@@ -309,8 +309,8 @@ npm run check
 npm test
 ```
 
-`npm run check` verifies the generated skill files, this README's skills table and the package rules.
-After editing a `SKILL.md` description, run `node scripts/generate-readme.mjs` to refresh the table.
+`npm run check` strictly type-checks tests and development tooling, then verifies the generated skill files, this README's skills table and the package rules.
+After editing a `SKILL.md` description, run `node scripts/generate-readme.ts` to refresh the table.
 See [docs/development.md](docs/development.md) for fixtures, evaluation, the shared runtime and the delivery gate.
 
 ## License

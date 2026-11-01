@@ -3,7 +3,7 @@
 The maintainer selected these findings after the existing-repo audit.
 Selection approves the scope below; exact protected-write diffs still need approval.
 
-- F-001: `journey.mjs` supplies price 12 from its controlled HTTP endpoint although `DESIGN.md` and the original journey assertion require checkout total 10.
+- F-001: `journey.ts` supplies price 12 from its controlled HTTP endpoint although `DESIGN.md` and the original journey assertion require checkout total 10.
   Correct that endpoint fixture to supply 10, preserve the total-10 assertion and keep the public quote at 12.
 - F-002: `packages/web/ui.ts` imports private storage and `packages/web/alias.ts` bypasses the public core interface.
   Route both through `packages/core/index.ts` and preserve their quote behaviour.

@@ -67,7 +67,7 @@ Read only the task and the shared contract it needs.
 In a Git checkout with available evidence metadata, `npm test` captures its full-suite output and test identities in `.cache/full-suite.json`, recording whether its source inputs are committed.
 When capture metadata is unavailable, ordinary `npm test` still executes the full suite; explicit capture remains strict.
 Ordinary and explicit capture execute the same full suite.
-The author attaches a saved run with `node scripts/task-evidence.mjs .cache/full-suite.json <task-id>`; the delivery gate neither requires attachment nor reruns the suite to refresh it.
+The author attaches a saved run with `node scripts/task-evidence.ts .cache/full-suite.json <task-id>`; the delivery gate neither requires attachment nor reruns the suite to refresh it.
 The generator reads the saved run rather than executing another suite or starting another pipeline.
 The saved run records the tested head, resolved base, command, environment, selected suite paths, test identities, counts, timing, output hashes and complete authored input inventory.
 Attachment can reuse the tested head when the generator confirms ancestry and identical bound inputs, base and environment, subject to the exclusions below.
@@ -104,7 +104,8 @@ Do not check upstream licences or raise licence questions (design R24).
 
 ### Conventions
 
-- **Language.** bstack's own scripts are JavaScript ES modules (`.mjs`) on Node 24 or later (design D3).
+- **Language.** Repository tests and development tooling use strict TypeScript (`.ts`), executed directly by Node 24 or later.
+Shipped runtime scripts remain JavaScript ES modules (`.mjs`) (design D3).
 - **Dependencies.** Installed skill scripts use Node built-in modules only.
 The one runtime dependency is `lavish-axi` for the VISION board.
 Repository development tools may use the root development dependencies declared in `package.json`.
@@ -272,7 +273,7 @@ bstack/
   tests/
     scripts/                     node:test suites for every command
     package-check/               seeded broken skill folders
-    fixtures/                    fixture sources and build.mjs
+    fixtures/                    fixture sources and build.ts
     inputs/                      valid and invalid command inputs
     acceptance/cases.json        all design acceptance IDs and their evidence procedures
     eval/scenarios/              evaluation scenarios
@@ -288,7 +289,7 @@ Every shipping slice goes through the no-mistakes pipeline configured in `.no-mi
 Green work merges unattended.
 [The gate configuration](../.no-mistakes.yaml) owns automatic repair budgets and the build's review focus.
 Its Prepare command installs the root development lock and each skill runtime declared by `skills/*/package.json`, stopping if any install fails.
-Its Test command is [`scripts/gate-test.mjs`](../scripts/gate-test.mjs), which always runs `npm run check`, then selects affected tasks and transitive protocol dependents from the [source-to-suite map](../tests/affected.json).
+Its Test command is [`scripts/gate-test.ts`](../scripts/gate-test.ts), which always runs `npm run check`, then selects affected tasks and transitive protocol dependents from the [source-to-suite map](../tests/affected.json).
 The [task registry](../tests/tasks.json) owns suite membership; repeated `--task` arguments run one union with each shared suite executed once.
 T3.1 supplies packaging contracts; the complete evaluation harness is retained for evaluator, contract and shared-runtime changes and every full fallback, rather than every per-piece gate.
 The script prints its merge base with `origin/main`, committed, staged, unstaged and untracked paths, including both sides of renames and deleted paths, selected modules and commands, and any fallback reason.
@@ -460,20 +461,20 @@ Tick each task when its "Done when" commands pass.
   - [x] T2.10 Add the `/verification correct` mode (after T3.3) - a five-step checklist and the constraint reference's evidence, diagnostic, proof and repeat rules, with no new script.
     The correct-mode scenario is defined and its evaluation stays deferred, so AC-76 to AC-78 keep planned procedures.
   - [x] T2.11 Add the `/plan` skill (after T2.10) - a ninth user-started skill that writes and checks one implementation plan from an approved design and never executes it, with `plan check`, its schema and references.
-    The plan scenarios are defined and their evaluations stay deferred, so AC-79, AC-80, AC-81 and AC-83 keep planned procedures; AC-82 is covered by `tests/scripts/plan.test.mjs`.
+    The plan scenarios are defined and their evaluations stay deferred, so AC-79, AC-80, AC-81 and AC-83 keep planned procedures; AC-82 is covered by `tests/scripts/plan.test.ts`.
   - [x] T2.12 Take the design as input to the setup skills and wire `/plan` into the checklists (after T2.11) - one sentence in each of four new-idea skills and `/plan` last in both repo-audit checklists.
     Design-as-input and checklist-order scenarios are defined with the required prerequisites; evaluations stay deferred, so AC-84 to AC-87 keep planned procedures.
-    AC-88 is covered by `tests/scripts/repo-audit-overview.test.mjs`, which installs the skill through the public installer and checks both checklist orders in the final host prompt.
+    AC-88 is covered by `tests/scripts/repo-audit-overview.test.ts`, which installs the skill through the public installer and checks both checklist orders in the final host prompt.
   - [x] T2.13 Add the `/formal-verification` skill (after T2.12) - a tenth user-started skill that proves one stated property by model checking and leaves a `formal-<target>` suite, with `formal scaffold`, `formal check`, the generalised coverage gate, the `/maintenance sweep` and `/architecture` wiring, and the `formal-charge-once` fixture pair as its proof input.
-    The skill's scenario evaluations are deferred, so AC-89, AC-90, AC-96, AC-98, AC-99 and AC-100 keep planned procedures; AC-91, AC-92, AC-95 and AC-97 are covered by `tests/scripts/formal.test.mjs`.
+    The skill's scenario evaluations are deferred, so AC-89, AC-90, AC-96, AC-98, AC-99 and AC-100 keep planned procedures; AC-91, AC-92, AC-95 and AC-97 are covered by `tests/scripts/formal.test.ts`.
     AC-93 and AC-94 ran against the pinned jar and are recorded in the [proof record](../tests/eval/results/tasks/T2.13.formal-proof.md) with its sha256; they skip wherever the tool is absent, so a missing tool is never a pass.
     The Kani recipe has no executed evidence: the build environment has no Rust toolchain.
   - [x] T2.14 Add the `how`, `why` and `teach` skills (after T2.13) - three user-started skills that explain a codebase from cited evidence and write nothing, with `/architecture` sharing the why-evidence reference.
-    The skills' scenario evaluations are deferred, so AC-102, AC-103 and AC-104 keep planned procedures; AC-101 and AC-105 are covered by `tests/scripts/research-skills.test.mjs`.
+    The skills' scenario evaluations are deferred, so AC-102, AC-103 and AC-104 keep planned procedures; AC-101 and AC-105 are covered by `tests/scripts/research-skills.test.ts`.
   - [x] T2.15 Add the `recall` skill (after T2.14) - a user-started skill that summarises prior context from the project's local Claude Code and Codex transcripts, read-only, with its output in scratch.
-    The skill's scenario evaluation is deferred, so AC-108 keeps a planned procedure; AC-106 and AC-107 are covered by `tests/scripts/recall.test.mjs`.
+    The skill's scenario evaluation is deferred, so AC-108 keeps a planned procedure; AC-106 and AC-107 are covered by `tests/scripts/recall.test.ts`.
   - [x] T2.16 Add the `prototype` skill (after T2.15) - a user-started skill that builds two or three throwaway variants in scratch clones, drives and measures each with the project's verification kit, and reports the evidence and a recommendation without writing to the repo.
-    The skill's scenario evaluation is deferred, so AC-111 keeps a planned procedure; AC-109 and AC-110 are covered by `tests/scripts/prototype.test.mjs`.
+    The skill's scenario evaluation is deferred, so AC-111 keeps a planned procedure; AC-109 and AC-110 are covered by `tests/scripts/prototype.test.ts`.
   - [x] T2.17 Add optional TLC charts to formal verification - unchanged pinned compiler, local Mermaid output and reader-word guidance, gated by the suite and tool checks.
     Package and task checks pass; the missing-jar proof runs offline, while AC-112 and AC-114 remain unavailable without the supplied pinned jar and Java.
     Evidence is recorded in `tests/eval/results/tasks/T2.17.json`.
@@ -622,7 +623,7 @@ Phase evidence from the design: no missing local references or undeclared runtim
 2. Add the MIT licence file, a short README and `.gitignore` for dependencies, scratch outputs and OS files.
 3. Add the root package manifest with Node >=24 and scripts `check`, `test` and `eval`.
 4. Generate and commit the root `package-lock.json` before any `npm ci` check.
-5. Write `scripts/test.mjs` to discover only `*.test.mjs` under `tests/scripts/` and `tests/package-check/`.
+5. Write `scripts/test.ts` to discover only `*.test.ts` under `tests/scripts/` and `tests/package-check/`.
    Sort paths and pass explicit file arguments to `node --test`.
    Never discover tests inside fixture sources, installed dependencies or evaluation workspaces.
    Fail when the selected suite has no tests.
@@ -676,7 +677,7 @@ Use the explicit-file runner above rather than passing a directory as a test fil
 
 **Inputs and outputs:** Pinned source list -> fetched raw sources, manifest and NOTICE.
 
-**Verification:** `node upstream/fetch.mjs --check` and `npm test`.
+**Verification:** `node upstream/fetch.ts --check` and `npm test`.
 
 **Read:** design "Bundled sources and runtime" and "Evidence and limitations".
 
@@ -689,7 +690,7 @@ Use the explicit-file runner above rather than passing a directory as a test fil
    - `kunchenguid/vision` at `7a20c38181151ec67efdf8fa2cb03a60123a7b83`: `skills/vision/SKILL.md` and `skills/vision/assets/`.
    - `cursor/plugins` (pstack): use the reviewed pin and file inventory in [`upstream/sources.json`](../upstream/sources.json).
    - `kunchenguid/kun` at `1b2a9c7dd4b2b33eb7161399d7893c39048213be`: `ENTRY.md`.
-2. Write `upstream/fetch.mjs`.
+2. Write `upstream/fetch.ts`.
    It downloads each listed file at its pinned commit from `raw.githubusercontent.com` into `upstream/<source>/`, and fails if a file is missing.
 3. Run it and commit the raw copies.
 4. Recheck that each pstack file the design cites exists at the pin.
@@ -699,7 +700,7 @@ Use the explicit-file runner above rather than passing a directory as a test fil
 
 **Done when**
 
-- `node upstream/fetch.mjs --check` exits 0 and reports every listed file present at its pin.
+- `node upstream/fetch.ts --check` exits 0 and reports every listed file present at its pin.
 - `NOTICE` lists every source in `sources.json`.
 
 ### T0.4 Build the shared script library
@@ -811,13 +812,13 @@ Phase evidence from the design: a new idea reaches an approved vision draft and 
 
 **Inputs and outputs:** Design acceptance sources -> isolated repo and non-Git fixtures with sanity checks.
 
-**Verification:** `node tests/fixtures/build.mjs --all` and `npm test -- --task T1.1`.
+**Verification:** `node tests/fixtures/build.ts --all` and `npm test -- --task T1.1`.
 
 **Read:** design "Acceptance cases" and "Language-agnostic by design".
 
 **Steps**
 
-1. Write `tests/fixtures/build.mjs`.
+1. Write `tests/fixtures/build.ts`.
    For repo fixtures, copy sources into a temporary folder, initialise Git and replay the declared history.
    For idea fixtures, copy the brief without initialising Git.
    Set fixture-local Git identity and disable signing, without changing global Git configuration.
@@ -855,7 +856,7 @@ Phase evidence from the design: a new idea reaches an approved vision draft and 
 
 **Done when**
 
-- `node tests/fixtures/build.mjs --all` builds every fixture and each `sanity` script passes.
+- `node tests/fixtures/build.ts --all` builds every fixture and each `sanity` script passes.
 - Each native sanity check executes on its real native tools and confirms its valid and invalid seeds before any baseline run.
 
 ### T1.2 Build the evaluation runner and record the baseline
@@ -864,7 +865,7 @@ Phase evidence from the design: a new idea reaches an approved vision draft and 
 
 **Inputs and outputs:** Fixtures and acceptance IDs -> adapters, registry, runner and baseline evidence.
 
-**Verification:** `npm test -- --task T1.2` and `node scripts/acceptance.mjs --check-registry, then baseline runs`.
+**Verification:** `npm test -- --task T1.2` and `node scripts/acceptance.ts --check-registry, then baseline runs`.
 
 **Read:** design "How repo-audit itself is written" (Testing), "Model-agnostic by design" and "Acceptance cases".
 
@@ -893,7 +894,7 @@ Phase evidence from the design: a new idea reaches an approved vision draft and 
    Baseline and with-skill runs use the same fixture revision, agent, model and scoring criteria.
    Score deterministic checks from artifacts, and identify human-scored checks by reviewer and transcript location.
 8. Register every design acceptance ID in `tests/acceptance/cases.json` with its owner task, procedure, criterion source and evidence type.
-   Implement `scripts/acceptance.mjs --check-registry` for missing IDs, duplicate IDs, unknown tasks and invalid procedure definitions.
+   Implement `scripts/acceptance.ts --check-registry` for missing IDs, duplicate IDs, unknown tasks and invalid procedure definitions.
    It permits planned procedures whose implementation is pending, but never treats them as passed.
    Completed procedures must name an existing test or scenario and its evidence artifacts.
 9. Add scenarios for a new idea, ambiguous idea, seeded existing repo, clear goals and implicit invocation.
@@ -1425,7 +1426,7 @@ It follows the design amendment of R41, which defines the skill's boundary.
    It accepts any approved design document, reports a missing bstack document as a gap without starting its skill (D1), runs the builder check (D2), turns the story map into units that each cite their design section, boundary, "Done when" and proving check or kit feature (D3), and carries non-functional targets as unit acceptance checks (D4).
 2. Add the plan-format and builder-check references.
    Adapt the format from this plan and from pstack's `pstack/skills/poteto-mode/playbooks/multi-phase-plan.md` and `pstack/skills/principle-sequence-verifiable-units/SKILL.md`, and the builder check from `skills/brainstorming/builder-check-prompt.md` in obra's `superpowers`.
-   Pin each source in `upstream/sources.json` through `upstream/fetch.mjs` and add its `NOTICE` row; confirm the pstack paths exist at the pinned commit first, since an earlier read cited the playbook without its `skills/` segment.
+   Pin each source in `upstream/sources.json` through `upstream/fetch.ts` and add its `NOTICE` row; confirm the pstack paths exist at the pinned commit first, since an earlier read cited the playbook without its `skills/` segment.
 3. Add `schemas/plan.json`, a `plan check` command in the shared runtime and `runtime/skills.json`, and the `plan` entry in the bundle generator and the installer's skill list.
    The command fails on a unit with no evidence, a dependency cycle, or a design citation that `cite-check` cannot resolve.
 4. Reuse `apply` and `state show`, and add the skill's one `AGENTS.md` pointer line through the pointer contract.
@@ -1495,9 +1496,9 @@ It follows the design amendment of R44, which defines the skill's boundary, and 
    A suite folder has its own prefix, so a `verify-` kit is never read as a suite.
 4. Add the architecture wiring: the "explicit state model" standard in `skills/architecture/references/design-standards.md` and its inspection signal in `skills/architecture/references/architecture.md`, proposed only with cited evidence, with no universal rule (D7, C4, C5).
    Add the `/repo-audit` checklist line that lists the skill only with cited risk evidence, and extend the checklist-order test (D8).
-5. Pin the sources in `upstream/sources.json` through `upstream/fetch.mjs` at `cursor/plugins` commit `0148b78c56c72a1b8412055913c79f767095b217`: `pstack/skills/create-formal-verification-skill/SKILL.md` and the state-model guidance in `pstack/skills/principle-model-the-domain/SKILL.md` and `pstack/skills/principle-type-system-discipline/SKILL.md`.
+5. Pin the sources in `upstream/sources.json` through `upstream/fetch.ts` at `cursor/plugins` commit `0148b78c56c72a1b8412055913c79f767095b217`: `pstack/skills/create-formal-verification-skill/SKILL.md` and the state-model guidance in `pstack/skills/principle-model-the-domain/SKILL.md` and `pstack/skills/principle-type-system-discipline/SKILL.md`.
    Confirm each path exists at the pin first, then replace the `NOTICE` row that records the read with the adapted destinations and what changed.
-6. Move the acceptance cases AC-89 to AC-100 from the design's "Formal verification cases" section into its numbered acceptance list, register them using this plan's existing coverage assignments, and update the registry count in `tests/scripts/acceptance.test.mjs`.
+6. Move the acceptance cases AC-89 to AC-100 from the design's "Formal verification cases" section into its numbered acceptance list, register them using this plan's existing coverage assignments, and update the registry count in `tests/scripts/acceptance.test.ts`.
    Drive `formal scaffold`, `formal check` and the coverage gate through their public commands on disposable copies of the `formal-charge-once` fixture pair.
    Run the `rule-proof` proof of AC-93 when Java and the pinned jar are present, and report it blocked when they are not, since a missing tool is never a pass.
    Run the Kani recipe once on a small crate if the toolchain is available, and otherwise leave it marked as having no executed evidence.
@@ -1614,7 +1615,7 @@ It follows the research amendment of R47 and the build choices of R51.
 
 Done when: The package and task checks pass, every installed compiler byte matches the upstream manifest, and AC-112 to AC-114 have recorded outcomes or explicit missing-tool limitations.
 Reader-word authoring and replay evaluations remain deferred.
-Re-sync with `node upstream/fetch.mjs`, regenerate the installed tree and rerun this task's acceptance cases.
+Re-sync with `node upstream/fetch.ts`, regenerate the installed tree and rerun this task's acceptance cases.
 
 ## Phase 3: Enforcement
 
@@ -2136,7 +2137,7 @@ See [release notes](releases/v0.1.0.md) and the [case-by-case evidence inventory
 
 **Inputs and outputs:** All case evidence and comparable agent runs -> validated release evidence and approved tag.
 
-**Verification:** `npm run check`, `npm test` and `node scripts/acceptance.mjs --release <version> --candidate <full-commit> --checks <hard-break-report.json> --results tests/eval/results`.
+**Verification:** `npm run check`, `npm test` and `node scripts/acceptance.ts --release <version> --candidate <full-commit> --checks <hard-break-report.json> --results tests/eval/results`.
 
 **Read:** design "Acceptance cases" and "Model-agnostic by design".
 
@@ -2174,7 +2175,7 @@ Automated procedures name the test title and file, with positive and negative co
 Agent and manual procedures name the scenario check and the transcript or board artifact needed to score it.
 The runner verifies that a named test actually executed, rather than accepting a zero-test exit code.
 Every result records passed, failed or blocked, its relevant input revision and an existing artifact path.
-T5.2 uses `scripts/acceptance.mjs --release` to classify hard breaks, regressions and known issues from repeated measurements.
+T5.2 uses `scripts/acceptance.ts --release` to classify hard breaks, regressions and known issues from repeated measurements.
 See the [evaluation contract](evaluation.md#registry-and-final-selections) for the available registry and selection validation.
 Repeated execution artifacts with unique run IDs are legitimate history; the gate compares compatible ledger batches and records reusable evidence from unaffected scenarios.
 
@@ -2198,13 +2199,13 @@ Fixture freshness follows the [evaluation contract](evaluation.md#scenarios-and-
 | T2.8 | AC-5, AC-6, AC-7, AC-38, AC-55, AC-62 | Audit-before-interview and project-specific findings in both stacks | Passing current evidence: AC-5, AC-6, AC-7, AC-38, AC-62 ([inventory](../tests/eval/results/release/approved-evidence.md)). v0.1.1 known issues: AC-55 ([release notes](releases/v0.1.0.md)). |
 | T2.9 | AC-1, AC-2, AC-9, AC-12 | Approved creation, unresolved decision and destination-collision controls | Passing current evidence: AC-2, AC-12 ([inventory](../tests/eval/results/release/approved-evidence.md)). v0.1.1 known issues: AC-1, AC-9 ([release notes](releases/v0.1.0.md)). |
 | T2.10 | AC-76, AC-77, AC-78 | Repeated-mistake evidence and threshold, higher rung with a replacement-naming diagnostic, and proof on a real past occurrence | Procedures planned; the scenario evaluation is deferred. |
-| T2.11 | AC-79, AC-80, AC-81, AC-82, AC-83 | Inputs and gaps, builder check, story-map units with evidence, `plan check` rejections and acceptance, and the write boundary | AC-82 passes in `tests/scripts/plan.test.mjs`; the other procedures are planned and the scenario evaluations are deferred. |
-| T2.12 | AC-84, AC-85, AC-86, AC-87, AC-88 | A named design document taken as the explanation by each of the four setup skills, and `/plan` last in both checklists | AC-88 passes in `tests/scripts/repo-audit-overview.test.mjs` against both checklist orders in the installed host prompt; AC-84 to AC-87 are planned and live scenario evaluations are deferred. |
-| T2.13 | AC-89, AC-90, AC-91, AC-92, AC-93, AC-94, AC-95, AC-96, AC-97, AC-98, AC-99, AC-100 | Explicit-only start, repo-first target and tool choice, suite rendering, `formal check` rejections, the `rule-proof` proof and the walkthrough, the generalised gate, `maintain` triage, sweep and repo-audit wiring, the write boundary and the architecture standard | AC-91, AC-92, AC-95 and AC-97 pass in `tests/scripts/formal.test.mjs`; AC-93 and AC-94 pass in the same file only with the pinned `tla2tools.jar` and Java, and their recorded result is in the [T2.13 proof record](../tests/eval/results/tasks/T2.13.formal-proof.md); the other procedures are planned and the scenario evaluations are deferred. |
-| T2.14 | AC-101, AC-102, AC-103, AC-104, AC-105 | Explicit-only start, source-cited `/why` with untrusted connector text, cited `/how` mechanics, `/teach` joining both, and the one shared why-evidence reference | AC-101 and AC-105 pass in `tests/scripts/research-skills.test.mjs`; AC-102, AC-103 and AC-104 are planned and the scenario evaluations are deferred. |
-| T2.15 | AC-106, AC-107, AC-108 | Explicit-only start, the `transcripts` digest limited to this project's sessions with transcripts and repo unchanged, and the cited, secret-free summary in scratch | AC-106 and AC-107 pass in `tests/scripts/recall.test.mjs`; AC-108 is planned and the scenario evaluation is deferred. |
-| T2.16 | AC-109, AC-110, AC-111 | Explicit-only start, the kit measurement of a passing and a failing variant in scratch clones with the target unchanged, and the report that recommends from the measured evidence | AC-109 and AC-110 pass in `tests/scripts/prototype.test.mjs`; AC-111 is planned and the scenario evaluation is deferred. |
-| T2.17 | AC-112, AC-113, AC-114 | Local TLC charts with a checked project pin, missing-tool blocking and wrong-hash refusal | AC-113 runs offline in `tests/scripts/formal.test.mjs`; AC-112 and AC-114 require `BSTACK_TLA2TOOLS_JAR` and Java and skip otherwise. Reader-word and triage evaluations remain deferred. |
+| T2.11 | AC-79, AC-80, AC-81, AC-82, AC-83 | Inputs and gaps, builder check, story-map units with evidence, `plan check` rejections and acceptance, and the write boundary | AC-82 passes in `tests/scripts/plan.test.ts`; the other procedures are planned and the scenario evaluations are deferred. |
+| T2.12 | AC-84, AC-85, AC-86, AC-87, AC-88 | A named design document taken as the explanation by each of the four setup skills, and `/plan` last in both checklists | AC-88 passes in `tests/scripts/repo-audit-overview.test.ts` against both checklist orders in the installed host prompt; AC-84 to AC-87 are planned and live scenario evaluations are deferred. |
+| T2.13 | AC-89, AC-90, AC-91, AC-92, AC-93, AC-94, AC-95, AC-96, AC-97, AC-98, AC-99, AC-100 | Explicit-only start, repo-first target and tool choice, suite rendering, `formal check` rejections, the `rule-proof` proof and the walkthrough, the generalised gate, `maintain` triage, sweep and repo-audit wiring, the write boundary and the architecture standard | AC-91, AC-92, AC-95 and AC-97 pass in `tests/scripts/formal.test.ts`; AC-93 and AC-94 pass in the same file only with the pinned `tla2tools.jar` and Java, and their recorded result is in the [T2.13 proof record](../tests/eval/results/tasks/T2.13.formal-proof.md); the other procedures are planned and the scenario evaluations are deferred. |
+| T2.14 | AC-101, AC-102, AC-103, AC-104, AC-105 | Explicit-only start, source-cited `/why` with untrusted connector text, cited `/how` mechanics, `/teach` joining both, and the one shared why-evidence reference | AC-101 and AC-105 pass in `tests/scripts/research-skills.test.ts`; AC-102, AC-103 and AC-104 are planned and the scenario evaluations are deferred. |
+| T2.15 | AC-106, AC-107, AC-108 | Explicit-only start, the `transcripts` digest limited to this project's sessions with transcripts and repo unchanged, and the cited, secret-free summary in scratch | AC-106 and AC-107 pass in `tests/scripts/recall.test.ts`; AC-108 is planned and the scenario evaluation is deferred. |
+| T2.16 | AC-109, AC-110, AC-111 | Explicit-only start, the kit measurement of a passing and a failing variant in scratch clones with the target unchanged, and the report that recommends from the measured evidence | AC-109 and AC-110 pass in `tests/scripts/prototype.test.ts`; AC-111 is planned and the scenario evaluation is deferred. |
+| T2.17 | AC-112, AC-113, AC-114 | Local TLC charts with a checked project pin, missing-tool blocking and wrong-hash refusal | AC-113 runs offline in `tests/scripts/formal.test.ts`; AC-112 and AC-114 require `BSTACK_TLA2TOOLS_JAR` and Java and skip otherwise. Reader-word and triage evaluations remain deferred. |
 | T3.1 | AC-14, AC-25, AC-47, AC-59 | Authority reuse and absence of tool presets or development routing | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
 | T3.2 | AC-52, AC-60, AC-66 | Valid and private-import, alias-bypass and cycle cases in both stacks | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
 | T3.3 | AC-67 | New debt rejection, removed debt and unauthorised baseline growth | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |

@@ -9,7 +9,7 @@ To try an example, complete [source setup](../development.md#install-from-a-chec
 The builder prints a JSON object containing the fresh fixture's `path`; use that value below and keep the fixture disposable.
 
 ```sh
-node tests/fixtures/build.mjs new-idea
+node tests/fixtures/build.ts new-idea
 node install/install.mjs --scope project --project <fixture-path> --host agents --dry-run
 node install/install.mjs --scope project --project <fixture-path> --host agents --json
 node scripts/check-package.mjs --skill <fixture-path>/.agents/skills/repo-audit

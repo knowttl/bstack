@@ -119,7 +119,7 @@ export async function checkPackage(skill, { sourcePreflight = false } = {}) {
     expected.set(`${vendorPrefix}LICENSE`, source.sha256['pstack/LICENSE'])
     for (const [file, hash] of expected) {
       const bytes = await readFile(join(skill, file)).catch(error => error.code === 'ENOENT' ? null : Promise.reject(error))
-      if (bytes === null || createHash('sha256').update(bytes).digest('hex') !== hash) add('vendor-bytes', file, 'Vendored compiler differs from its pin.', 'Run node scripts/generate-skills.mjs to restore the unchanged copy.')
+      if (bytes === null || createHash('sha256').update(bytes).digest('hex') !== hash) add('vendor-bytes', file, 'Vendored compiler differs from its pin.', 'Run node scripts/generate-skills.ts to restore the unchanged copy.')
     }
     for (const file of files.keys()) {
       if (!file.startsWith(vendorPrefix)) continue

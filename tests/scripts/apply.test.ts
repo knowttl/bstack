@@ -1,0 +1,1601 @@
+import test from 'node:test'
+import assert from 'node:assert/strict'
+import { readFile, writeFile, symlink, mkdir, readdir, stat, chmod, rm } from 'node:fs/promises'
+import { join, resolve, dirname } from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { createHash } from 'node:crypto'
+import { spawnSync } from 'node:child_process'
+import { parse } from 'yaml'
+import { emptyRepo, run, runMaintenance, snapshot, git } from './discovery-fixture.ts'
+import { maintenanceRepo } from './maintenance-fixture.ts'
+
+const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
+function hash(value: string | Buffer): string
+function hash(value: null): null
+function hash(value: string | Buffer | null): string | null
+function hash(value: string | Buffer | null) { return value === null ? null : createHash('sha256').update(value).digest('hex') }
+
+type Edit = {
+  id: string; findingId: string; path: string; originalHash: string | null; proposedHash: string | null;
+  operation: string; payload: Record<string, unknown>; proposedContent: string | null; checkIntegration?: readonly (readonly string[])[];
+}
+type ApplyContext = Awaited<ReturnType<typeof emptyRepo>> & {
+  env: NodeJS.ProcessEnv; file: string; findingsFile: string; findings: ReturnType<typeof JSON.parse>;
+  plan: { schemaVersion: number; target: ReturnType<typeof JSON.parse>; findings: string; findingsDigest: string;
+    selectedFindingIds: string[]; reviewedScope: { path: string; resolvedPath: string }[]; edits: Edit[]; planDigest: string }
+}
+// The documented digest algorithm is implemented here independently of production.
+function canonical(value: unknown): string {
+  if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`
+  if (value !== null && typeof value === 'object') return `{${Object.keys(value).sort().map(key => `${JSON.stringify(key)}:${canonical((value as Record<string, unknown>)[key])}`).join(',')}}`
+  return JSON.stringify(value)!
+}
+
+async function save(context: ApplyContext, refresh = true) {
+  await writeFile(context.findingsFile, JSON.stringify(context.findings))
+  if (refresh) {
+    context.plan.findingsDigest = hash(canonical(context.findings))
+    const { planDigest, ...reviewed } = context.plan
+    context.plan.planDigest = hash(canonical(reviewed))
+  }
+  await writeFile(context.file, JSON.stringify(context.plan))
+}
+
+async function setup(t: import('node:test').TestContext, operation = 'replace', original: string | null = 'old\n', payload: Record<string, unknown> = { search: 'old', replacement: 'new' }, proposed: string | null = 'new\n', path = 'README.md', checkIntegration?: readonly (readonly string[])[]) {
+  const context = await emptyRepo(t) as ApplyContext
+  context.env = { ...process.env, XDG_CACHE_HOME: join(context.directory, 'cache'), LOCALAPPDATA: join(context.directory, 'cache'), HOME: context.directory, USERPROFILE: context.directory }
+  context.file = join(context.directory, 'plan ü &.json')
+  context.findingsFile = join(context.directory, 'findings.json')
+  if (original !== null) await writeFile(join(context.repo, path), original)
+  context.findings = JSON.parse(await readFile(join(root, 'tests/inputs/findings-audit.json'), 'utf8'))
+  context.findings.target.root = context.repo
+  context.findings.reviewedScope = [path]
+  context.findings.findings[0].scope = [path]
+  context.findings.findings[0].files = [path]
+  context.plan = {
+    schemaVersion: 1, target: context.findings.target, findings: 'findings.json', findingsDigest: '',
+    selectedFindingIds: ['F-001'], reviewedScope: [{ path, resolvedPath: join(context.repo, path) }],
+    edits: [{ id: 'E-001', findingId: 'F-001', path, originalHash: hash(original), proposedHash: hash(proposed), operation, payload, proposedContent: proposed }], planDigest: ''
+  }
+  if (checkIntegration) context.plan.edits[0].checkIntegration = checkIntegration
+  await save(context)
+  return context
+}
+
+async function integration(t: import('node:test').TestContext, path: string, content: string, original: string | null = path === 'package.json' ? '{}' : '') {
+  let proposed = content
+  let selected = [['scripts', 'check']]
+  if (path !== 'package.json') {
+    let document
+    try { document = parse(content) } catch {
+      return setup(t, 'replace-file', original, { content }, content, path, [['steps', '0', 'run']])
+    }
+    proposed = JSON.stringify(document)
+    selected = document.job ? [['job', 'script']] : [['steps', '0', Object.hasOwn(document.steps[0], 'run') ? 'run' : 'script']]
+  }
+  return setup(t, 'replace-file', original, { content: proposed }, proposed, path, selected)
+}
+
+async function assessmentPlan(t: import('node:test').TestContext, operation = 'create') {
+  const fixture = await maintenanceRepo(t)
+  const collected = runMaintenance('evidence collect', fixture.repo, process.env, ['--base', 'empty'])
+  assert.equal(collected.exit, 0, JSON.stringify(collected))
+  const content = await readFile(collected.data.path, 'utf8')
+  return operation === 'delete' ? setup(t, 'delete', content, {}, null, 'review.json') :
+    setup(t, 'create', null, { content }, content, 'review.json')
+}
+
+test('assessment preview ends with the exact approval instruction without writing the project', async t => {
+  const context = await assessmentPlan(t)
+  const before = await snapshot(context.repo)
+  const preview = execute(context, undefined, 'apply', ['--plan', context.file, '--dry-run'])
+  assert.equal(preview.exit, 0, JSON.stringify(preview))
+  assert.equal(preview.data.planDigest, context.plan.planDigest)
+  assert.equal(preview.data.approvalRequired, `Approval required: show this preview to the owner and end your turn; do not run assessment apply until the owner approves this exact fingerprint: ${context.plan.planDigest}.`)
+  const text = spawnSync(process.execPath, [join(root, 'skills/maintenance/scripts/maintenance.mjs'), 'apply',
+    '--repo', context.repo, '--plan', context.file, '--dry-run'], { encoding: 'utf8', env: context.env })
+  assert.equal(text.status, 0, text.stdout + text.stderr)
+  assert.ok(text.stdout.trimEnd().endsWith(preview.data.approvalRequired))
+  assert.deepEqual(await snapshot(context.repo), before)
+})
+
+for (const [name, flags, code] of [
+  ['missing', [], 'assessment-approval-required'],
+  ['wrong', ['--approved-fingerprint', '0'.repeat(64)], 'assessment-approval-mismatch']
+] satisfies [unknown, unknown, unknown][]) {
+  test(`assessment apply rejects a ${name} approved fingerprint before any project edit`, async t => {
+    const context = await assessmentPlan(t)
+    await secondEdit(context)
+    const before = await snapshot(context.repo)
+    const applied = execute(context, undefined, 'apply', ['--plan', context.file, ...flags])
+    assert.equal(applied.exit, 2, JSON.stringify(applied))
+    assert.equal(applied.problems[0].code, code)
+    assert.deepEqual(await snapshot(context.repo), before)
+  })
+}
+
+test('assessment apply accepts the exact approved preview and requires it again on resume', async t => {
+  const context = await assessmentPlan(t)
+  const preview = execute(context, undefined, 'apply', ['--plan', context.file, '--dry-run'])
+  assert.equal(preview.exit, 0, JSON.stringify(preview))
+  const approved = ['--plan', context.file, '--approved-fingerprint', preview.data.planDigest]
+  assert.equal(execute(context, undefined, 'apply', approved).exit, 0)
+  assert.equal(await readFile(join(context.repo, 'review.json'), 'utf8'), context.plan.edits[0].proposedContent)
+  const before = await snapshot(context.repo)
+  assert.equal(execute(context).problems[0].code, 'assessment-approval-required')
+  assert.deepEqual(await snapshot(context.repo), before)
+  assert.equal(execute(context, undefined, 'apply', approved).exit, 0)
+})
+
+test('changed assessment bytes invalidate the previously approved preview fingerprint', async t => {
+  const context = await assessmentPlan(t)
+  const preview = execute(context, undefined, 'apply', ['--plan', context.file, '--dry-run'])
+  assert.equal(preview.exit, 0, JSON.stringify(preview))
+  const record = JSON.parse(context.plan.edits[0].proposedContent!)
+  record.fingerprint = '1'.repeat(64)
+  const content = JSON.stringify(record)
+  Object.assign(context.plan.edits[0], { proposedContent: content, proposedHash: hash(content), payload: { content } })
+  await save(context)
+  const before = await snapshot(context.repo)
+  const applied = execute(context, undefined, 'apply', ['--plan', context.file, '--approved-fingerprint', preview.data.planDigest])
+  assert.equal(applied.problems[0].code, 'assessment-approval-mismatch')
+  assert.deepEqual(await snapshot(context.repo), before)
+})
+
+test('deleting an assessment at a custom path requires the exact approved fingerprint', async t => {
+  const context = await assessmentPlan(t, 'delete')
+  const before = await snapshot(context.repo)
+  assert.equal(execute(context).problems[0].code, 'assessment-approval-required')
+  assert.deepEqual(await snapshot(context.repo), before)
+  const preview = execute(context, undefined, 'apply', ['--plan', context.file, '--dry-run'])
+  assert.equal(execute(context, undefined, 'apply', ['--plan', context.file, '--approved-fingerprint', preview.data.planDigest]).exit, 0)
+  assert.deepEqual(await readdir(context.repo), ['.git'])
+})
+
+test('the conventional assessment path requires approval even for an incomplete record', async t => {
+  const context = await setup(t, 'create', null, { content: '{}' }, '{}', '.bstack/assessment.json')
+  const before = await snapshot(context.repo)
+  assert.equal(execute(context).problems[0].code, 'assessment-approval-required')
+  assert.deepEqual(await snapshot(context.repo), before)
+})
+
+async function ruleMove(t: import('node:test').TestContext, destination: string | null = '# Standards\n', destinationPath = 'CONTRIBUTING.md', rule = '## One source\n\nKeep one authoritative source for each rule.\n') {
+  const link = `[One source](${destinationPath}#one-source)\n`
+  const payload = { sourcePath: 'README.md', destinationPath, rule, link, destinationAnchor: destination === null ? '' : '# Standards\n' }
+  const context = await setup(t, 'move-rule', '# Design\n' + rule, payload, '# Design\n' + link)
+  if (destination !== null) {
+    await mkdir(dirname(join(context.repo, destinationPath)), { recursive: true })
+    await writeFile(join(context.repo, destinationPath), destination)
+  }
+  context.findings.reviewedScope.push(destinationPath)
+  context.findings.findings[0].scope.push(destinationPath)
+  context.plan.reviewedScope.push({ path: destinationPath, resolvedPath: join(context.repo, destinationPath) })
+  const proposed = destination === null ? rule : destination + rule
+  context.plan.edits.push({ id: 'E-002', findingId: 'F-001', path: destinationPath, originalHash: hash(destination),
+    proposedHash: hash(proposed), operation: 'move-rule', payload, proposedContent: proposed })
+  await save(context)
+  return context
+}
+
+for (const [name, destination, path] of [['existing authority', '# Standards\n', 'CONTRIBUTING.md'], ['selected new authority', null, 'CODING_STANDARDS.md'], ['new nested authority', null, 'docs/CODING_STANDARDS.md'], ['underscore authority', '# Standards\n', '_STANDARDS_.md'], ['new underscore authority', null, '_STANDARDS_.md']] satisfies [unknown, unknown, unknown][]) {
+  test(`move-rule leaves one rule and one link in ${name}`, async t => {
+    const context = await ruleMove(t, destination, path)
+    const before = await snapshot(context.repo)
+    assert.equal(execute(context, undefined, 'apply', ['--plan', context.file, '--dry-run']).exit, 0)
+    assert.deepEqual(await snapshot(context.repo), before)
+    assert.equal(execute(context).exit, 0)
+    assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), context.plan.edits[0].proposedContent)
+    assert.equal(await readFile(join(context.repo, path), 'utf8'), context.plan.edits[1].proposedContent)
+    assert.equal(execute(context).exit, 0, 'unchanged move resumes safely')
+  })
+}
+
+for (const [name, change, code] of [
+  ['missing destination edit', (context: Awaited<ReturnType<typeof ruleMove>>) => context.plan.edits.pop(), 'incomplete-rule-move'],
+  ['missing source edit', (context: Awaited<ReturnType<typeof ruleMove>>) => context.plan.edits.shift(), 'incomplete-rule-move'],
+  ['mismatched payload', (context: Awaited<ReturnType<typeof ruleMove>>) => { context.plan.edits[1].payload = { ...context.plan.edits[1].payload, link: '[Other](README.md)\n' } }, 'incomplete-rule-move'],
+  ['wrong destination link', (context: Awaited<ReturnType<typeof ruleMove>>) => {
+    context.plan.edits.forEach((edit) => { edit.payload = { ...edit.payload, link: '[Other](README.md)\n' } })
+    context.plan.edits[0].proposedContent = '# Design\n[Other](README.md)\n'
+    context.plan.edits[0].proposedHash = hash(context.plan.edits[0].proposedContent)
+  }, 'invalid-rule-link'],
+  ['missing heading link', (context: Awaited<ReturnType<typeof ruleMove>>) => {
+    context.plan.edits.forEach((edit) => { edit.payload = { ...edit.payload, link: '[Other](CONTRIBUTING.md#absent)\n' } })
+    context.plan.edits[0].proposedContent = '# Design\n[Other](CONTRIBUTING.md#absent)\n'
+    context.plan.edits[0].proposedHash = hash(context.plan.edits[0].proposedContent)
+  }, 'broken-local-link'],
+  ['external link', (context: Awaited<ReturnType<typeof ruleMove>>) => {
+    context.plan.edits.forEach((edit) => { edit.payload = { ...edit.payload, link: '[Other](https://example.invalid)\n' } })
+    context.plan.edits[0].proposedContent = '# Design\n[Other](https://example.invalid)\n'
+    context.plan.edits[0].proposedHash = hash(context.plan.edits[0].proposedContent)
+  }, 'invalid-rule-link']
+] satisfies [unknown, unknown, unknown][]) {
+  test(`move-rule rejects ${name} before writing either file`, async t => {
+    const context = await ruleMove(t)
+    change(context)
+    await save(context)
+    const before = await snapshot(context.repo)
+    const result = execute(context)
+    assert.equal(result.problems[0].code, code, JSON.stringify(result))
+    assert.deepEqual(await snapshot(context.repo), before)
+  })
+}
+
+for (const [name, destination, code] of [
+  ['missing insertion anchor', '# Different\n', 'ambiguous-rule-destination'],
+  ['ambiguous insertion anchor', '# Standards\n# Standards\n', 'ambiguous-rule-destination'],
+  ['duplicate rule', '# Standards\n## One source\n\nKeep one authoritative source for each rule.\n', 'duplicate-rule']
+] satisfies [unknown, unknown, unknown][]) {
+  test(`move-rule rejects ${name} without replacing the source`, async t => {
+    const context = await ruleMove(t, destination)
+    const before = await snapshot(context.repo)
+    assert.equal(execute(context).problems[0].code, code)
+    assert.deepEqual(await snapshot(context.repo), before)
+  })
+}
+
+test('move-rule validates the destination precondition before writing the source', async t => {
+  const context = await ruleMove(t)
+  await writeFile(join(context.repo, 'CONTRIBUTING.md'), '# User edits\n')
+  const before = await snapshot(context.repo)
+  assert.equal(execute(context).problems[0].code, 'changed-precondition')
+  assert.deepEqual(await snapshot(context.repo), before)
+})
+
+for (const destination of ['# Standards\n', null]) {
+  test(`move-rule rejects broken relocated references in ${destination === null ? 'new' : 'existing'} destinations`, async t => {
+    const context = await ruleMove(t, destination, 'docs/STANDARDS.md', '## One source\n\n[Design](README.md#design)\n')
+    const before = await snapshot(context.repo)
+    const result = execute(context)
+    assert.equal(result.problems[0].code, 'broken-local-link', JSON.stringify(result))
+    assert.equal(result.problems[0].path, 'docs/STANDARDS.md')
+    assert.deepEqual(await snapshot(context.repo), before)
+  })
+}
+
+test('move-rule rejects references that escape after relocation to the root', async t => {
+  const context = await ruleMove(t, '# Standards\n', 'CONTRIBUTING.md', '## One source\n\n[Check](../check.mjs)\n')
+  await mkdir(join(context.repo, 'docs'))
+  await writeFile(join(context.repo, 'check.mjs'), 'export {}\n')
+  const source = context.plan.edits[0]
+  const original = '# Design\n' + source.payload.rule
+  await writeFile(join(context.repo, 'docs/DESIGN.md'), original)
+  context.findings.reviewedScope[0] = 'docs/DESIGN.md'
+  context.findings.findings[0].scope[0] = 'docs/DESIGN.md'
+  context.findings.findings[0].files[0] = 'docs/DESIGN.md'
+  context.plan.reviewedScope[0] = { path: 'docs/DESIGN.md', resolvedPath: join(context.repo, 'docs/DESIGN.md') }
+  source.path = 'docs/DESIGN.md'
+  for (const edit of context.plan.edits) edit.payload = { ...edit.payload, sourcePath: source.path, link: '[One source](../CONTRIBUTING.md#one-source)\n' }
+  source.proposedContent = '# Design\n' + source.payload.link
+  source.proposedHash = hash(source.proposedContent)
+  await save(context)
+  const before = await snapshot(context.repo)
+  const result = execute(context)
+  assert.equal(result.problems[0].code, 'broken-local-link', JSON.stringify(result))
+  assert.equal(result.problems[0].path, 'CONTRIBUTING.md')
+  assert.deepEqual(await snapshot(context.repo), before)
+})
+
+test('move-rule rejects remaining source references to removed headings', async t => {
+  const context = await ruleMove(t)
+  const source = context.plan.edits[0]
+  const reference = '\n[Rule](#one-source)\n'
+  const original = '# Design\n' + source.payload.rule + reference
+  await writeFile(join(context.repo, source.path), original)
+  source.originalHash = hash(original)
+  source.proposedContent += reference
+  source.proposedHash = hash(source.proposedContent)
+  await save(context)
+  const before = await snapshot(context.repo)
+  const result = execute(context)
+  assert.equal(result.problems[0].code, 'broken-local-link', JSON.stringify(result))
+  assert.equal(result.problems[0].path, 'README.md')
+  assert.deepEqual(await snapshot(context.repo), before)
+})
+
+test('move-rule resolves rule fragments against the staged destination', async t => {
+  const context = await ruleMove(t, null, 'CONTRIBUTING.md', '## One source\n\n[Rule](#one-source)\n[Design](README.md#design)\n')
+  const result = execute(context)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.equal(await readFile(join(context.repo, 'CONTRIBUTING.md'), 'utf8'), context.plan.edits[1].proposedContent)
+})
+
+for (const [link, exit] of [
+  ['[Rule](CONTRIBUTING.md#one-source)\n', 0],
+  ['[Rule](CONTRIBUTING.md#one-source)\r\n', 0],
+  ['[Rule](CONTRIBUTING.md#one-source unexpected)\n', 1],
+  ['[Rule](CONTRIBUTING.md#one-source "Title")\n', 1],
+  [String.raw`[A \] B](CONTRIBUTING.md#one-source)` + '\n', 1],
+  ['[`Rule`](CONTRIBUTING.md#one-source)\n', 1],
+  ['[Rule](CONTRIBUTING.md#one-source)', 1],
+  ['[Rule](CONTRIBUTING.md#one-source)\n\n', 1],
+  ['[Rule](CONTRIBUTING.md#one-source)\n[Second](CONTRIBUTING.md)\n', 1],
+  ['[Rule](CONTRIBUTING.md#one-source) trailing\n', 1],
+  ['![Rule](CONTRIBUTING.md#one-source)\n', 1]
+] satisfies [unknown, unknown][]) {
+  test('move-rule validates the bounded exact replacement with exit ' + exit + ': ' + link, async t => {
+    const context = await ruleMove(t)
+    for (const edit of context.plan.edits) edit.payload = { ...edit.payload, link }
+    context.plan.edits[0].proposedContent = '# Design\n' + link
+    context.plan.edits[0].proposedHash = hash(context.plan.edits[0].proposedContent)
+    await save(context)
+    const before = await snapshot(context.repo)
+    const result = execute(context)
+    assert.equal(result.exit, exit, JSON.stringify(result))
+    if (exit) {
+      assert.equal(result.problems[0].code, 'invalid-rule-move')
+      assert.deepEqual(await snapshot(context.repo), before)
+    } else {
+      assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), context.plan.edits[0].proposedContent)
+      assert.equal(await readFile(join(context.repo, 'CONTRIBUTING.md'), 'utf8'), context.plan.edits[1].proposedContent)
+    }
+  })
+}
+
+for (const text of [
+  '[Guide](_missing_.md)\n', '![Guide](*missing*.md)\n', '[Guide][target]\n\n[target]: _missing_.md\n',
+  String.raw`[A \] B](missing.md)` + '\n',
+  'A literal `\n\n[Guide](missing.md)\n\nUse `value`.\n'
+]) {
+  for (const path of ['README.md', 'CONTRIBUTING.md']) {
+    test('move-rule rejects ordinary broken destinations in staged ' + path + ': ' + text, async t => {
+      const rule = '## One source\n\n' + (path === 'CONTRIBUTING.md' ? text : 'Move this rule.\n')
+      const context = await ruleMove(t, null, 'CONTRIBUTING.md', rule)
+      const source = context.plan.edits[0]
+      const retained = path === 'README.md' ? text + '\n' : ''
+      const original = retained + '# Design\n' + rule
+      await writeFile(join(context.repo, source.path), original)
+      source.originalHash = hash(original)
+      source.proposedContent = retained + source.proposedContent
+      source.proposedHash = hash(source.proposedContent)
+      await save(context)
+      const before = await snapshot(context.repo)
+      const result = execute(context)
+      assert.equal(result.exit, 1, JSON.stringify(result))
+      assert.equal(result.problems[0].code, 'broken-local-link')
+      assert.equal(result.problems[0].path, path)
+      assert.deepEqual(await snapshot(context.repo), before)
+    })
+  }
+}
+
+for (const text of [
+  '[`a]: README.md\n[b`]: missing.md\n\n[First][`a] [Second][b`]\n',
+  '[`a`]: https://example.invalid\n[`b`]: missing.md\n\n[Guide][`b`]\n',
+  '## [![Logo](logo.svg)](guide.md)\n'
+]) {
+  for (const path of ['README.md', 'CONTRIBUTING.md']) {
+    test('move-rule rejects parsed broken staged links without writes in ' + path + ': ' + text, async t => {
+      const rule = '## One source\n\n' + (path === 'CONTRIBUTING.md' ? text : 'Move this rule.\n')
+      const context = await ruleMove(t, null, 'CONTRIBUTING.md', rule)
+      const source = context.plan.edits[0]
+      const retained = path === 'README.md' ? text + '\n' : ''
+      const original = retained + '# Design\n' + rule
+      await writeFile(join(context.repo, source.path), original)
+      source.originalHash = hash(original)
+      source.proposedContent = retained + source.proposedContent
+      source.proposedHash = hash(source.proposedContent)
+      await save(context)
+      const before = await snapshot(context.repo)
+      const preview = execute(context, undefined, 'apply', ['--plan', context.file, '--dry-run'])
+      assert.equal(preview.exit, 1, JSON.stringify(preview))
+      assert.ok(preview.problems.every((problem: NonNullable<typeof preview.problems>[number]) => problem.code === 'broken-local-link' && problem.path === path))
+      assert.deepEqual(await snapshot(context.repo), before)
+      const result = execute(context)
+      assert.equal(result.exit, 1, JSON.stringify(result))
+      assert.ok(result.problems.every((problem: NonNullable<typeof result.problems>[number]) => problem.code === 'broken-local-link' && problem.path === path))
+      assert.deepEqual(await snapshot(context.repo), before)
+    })
+  }
+}
+
+for (const headings of ['## Rule\n## Rule-1\n## Rule\n', 'Rule\n---\nRule-1\n===\nRule\n---\n']) {
+  for (const path of ['README.md', 'CONTRIBUTING.md']) {
+    test(`move-rule resolves colliding heading anchors in staged ${path}: ${headings}`, async t => {
+      const rule = `## One source\n\n${headings}\n[Last](${path}#rule-2)\n`
+      const context = await ruleMove(t, null, 'CONTRIBUTING.md', rule)
+      const source = context.plan.edits[0]
+      const retained = headings + '\n[Last](#rule-2)\n\n'
+      const original = retained + '# Design\n' + rule
+      await writeFile(join(context.repo, source.path), original)
+      source.originalHash = hash(original)
+      source.proposedContent = retained + source.proposedContent
+      source.proposedHash = hash(source.proposedContent)
+      await save(context)
+      const result = execute(context)
+      assert.equal(result.exit, 0, JSON.stringify(result))
+      assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), source.proposedContent)
+      assert.equal(await readFile(join(context.repo, 'CONTRIBUTING.md'), 'utf8'), context.plan.edits[1].proposedContent)
+    })
+  }
+}
+
+for (const rule of [
+  '## One source\n\n`[Example](missing.md)`\n\n[Design](README.md#design)\n',
+  '## One source\n\n- ```md\n  [Example](missing.md)\n  ```\n\n[Design](README.md#design)\n',
+  '## One source\n\n> ~~~md\n> [Example](missing.md)\n> ~~~\n\n[Design](README.md#design)\n',
+  '## One source\n\nIntroduction\n***\nDetails\n---\n\n[Details](#details)\n'
+]) {
+  test(`move-rule validates rendered references in staged Markdown blocks: ${rule}`, async t => {
+    const context = await ruleMove(t, null, 'CONTRIBUTING.md', rule)
+    const result = execute(context)
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.equal(await readFile(join(context.repo, 'CONTRIBUTING.md'), 'utf8'), context.plan.edits[1].proposedContent)
+  })
+}
+
+for (const rule of [
+  '## One source\n\n<!--\n```\n-->\n[Check](missing.md)\n',
+]) {
+  test(`move-rule rejects rendered references after inert syntax without writes: ${rule}`, async t => {
+    const context = await ruleMove(t, null, 'CONTRIBUTING.md', rule)
+    const before = await snapshot(context.repo)
+    const result = execute(context)
+    assert.equal(result.problems[0].code, 'broken-local-link', JSON.stringify(result))
+    assert.deepEqual(await snapshot(context.repo), before)
+  })
+}
+
+for (const path of ['check.mjs', './check.mjs']) {
+  test(`move-rule rejects rule references to ${path} deleted by the same plan`, async t => {
+    const context = await ruleMove(t, null, 'CONTRIBUTING.md', '## One source\n\n[Check](check.mjs)\n')
+    await writeFile(join(context.repo, 'check.mjs'), 'export {}\n')
+    context.findings.reviewedScope.push(path)
+    context.findings.findings[0].scope.push(path)
+    context.plan.reviewedScope.push({ path, resolvedPath: join(context.repo, 'check.mjs') })
+    context.plan.edits.push({ id: 'E-003', findingId: 'F-001', path, originalHash: hash('export {}\n'),
+      proposedHash: null, operation: 'delete', payload: {}, proposedContent: null })
+    await save(context)
+    const before = await snapshot(context.repo)
+    const result = execute(context)
+    assert.equal(result.problems[0].code, 'broken-local-link', JSON.stringify(result))
+    assert.deepEqual(await snapshot(context.repo), before)
+  })
+}
+
+for (const destination of ['# Standards\n', null]) {
+  test(`move-rule resolves a dot-prefixed ${destination === null ? 'new' : 'existing'} destination`, async t => {
+    const context = await ruleMove(t, destination, './CONTRIBUTING.md')
+    const before = await snapshot(context.repo)
+    assert.equal(execute(context, undefined, 'apply', ['--plan', context.file, '--dry-run']).exit, 0)
+    assert.deepEqual(await snapshot(context.repo), before)
+    const result = execute(context)
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.equal(await readFile(join(context.repo, 'CONTRIBUTING.md'), 'utf8'), context.plan.edits[1].proposedContent)
+    assert.equal(execute(context).exit, 0)
+  })
+}
+
+test('move-rule resolves replacement and fragment links through a destination directory alias', async t => {
+  const context = await ruleMove(t, '# Standards\n', 'docs/STANDARDS.md')
+  await symlink('docs', join(context.repo, 'alias'), process.platform === 'win32' ? 'junction' : 'dir')
+  const destination = context.plan.edits[1]
+  destination.path = 'alias/STANDARDS.md'
+  context.findings.reviewedScope[1] = destination.path
+  context.findings.findings[0].scope[1] = destination.path
+  context.plan.reviewedScope[1].path = destination.path
+  const link = '[One source](alias/STANDARDS.md#one-source)\n'
+  for (const edit of context.plan.edits) edit.payload = { ...edit.payload, destinationPath: destination.path, link }
+  context.plan.edits[0].proposedContent = '# Design\n' + link
+  context.plan.edits[0].proposedHash = hash(context.plan.edits[0].proposedContent)
+  await save(context)
+  const result = execute(context)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.equal(await readFile(join(context.repo, 'docs/STANDARDS.md'), 'utf8'), destination.proposedContent)
+})
+
+test('move-rule resolves staged fragments through a source directory alias', async t => {
+  const context = await ruleMove(t, null)
+  await symlink(context.repo, join(context.repo, 'alias'), process.platform === 'win32' ? 'junction' : 'dir')
+  const source = context.plan.edits[0]
+  source.path = 'alias/README.md'
+  context.findings.reviewedScope[0] = source.path
+  context.findings.findings[0].scope[0] = source.path
+  context.findings.findings[0].files[0] = source.path
+  context.plan.reviewedScope[0].path = source.path
+  for (const edit of context.plan.edits) edit.payload = { ...edit.payload, sourcePath: source.path }
+  await save(context)
+  const result = execute(context)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.equal(await readFile(join(context.repo, 'CONTRIBUTING.md'), 'utf8'), context.plan.edits[1].proposedContent)
+})
+
+test('move-rule resolves staged fragment changes under a dot-prefixed path', async t => {
+  const context = await ruleMove(t, null, 'CONTRIBUTING.md', '## One source\n\n[Check](check.md#updated)\n')
+  await writeFile(join(context.repo, 'check.md'), '# Old\n')
+  context.findings.reviewedScope.push('./check.md')
+  context.findings.findings[0].scope.push('./check.md')
+  context.plan.reviewedScope.push({ path: './check.md', resolvedPath: join(context.repo, 'check.md') })
+  context.plan.edits.push({ id: 'E-003', findingId: 'F-001', path: './check.md', originalHash: hash('# Old\n'),
+    proposedHash: hash('# Updated\n'), operation: 'replace-file', payload: { content: '# Updated\n' }, proposedContent: '# Updated\n' })
+  await save(context)
+  const result = execute(context)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.equal(await readFile(join(context.repo, 'check.md'), 'utf8'), '# Updated\n')
+})
+
+test('move-rule rejects references to files deleted through a symlink alias', async t => {
+  const context = await ruleMove(t, null, 'CONTRIBUTING.md', '## One source\n\n[Check](check.mjs)\n')
+  await writeFile(join(context.repo, 'check.mjs'), 'export {}\n')
+  await symlink('check.mjs', join(context.repo, 'alias.mjs'))
+  context.findings.reviewedScope.push('alias.mjs')
+  context.findings.findings[0].scope.push('alias.mjs')
+  context.plan.reviewedScope.push({ path: 'alias.mjs', resolvedPath: join(context.repo, 'check.mjs') })
+  context.plan.edits.push({ id: 'E-003', findingId: 'F-001', path: 'alias.mjs', originalHash: hash('export {}\n'),
+    proposedHash: null, operation: 'delete', payload: {}, proposedContent: null })
+  await save(context)
+  const before = await snapshot(context.repo)
+  const result = execute(context)
+  assert.equal(result.problems[0].code, 'broken-local-link', JSON.stringify(result))
+  assert.deepEqual(await snapshot(context.repo), before)
+})
+
+for (const rule of [
+  '## One source\n\n> [design]: README.md#design\n>\n> [Design][design]\n',
+  '## One source\n\n- ## Details\n\n[Details](#details)\n',
+  '## [One source](README.md#design)\n\nKeep one authority.\n',
+  '## [One source][design]\n\n[design]: README.md#design\n'
+]) {
+  test(`move-rule uses shared container and heading-link parsing: ${rule}`, async t => {
+    const context = await ruleMove(t, null, './CONTRIBUTING.md', rule)
+    const result = execute(context)
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.equal(await readFile(join(context.repo, 'CONTRIBUTING.md'), 'utf8'), context.plan.edits[1].proposedContent)
+  })
+}
+
+test('move-rule checks image destinations without checking alt references', async t => {
+  const context = await ruleMove(t, null, 'CONTRIBUTING.md', '## One source\n\n![See [Guide](missing.md)](logo.png)\n')
+  await writeFile(join(context.repo, 'logo.png'), 'image')
+  const result = execute(context)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.equal(await readFile(join(context.repo, 'CONTRIBUTING.md'), 'utf8'), context.plan.edits[1].proposedContent)
+})
+
+for (const heading of ['## [![Logo](logo.svg)](guide.md)', '[![Logo](logo.svg)](guide.md)\n---']) {
+  test(`move-rule resolves staged image heading fragments: ${heading}`, async t => {
+    const context = await ruleMove(t, null, 'CONTRIBUTING.md', heading + '\n')
+    await writeFile(join(context.repo, 'logo.svg'), '<svg/>\n')
+    await writeFile(join(context.repo, 'guide.md'), '# Guide\n')
+    const link = '[Logo](CONTRIBUTING.md#logo)\n'
+    for (const edit of context.plan.edits) edit.payload = { ...edit.payload, link }
+    context.plan.edits[0].proposedContent = '# Design\n' + link
+    context.plan.edits[0].proposedHash = hash(context.plan.edits[0].proposedContent)
+    await save(context)
+    const result = execute(context)
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.deepEqual(result.problems, [])
+    assert.equal(await readFile(join(context.repo, 'CONTRIBUTING.md'), 'utf8'), context.plan.edits[1].proposedContent)
+  })
+}
+
+for (const [name, original] of [
+  ['ambiguous source', '# Design\n## One source\n\nKeep one authoritative source for each rule.\n## One source\n\nKeep one authoritative source for each rule.\n'],
+  ['absent source', '# Design\nAnother rule.\n'],
+  ['partial line source', '# Design\nPrefix ## One source\n\nKeep one authoritative source for each rule.\n']
+] satisfies [unknown, unknown][]) {
+  test(`move-rule rejects ${name} before writing the destination`, async t => {
+    const context = await ruleMove(t)
+    await writeFile(join(context.repo, 'README.md'), original)
+    context.plan.edits[0].originalHash = hash(original)
+    await save(context)
+    const before = await snapshot(context.repo)
+    assert.equal(execute(context).problems[0].code, 'ambiguous-rule')
+    assert.deepEqual(await snapshot(context.repo), before)
+  })
+}
+
+function execute(context: ApplyContext, fault?: string, command = 'apply', extra = ['--plan', context.file]) {
+  const result = spawnSync(process.execPath, [...(fault ? ['--import', join(root, 'tests/inputs/write-fault.ts')] : []),
+    join(root, 'skills/maintenance/scripts/maintenance.mjs'), ...command.split(' '), '--repo', context.repo, '--json', ...extra],
+  { encoding: 'utf8', cwd: context.directory, env: { ...context.env, BSTACK_TEST_FAULT: fault,
+    BSTACK_TEST_DESTINATION: fault === 'resolution-user-change' ? join(context.repo, context.plan.edits[0].path) : context.plan.reviewedScope[0].resolvedPath } })
+  assert.equal(result.stderr, '')
+  return { exit: result.status, ...(result.stdout ? JSON.parse(result.stdout) : {}) }
+}
+
+async function secondEdit(context: ApplyContext) {
+  const path = 'other.txt'
+  await writeFile(join(context.repo, path), 'old\n')
+  context.findings.reviewedScope.push(path)
+  context.findings.findings[0].scope.push(path)
+  context.plan.reviewedScope.push({ path, resolvedPath: join(context.repo, path) })
+  context.plan.edits.push({ ...context.plan.edits[0], id: 'E-002', path, originalHash: hash('old\n'), proposedHash: hash('new\n'),
+    operation: 'replace', payload: { search: 'old', replacement: 'new' }, proposedContent: 'new\n' })
+  await save(context)
+}
+
+async function preview(context: ApplyContext) {
+  const before = await snapshot(context.repo)
+  const result = runMaintenance('apply', context.repo, process.env, ['--plan', context.file, '--dry-run'])
+  assert.deepEqual(await snapshot(context.repo), before)
+  if (result.exit !== 0) {
+    const applied = execute(context)
+    assert.notEqual(applied.exit, 0)
+    assert.deepEqual(applied.problems, result.problems)
+    assert.deepEqual(await snapshot(context.repo), before)
+  }
+  return result
+}
+
+for (const value of ['node check.mjs || true', 'node check.mjs || :', 'node check.mjs; true', 'node check.mjs; exit 0', 'node check.mjs &',
+  'node check.mjs | cat', '! node check.mjs', 'set +e && node check.mjs', 'sh -c "node check.mjs || :"',
+  "CI=true sh -c 'npm run check || true'", "npm test && CI=true sh -c 'npm run check || true'"]) {
+  test(`apply rejects swallowed package command failure: ${value}`, async t => {
+    const proposed = JSON.stringify({ scripts: { check: value } })
+    const context = await integration(t, 'package.json', proposed)
+    assert.equal((await preview(context)).problems[0].code, 'ignored-check-failure')
+  })
+}
+
+for (const executable of ['command sh', 'builtin eval', 'dash', '/bin/dash', 'ash', 'ksh', 'fish', 'busybox sh', 'cmd.exe']) {
+  for (const prefix of ['', 'npm test && ']) {
+    const value = `${prefix}${executable} -c 'npm run check || true'`
+    const path = 'package.json'
+    const content = JSON.stringify({ scripts: { check: value } })
+    test(`apply rejects selected shell dispatch: ${path} ${content}`, async t => {
+      const context = await integration(t, path, content)
+      assert.equal((await preview(context)).problems[0].code, 'ignored-check-failure')
+    })
+  }
+}
+
+for (const [value, exit] of [
+  ['node .bstack/bin/bstack-check.mjs>out', 1],
+  ['node .bstack/bin/bstack-check.mjs>>out', 1],
+  ['node .bstack/bin/bstack-check.mjs<in', 1],
+  ['>out node check.mjs', 1],
+  ['<in node check.mjs', 1],
+  ['node check.mjs 2>out', 1],
+  ['node --version && node check.mjs>out', 1],
+  ['@npm run leaf', 1],
+  ['@@npm run leaf', 1],
+  ['node --version && @npm run leaf', 1],
+  ['node "argument"\u00a0', 1],
+  ['node \u00a0"argument"', 1],
+  ['node\u000bargument', 1],
+  ['node\u000cargument', 1],
+  ['node\u0000argument', 1],
+  ['node\t"literal argument" &&\r\nnode --version', 1],
+  ['node\t"literal argument" &&\nnode --version', 0],
+  ['\rnode --version', 1],
+  ['node --version\r', 1],
+  ['node\r --version', 1],
+  ['node "arg\r"', 1],
+  ['"node\r" --version', 1],
+  ['node "arg"\r --version', 1],
+  ['node \r"arg"', 1],
+  ['node --version &&\rnode --version', 1],
+  ['node "<input>" "@argument" "日本語\u00a0file"', 0],
+  ['"@literal-program" "literal argument"', 0],
+  ['node @argument 日本語\u00a0file', 0],
+  ["npm run 'leaf'", 1],
+  ["'node' --version", 1],
+  ["no'de' --version", 1],
+  ["node le'af'", 1],
+  ['no"de" --version', 1],
+  ['"no"de --version', 1],
+  ['"no""de" --version', 1],
+  ['node le"af"', 1],
+  ['node "le"af', 1],
+  ['node "le""af"', 1],
+  ['node "leaf"&& node --version', 1],
+  ['node --version &&"node" --version', 1],
+  ['node ""', 1],
+  ['node "unterminated', 1],
+  ["node \"literal'argument\"", 1],
+  ["node check.mjs '#literal' && node boundaries.mjs", 1],
+  ['"node" "literal argument" && "node" "*.mjs"', 0],
+  ['node "%CHECKER%"', 1],
+  ["node '%CHECKER%'", 1],
+  ['"%CHECKER%" --version', 1],
+  ["'%CHECKER%' --version", 1],
+  ['prefix"%CHECKER%"suffix --version', 1],
+  ['node "prefix%CHECKER%suffix"', 1],
+  ['node "prefix"%CHECKER%"suffix"', 1],
+  ['node "!CHECKER!"', 1],
+  ["node '!CHECKER!'", 1],
+  ['"!CHECKER!" --version', 1],
+  ["'!CHECKER!' --version", 1],
+  ['prefix"!CHECKER!"suffix --version', 1],
+  ['!CHECKER! --version', 1],
+  ['node "prefix!CHECKER!suffix"', 1],
+  ['node "prefix"!CHECKER!"suffix"', 1],
+  ['node .bstack/bin/bstack-*.mjs', 1],
+  ['.bstack/bin/bstack-*.mjs', 1],
+  ['node check.mjs file?.mjs', 1],
+  ['node check.mjs [ab].mjs', 1],
+  ['node check.mjs file].mjs', 1],
+  ['node check.mjs ~', 1],
+  ['node check.mjs %ENTRY%', 1],
+  ['node check.mjs ^entry', 1],
+  ['node check.mjs ${ENTRY}', 1],
+  ['node check.mjs {a,b}', 1],
+  ['node check.mjs @(entry)', 1],
+  ["node check.mjs '*.mjs' '?' '[ab]' '~' '${ENTRY}' '{a,b}' '@(entry)'", 1],
+  ['node check.mjs "*.mjs" "?" "[ab]" "~" "{a,b}" "@(entry)"', 0],
+  ['"tools/bstack-*.mjs" "literal argument"', 0],
+  ['node .bstack\\bin\\bstack-check.mjs', 1],
+  ['node ".bstack\\bin\\bstack-check.mjs"', 1],
+  ["node '.bstack\\bin\\bstack-check.mjs'", 1],
+  ['node check.mjs literal\\ argument', 1],
+  ['node check.mjs \\#literal && node boundaries.mjs', 1],
+  ["npm exec -c 'node boundaries.mjs || true'", 1],
+  ["npx --call 'node boundaries.mjs || true'", 1],
+  ["npm x --call 'node boundaries.mjs'", 1],
+  ["npm --call='node boundaries.mjs' exec", 1],
+  ["npm exec -c'node boundaries.mjs'", 1],
+  ["npm test && npm x -c 'node boundaries.mjs'", 1],
+  ["npx --call='node boundaries.mjs'", 1],
+  ["npm test && npx -c 'node boundaries.mjs'", 1],
+  ["'C:\\tools\\npm.cmd' exec --call='node boundaries.mjs'", 1],
+  ["env -S 'node boundaries.mjs'", 1],
+  ["sh -c 'node boundaries.mjs'", 1],
+  ["node check.mjs 'a || b'", 1],
+  ['node check.mjs "a && b"', 1],
+  ["node check.mjs 'a;b'", 1],
+  ["node check.mjs 'a|b'", 1],
+  ["node check.mjs 'a&b'", 1],
+  ["node check.mjs '$(check)'", 1],
+  ["node check.mjs '`check`'", 1],
+  ["node check.mjs 'a\n&&\nb'", 1],
+  ['node check.mjs a\\;b', 1],
+  ['node check.mjs a\\|b', 1],
+  ['node check.mjs a\\&b', 1],
+  ['node check.mjs \\`check\\`', 1],
+  ["npm test && node check.mjs 'a || b'", 1],
+  ['npm run check && node boundaries.mjs', 0],
+  ['npm run check &&\nnode boundaries.mjs', 0],
+  ['npm exec -- tsc --noEmit', 0],
+  ['npx tsc --noEmit', 0],
+  ['node check.mjs "literal argument"', 0]
+] satisfies [unknown, unknown][]) {
+  const path = 'package.json'
+  const content = JSON.stringify({ scripts: { check: value } })
+  test(`apply enforces bounded selected arguments: ${path} ${content}`, async t => {
+    const context = await integration(t, path, content)
+    const result = await preview(context)
+    assert.equal(result.exit, exit)
+    if (exit === 1) assert.equal(result.problems[0].code, 'ignored-check-failure')
+    else assert.equal(execute(context).exit, 0)
+  })
+}
+
+for (const [path, content] of [
+  ['config.yml', 'packages: [web, core]\n'],
+  ['package.json', '{"scripts":{"start":"node $ENTRY"}}']
+] satisfies [unknown, unknown][]) {
+  test(`apply permits unrelated reviewed edit: ${path}`, async t => {
+    const context = await setup(t, 'replace-file', '', { content }, content, path)
+    assert.equal((await preview(context)).exit, 0)
+    assert.equal(execute(context).exit, 0)
+    assert.equal(await readFile(join(context.repo, path), 'utf8'), content)
+  })
+}
+
+for (const [path, content, selected] of [
+  ['package.json', '{"scripts":{"check":"npm test","start":"node $ENTRY"}}', [['scripts', 'check']]],
+  ['ci.yml', '{"packages":["web","core"],"steps":[{"run":"npm test"},{"run":"echo $ENTRY","continue-on-error":true}]}', [['steps', '0', 'run']]]
+] satisfies [unknown, unknown, unknown][]) {
+  test(`apply validates only selected commands within an integration edit: ${path}`, async t => {
+    const context = await setup(t, 'replace-file', '', { content }, content, path, selected)
+    assert.equal((await preview(context)).exit, 0)
+    assert.equal(execute(context).exit, 0)
+    assert.equal(await readFile(join(context.repo, path), 'utf8'), content)
+  })
+}
+
+for (const [path, content, selected] of [
+  ['package.json', '{"scripts":{"check":"npm test","boundaries":"node boundaries.mjs || true"}}', [['scripts', 'check'], ['scripts', 'boundaries']]],
+  ['ci.yml', '{"steps":[{"run":"npm test"},{"script":"node boundaries.mjs || true"}]}', [['steps', '0', 'run'], ['steps', '1', 'script']]],
+  ['ci.yml', '{"job":{"allow_failure":true,"steps":[{"run":"npm test"}]}}', [['job', 'steps', '0', 'run']]],
+  ['package.json', '{"scripts":{"start":"npm start"}}', [['scripts', 'check']]],
+  ['ci.yml', 'steps:\n  - run: npm test\n', [['steps', '0', 'run']]]
+] satisfies [unknown, unknown, unknown][]) {
+  test(`apply rejects invalid selected integration: ${path} ${content}`, async t => {
+    const context = await setup(t, 'replace-file', '', { content }, content, path, selected)
+    assert.equal((await preview(context)).problems[0].code, 'ignored-check-failure')
+  })
+}
+
+for (const proposed of [
+  'steps:\n  - run: npm run check\n    continue-on-error: true\n',
+  'steps:\n  - run: npm run check || true\n',
+  'steps:\n  - run: |\n      npm run check\n      echo done\n',
+  'steps:\n  - run: "npm run check || true"\n',
+  'steps:\n  - run: npm run check\n    continue-on-error: ${{ true }}\n',
+  'job:\n  script: npm run check\n  allow_failure: true\n',
+  'steps:\n  - "run": npm run check || true\n',
+  'steps:\n  - run: [npm run check, true]\n',
+  'steps:\n  - run: *unchecked\n'
+]) {
+  test(`apply rejects ignored CI failure: ${JSON.stringify(proposed)}`, async t => {
+    const context = await integration(t, 'ci.yml', proposed)
+    assert.equal((await preview(context)).problems[0].code, 'ignored-check-failure')
+  })
+}
+
+for (const key of ['run', 'script']) {
+  for (const scalar of ['npm run check\n      || true', '>\n      npm run check\n      || true',
+    '"npm run check\n      || true"', "'npm run check\n      || true'",
+    '"npm run check \\x7c\\x7c true"', "CI=true sh -c 'npm run check || true'",
+    "npm test && CI=true sh -c 'npm run check || true'"]) {
+    const proposed = `steps:\n  - ${key}: ${scalar}\n`
+    test(`apply rejects folded or prefixed CI failure: ${JSON.stringify(proposed)}`, async t => {
+      const context = await integration(t, 'ci.yml', proposed)
+      assert.equal((await preview(context)).problems[0].code, 'ignored-check-failure')
+    })
+  }
+  for (const scalar of ['|\n      npm run check', '|-\n      npm run check &&\n      npm test',
+    '>\n      npm run check &&\n      npm test', 'npm run check &&\n      npm test',
+    '"npm run check" # selected check', "'npm run check' # selected check", '"npm run \\x63heck"']) {
+    const proposed = `steps:\n  - ${key}: ${scalar}\n    name: Check\n`
+    test(`apply accepts decoded CI scalar with sibling: ${JSON.stringify(proposed)}`, async t => {
+      const context = await integration(t, 'ci.yml', proposed)
+      assert.equal((await preview(context)).exit, 0)
+      assert.equal(execute(context).exit, 0)
+    })
+  }
+}
+
+for (const value of ['tsc --noEmit # typecheck && node boundaries.mjs',
+  'tsc --noEmit # typecheck &&\nnode boundaries.mjs', 'tsc --noEmit && # boundary check &&\nnode boundaries.mjs']) {
+  for (const [path, proposed, original] of [
+    ['package.json', JSON.stringify({ scripts: { check: value } }), '{"scripts":{"check":"tsc --noEmit"}}'],
+    ['ci.yml', `steps:\n  - run: ${JSON.stringify(value)}\n`, ''],
+    ['ci.yml', `job:\n  script: |\n    ${value.replaceAll('\n', '\n    ')}\n`, '']
+  ] satisfies [unknown, unknown, unknown][]) {
+    test(`apply rejects shell comments hiding checks: ${path} ${JSON.stringify(proposed)}`, async t => {
+      const context = await integration(t, path, proposed, original)
+      assert.equal((await preview(context)).problems[0].code, 'ignored-check-failure')
+    })
+  }
+}
+
+for (const [path, proposed] of [
+  ['package.json', '{"scripts":{"check":"tsc --noEmit && node boundaries.mjs"}}'],
+  ['package.json', JSON.stringify({ scripts: { check: 'node check.mjs "#literal" && node boundaries.mjs' } })],
+  ['ci.yml', 'steps:\n  - run: npm run check\n    continue-on-error: false\n'],
+  ['ci.yml', 'steps:\n  - run: |\n      npm run check &&\n      npm test\n']
+] satisfies [unknown, unknown][]) {
+  test(`apply accepts failure-preserving integration: ${path} ${JSON.stringify(proposed)}`, async t => {
+    const context = await integration(t, path, proposed)
+    assert.equal((await preview(context)).exit, 0)
+    assert.equal(execute(context).exit, 0)
+  })
+}
+
+for (const [name, operation, original, payload, proposed, path] of [
+  ['create', 'create', null, { content: 'new\n' }, 'new\n', 'new ü &.txt'],
+  ['replace', 'replace', 'old\r\n', { search: 'old', replacement: 'new' }, 'new\r\n', 'README.md'],
+  ['selected delete', 'delete', 'old\n', {}, null, 'README.md'],
+  ['empty replacement keeps a present file', 'replace', 'old', { search: 'old', replacement: '' }, '', 'README.md'],
+  ['heading section', 'set-heading-section', '# A\nold\n## Child\nold child\n# B\nkeep\n', { heading: 'A', content: 'new\n' }, '# A\nnew\n# B\nkeep\n', 'README.md'],
+  ['CRLF heading section', 'set-heading-section', '# A\r\nold\r\n# B\r\nkeep\r\n', { heading: 'A', content: 'new\r\n' }, '# A\r\nnew\r\n# B\r\nkeep\r\n', 'README.md'],
+  ['UTF-8 BOM and Unicode replacement', 'replace', '\uFEFFold ü\n', { search: 'old', replacement: 'new' }, '\uFEFFnew ü\n', 'README.md'],
+  ['JSON key', 'set-json-key', '{"scripts":{"test":"old"},"keep":true}\n', { key: 'scripts', value: { test: 'new' } }, '{"scripts":{"test":"new"},"keep":true}\n', 'config.json'],
+  ['new JSON key preserves exact existing values', 'set-json-key', '{"big":9007199254740993}\n', { key: 'scripts', value: { test: 'new' } }, '{"big":9007199254740993,"scripts":{"test":"new"}}\n', 'config.json'],
+  ['append line', 'append-line-once', 'old', { line: 'new' }, 'old\nnew\n', 'rules.txt'],
+  ['existing appended line', 'append-line-once', 'old\r\nnew\r\n', { line: 'new' }, 'old\r\nnew\r\n', 'rules.txt'],
+  ['heading in fenced code is preserved', 'set-heading-section', '```md\n# A\n```\n# A\nold\n', { heading: 'A', content: 'new\n' }, '```md\n# A\n```\n# A\nnew\n', 'README.md'],
+  ['comment in fenced code is preserved', 'set-heading-section', '```md\n<!--\n# A\n-->\n```\n# A\nold\n', { heading: 'A', content: 'new\n' }, '```md\n<!--\n# A\n-->\n```\n# A\nnew\n', 'README.md'],
+  ['HTML block in fenced code is preserved', 'set-heading-section', '~~~html\n<pre>\n# A\n</pre>\n~~~\n# A\nold\n', { heading: 'A', content: 'new\n' }, '~~~html\n<pre>\n# A\n</pre>\n~~~\n# A\nnew\n', 'README.md'],
+  ['less-than prose', 'set-heading-section', '# A\nold\n# B\n1 < 2\n', { heading: 'A', content: 'new\n' }, '# A\nnew\n# B\n1 < 2\n', 'README.md'],
+  ['closing heading markers', 'set-heading-section', '# A ###\nold\n# B ###\nkeep\n', { heading: 'A', content: 'new\n' }, '# A ###\nnew\n# B ###\nkeep\n', 'README.md']
+] satisfies [unknown, unknown, unknown, unknown, unknown, unknown][]) {
+  test(`apply dry run stages ${name} with no project writes`, async t => {
+    const context = await setup(t, operation, original, payload, proposed, path)
+    const result = await preview(context)
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.equal(result.data.edits[0].proposedContent, proposed)
+    assert.equal(result.data.edits[0].proposedHash, hash(proposed))
+  })
+}
+
+for (const [operation, original, payload, proposed, path] of [
+  ['set-heading-section', '# A\nold\r# B\rkeep\n# C\nrest\n', { heading: 'A', content: 'new\n' }, '# A\nnew\n# C\nrest\n', 'README.md'],
+  ['append-line-once', '# Rules\rrule\r', { line: 'rule' }, '# Rules\rrule\r\nrule\n', 'rules.txt']
+] satisfies [unknown, unknown, unknown, unknown, unknown][]) {
+  test(`apply rejects bare CR in ${operation} before matching with no project writes`, async t => {
+    const context = await setup(t, operation, original, payload, proposed, path)
+    const result = await preview(context)
+    assert.equal(result.exit, 1)
+    assert.equal(result.problems[0].code, 'unsupported-format')
+    assert.equal(result.problems[0].message, 'Line-based edits require LF or CRLF line endings.')
+    assert.deepEqual(result.data, {})
+  })
+}
+
+test('apply ignores a leading BOM for semantic matching while preserving bytes', async t => {
+  for (const [operation, original, payload, proposed, expected] of [
+    ['set-heading-section', '\uFEFF# A\none\n# A\ntwo\n', { heading: 'A', content: 'new\n' }, '\uFEFF# A\none\n# A\nnew\n', { exit: 1, code: 'ambiguous-heading', content: undefined }],
+    ['append-line-once', '\uFEFFrule\r\n', { line: 'rule' }, '\uFEFFrule\r\n', { exit: 0, code: undefined, content: '\uFEFFrule\r\n' }],
+    ['set-heading-section', '\uFEFF# A\nold\n# B\nkeep\n', { heading: 'A', content: 'new\n' }, '\uFEFF# A\nnew\n# B\nkeep\n', { exit: 0, code: undefined, content: '\uFEFF# A\nnew\n# B\nkeep\n' }],
+    ['set-heading-section', '\uFEFF```md\n# A\n```\n# A\nold\n', { heading: 'A', content: 'new\n' }, '\uFEFF```md\n# A\n```\n# A\nnew\n', { exit: 0, code: undefined, content: '\uFEFF```md\n# A\n```\n# A\nnew\n' }],
+    ['set-heading-section', '\uFEFF---\n# A\nold\n', { heading: 'A', content: 'new\n' }, '', { exit: 1, code: 'unsupported-format', content: undefined }]
+  ] satisfies [unknown, unknown, unknown, unknown, unknown][]) {
+    const context = await setup(t, operation, original, payload, proposed)
+    const result = await preview(context)
+    assert.deepEqual({ exit: result.exit, code: result.problems[0]?.code, content: result.data.edits?.[0].proposedContent }, expected)
+  }
+})
+
+test('apply rejects backtick-containing fence info before deriving section bytes', async t => {
+  const context = await setup(t, 'set-heading-section', '# A\nold\n```inline```\n# B\nkeep\n```text\nliteral\n```\n# C\nrest\n',
+    { heading: 'A', content: 'new\n' }, '# A\nnew\n# C\nrest\n')
+  const result = await preview(context)
+  assert.equal(result.exit, 1)
+  assert.equal(result.problems[0].code, 'unsupported-format')
+  assert.deepEqual(result.data, {})
+})
+
+for (const marker of ['```', '~~~']) {
+  for (const indentation of [' ', '  ', '   ', '\t']) {
+    for (const [position, original] of [
+      ['inside a fence', `# A\nold\n${marker}md\nliteral\n${indentation}${marker}\n# B\nkeep\n${marker}text\nliteral\n${marker}\n# C\nrest\n`],
+      ['outside a fence', `# A\nold\n${indentation}${marker}md\nliteral\n${marker}\n# B\nkeep\n`]
+    ] satisfies [unknown, unknown][]) {
+      test(`heading edits reject ${JSON.stringify(indentation + marker)} ${position} without project writes`, async t => {
+        const context = await setup(t, 'set-heading-section', original, { heading: 'A', content: 'new\n' }, '# A\nnew\n# C\nrest\n')
+        const result = await preview(context)
+        assert.equal(result.exit, 1)
+        assert.equal(result.problems[0].code, 'unsupported-format')
+        assert.equal(result.problems[0].message, 'Unsupported Markdown structure; use whole-file replacement.')
+        assert.deepEqual(result.data, {})
+      })
+    }
+  }
+}
+
+test('apply rejects nonfinite JSON payload numbers before digest computation', async t => {
+  for (const [value, raw, proposed] of [
+    [null, '1e400', '{"a":null}\n'],
+    [{ nested: null }, '{"nested":-1e400}', '{"a":{"nested":null}}\n'],
+    [[{ nested: [null] }], '[{"nested":[1e400]}]', '{"a":[{"nested":[null]}]}\n']
+  ] satisfies [unknown, unknown, unknown][]) {
+    const context = await setup(t, 'set-json-key', '{"a":0}\n', { key: 'a', value }, proposed, 'config.json')
+    const input = await readFile(context.file, 'utf8')
+    await writeFile(context.file, input.replace(`"value":${JSON.stringify(value)}`, `"value":${raw}`))
+    const result = await preview(context)
+    assert.equal(result.exit, 1)
+    assert.equal(result.problems[0].code, 'nonfinite-number')
+    assert.deepEqual(result.data, {})
+  }
+})
+
+test('apply prints the exact selected-delete diff in plain and JSON output', async t => {
+  const context = await setup(t, 'delete', 'old', {}, null)
+  const expected = '--- a/README.md\n+++ /dev/null\n@@ -1,1 +0,0 @@\n-old\n\\ No newline at end of file\n'
+  assert.equal((await preview(context)).data.diff, expected)
+  const before = await snapshot(context.repo)
+  const result = spawnSync(process.execPath, [join(root, 'skills/maintenance/scripts/maintenance.mjs'), 'apply', '--repo', context.repo, '--plan', context.file, '--dry-run'], { encoding: 'utf8', cwd: context.directory })
+  assert.equal(result.status, 0)
+  assert.equal(result.stdout, `apply: passed\n${expected}\n`)
+  assert.deepEqual(await snapshot(context.repo), before)
+})
+
+for (const boundary of ['#', '#   ', '# ###', '##', '###', '####', '#####', '######']) {
+  test(`heading edits reject the empty ${JSON.stringify(boundary)} section without project writes`, async t => {
+    const level = boundary.trim().split(' ')[0].length
+    const heading = '#'.repeat(level) + ' A\n'
+    const context = await setup(t, 'set-heading-section', `${heading}old\n${boundary}\nkeep\n# C\nrest\n`,
+      { heading: 'A', content: 'new\n' }, `${heading}new\n${boundary}\nkeep\n# C\nrest\n`)
+    const result = await preview(context)
+    assert.equal(result.exit, 1, JSON.stringify(result))
+    assert.equal(result.problems[0].code, 'unsupported-format')
+    assert.equal(result.problems[0].message, 'Unsupported Markdown structure; use whole-file replacement.')
+  })
+}
+
+for (const [name, heading, underline] of [
+  ['level-1 setext underline', '# A', '===\t'],
+  ['level-2 setext underline', '## A', '---\t'],
+  ['star thematic break', '# A', '***\t'],
+  ['underscore thematic break', '# A', '___\t']
+] satisfies [unknown, unknown, unknown][]) {
+  for (const newline of ['\n', '\r\n']) {
+    test(`heading edits reject tab-terminated ${name} with ${JSON.stringify(newline)} and no project writes`, async t => {
+      const original = [heading, 'old', '', 'B', underline, 'keep', '# C', 'rest', ''].join(newline)
+      const proposed = [heading, 'new', '# C', 'rest', ''].join(newline)
+      const context = await setup(t, 'set-heading-section', original, { heading: 'A', content: `new${newline}` }, proposed)
+      const result = await preview(context)
+      assert.equal(result.exit, 1)
+      assert.equal(result.problems[0].code, 'unsupported-format')
+      assert.equal(result.problems[0].message, 'Unsupported Markdown structure; use whole-file replacement.')
+      assert.deepEqual(result.data, {})
+    })
+  }
+}
+
+for (const [name, structure] of [
+  ['unordered list continuation', '- item\n # B\n keep\n'],
+  ['ordered list continuation', '1. item\n   # B\n   keep\n'],
+  ['unordered list heading', '- # B\n'],
+  ['ordered list heading', '1) # B\n'],
+  ['indented heading', ' # B\n'],
+  ['tab-indented heading', '\t# B\n'],
+  ['block quote heading', '> # B\n'],
+  ['HTML block', '<pre>\n# B\n</pre>\n'],
+  ['indented fence', ' ```md\n# B\n ```\n'],
+  ['fence attributes', '```md {#example}\n# B\n```\n'],
+  ['table', 'name | value\n--- | ---\n'],
+  ['reference definition', '[example]: target.md\n'],
+  ['CRLF empty heading', '#\r\nkeep\r\n']
+] satisfies [unknown, unknown][]) {
+  test(`heading edits reject unsupported ${name} with whole-file guidance and no project writes`, async t => {
+    const context = await setup(t, 'set-heading-section', `# A\nold\n${structure}# C\nrest\n`, { heading: 'A', content: 'new\n' }, '')
+    const result = await preview(context)
+    assert.equal(result.exit, 1)
+    assert.equal(result.problems[0].code, 'unsupported-format')
+    assert.equal(result.problems[0].message, 'Unsupported Markdown structure; use whole-file replacement.')
+    assert.deepEqual(result.data, {})
+  })
+}
+
+for (const [name, original] of [
+  ['comment before selected heading', '<!--\n# A\n-->\n# A\nold\n'],
+  ['comment inside selected section', '# A\nold\n<!--\n# B\n-->\nkeep\n# C\nrest\n'],
+  ['inline comment', '# A\nold <!-- # B -->\n# C\nrest\n']
+] satisfies [unknown, unknown][]) {
+  test(`heading edits reject ${name} without project writes`, async t => {
+    const context = await setup(t, 'set-heading-section', original, { heading: 'A', content: 'new\n' }, '')
+    const result = await preview(context)
+    assert.equal(result.exit, 1)
+    assert.equal(result.problems[0].code, 'unsupported-format')
+  })
+}
+
+for (const [name, block] of [
+  ['pre', '<pre>\n# B\n</pre>\n'],
+  ['script', '<script>\n# B\n</script>\n'],
+  ['style', '<style>\n# B\n</style>\n'],
+  ['textarea', '<textarea>\n# B\n</textarea>\n'],
+  ['div', '<div>\n# B\n</div>\n'],
+  ['uppercase indented tag', '   <DIV>\n# B\n   </DIV>\n'],
+  ['multiline tag', '<div\nclass="section">\n# B\n</div>\n'],
+  ['custom tag', '<custom-element>\n# B\n</custom-element>\n'],
+  ['closing tag', '</div>\n# B\n'],
+  ['processing instruction', '<?instruction\n# B\n?>\n'],
+  ['declaration', '<!DOCTYPE\n# B\n>\n'],
+  ['CDATA', '<![CDATA[\n# B\n]]>\n']
+] satisfies [unknown, unknown][]) {
+  for (const [position, original] of [
+    ['before selection', `${block}# A\nold\n# C\nrest\n`],
+    ['inside selection', `# A\nold\n${block}# C\nrest\n`],
+    ['after selection', `# A\nold\n# C\nrest\n${block}`]
+  ] satisfies [unknown, unknown][]) {
+    test(`heading edits reject ${name} ${position} without project writes`, async t => {
+      const context = await setup(t, 'set-heading-section', original, { heading: 'A', content: 'new\n' }, '')
+      const result = await preview(context)
+      assert.equal(result.exit, 1)
+      assert.equal(result.problems[0].code, 'unsupported-format')
+      assert.deepEqual(result.data, {})
+    })
+  }
+}
+
+for (const [name, file, search, replacement] of [
+  ['plan member', 'file', '"originalHash":', '"originalHash":"discarded","originalHash":'],
+  ['escaped plan member', 'file', '"originalHash":', '"original\\u0048ash":"discarded","originalHash":'],
+  ['nested payload member', 'file', '"value":{"a":1}', '"value":{"a":0,"\\u0061":1}'],
+  ['findings member', 'findingsFile', '"nextChange":', '"nextChange":"discarded","nextChange":']
+] satisfies [unknown, unknown, unknown, unknown][]) {
+  test(`apply rejects duplicate ${name} before hashing with no project writes`, async t => {
+    const context = await setup(t, 'set-json-key', '{"a":0}\n', { key: 'a', value: { a: 1 } }, '{"a":{"a":1}}\n', 'config.json')
+    const input = await readFile(context[file as 'file' | 'findingsFile'], 'utf8')
+    await writeFile(context[file as 'file' | 'findingsFile'], input.replace(search, replacement))
+    const result = await preview(context)
+    assert.equal(result.exit, 1)
+    assert.equal(result.problems[0].code, 'duplicate-key')
+  })
+}
+
+for (const [path, code] of [
+  ['docs', 'invalid-scope'], ['docs/*.md', 'invalid-scope'], ['docs/?.md', 'invalid-scope'],
+  ['docs/[ab].md', 'invalid-scope'], ['docs/{a,b}.md', 'invalid-scope'], ['README.md/child', 'unresolved-path']
+] satisfies [unknown, unknown][]) {
+  for (const scope of ['plan', 'both']) {
+    test(`apply rejects unedited ${JSON.stringify(path)} in ${scope} scope without project writes`, async t => {
+      const context = await setup(t)
+      await mkdir(join(context.repo, 'docs'))
+      context.plan.reviewedScope.push({ path, resolvedPath: join(context.repo, path) })
+      if (scope === 'both') context.findings.reviewedScope.push(path)
+      await save(context)
+      const result = await preview(context)
+      assert.notEqual(result.exit, 0)
+      assert.ok(result.problems.some((problem: NonNullable<typeof result.problems>[number]) => problem.code === code), JSON.stringify(result))
+    })
+  }
+}
+
+test('apply accepts unedited concrete planned files in reviewed scope', async t => {
+  const context = await setup(t)
+  const path = 'future/new.md'
+  context.findings.reviewedScope.push(path)
+  context.plan.reviewedScope.push({ path, resolvedPath: join(context.repo, path) })
+  await save(context)
+  assert.equal((await preview(context)).exit, 0)
+})
+
+for (const [name, mutate, code, refresh = true] of [
+  ['invalid schema', (c: Awaited<ReturnType<typeof setup>>) => delete (c.plan.edits[0] as Partial<Record<'originalHash', unknown>>).originalHash, 'missing-field'],
+  ['unknown input field', (c: Awaited<ReturnType<typeof setup>>) => (c.plan as typeof c.plan & { force?: boolean }).force = true, 'unknown-field'],
+  ['unresolved scope', (c: Awaited<ReturnType<typeof setup>>) => (c.plan.reviewedScope[0] as { resolvedPath: unknown }).resolvedPath = null, 'invalid-type'],
+  ['changed scope resolution', (c: Awaited<ReturnType<typeof setup>>) => c.plan.reviewedScope[0].resolvedPath += '.elsewhere', 'unresolved-scope'],
+  ['unselected finding', (c: Awaited<ReturnType<typeof setup>>) => c.plan.edits[0].findingId = 'F-999', 'unselected-finding'],
+  ['changed selected IDs', (c: Awaited<ReturnType<typeof setup>>) => c.plan.selectedFindingIds = ['F-999'], 'selection-mismatch'],
+  ['scope widening', (c: Awaited<ReturnType<typeof setup>>) => c.findings.findings[0].scope = ['different.md'], 'scope-mismatch'],
+  ['path traversal', (c: Awaited<ReturnType<typeof setup>>) => c.plan.reviewedScope[0].path = '../escape.txt', 'unsafe-path'],
+  ['target mismatch', (c: Awaited<ReturnType<typeof setup>>) => c.plan.target = { ...c.plan.target, root: c.directory }, 'target-mismatch'],
+  ['duplicate edit IDs', (c: Awaited<ReturnType<typeof setup>>) => c.plan.edits.push({ ...c.plan.edits[0] }), 'duplicate-id'],
+  ['overlapping edits', (c: Awaited<ReturnType<typeof setup>>) => c.plan.edits.push({ ...c.plan.edits[0], id: 'E-002' }), 'overlapping-edits'],
+  ['duplicate scope', (c: Awaited<ReturnType<typeof setup>>) => c.plan.reviewedScope.push(c.plan.reviewedScope[0]), 'overlapping-scope'],
+  ['changed precondition', (c: Awaited<ReturnType<typeof setup>>) => c.plan.edits[0].originalHash = hash('different'), 'changed-precondition'],
+  ['wrong proposed hash', (c: Awaited<ReturnType<typeof setup>>) => c.plan.edits[0].proposedHash = hash('different'), 'payload-mismatch'],
+  ['wrong proposed bytes', (c: Awaited<ReturnType<typeof setup>>) => c.plan.edits[0].proposedContent = 'different', 'payload-mismatch'],
+  ['empty replacement as absent', (c: Awaited<ReturnType<typeof setup>>) => { c.plan.edits[0].payload.replacement = ''; c.plan.edits[0].proposedContent = null; c.plan.edits[0].proposedHash = null }, 'payload-mismatch'],
+  ['unknown payload field', (c: Awaited<ReturnType<typeof setup>>) => c.plan.edits[0].payload.force = true, 'unknown-field'],
+  ['changed reviewed payload', (c: Awaited<ReturnType<typeof setup>>) => c.plan.edits[0].payload.replacement = 'changed', 'changed-plan', false],
+  ['changed reviewed findings', (c: Awaited<ReturnType<typeof setup>>) => c.findings.nextChange = 'different', 'changed-plan', false],
+  ['unresolved decision', (c: Awaited<ReturnType<typeof setup>>) => c.findings.findings[0].category = 'decision', 'unresolved-decision']
+] satisfies [unknown, unknown, unknown, unknown?][]) {
+  test(`apply rejects ${name} with no project writes`, async t => {
+    const context = await setup(t)
+    mutate(context)
+    await save(context, refresh)
+    const result = await preview(context)
+    assert.notEqual(result.exit, 0)
+    assert.ok(result.problems.some((problem: NonNullable<typeof result.problems>[number]) => problem.code === code), JSON.stringify(result))
+    assert.deepEqual(result.data, {})
+  })
+}
+
+for (const [name, operation, original, payload, proposed, path, code] of [
+  ['ambiguous headings', 'set-heading-section', '# A\none\n# A\ntwo\n', { heading: 'A', content: 'new\n' }, '', 'README.md', 'ambiguous-heading'],
+  ['setext headings', 'set-heading-section', 'A\n===\nold\n', { heading: 'A', content: 'new\n' }, '', 'README.md', 'unsupported-format'],
+  ['unclosed fence', 'set-heading-section', '# A\n```\nold\n', { heading: 'A', content: 'new\n' }, '', 'README.md', 'unsupported-format'],
+  ['duplicate JSON keys', 'set-json-key', '{"a":1,"a":2}', { key: 'a', value: 3 }, '', 'config.json', 'duplicate-key'],
+  ['nested duplicate JSON keys', 'set-json-key', '{"a":[{"b":1,"\\u0062":2}]}', { key: 'a', value: 3 }, '', 'config.json', 'duplicate-key'],
+  ['unsupported format', 'replace', 'old', { search: 'old', replacement: 'new' }, 'new', 'code.mjs', 'unsupported-format'],
+  ['invalid JSON', 'set-json-key', '{broken', { key: 'a', value: 3 }, '', 'config.json', 'unsupported-format'],
+  ['ambiguous replacement', 'replace', 'old old', { search: 'old', replacement: 'new' }, '', 'README.md', 'ambiguous-replacement'],
+  ['missing replacement match', 'replace', 'keep', { search: 'old', replacement: 'new' }, '', 'README.md', 'ambiguous-replacement'],
+  ['create collision', 'create', 'old', { content: 'new' }, 'new', 'README.md', 'create-collision'],
+  ['missing delete', 'delete', null, {}, null, 'README.md', 'missing-original']
+] satisfies [unknown, unknown, unknown, unknown, unknown, unknown, unknown][]) {
+  test(`apply rejects ${name} before any project writes`, async t => {
+    const context = await setup(t, operation, original, payload, proposed, path)
+    const result = await preview(context)
+    assert.equal(result.exit, 1)
+    assert.ok(result.problems.some((problem: NonNullable<typeof result.problems>[number]) => problem.code === code), JSON.stringify(result))
+  })
+}
+
+test('changed later precondition prevents all edits and reports every changed file', async t => {
+  const context = await setup(t)
+  await writeFile(join(context.repo, 'other.txt'), 'old\n')
+  context.findings.reviewedScope.push('other.txt')
+  context.findings.findings[0].scope.push('other.txt')
+  context.plan.reviewedScope.push({ path: 'other.txt', resolvedPath: join(context.repo, 'other.txt') })
+  context.plan.edits.push({ ...context.plan.edits[0], id: 'E-002', path: 'other.txt' })
+  await save(context)
+  await writeFile(join(context.repo, 'README.md'), 'user edit\n')
+  await writeFile(join(context.repo, 'other.txt'), 'another user edit\n')
+  const result = await preview(context)
+  assert.equal(result.exit, 1)
+  assert.deepEqual(result.problems.map((problem: NonNullable<typeof result.problems>[number]) => problem.path), ['README.md', 'other.txt'])
+})
+
+test('escaping links fail with an unchanged project fingerprint and outside bytes', async t => {
+  const context = await setup(t)
+  await mkdir(join(context.directory, 'outside'))
+  await writeFile(join(context.directory, 'outside', 'keep.txt'), 'outside\n')
+  await symlink(join(context.directory, 'outside'), join(context.repo, 'escape'), process.platform === 'win32' ? 'junction' : 'dir')
+  context.plan.reviewedScope.push({ path: 'escape/keep.txt', resolvedPath: join(context.directory, 'outside', 'keep.txt') })
+  await save(context)
+  const result = await preview(context)
+  assert.ok(result.problems.some((problem: NonNullable<typeof result.problems>[number]) => problem.code === 'escaping-path'))
+  assert.equal(await readFile(join(context.directory, 'outside', 'keep.txt'), 'utf8'), 'outside\n')
+})
+
+test('Git revision changes invalidate a reviewed dry run', async t => {
+  const context = await setup(t)
+  git(context.repo, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '--allow-empty', '-m', 'new revision')
+  const result = await preview(context)
+  assert.equal(result.problems[0].code, 'changed-revision')
+})
+
+test('apply refuses a missing plan and malformed plans', async t => {
+  const context = await setup(t)
+  const before = await snapshot(context.repo)
+  assert.equal(runMaintenance('apply', context.repo).exit, 3)
+  await writeFile(context.file, '{broken')
+  assert.equal((await preview(context)).problems[0].code, 'invalid-input')
+  assert.deepEqual(await snapshot(context.repo), before)
+})
+
+test('internal link aliases cannot stage overlapping edits', async t => {
+  const context = await setup(t)
+  await symlink(join(context.repo, 'README.md'), join(context.repo, 'alias.md'))
+  context.findings.reviewedScope.push('alias.md')
+  context.findings.findings[0].scope.push('alias.md')
+  context.plan.reviewedScope.push({ path: 'alias.md', resolvedPath: join(context.repo, 'README.md') })
+  context.plan.edits.push({ ...context.plan.edits[0], id: 'E-002', path: 'alias.md' })
+  await save(context)
+  assert.ok((await preview(context)).problems.some((problem: ReturnType<typeof JSON.parse>) => problem.code === 'overlapping-edits'))
+})
+
+test('workspace dry run uses the same scope and payload protections', async t => {
+  const context = await setup(t)
+  context.findings.target.mode = 'workspace'
+  await save(context)
+  const before = await snapshot(context.repo)
+  const result = spawnSync(process.execPath, [join(root, 'skills/maintenance/scripts/maintenance.mjs'), 'apply', '--workspace', context.repo, '--plan', context.file, '--dry-run', '--json'], { encoding: 'utf8', cwd: context.directory })
+  assert.equal(result.status, 0, result.stdout)
+  assert.equal(JSON.parse(result.stdout).data.edits[0].proposedContent, 'new\n')
+  assert.deepEqual(await snapshot(context.repo), before)
+})
+
+for (const [name, mutate, expected] of [
+  ['complete state', () => {}, 0],
+  ['absent original and backup for create', (s: {planDigest?: string; trusted?: boolean; edits: {originalHash: string | null; proposedHash: string | null; backup?: string | null; resolvedPath?: string}[]}) => { s.edits[0].originalHash = null; s.edits[0].backup = null }, 0],
+  ['absent proposed state for delete', (s: {planDigest?: string; trusted?: boolean; edits: {originalHash: string | null; proposedHash: string | null; backup?: string | null; resolvedPath?: string}[]}) => s.edits[0].proposedHash = null, 0],
+  ['missing plan digest', (s: {planDigest?: string; trusted?: boolean; edits: {originalHash: string | null; proposedHash: string | null; backup?: string | null; resolvedPath?: string}[]}) => delete s.planDigest, 1],
+  ['missing backup', (s: {planDigest?: string; trusted?: boolean; edits: {originalHash: string | null; proposedHash: string | null; backup?: string | null; resolvedPath?: string}[]}) => delete s.edits[0].backup, 1],
+  ['missing resolved identity', (s: {planDigest?: string; trusted?: boolean; edits: {originalHash: string | null; proposedHash: string | null; backup?: string | null; resolvedPath?: string}[]}) => delete s.edits[0].resolvedPath, 1],
+  ['invalid hash', (s: {planDigest?: string; trusted?: boolean; edits: {originalHash: string | null; proposedHash: string | null; backup?: string | null; resolvedPath?: string}[]}) => s.edits[0].originalHash = 'bad', 1],
+  ['unknown field', (s: {planDigest?: string; trusted?: boolean; edits: {originalHash: string | null; proposedHash: string | null; backup?: string | null; resolvedPath?: string}[]}) => s.trusted = true, 1]
+] satisfies [unknown, unknown, unknown][]) {
+  test(`resume schema validates ${name} through the public contract command`, async t => {
+    const context = await setup(t)
+    const state = { schemaVersion: 1, runId: 'run-1', target: context.plan.target, planDigest: context.plan.planDigest,
+      edits: [{ id: 'E-001', path: 'README.md', resolvedPath: join(context.repo, 'README.md'), originalHash: hash('old\n'), proposedHash: hash('new\n'), backup: 'scratch/original-1', completed: false }], affectedChecks: ['journey'] }
+    mutate(state)
+    await writeFile(context.file, JSON.stringify(state))
+    const before = await snapshot(context.repo)
+    const result = run('contract-test', context.repo, process.env, ['--input', context.file, '--schema', join(root, 'runtime/schemas/resume-state.schema.json')])
+    assert.equal(result.exit, expected, JSON.stringify(result))
+    assert.deepEqual(await snapshot(context.repo), before)
+  })
+}
+
+for (const [name, operation, original, payload, proposed, path] of [
+  ['replacement', 'replace', 'old\r\n', { search: 'old', replacement: 'new' }, 'new\r\n', 'README.md'],
+  ['creation', 'create', null, { content: 'new\n' }, 'new\n', 'new ü &.md'],
+  ['deletion', 'delete', 'old\n', {}, null, 'README.md'],
+  ['empty replacement', 'replace-file', 'old', { content: '' }, '', 'README.md'],
+  ['append', 'append-line-once', 'old\n', { line: 'new' }, 'old\nnew\n', 'README.md'],
+  ['no-op append', 'append-line-once', 'old\nnew\n', { line: 'new' }, 'old\nnew\n', 'README.md'],
+  ['heading', 'set-heading-section', '# A\nold\n', { heading: 'A', content: 'new\n' }, '# A\nnew\n', 'README.md'],
+  ['JSON', 'set-json-key', '{"a":1}\n', { key: 'a', value: 2 }, '{"a":2}\n', 'config.json'],
+  ['unsupported code whole-file replacement', 'replace-file', 'export const a = 1\n', { content: 'export const a = 2\n' }, 'export const a = 2\n', 'code.mjs'],
+  ['unsupported Markdown whole-file replacement', 'replace-file', '# A\nold\n<div>\n# B\n</div>\n', { content: '# A\nnew\n<div>\n# B\n</div>\n' }, '# A\nnew\n<div>\n# B\n</div>\n', 'README.md'],
+  ['unsupported JSON whole-file replacement', 'replace-file', '{"a":1,"a":2}', { content: '{"a":3}\n' }, '{"a":3}\n', 'config.json']
+] satisfies [unknown, unknown, unknown, unknown, unknown, unknown][]) {
+  test(`protected ${name} saves originals and repeat performs no writes`, async t => {
+    const context = await setup(t, operation, original, payload, proposed, path)
+    const result = execute(context)
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.deepEqual(result.data.applied, [path])
+    if (proposed === null) await assert.rejects(readFile(join(context.repo, path)), { code: 'ENOENT' })
+    else assert.equal(await readFile(join(context.repo, path), 'utf8'), proposed)
+    const journal = JSON.parse(await readFile(result.data.journal, 'utf8'))
+    assert.equal(journal.planDigest, context.plan.planDigest)
+    if (original === null) assert.equal(journal.edits[0].backup, null)
+    else assert.equal(await readFile(join(dirname(result.data.journal), journal.edits[0].backup), 'utf8'), original)
+    const before = await snapshot(context.directory)
+    const repeated = execute(context, 'before-write')
+    assert.equal(repeated.data.outcome, 'already-applied', JSON.stringify(repeated))
+    assert.deepEqual(await snapshot(context.directory), before)
+    const shown = execute(context, undefined, 'state show', ['--run', result.data.runId])
+    assert.deepEqual(shown.data.applied, [path])
+    assert.deepEqual(shown.data.affectedChecks, context.findings.requiredOutcomes)
+  })
+}
+
+for (const operation of ['replace', 'delete', 'create']) {
+  for (const [fault, exit, applied] of [['before-write', 2, false], ['after-replacement', 91, true], ['before-completion', 92, true], ['journal-io', 2, true]] satisfies [unknown, unknown, unknown][]) {
+    test(`${operation} interruption ${fault} resumes from actual hashes and keeps backups`, async t => {
+      const original = operation === 'create' ? null : 'old\n'
+      const proposed = operation === 'delete' ? null : 'new\n'
+      const payload = operation === 'delete' ? {} : operation === 'create' ? { content: proposed } : { search: 'old', replacement: 'new' }
+      const context = await setup(t, operation, original, payload, proposed)
+      await secondEdit(context)
+      const failed = execute(context, fault)
+      assert.equal(failed.exit, exit, JSON.stringify(failed))
+      const shown = execute(context, undefined, 'state show', ['--run', context.plan.planDigest])
+      assert.equal(shown.exit, 0, JSON.stringify(shown))
+      assert.deepEqual(shown.data.applied, applied ? ['README.md'] : [])
+      assert.deepEqual(shown.data.pending, applied ? ['other.txt'] : ['README.md', 'other.txt'])
+      if (failed.data) {
+        assert.deepEqual(failed.data.applied, shown.data.applied)
+        assert.deepEqual(failed.data.pending, shown.data.pending)
+      }
+      const resumed = execute(context)
+      assert.equal(resumed.exit, 0, JSON.stringify(resumed))
+      assert.deepEqual(resumed.data.applied, ['README.md', 'other.txt'])
+      assert.equal(await readFile(join(context.repo, 'other.txt'), 'utf8'), 'new\n')
+      if (original !== null) assert.equal(await readFile(join(dirname(resumed.data.journal), 'original-0'), 'utf8'), original)
+      assert.equal(execute(context).data.outcome, 'already-applied')
+    })
+  }
+}
+
+for (const [operation, changedPath] of [['replace', 'README.md'], ['replace', 'other.txt'], ['delete', 'README.md'], ['create', 'README.md']] satisfies [unknown, unknown][]) {
+  test(`user change to ${changedPath} after ${operation} interruption blocks every remaining write`, async t => {
+    const original = operation === 'create' ? null : 'old\n'
+    const proposed = operation === 'delete' ? null : 'new\n'
+    const payload = operation === 'delete' ? {} : operation === 'create' ? { content: proposed } : { search: 'old', replacement: 'new' }
+    const context = await setup(t, operation, original, payload, proposed)
+    await secondEdit(context)
+    assert.equal(execute(context, 'after-replacement').exit, 91)
+    await writeFile(join(context.repo, changedPath), 'user changed or recreated\n')
+    const before = await snapshot(context.directory)
+    const resumed = execute(context)
+    assert.equal(resumed.exit, 2, JSON.stringify(resumed))
+    assert.deepEqual(resumed.data.conflicting, [changedPath])
+    assert.deepEqual(await snapshot(context.directory), before)
+    assert.deepEqual(execute(context, undefined, 'state show', ['--run', context.plan.planDigest]).data.conflicting, [changedPath])
+  })
+}
+
+test('a user change to a completed run blocks repetition', async t => {
+  const context = await setup(t)
+  assert.equal(execute(context).exit, 0)
+  await writeFile(join(context.repo, 'README.md'), 'user\n')
+  const before = await snapshot(context.directory)
+  assert.equal(execute(context).exit, 2)
+  assert.deepEqual(await snapshot(context.directory), before)
+})
+
+test('a changed digest cannot reuse an earlier run', async t => {
+  const context = await setup(t)
+  assert.equal(execute(context).exit, 0)
+  context.plan.edits[0].payload.replacement = 'later'
+  context.plan.edits[0].proposedContent = 'later\n'
+  context.plan.edits[0].proposedHash = hash('later\n')
+  await save(context)
+  const before = await snapshot(context.directory)
+  assert.equal(execute(context).problems[0].code, 'changed-precondition')
+  assert.deepEqual(await snapshot(context.directory), before)
+})
+
+test('apply rejects a second run-selection input without writes', async t => {
+  const context = await setup(t)
+  const before = await snapshot(context.directory)
+  const result = execute(context, undefined, 'apply', ['--plan', context.file, '--run', context.plan.planDigest])
+  assert.equal(result.exit, 3, JSON.stringify(result))
+  assert.equal(result.problems[0].code, 'unknown-option')
+  assert.deepEqual(await snapshot(context.directory), before)
+})
+
+test('a changed target cannot reuse completion from another target', async t => {
+  const context = await setup(t)
+  assert.equal(execute(context).exit, 0)
+  const other = await setup(t)
+  await writeFile(join(other.repo, 'README.md'), 'new\n')
+  assert.equal(execute(other).problems[0].code, 'changed-precondition')
+  assert.equal(execute(other, undefined, 'state show', ['--run', context.plan.planDigest]).problems[0].code, 'missing-journal')
+})
+
+test('filesystem replacement limits block without falling back or losing the original', async t => {
+  const context = await setup(t)
+  const failed = execute(context, 'atomic-unavailable')
+  assert.equal(failed.exit, 2)
+  assert.equal(failed.problems[0].code, 'atomic-replacement-unavailable')
+  assert.deepEqual(failed.data.pending, ['README.md'])
+  assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), 'old\n')
+  assert.deepEqual((await readdir(context.repo)).filter(path => path.startsWith('.bstack-')), [])
+  assert.equal(execute(context).exit, 0)
+})
+
+test('directory flush limits are reported in successful results', async t => {
+  const context = await setup(t)
+  const result = execute(context, 'directory-flush')
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.ok(result.data.limitations.some((message: string) => message.includes('power loss')))
+})
+
+test('unrelated uncommitted journey and selected file permissions survive writes', async t => {
+  const context = await setup(t)
+  const journey = join(context.repo, 'journey.mjs')
+  await writeFile(journey, "import assert from 'node:assert/strict'\nassert.equal(2 + 2, 4)\n")
+  await writeFile(join(context.repo, 'dirty.txt'), 'uncommitted user bytes\n')
+  if (process.platform !== 'win32') await chmod(join(context.repo, 'README.md'), 0o755)
+  const mode = (await stat(join(context.repo, 'README.md'))).mode
+  const beforeJourney = await readFile(journey)
+  assert.equal(execute(context).exit, 0)
+  assert.equal((await stat(join(context.repo, 'README.md'))).mode, mode)
+  assert.equal(await readFile(join(context.repo, 'dirty.txt'), 'utf8'), 'uncommitted user bytes\n')
+  assert.deepEqual(await readFile(journey), beforeJourney)
+  assert.equal(spawnSync(process.execPath, [journey]).status, 0)
+})
+
+for (const [operation, original, payload, proposed] of [
+  ['replace', 'old\n', { search: 'old', replacement: 'new' }, 'new\n'],
+  ['replace-file', 'old\n', { content: 'new\n' }, 'new\n'],
+  ['create', null, { content: 'new\n' }, 'new\n'],
+  ['delete', 'old\n', {}, null]
+] satisfies [unknown, unknown, unknown, unknown][]) {
+  test(`restored original after completed ${operation} conflicts without writes`, async t => {
+    const context = await setup(t, operation, original, payload, proposed)
+    const applied = execute(context)
+    assert.equal(applied.exit, 0, JSON.stringify(applied))
+    if (original === null) await rm(join(context.repo, 'README.md'))
+    else await writeFile(join(context.repo, 'README.md'), original)
+    const before = await snapshot(context.directory)
+    const shown = execute(context, undefined, 'state show', ['--run', applied.data.runId])
+    assert.deepEqual(shown.data.conflicting, ['README.md'])
+    assert.deepEqual(shown.data.pending, [])
+    assert.equal(execute(context).exit, 2)
+    assert.deepEqual(await snapshot(context.directory), before)
+  })
+}
+
+test('changed backups block resume without any target writes', async t => {
+  const context = await setup(t)
+  const failed = execute(context, 'before-write')
+  await writeFile(join(dirname(failed.data.journal), 'original-0'), 'changed backup\n')
+  const before = await snapshot(context.directory)
+  assert.equal(execute(context).problems[0].code, 'backup-mismatch')
+  assert.deepEqual(await snapshot(context.directory), before)
+})
+
+test('creation preflights collision and creates missing parent directories', async t => {
+  const context = await setup(t, 'create', null, { content: 'new\n' }, 'new\n', 'docs/nested/new.md')
+  assert.equal(execute(context).exit, 0)
+  assert.equal(await readFile(join(context.repo, 'docs/nested/new.md'), 'utf8'), 'new\n')
+})
+
+test('workspace apply writes and repeats through the same protected boundary', async t => {
+  const context = await setup(t)
+  context.findings.target.mode = 'workspace'
+  await save(context)
+  const invoke = () => spawnSync(process.execPath, [join(root, 'skills/maintenance/scripts/maintenance.mjs'), 'apply',
+    '--workspace', context.repo, '--plan', context.file, '--json'], { encoding: 'utf8', cwd: context.directory, env: context.env })
+  const applied = invoke()
+  assert.equal(applied.status, 0, applied.stdout)
+  assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), 'new\n')
+  assert.equal(JSON.parse(invoke().stdout).data.outcome, 'already-applied')
+})
+
+for (const [fault, exit] of [['backup-io', 2], ['backup-interruption', 94]] satisfies [unknown, unknown][]) {
+  test(`${fault} during backup preparation permits an unchanged retry`, async t => {
+    const context = await setup(t)
+    assert.equal(execute(context, fault).exit, exit)
+    assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), 'old\n')
+    const retried = execute(context)
+    assert.equal(retried.exit, 0, JSON.stringify(retried))
+    assert.equal(await readFile(join(dirname(retried.data.journal), 'original-0'), 'utf8'), 'old\n')
+    assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), 'new\n')
+  })
+}
+
+for (const [operation, fault] of [
+  ['replace', 'journal-user-change'], ['delete', 'journal-user-change'], ['create', 'journal-user-change'],
+  ['replace', 'temporary-user-change'], ['create', 'temporary-user-change']
+] satisfies [unknown, unknown][]) {
+  test(`${operation} preserves a user save during ${fault} and blocks success`, async t => {
+    const original = operation === 'create' ? null : 'old\n'
+    const proposed = operation === 'delete' ? null : 'new\n'
+    const payload = operation === 'delete' ? {} : operation === 'create' ? { content: proposed } : { search: 'old', replacement: 'new' }
+    const context = await setup(t, operation, original, payload, proposed)
+    await secondEdit(context)
+    const result = execute(context, fault)
+    assert.equal(result.exit, 2, JSON.stringify(result))
+    assert.deepEqual(result.data.conflicting, ['README.md'])
+    assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), 'user\n')
+    assert.equal(await readFile(join(context.repo, 'other.txt'), 'utf8'), 'old\n')
+  })
+}
+
+test('a user save after the last replacement blocks the final success result', async t => {
+  const context = await setup(t)
+  const result = execute(context, 'final-user-change')
+  assert.equal(result.exit, 2, JSON.stringify(result))
+  assert.deepEqual(result.data.conflicting, ['README.md'])
+  assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), 'user\n')
+})
+
+for (const alias of ['absolute', 'relative', 'chain', 'parent']) {
+  test(`selected delete through a ${alias} alias resumes and repeats with its reviewed identity`, async t => {
+    const context = await setup(t, 'delete', 'old\n', {}, null)
+    const path = alias === 'parent' ? 'alias/README.md' : 'alias.md'
+    const link = alias === 'absolute' ? join(context.repo, 'README.md') : alias === 'chain' ? 'intermediate.md' : alias === 'parent' ? context.repo : 'README.md'
+    if (alias === 'chain') await symlink('README.md', join(context.repo, 'intermediate.md'))
+    await symlink(link, join(context.repo, alias === 'parent' ? 'alias' : path), alias === 'parent' ? (process.platform === 'win32' ? 'junction' : 'dir') : 'file')
+    context.findings.reviewedScope = [path]
+    context.findings.findings[0].scope = [path]
+    context.findings.findings[0].files = [path]
+    context.plan.reviewedScope[0].path = path
+    context.plan.edits[0].path = path
+    await secondEdit(context)
+    const applied = execute(context, 'before-completion')
+    assert.equal(applied.exit, 92, JSON.stringify(applied))
+    const shown = execute(context, undefined, 'state show', ['--run', context.plan.planDigest])
+    assert.equal(shown.exit, 0, JSON.stringify(shown))
+    assert.deepEqual(shown.data.applied, [path])
+    assert.deepEqual(shown.data.pending, ['other.txt'])
+    assert.equal(execute(context).exit, 0)
+    assert.equal(await readFile(join(context.repo, 'other.txt'), 'utf8'), 'new\n')
+    assert.equal(execute(context).data.outcome, 'already-applied')
+    await writeFile(join(context.repo, 'README.md'), 'user\n')
+    assert.equal(execute(context).exit, 2)
+    assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), 'user\n')
+  })
+}
+
+for (const [alias, previewExit, previewCode] of [
+  ['absolute', 2, 'unresolved-path'], ['relative', 2, 'unresolved-path'], ['chain', 2, 'unresolved-path'], ['parent', 1, 'changed-precondition']
+] satisfies [unknown, unknown, unknown][]) {
+  for (const [fault, exit] of [['after-replacement', 91], [undefined, 0]] satisfies [unknown, unknown][]) {
+    test(`an unedited ${alias} alias permits deletion recovery after ${fault ?? 'completion'}`, async t => {
+      const context = await setup(t, 'delete', 'old\n', {}, null)
+      const path = alias === 'parent' ? 'alias/README.md' : 'alias.md'
+      const link = alias === 'absolute' ? join(context.repo, 'README.md') : alias === 'chain' ? 'intermediate.md' : alias === 'parent' ? context.repo : 'README.md'
+      if (alias === 'chain') await symlink('README.md', join(context.repo, 'intermediate.md'))
+      await symlink(link, join(context.repo, alias === 'parent' ? 'alias' : path), alias === 'parent' ? (process.platform === 'win32' ? 'junction' : 'dir') : 'file')
+      context.findings.reviewedScope.push(path)
+      context.findings.findings[0].scope.push(path)
+      context.plan.reviewedScope.push({ path, resolvedPath: join(context.repo, 'README.md') })
+      await secondEdit(context)
+      const initial = execute(context, fault)
+      assert.equal(initial.exit, exit, JSON.stringify(initial))
+      const repeated = execute(context)
+      assert.equal(repeated.exit, 0, JSON.stringify(repeated))
+      assert.deepEqual(repeated.data.applied, ['README.md', 'other.txt'])
+      assert.equal(await readFile(join(context.repo, 'other.txt'), 'utf8'), 'new\n')
+      assert.equal(execute(context).data.outcome, 'already-applied')
+      const before = await snapshot(context.directory)
+      const preview = execute(context, undefined, 'apply', ['--plan', context.file, '--dry-run'])
+      assert.equal(preview.exit, previewExit, JSON.stringify(preview))
+      assert.equal(preview.problems[0].code, previewCode)
+      assert.deepEqual(await snapshot(context.directory), before)
+    })
+  }
+}
+
+for (const [alias, path, link, resolvedPath, type] of [
+  ['relative', 'alias.md', 'missing.md', 'missing.md', 'file'],
+  ['absolute', 'alias.md', null, 'missing.md', 'file'],
+  ['chain', 'alias.md', 'intermediate.md', 'missing.md', 'file'],
+  ['parent', 'alias/new.md', 'missing', 'missing/new.md', process.platform === 'win32' ? 'junction' : 'dir']
+] satisfies [unknown, unknown, unknown, unknown, unknown][]) {
+  for (const [command, extra] of [['apply', []], ['dry run', ['--dry-run']]] satisfies [unknown, unknown][]) {
+    test(`fresh ${command} rejects creation through a dangling ${alias} link without writes`, async t => {
+      const context = await setup(t, 'create', null, { content: 'new\n' }, 'new\n', path)
+      if (alias === 'chain') await symlink('missing.md', join(context.repo, 'intermediate.md'))
+      await symlink(link ?? join(context.repo, resolvedPath), join(context.repo, path.split('/')[0]), type)
+      context.plan.reviewedScope[0].resolvedPath = join(context.repo, resolvedPath)
+      await save(context)
+      const before = await snapshot(context.directory)
+      const result = execute(context, undefined, 'apply', ['--plan', context.file, ...extra])
+      assert.equal(result.exit, 2, JSON.stringify(result))
+      assert.equal(result.problems[0].code, 'unresolved-path')
+      assert.deepEqual(await snapshot(context.directory), before)
+    })
+  }
+}
+
+test('a retargeted alias during journal preparation blocks both destinations', async t => {
+  const context = await setup(t)
+  await symlink('README.md', join(context.repo, 'alias.md'))
+  context.findings.reviewedScope = ['alias.md']
+  context.findings.findings[0].scope = ['alias.md']
+  context.findings.findings[0].files = ['alias.md']
+  context.plan.reviewedScope[0].path = 'alias.md'
+  context.plan.edits[0].path = 'alias.md'
+  await secondEdit(context)
+  const result = execute(context, 'resolution-user-change')
+  assert.equal(result.exit, 2, JSON.stringify(result))
+  assert.deepEqual(result.data.conflicting, ['alias.md'])
+  assert.equal(await readFile(join(context.repo, 'README.md'), 'utf8'), 'old\n')
+  assert.equal(await readFile(join(context.repo, 'other.txt'), 'utf8'), 'old\n')
+})
+
+test('new recovery and nested target directory entries are flushed before publication', async t => {
+  const context = await setup(t, 'create', null, { content: 'new\n' }, 'new\n', 'docs/nested/new.md')
+  const result = execute(context, 'directory-order')
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.equal(await readFile(join(context.repo, 'docs/nested/new.md'), 'utf8'), 'new\n')
+})

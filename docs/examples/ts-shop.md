@@ -1,6 +1,6 @@
 # Existing repo: TypeScript shop
 
-Prepare with `node tests/fixtures/build.mjs ts-shop`, then follow the [install and invocation steps](README.md).
+Prepare with `node tests/fixtures/build.ts ts-shop`, then follow the [install and invocation steps](README.md).
 
 Request: Complete the existing-repo audit before interviewing, present findings for selection and apply only approved corrections and maintained guidance.
 Preserve the checkout acceptance total of 10, default quote of 12, authoritative file names and user work.

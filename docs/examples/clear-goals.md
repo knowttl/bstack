@@ -1,6 +1,6 @@
 # Approved goals: reading queue
 
-Prepare with `node tests/fixtures/build.mjs clear-goals`, then follow the [install and invocation steps](README.md).
+Prepare with `node tests/fixtures/build.ts clear-goals`, then follow the [install and invocation steps](README.md).
 
 Request: Audit the repo and recommend principles and checks appropriate to its approved goals.
 

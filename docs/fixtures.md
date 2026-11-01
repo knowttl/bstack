@@ -4,11 +4,11 @@ T1.1 delivers idea fixtures, clear goals, both native stacks, clean boundary pro
 These sources serve later acceptance procedures, and their sanity checks do not claim those agent behaviours have passed.
 
 See [fixtures in development](development.md#fixtures) for build commands, output and cleanup responsibilities.
-The builder copies declared files into a fresh OS temporary folder and runs the named fixture's `sanity.mjs` with that folder as its only argument.
+The builder copies declared files into a fresh OS temporary folder and runs the named fixture's `sanity.ts` with that folder as its only argument.
 Exit codes are 0 for success, 1 for a failed build or sanity check, 2 for a missing executable or input, and 3 for usage errors.
 
 The [fixture registry](../tests/fixtures/fixtures.json) declares the files to copy and, for repo fixtures, an ordered history of paths, messages and dates.
-Each named fixture keeps its `sanity.mjs` and any `FIXTURE.md` outside the built workspace.
+Each named fixture keeps its `sanity.ts` and any `FIXTURE.md` outside the built workspace.
 Variants reuse source files through `source`, inject independent `seed` files before history, and share native sanity procedures.
 `base` inherits a registry entry's files and settings; an `overlay` directory supplies only the changed or generated files before history is committed.
 `selected-ts-shop` inherits `ts-shop` and overlays the selected findings and approved bounded apply plan, retaining the original failing live journey and boundary defects.
@@ -25,7 +25,7 @@ Fixed author and committer dates make equivalent builds produce the same Git his
 
 Where present, `FIXTURE.md` explains seeds, acceptance inputs and runtime requirements.
 The [scenario registry](../tests/eval/scenarios/scenarios.json) owns evaluation requests and scoring checks, including the existing-vision delta scenario.
-To rerun sanity directly, use `node tests/fixtures/<name>/sanity.mjs <built-folder>`.
+To rerun sanity directly, use `node tests/fixtures/<name>/sanity.ts <built-folder>`.
 `npm test -- --task T1.1` exercises the builder, deterministic history, isolated Git configuration, seed sanity and preservation of source bytes.
 The [task evidence](../tests/eval/results/tasks/T1.1.json) records local execution.
 

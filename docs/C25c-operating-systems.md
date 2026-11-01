@@ -49,13 +49,13 @@ npm test -- --task C25c
 For a separately captured copy journey, run the existing fixture-backed public-command tests:
 
 ```sh
-node --test --test-name-pattern="copy install validates the complete package|clean .* update removes obsolete ownership|noninteractive update reports actual mixed versions|uninstall retains edited ownership" tests/scripts/install-copy.test.mjs tests/scripts/install-update.test.mjs
+node --test --test-name-pattern="copy install validates the complete package|clean .* update removes obsolete ownership|noninteractive update reports actual mixed versions|uninstall retains edited ownership" tests/scripts/install-copy.test.ts tests/scripts/install-update.test.ts
 ```
 
 For a separately captured link journey, run:
 
 ```sh
-node --test --test-name-pattern="link lifecycle|link installation preserves|owned link removal|failed link runtime|interrupted link|tagged checkout link recovery|link runtime preparation" tests/scripts/install-links.test.mjs
+node --test --test-name-pattern="link lifecycle|link installation preserves|owned link removal|failed link runtime|interrupted link|tagged checkout link recovery|link runtime preparation" tests/scripts/install-links.test.ts
 ```
 
 The copy journey must validate the complete installed folder, report preview without mutations, preserve edited and unrelated files through update and removal, and retain conflicts until exact replacement decisions with backups.
@@ -68,7 +68,7 @@ Do not install into actual user skill directories to gather this evidence.
 
 Return the full source SHA, OS/platform/release/architecture, Node/npm/Git versions, each exact command and exit code, output artifact paths and SHA-256 hashes, named lifecycle test outcomes, any limitations and observed fixture cleanup.
 Use repository-relative artifact paths in the published record and remove private home paths and local account names from captured failure diagnostics.
-The existing final-input full-suite capture and `scripts/task-evidence.mjs` attachment remain the task evidence authority; manual OS records supplement that capture.
+The existing final-input full-suite capture and `scripts/task-evidence.ts` attachment remain the task evidence authority; manual OS records supplement that capture.
 
 Fixture teardown removes task-created disposable snapshots, isolated homes/projects, npm caches, fake runtime tarballs, stages, links and backups.
 No task-created development stack, image or shared cache needs teardown.
