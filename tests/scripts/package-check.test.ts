@@ -299,7 +299,7 @@ for (const [file, text, expected] of [
   })
 }
 
-test('only the source verification slop baseline reference may name language tools', async t => {
+test('the slop baseline tool-name exception stays scoped to verification', async t => {
   const verification = fileURLToPath(new URL('../../skills/verification/', import.meta.url))
   const allowed = run('--skill', verification)
   assert.equal(allowed.status, 0, allowed.stdout + allowed.stderr)
@@ -315,3 +315,19 @@ test('only the source verification slop baseline reference may name language too
   assert.match(result.stdout, /language-policy: references\/guide\.md:/)
   assert.match(result.stdout, /language-policy: references\/slop-baseline\.md:/)
 })
+
+for (const [file, expected] of [
+  ['references/foundation.md', 0],
+  ['references/guide.md', 1]
+] satisfies [string, number][]) {
+  test(`foundation tool examples in ${file} exit ${expected}`, async t => {
+    const directory = await sandbox(t)
+    const skill = await readFile(join(directory, 'SKILL.md'), 'utf8')
+    await writeFile(join(directory, 'SKILL.md'), skill.replace('name: fixture', 'name: foundation') + '\n| Foundation | `references/foundation.md` |\n')
+    await writeFile(join(directory, 'references', 'foundation.md'), '')
+    await writeFile(join(directory, file), '- ESLint\n- Ruff\n')
+    const result = run('--skill', directory)
+    assert.equal(result.status, expected, result.stdout + result.stderr)
+    if (expected) assert.match(result.stdout, /language-policy: references\/guide\.md:/)
+  })
+}
