@@ -643,7 +643,7 @@ This selected canonical block is an exception to the general preference for inst
 `/verification` proposes a selector for the no-mistakes Test command that builds, lints and tests touched modules and affected dependents; protocol changes include every dependent's tests.
 Selection compares against the default branch's merge base and includes uncommitted paths, deletions and renames.
 Unmapped paths, empty diffs, unusable bases, uncertain dependencies and selector or infrastructure changes fall back to full offline validation.
-Large modules may use project-researched native related-test tooling, proven with seeded failures and tuned against full offline runs during maintain or owner-selected scheduled local runs.
+Large modules may use project-researched native related-test tooling, proven with seeded failures and tuned under the [selection-miss contract](../skills/verification/references/no-mistakes.md#change-scoped-test-command).
 No new skill, hosted workflow or selector implementation is added to bstack by this guidance change.
 
 ## The skill split

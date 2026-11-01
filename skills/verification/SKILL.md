@@ -280,5 +280,6 @@ Run scripts without loading their source, and pass schemas to scripts without re
 | The product calls an outside service or API | `references/third-party.md` |
 | Running a maintain pass, triaging a discrepancy or correcting an applied kit | `references/maintain.md` |
 | Proposing or reviewing no-mistakes wiring or the coverage gate | `references/no-mistakes.md` |
+| Measuring feedback time, or proposing layers, timeouts, workers, tool swaps or suite sections to speed it up | `references/fast-feedback.md` |
 | Writing the kit plan | `schemas/kit-plan.json` |
 | Preparing check plans for rule proofs | `schemas/check-plan.json` |
