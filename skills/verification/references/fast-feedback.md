@@ -56,7 +56,11 @@ Label a saving observed when it was measured and estimated when it was inferred,
 
 ## Agent loop contract
 
-Name two commands for the project, an affected command and a full command, and follow the [agents-md command-pointer contract](../../agents-md/references/agents-md.md#affected-and-full-commands) for the project's `AGENTS.md` lines and run cadence.
+Name two commands for the project, an affected command and a full command, and put one pointer line for them in the project's `AGENTS.md`:
+
+> Iterate with the affected command; run the full suite and the maintained check once before the gate and after any dependency change.
+
+The check belongs in that line because a gate that runs lint after tests would otherwise find a type error only after a full test run.
 
 Affected commands by stack:
 
