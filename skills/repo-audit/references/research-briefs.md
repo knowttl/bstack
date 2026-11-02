@@ -64,7 +64,8 @@ Question: Which authoritative documents establish purpose, goals, vocabulary, de
 Also ask: Which test-policy files and review instructions exist, and do they state the test-quality rules?
 Report whether they address impossible states, copied expectations, unrealistic mocks, private spying and trivial assertions, citing the policy or stating its absence.
 If a test instance was incidentally read within the selected scope, report at most one `path:line` with the rule and uncertainty.
-Do not expand into test sampling or a suite audit; `/verification` owns that work.
+Also ask: Do the documents say the suite or the gate is slow? Cite the statement, or state that none was found.
+Do not expand into test sampling, timing a run or a suite audit; `/verification` owns that work.
 No incidental instance means test quality was not sampled, not that the suite is clean.
 Paths in scope: The main thread's selected instructions, indexes and linked README, vision, design, requirements, glossary, standards, decision and prior audit files under the target, and the user's brief for a new idea.
 Report format: State each observed file's purpose, explicit goals and principles, conflicts and absent sources using the common entry format with path:line citations.

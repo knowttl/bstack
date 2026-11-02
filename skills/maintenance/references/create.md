@@ -77,3 +77,4 @@ Compare the installed bytes with the skill's copy when the skill is updated, and
 - The Document step sees only the change's diff, so it keeps terms and boundaries current for that change; drift that built up elsewhere is what the sweep finds.
 - The gate command runs repository files at the pushed head, so a contributor who edits the checker or the contract changes what it checks; the signed-off per-change assessment, which SKILL.md names, covers edits to either.
 - The map and gate steer a pipeline that is already in use; this skill does not add a pipeline, a hosted workflow or a hook.
+  `/verification` and `/foundation` may offer an optional pre-push hook to a repo that has no gate, so maintenance never adds one itself and never replaces a gate with one.

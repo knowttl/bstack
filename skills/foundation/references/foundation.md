@@ -79,8 +79,7 @@ These examples are not bundled policy: use candidates only where they fit the se
 Prove the representative valid cases still pass and the same seeded violations fail with the expected diagnostics, using `rule-proof`.
 Record tool versions and measured time saved before proposing a replacement; speed alone does not establish equivalence.
 Keep the maintained check command a sequential fail-fast `&&` chain, and use each tool's own worker controls for parallelism rather than backgrounding checks.
-For a project without a no-mistakes gate, offer an optional pre-push hook as part of the reviewed setup.
-Do not add a redundant hook to a project that already uses the gate.
+Use the checks reference's optional pre-push hook procedure for eligibility, setup and proof.
 
 ## Record each proposal
 

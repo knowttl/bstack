@@ -626,7 +626,7 @@ The IDs in this section belong to this review, not the earlier testing principle
 
 These are stack-independent inspections and rules, not blanket bans on a particular framework API or assumptions about a runtime.
 As worked examples only, a framework hook called outside its sanctioned wrapper can motivate P4, and a desktop application's main and renderer processes or a frame budget can motivate P3.
-Hosted CI by default (P10), an explicit test rung, instruction-file rule table and inline expiring exceptions (P11), and an auto-loaded mode skill (P12) remain unadopted.
+Hosted CI by default (P10), an explicit test rung, instruction-file rule table and inline expiring exceptions (P11), and an auto-loaded mode skill (P12) remain unadopted; the local feedback layers in the [fast-feedback amendment](#fast-feedback-amendment-2026-11-01) cover fast feedback without hosted CI.
 P9's missing verification-kit attribution is a separate attribution fix, not new runtime behaviour.
 This amendment changes the design only; skill procedures, checkers and tests are built in later slices, and agent evaluations remain deferred.
 
@@ -635,7 +635,8 @@ This amendment changes the design only; skill procedures, checkers and tests are
 The maintainer approved strengthening the existing verification guidance and review criteria, with no test-first requirement.
 `skills/verification/references/testing.md` owns the canonical copyable test-quality block, remedies, category evidence and false-positive guards.
 The suite audit uses the wasteful-test patterns without hardcoding their count.
-Q10 remains: `/verification` owns the full suite audit, while `/repo-audit` adds a documents-level test-policy signal to its existing `/verification create` checklist line, with at most one incidental cited instance and no test-sampling pass.
+Q10 remains: `/verification` owns the full suite audit, while `/repo-audit` adds a documents-level test-policy signal to its verification checklist line, with at most one incidental cited instance and no test-sampling pass.
+The [fast-feedback amendment](#fast-feedback-amendment-2026-11-01) owns the slow-suite routing exception.
 For this rollout, bstack keeps the delimited block in its existing testing home, `AGENTS.md`, and points review instructions at it; copies in other repos carry a provenance line naming the source revision.
 This selected canonical block is an exception to the general preference for instruction-file pointers, not permission to copy unrelated policy into agent instructions.
 
@@ -645,6 +646,35 @@ Selection compares against the default branch's merge base and includes uncommit
 Unmapped paths, empty diffs, unusable bases, uncertain dependencies and selector or infrastructure changes fall back to full offline validation.
 Large modules may use project-researched native related-test tooling, proven with seeded failures and tuned under the [selection-miss contract](../skills/verification/references/no-mistakes.md#change-scoped-test-command).
 No new skill, hosted workflow or selector implementation is added to bstack by this guidance change.
+
+### Fast-feedback amendment (2026-11-01)
+
+The maintainer approved making the speed of feedback part of the verification guidance, in a form that works on any stack, host and user.
+Nothing in it depends on a particular machine, wrapper, private path or fleet tool; every command it names is the project's own.
+Hosted CI is not added: the layers below are local, and the delivery gate stays the review step.
+
+- **Four feedback layers.** A fast check on changed files before code leaves the machine, an affected-test command while iterating, the full offline suite and the maintained check once before the gate, and a slow tier that runs on a schedule.
+  Each layer records its measured time, warm and cold, with wait, setup and run timed separately.
+  No fixed target applies, because projects differ in size; each layer aims to be as fast as practical for its project.
+  A slowdown against the project's own history, or a large cheap saving found by the audit, triggers maintain work, and a time is never a check that fails.
+- **Agent loop contract.** The project defines one affected command and one full command.
+  The root `AGENTS.md` carries two pointers: iterate with the affected command, and run the full suite and the maintained check once before the gate and again after any dependency change.
+  `/agents-md` proposes them only for commands the project defines.
+- **Gate and hook.** In a repo with a gate, the gate's own check is the enforcement and no hook is added.
+  `/verification` and `/foundation` may offer an optional pre-push hook only to a repo with no gate; the hook calls the maintained commands on changed files and is never the only enforcement.
+  `/maintenance` adds no hook.
+- **Scheduled full run.** When the gate selects tests by change, a scheduled local full run is the default companion that catches selector misses.
+- **Workers, setup and timeouts.** Parallelism comes from each tool's own worker setting so that a shared host can cap it.
+  Expensive setup is reused only when tests prove they clean up.
+  Every test gets a timeout, and the suite gets a ceiling of about twice its recent measured time.
+- **Tool choice.** `/foundation` picks the fastest maintained tool for each check, and `/verification maintain` proposes a swap only with an equivalence proof, the same seeded violations flagged, plus the measured time saved.
+  A tool in beta stays a candidate.
+- **Suite audit.** `/verification maintain` audits the suite for waste and quality, speed, splitting into sections and selector misses, and `/repo-audit` points to `/verification maintain`, or to `/verification create` when there is no kit, when the suite or gate is documented as slow.
+- **Out of scope.** Scheduling of shared hosts, load waits, hosted-proof queues and review-to-merge latency belong to whoever runs the fleet, not to bstack.
+
+The [agents-md command pointers](../skills/agents-md/references/agents-md.md#affected-and-full-commands), [maintenance hook boundary](../skills/maintenance/references/create.md#effect-and-limits) and [repo-audit routing](../skills/repo-audit/SKILL.md#step-4-print-the-checklist) are implemented as skill guidance.
+The [verification fast-feedback reference](../skills/verification/references/fast-feedback.md) provides measurement and suite guidance, and the [foundation checks reference](../skills/foundation/references/checks.md#optional-pre-push-hook) provides the optional hook procedure.
+Remaining fast-feedback integration, checkers and tests are built in later slices, and agent evaluations remain deferred.
 
 ## The skill split
 
@@ -681,7 +711,7 @@ Each checklist is the order of dependency: an idea precedes its vocabulary, voca
 | Repo | Order |
 |---|---|
 | New idea | `/vision`, `/glossary`, `/architecture`, `/foundation`, `/verification create`, `/formal-verification create` (only with cited risk evidence), `/maintenance`, `/agents-md`, `/plan` |
-| Existing repo | `/repo-audit` overview, then `/vision` (only for a gap), `/glossary` (only if terms are unclear), `/architecture`, `/verification create`, `/formal-verification create` (only with cited risk evidence), `/maintenance`, `/agents-md`, `/plan` |
+| Existing repo | `/repo-audit` overview, then `/vision` (only for a gap), `/glossary` (only if terms are unclear), `/architecture`, `/verification` (mode from the [repo-audit checklist](../skills/repo-audit/SKILL.md#step-4-print-the-checklist)), `/formal-verification create` (only with cited risk evidence), `/maintenance`, `/agents-md`, `/plan` |
 
 repo-audit prints the checklist for the repo's case with one reason per line, each citing the evidence that makes the skill relevant or its output already present.
 It computes status again on every run, writes nothing to the project and keeps no audit record, so `docs/repo-audit.md` is dropped.

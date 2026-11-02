@@ -71,6 +71,7 @@ Done when: Each candidate has a decision to merge, keep or leave, the host check
 
 Draft the complete root file in scratch following the pointer shape in the [pointer guide](references/agents-pointer.md), keeping the lines other skills added and the author's order.
 Add pointers only for sources that exist, and word each as one sentence saying when an agent should use the source.
+When the project defines affected-test and full-suite commands, add the two command pointers from the [AGENTS.md guide](references/agents-md.md).
 Fold in repo-owned `CLAUDE.md` content that the author chose to merge, as pointers where a source already holds it and as kept text where none does.
 Leave out vocabulary, vision, design and standards text.
 Write the sentences by the [writing reference](references/writing.md).
