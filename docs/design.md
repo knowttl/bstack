@@ -673,7 +673,8 @@ Hosted CI is not added: the layers below are local, and the delivery gate stays 
 - **Out of scope.** Scheduling of shared hosts, load waits, hosted-proof queues and review-to-merge latency belong to whoever runs the fleet, not to bstack.
 
 The [agents-md command pointers](../skills/agents-md/references/agents-md.md#affected-and-full-commands), [maintenance hook boundary](../skills/maintenance/references/create.md#effect-and-limits) and [repo-audit routing](../skills/repo-audit/SKILL.md#step-4-print-the-checklist) are implemented as skill guidance.
-The remaining fast-feedback procedures, reference, checkers and tests are built in later slices, and agent evaluations remain deferred.
+The [verification fast-feedback reference](../skills/verification/references/fast-feedback.md) provides measurement and suite guidance, and the [foundation checks reference](../skills/foundation/references/checks.md#optional-pre-push-hook) provides the optional hook procedure.
+Remaining fast-feedback integration, checkers and tests are built in later slices, and agent evaluations remain deferred.
 
 ## The skill split
 
