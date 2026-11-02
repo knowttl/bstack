@@ -886,7 +886,7 @@ When startup requires a product fix, report the blocker rather than edit product
 
 Propose the testing policy, test gate, constraint principles, slop baseline and comment ban as selected changes in the target's existing authoritative surfaces.
 Prove each enabled lint rule with `rule-proof` and place existing violations in the shrinking baseline.
-On existing repos, audit the suite for the wasteful-test patterns and journeys protected only by unit or mocked tests.
+On existing repos, run the first-contact suite audit defined in [Create Step 7](../skills/verification/SKILL.md#step-7-audit-the-existing-suite).
 Offer no-mistakes wiring and, where absent, setup as a selected step (Q11), without generating GitHub workflows unless explicitly requested.
 
 The kit shape adapts pstack's [create-verification-skill](https://github.com/cursor/plugins/blob/dbf49813a39c1a5389c5e28cb8e4c1c2379e2454/pstack/skills/create-verification-skill/SKILL.md), with the report's host-neutral location and pointer decisions replacing its host-specific path.
@@ -898,7 +898,7 @@ Check index hygiene, assign one read-only source reader per feature where the ho
 Triage discrepancies into doc drift, harness gaps or product bugs.
 Propose reviewed kit corrections for drift and harness gaps, re-drive harness fixes and report product bugs without weakening the map to hide them.
 Hand no-mistakes findings and review comments to the evidence and rung steps of correct mode, which propose each repeated mistake's rung without applying it.
-Audit the suite for the wasteful-test patterns.
+Run the separate suite audit defined in [Maintain Step M7](../skills/verification/SKILL.md#step-m7-audit-and-speed-up-the-suite).
 Report clean, changed through a reviewed change set, or blocked, with coverage and unreachable prerequisites explicit.
 The full pass remains user-invoked; automatic per-change upkeep does not replace it.
 
