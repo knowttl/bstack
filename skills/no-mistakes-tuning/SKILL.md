@@ -74,7 +74,7 @@ For each proposed value, including values that already match the profile and sta
 When a value trades away detection of a class of defect, such as skipping review for a path that can carry behaviour, present it as a decision with its options instead of choosing silently.
 Keep the review instructions short and in plain words; they share the review prompt's size budget.
 
-Done when: The draft in scratch parses as YAML, every existing key is unchanged, every proposed value has its reason and trade-off, and every decision has its options.
+Done when: The draft in scratch parses as YAML, every key outside `auto_fix`, `ignore_patterns` and `review.path_instructions` stays byte-for-byte unchanged, every proposed value has its reason and trade-off, and every decision has its options.
 
 ### Step 4: Review and apply
 
