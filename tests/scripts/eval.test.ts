@@ -1024,7 +1024,7 @@ test('file-tool access requires success for opened and retains attempts for notO
 
 test('scenario fixture hashes bind selected source bytes and overlays without binding unrelated fixtures', async t => {
   const directory = await temporary(t)
-  for (const path of ['scripts', 'runtime', 'skills/repo-audit/scripts', 'skills/repo-audit/schemas', 'skills/verification/scripts',
+  for (const path of ['scripts', 'runtime', 'skills/repo-audit/scripts', 'skills/repo-audit/schemas', 'skills/verification/scripts', 'skills/verification/schemas',
     'tests/fixtures', 'tests/eval/scenarios', 'tests/acceptance', 'node_modules/acorn', 'node_modules/esbuild', 'node_modules/@esbuild']) {
     await cp(join(root, path), join(directory, path), { recursive: true })
   }
