@@ -1403,7 +1403,7 @@ It is numbered after the phase-2 tasks because it extends the verification skill
 2. Extend the constraint reference with the wider evidence and two-occurrence threshold, the replacement-naming diagnostic, the proof on a real past occurrence and the repeat rules.
 3. Add the pstack `correct` source to the pinned manifest and the NOTICE adaptation row.
 4. Define AC-76 to AC-78 and the `correct-recurring-rule` scenario; leave their procedures planned because evaluations are deferred.
-5. Add the `slow-suite`, `gated-slow-suite` and `ts7-comments` fixtures, the TypeScript 7 checker test and the fast-feedback create and maintain scenarios; define AC-118 to AC-121 and leave AC-119 to AC-121 planned.
+5. Add the `slow-suite`, `gated-slow-suite`, `maintained-slow-suite` and `ts7-comments` fixtures, the TypeScript 7 checker test and the fast-feedback create and maintain scenarios; define AC-118 to AC-121 and leave AC-119 to AC-121 planned.
 
 **Done when**
 
