@@ -8,7 +8,7 @@
 
 ```text
 $ npx skills add knowttl/bstack --agent claude-code --yes
-◇  Installed 16 skills ──────────────────────╮
+◇  Installed 17 skills ──────────────────────╮
 │                                            │
 │  ✓ agents-md (copied)                      │
 │    → ./.claude/skills/agents-md            │
@@ -24,6 +24,8 @@ $ npx skills add knowttl/bstack --agent claude-code --yes
 │    → ./.claude/skills/how                  │
 │  ✓ maintenance (copied)                    │
 │    → ./.claude/skills/maintenance          │
+│  ✓ no-mistakes-tuning (copied)             │
+│    → ./.claude/skills/no-mistakes-tuning   │
 │  ✓ plan (copied)                           │
 │    → ./.claude/skills/plan                 │
 │  ✓ prototype (copied)                      │
@@ -176,6 +178,7 @@ Claude Code reads skills from `.claude/skills` and Codex from `.agents/skills`.
 | [`glossary`](skills/glossary/SKILL.md) | Find, resolve and write a project's domain terms in GLOSSARY.md or a glossary map, and keep them true as the project's language changes. |
 | [`how`](skills/how/SKILL.md) | Explain how a part of a codebase works from its code, tests and documents, with every claim cited to a file and line. |
 | [`maintenance`](skills/maintenance/SKILL.md) | Register a project's documents, scopes and checks so they stay true as code changes, wire no-mistakes to check them on every change, and sweep the whole repo now and then for drift. |
+| [`no-mistakes-tuning`](skills/no-mistakes-tuning/SKILL.md) | Tune a repo's no-mistakes gate so review stays on likely, practical defects, fix loops stay bounded, and trivial or config-only changes skip agent review, writing only the approved .no-mistakes.yaml. |
 | [`plan`](skills/plan/SKILL.md) | Write and check one implementation plan from an approved design document, with units that each cite their design, name the boundary they touch and say what proves them done. Never executes the plan. |
 | [`prototype`](skills/prototype/SKILL.md) | Build two or three throwaway variants of a design in scratch, drive and measure each with the project's verification kit, and report the evidence and a recommendation without writing to the repo. |
 | [`readme`](skills/readme/SKILL.md) | Create or audit a project's README.md so people find it, understand it in thirty seconds and can install it, and so an agent can set it up and run it without asking. |
@@ -200,6 +203,8 @@ Claude Code reads skills from `.claude/skills` and Codex from `.agents/skills`.
   It needs an applied kit and stops without one, writes nothing to the repo, and is how you settle a spike unit that `/plan` writes.
 - `/readme` creates or audits a project's `README.md` so it ranks in search, reads in thirty seconds and gives an agent the install path, the single entry point and the commands.
   It checks every command and link against the project, reports content that belongs in other documents and the repository description and topics to set on the host, and writes only the approved README.
+- `/no-mistakes-tuning` reads a repo's `.no-mistakes.yaml` and its no-mistakes run history read-only, and proposes bounded fix rounds, a review focus on practical defects and ignore patterns for trivial files, with a reason and trade-off for each value.
+  It edits only the review-tuning keys, reports machine-wide settings without writing them, never touches the no-mistakes daemon, and writes only the approved `.no-mistakes.yaml`.
 - Skills that write ask you to answer open intent questions, select findings and approve the exact diff before anything is applied.
 - `/foundation` is for a new, empty project only and refuses a non-empty directory.
 - For registering a temporary plan and handling its completion or orphaning, follow the [plan lifecycle guidance](skills/plan/references/plan.md#the-document).
@@ -213,7 +218,7 @@ Bundled scripts enforce the controls below; `baseline check --refresh` can write
 
 | Capability | Skills | How it is unlocked |
 |---|---|---|
-| Apply reviewed target-file edits | `vision`, `glossary`, `architecture`, `verification`, `formal-verification`, `foundation`, `maintenance`, `agents-md`, `readme`, `plan` | `apply` writes the reviewed change set after you approve its exact diff; a changed file hash blocks the write |
+| Apply reviewed target-file edits | `vision`, `glossary`, `architecture`, `verification`, `formal-verification`, `foundation`, `maintenance`, `agents-md`, `readme`, `no-mistakes-tuning`, `plan` | `apply` writes the reviewed change set after you approve its exact diff; a changed file hash blocks the write |
 | Replace the target debt baseline | `architecture`, `verification` | `baseline check --refresh` directly replaces the baseline when validation passes, removing fixed entries; adding an entry also requires `--finding`, `--findings` and `--entry` matching selected unresolved debt. There is no approval prompt or `apply` journal; the skill workflow instead prepares baseline edits in scratch for reviewed `apply` |
 | Create a new Git project | `foundation` | `project create` runs after you approve the exact files and commands, only in an empty destination |
 | Run project commands | `architecture`, `verification`, `formal-verification`, `foundation`, `maintenance`, `prototype` | The workflow requires approved setup, journey and check commands; live probes need `--approved-by-user` on each call. For `architecture`, `verification` and `formal-verification`, `rule-proof` executes the command selected by `--check-plan` and `--check-id` in disposable valid and violation copies, without a separate approval switch. For `prototype`, `kit prove` runs the kit's launch and step commands on scratch clones of the target and never on the target, without a separate approval switch |

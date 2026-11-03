@@ -44,6 +44,7 @@
   "T2.16": ["tests/scripts/prototype.test.ts", "tests/scripts/package-check.test.ts", "tests/scripts/acceptance.test.ts"],
   "T2.17": ["tests/scripts/formal.test.ts", "tests/scripts/upstream.test.ts", "tests/scripts/package-check.test.ts", "tests/scripts/acceptance.test.ts"],
   "T2.18": ["tests/scripts/readme.test.ts", "tests/scripts/package-check.test.ts", "tests/scripts/acceptance.test.ts"],
+  "T2.19": ["tests/scripts/no-mistakes-tuning.test.ts", "tests/scripts/package-check.test.ts", "tests/scripts/acceptance.test.ts"],
   "T3.1": ["tests/scripts/package-check.test.ts", "tests/scripts/skill-skeleton.test.ts"],
   "T3.2": ["tests/scripts/rule-proof.test.ts"],
   "T3.3": ["tests/scripts/baseline.test.ts"],

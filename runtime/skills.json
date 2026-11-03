@@ -78,6 +78,11 @@
     "assets": [],
     "references": ["writing.md"]
   },
+  "no-mistakes-tuning": {
+    "commands": ["apply", "state show"],
+    "schemas": ["change-set.schema.json", "evidence.schema.json", "findings.schema.json", "resume-state.schema.json"],
+    "assets": []
+  },
   "plan": {
     "commands": ["plan check", "apply", "state show", "cite-check"],
     "schemas": [
