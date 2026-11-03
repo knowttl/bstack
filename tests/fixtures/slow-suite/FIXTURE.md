@@ -9,5 +9,5 @@ The test script is a bare `node --test` with no per-test timeout and no suite ce
 The repo has no no-mistakes gate and no hook, so a create run may offer the optional pre-push hook.
 The repo ships no dependencies, so the suite runs offline.
 
-Serves the fast-feedback acceptance for `/verification` create and maintain as fixture inputs.
+Serves the fast-feedback acceptance for `/verification` create; maintained-slow-suite adds an applied kit for maintain.
 These are inputs for acceptance procedures, not evidence that those behaviours pass.

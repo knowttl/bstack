@@ -1085,7 +1085,7 @@
       "id": "fast-feedback-maintain-audit",
       "tier": "full",
       "skills": ["verification"],
-      "fixture": "slow-suite",
+      "fixture": "maintained-slow-suite",
       "request": "Run /verification maintain on this repo and present the suite audit and its ranked proposals only: stop before any selection, protected write or apply. Do not browse or use network commands. Before every Node suite verify at least 8 GB available memory, 20 GB free disk, load below 36, and at most two host-wide Node suites including the proposed run. Count suites without printing host process inventories.",
       "answers": [],
       "checkpoints": ["final"],

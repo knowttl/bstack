@@ -1816,7 +1816,7 @@
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "Run /verification create on the gated-slow-suite fixture, which has a no-mistakes gate, and score that it extends the gate's own configuration with the affected and full commands, offers no pre-push hook and proposes no other file change before the exact diff is approved."
+        "description": "Run /verification create on the gated-slow-suite fixture, which has a no-mistakes gate, and score that it extends the gate's own configuration with the affected and full commands, offers no pre-push hook and applies no file change before the exact diff is approved."
       }
     },
     {
@@ -1829,7 +1829,7 @@
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "Run /verification maintain on the slow-suite fixture and score the ranked audit: the repeated per-file setup with its measured saving and the proof required before reusing it, a per-test timeout, a suite ceiling of about twice the measured time, and no change before the user selects a proposal."
+        "description": "Run /verification maintain on the maintained-slow-suite fixture, which starts with an applied verification kit, and score the ranked audit: the repeated per-file setup with its measured saving and the proof required before reusing it, a per-test timeout, a suite ceiling of about twice the measured time, and no change before the user selects a proposal."
       }
     }
   ]

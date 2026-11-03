@@ -8,7 +8,7 @@ import { execFileSync } from 'node:child_process'
 const sources = dirname(fileURLToPath(import.meta.url))
 
 type HistoryStep = { write?: Record<string, string>; remove?: string[]; paths: string[]; date: string; message: string }
-type FixtureFiles = { base?: string; source?: string; files: string[]; overlay?: string; seed?: Record<string, string>;
+type FixtureFiles = { base?: string; source?: string; files: string[]; overlay?: string; kitPlan?: string; seed?: Record<string, string>;
   dirty?: Record<string, string>; dirtyAppend?: Record<string, string>; remove?: string[]; stage?: string[]; shallow?: boolean }
 type Fixture = FixtureFiles & ({ kind: 'repo'; history: HistoryStep[] } | { kind: 'idea' })
 
@@ -36,6 +36,17 @@ try {
         git('config', '--local', 'user.email', 'fixture@example.invalid')
         git('config', '--local', 'commit.gpgsign', 'false')
         git('config', '--local', 'core.autocrlf', 'false')
+        if (fixture.kitPlan) {
+          const cache = await mkdtemp(join(tmpdir(), 'bstack-kit-seed-'))
+          const entry = join(sources, '../../skills/verification/scripts/verification.mjs')
+          const options = { env: { ...env, XDG_CACHE_HOME: cache, LOCALAPPDATA: cache }, encoding: 'utf8' as const }
+          try {
+            const scaffold = JSON.parse(execFileSync(process.execPath, [entry, 'kit', 'scaffold', '--repo', path, '--plan', join(sources, name, fixture.kitPlan), '--json'], options))
+            execFileSync(process.execPath, [entry, 'apply', '--repo', path, '--plan', scaffold.data.path, '--json'], options)
+          } finally {
+            await rm(cache, { recursive: true, force: true })
+          }
+        }
         for (const step of fixture.history) {
           for (const [file, content] of Object.entries(step.write ?? {})) await writeFile(join(path, file), content)
           for (const file of step.remove ?? []) await rm(join(path, file))

@@ -575,6 +575,10 @@
     "base": "slow-suite",
     "seed": { ".no-mistakes.yaml": "commands:\n  lint: npm run check\n  test: npm test\n" }
   },
+  "maintained-slow-suite": {
+    "base": "slow-suite",
+    "kitPlan": "kit-plan.json"
+  },
   "ts7-comments": {
     "kind": "repo",
     "files": [".gitignore", "package.json", "src"],
