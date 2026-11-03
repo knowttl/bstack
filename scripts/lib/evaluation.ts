@@ -50,6 +50,7 @@ export async function fixtureHash(name: string) {
   const source = fixture.source ?? fixture.base ?? name
   for (const file of fixture.files) await collect(join(directory, source, file), `${source}/${file}`)
   if (fixture.overlay) await collect(join(directory, name, fixture.overlay), `${name}/${fixture.overlay}`)
+  if (fixture.kitPlan) await collect(join(directory, name, fixture.kitPlan), `${name}/${fixture.kitPlan}`)
   await collect(join(directory, name, 'sanity.ts'), `${name}/sanity.ts`)
   if (source !== name && parse((await (await import('esbuild')).transform(await readFile(join(directory, name, 'sanity.ts'), 'utf8'), { loader: 'ts', format: 'esm', target: 'node24' })).code,
     { ecmaVersion: 'latest', sourceType: 'module' }).body.some(node => node.type === 'ImportDeclaration' &&

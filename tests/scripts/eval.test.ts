@@ -1024,7 +1024,7 @@ test('file-tool access requires success for opened and retains attempts for notO
 
 test('scenario fixture hashes bind selected source bytes and overlays without binding unrelated fixtures', async t => {
   const directory = await temporary(t)
-  for (const path of ['scripts', 'runtime', 'skills/repo-audit/scripts', 'skills/repo-audit/schemas',
+  for (const path of ['scripts', 'runtime', 'skills/repo-audit/scripts', 'skills/repo-audit/schemas', 'skills/verification/scripts',
     'tests/fixtures', 'tests/eval/scenarios', 'tests/acceptance', 'node_modules/acorn', 'node_modules/esbuild', 'node_modules/@esbuild']) {
     await cp(join(root, path), join(directory, path), { recursive: true })
   }
@@ -1044,6 +1044,13 @@ test('scenario fixture hashes bind selected source bytes and overlays without bi
   const idea = revision('ambiguous-idea')
   const maintained = revision('maintenance')
   const delta = revision('existing-vision-delta')
+  const orders = revision('fast-feedback-maintain-audit')
+  const kitPlanPath = join(directory, 'tests/fixtures/maintained-slow-suite/kit-plan.json')
+  const kitPlan = JSON.parse(await readFile(kitPlanPath, 'utf8'))
+  kitPlan.description = 'Drive the public order-total and largest-order operations.'
+  await writeFile(kitPlanPath, JSON.stringify(kitPlan))
+  assert.notEqual(revision('fast-feedback-maintain-audit'), orders)
+  assert.equal(revision('ambiguous-idea'), idea)
   const scenariosPath = join(directory, 'tests/eval/scenarios/scenarios.json')
   const scenarios = JSON.parse(await readFile(scenariosPath, 'utf8'))
   scenarios.scenarios.find((scenario: NonNullable<typeof scenarios.scenarios>[number]) => scenario.id === 'existing-repo').fixture = 'ts-rule-proof'
