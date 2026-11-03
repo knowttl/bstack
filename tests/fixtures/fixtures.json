@@ -565,5 +565,19 @@
   "formal-charge-once-violation": {
     "base": "formal-charge-once",
     "overlay": "overlay"
+  },
+  "slow-suite": {
+    "kind": "repo",
+    "files": [".gitignore", "package.json", "src", "support", "test"],
+    "history": [{ "paths": ["."], "message": "feat: establish fixture", "date": "2026-01-08T12:00:00Z" }]
+  },
+  "gated-slow-suite": {
+    "base": "slow-suite",
+    "seed": { ".no-mistakes.yaml": "commands:\n  lint: npm run check\n  test: npm test\n" }
+  },
+  "ts7-comments": {
+    "kind": "repo",
+    "files": [".gitignore", "package.json", "src"],
+    "history": [{ "paths": ["."], "message": "feat: establish fixture", "date": "2026-01-08T12:00:00Z" }]
   }
 }

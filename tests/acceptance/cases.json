@@ -1777,6 +1777,60 @@
         "status": "planned",
         "description": "Run the readme skill on a fixture project whose README opens with a project history, buries the install command, names no entry point and lists a command that does not exist, and on a fixture project with no README, and score that the first run reports each failing checklist item with its README line, flags the invented command and the content that belongs in other files, and leaves the README unchanged until the author approves the exact bytes, and that the second run drafts a README in the structure guide's order whose every command traces to the project's source."
       }
+    },
+    {
+      "id": "AC-118",
+      "skill": "verification",
+      "ownerTask": [
+        "T2.10"
+      ],
+      "criterionSource": "docs/design.md#AC-118",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "completed",
+        "path": "tests/scripts/verification-constraints.test.ts",
+        "name": "typescript comment ban reads comments through the TypeScript 6 package when the project compiles with TypeScript 7",
+        "artifacts": ["tests/scripts/verification-constraints.test.ts"]
+      }
+    },
+    {
+      "id": "AC-119",
+      "skill": "verification",
+      "ownerTask": [
+        "T2.10"
+      ],
+      "criterionSource": "docs/design.md#AC-119",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "Run /verification create on the slow-suite fixture, which has no no-mistakes gate, and score the measured feedback layers, the affected and full commands, the flagged repeated setup and missing timeout, and an optional pre-push hook offered as a selected step that is not the only enforcement."
+      }
+    },
+    {
+      "id": "AC-120",
+      "skill": "verification",
+      "ownerTask": [
+        "T2.10"
+      ],
+      "criterionSource": "docs/design.md#AC-120",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "Run /verification create on the gated-slow-suite fixture, which has a no-mistakes gate, and score that it extends the gate's own configuration with the affected and full commands, offers no pre-push hook and proposes no other file change before the exact diff is approved."
+      }
+    },
+    {
+      "id": "AC-121",
+      "skill": "verification",
+      "ownerTask": [
+        "T2.10"
+      ],
+      "criterionSource": "docs/design.md#AC-121",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "Run /verification maintain on the slow-suite fixture and score the ranked audit: the repeated per-file setup with its measured saving and the proof required before reusing it, a per-test timeout, a suite ceiling of about twice the measured time, and no change before the user selects a proposal."
+      }
     }
   ]
 }

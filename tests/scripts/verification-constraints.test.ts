@@ -1,9 +1,9 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
-import { appendFile, cp, mkdir, mkdtemp, readFile, rename, rm, writeFile } from 'node:fs/promises'
+import { appendFile, cp, mkdir, mkdtemp, readFile, rename, rm, symlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { join } from 'node:path'
+import { join, resolve } from 'node:path'
 import { build, git, runVerification } from './discovery-fixture.ts'
 
 async function scratch(t: import('node:test').TestContext) {
@@ -375,6 +375,23 @@ test('typescript comment ban uses the compiler scanner, ignoring comment-like te
     assert.equal(rejected.exit, 1, rejected.output)
     assert.match(rejected.output, /directive\.ts:\d+:\d+: no-prose-comments/)
   }
+})
+
+test('typescript comment ban reads comments through the TypeScript 6 package when the project compiles with TypeScript 7', async t => {
+  const f = await scratch(t)
+  const repo = build(t, 'ts7-comments')
+  const modules = resolve(import.meta.dirname, '../../node_modules')
+  const installed = JSON.parse(await readFile(join(modules, 'typescript/package.json'), 'utf8')).version
+  assert.equal(installed.split('.')[0], '7', 'the checkout provides the TypeScript 7 this fixture exercises')
+  await symlink(modules, join(repo, 'node_modules'), 'dir')
+  const [command, ...args] = await install(f, repo, 'typescript')
+  args.pop()
+  const failed = execute(repo, command, args)
+  assert.equal(failed.exit, 1, failed.output)
+  assert.match(failed.output, /src\/index\.ts:1:1: no-prose-comments: prose comment: \/\/ explain why the value is fixed/)
+  await writeFile(join(repo, 'src/index.ts'), 'export const retries = 3\n')
+  const clean = execute(repo, command, args)
+  assert.equal(clean.exit, 0, clean.output)
 })
 
 test('typescript comment ban scans untracked files once and excludes ignored files', async t => {

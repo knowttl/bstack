@@ -460,6 +460,7 @@ Tick each task when its "Done when" commands pass.
     [Task evidence](../tests/eval/results/tasks/T2.9.json) records final local checks and platform limitations; see the [README skills table](../README.md#use-with-your-agent) for current enforcement and maintenance availability.
   - [x] T2.10 Add the `/verification correct` mode (after T3.3) - a five-step checklist and the constraint reference's evidence, diagnostic, proof and repeat rules, with no new script.
     The correct-mode scenario is defined and its evaluation stays deferred, so AC-76 to AC-78 keep planned procedures.
+    The fast-feedback fixtures and scenarios add AC-118 to AC-121: AC-118 passes in `tests/scripts/verification-constraints.test.ts`, and AC-119 to AC-121 keep planned procedures.
   - [x] T2.11 Add the `/plan` skill (after T2.10) - a ninth user-started skill that writes and checks one implementation plan from an approved design and never executes it, with `plan check`, its schema and references.
     The plan scenarios are defined and their evaluations stay deferred, so AC-79, AC-80, AC-81 and AC-83 keep planned procedures; AC-82 is covered by `tests/scripts/plan.test.ts`.
   - [x] T2.12 Take the design as input to the setup skills and wire `/plan` into the checklists (after T2.11) - one sentence in each of four new-idea skills and `/plan` last in both repo-audit checklists.
@@ -1402,6 +1403,7 @@ It is numbered after the phase-2 tasks because it extends the verification skill
 2. Extend the constraint reference with the wider evidence and two-occurrence threshold, the replacement-naming diagnostic, the proof on a real past occurrence and the repeat rules.
 3. Add the pstack `correct` source to the pinned manifest and the NOTICE adaptation row.
 4. Define AC-76 to AC-78 and the `correct-recurring-rule` scenario; leave their procedures planned because evaluations are deferred.
+5. Add the `slow-suite`, `gated-slow-suite` and `ts7-comments` fixtures, the TypeScript 7 checker test and the fast-feedback create and maintain scenarios; define AC-118 to AC-121 and leave AC-119 to AC-121 planned.
 
 **Done when**
 
@@ -1409,7 +1411,7 @@ It is numbered after the phase-2 tasks because it extends the verification skill
 - The scenario's checks resolve to verification cases, and the registry matches the design list and this plan.
 - No new script, schema or command exists: the proof and baseline use `rule-proof` and `baseline check`.
 
-**Covers:** AC-76, AC-77, AC-78.
+**Covers:** AC-76, AC-77, AC-78, AC-118, AC-119, AC-120, AC-121.
 
 ### T2.11 Add the `/plan` skill
 
@@ -2226,7 +2228,7 @@ Fixture freshness follows the [evaluation contract](evaluation.md#scenarios-and-
 | T2.7 | AC-26, AC-27, AC-29, AC-30, AC-31, AC-32, AC-33, AC-71 | Bug reproduction, pre-refactor protection, user flows and probe pairs | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
 | T2.8 | AC-5, AC-6, AC-7, AC-38, AC-55, AC-62 | Audit-before-interview and project-specific findings in both stacks | Passing current evidence: AC-5, AC-6, AC-7, AC-38, AC-62 ([inventory](../tests/eval/results/release/approved-evidence.md)). v0.1.1 known issues: AC-55 ([release notes](releases/v0.1.0.md)). |
 | T2.9 | AC-1, AC-2, AC-9, AC-12 | Approved creation, unresolved decision and destination-collision controls | Passing current evidence: AC-2, AC-12 ([inventory](../tests/eval/results/release/approved-evidence.md)). v0.1.1 known issues: AC-1, AC-9 ([release notes](releases/v0.1.0.md)). |
-| T2.10 | AC-76, AC-77, AC-78 | Repeated-mistake evidence and threshold, higher rung with a replacement-naming diagnostic, and proof on a real past occurrence | Procedures planned; the scenario evaluation is deferred. |
+| T2.10 | AC-76, AC-77, AC-78, AC-118, AC-119, AC-120, AC-121 | Repeated-mistake evidence and threshold, higher rung with a replacement-naming diagnostic, and proof on a real past occurrence; the TypeScript 7 checker fallback and the fast-feedback create and maintain fixtures | AC-118 passes in `tests/scripts/verification-constraints.test.ts`; the other procedures are planned and the scenario evaluation is deferred. |
 | T2.11 | AC-79, AC-80, AC-81, AC-82, AC-83 | Inputs and gaps, builder check, story-map units with evidence, `plan check` rejections and acceptance, and the write boundary | AC-82 passes in `tests/scripts/plan.test.ts`; the other procedures are planned and the scenario evaluations are deferred. |
 | T2.12 | AC-84, AC-85, AC-86, AC-87, AC-88 | A named design document taken as the explanation by each of the four setup skills, and `/plan` last in both checklists | AC-88 passes in `tests/scripts/repo-audit-overview.test.ts` against both checklist orders in the installed host prompt; AC-84 to AC-87 are planned and live scenario evaluations are deferred. |
 | T2.13 | AC-89, AC-90, AC-91, AC-92, AC-93, AC-94, AC-95, AC-96, AC-97, AC-98, AC-99, AC-100 | Explicit-only start, repo-first target and tool choice, suite rendering, `formal check` rejections, the `rule-proof` proof and the walkthrough, the generalised gate, `maintain` triage, sweep and repo-audit wiring, the write boundary and the architecture standard | AC-91, AC-92, AC-95 and AC-97 pass in `tests/scripts/formal.test.ts`; AC-93 and AC-94 pass in the same file only with the pinned `tla2tools.jar` and Java, and their recorded result is in the [T2.13 proof record](../tests/eval/results/tasks/T2.13.formal-proof.md); the other procedures are planned and the scenario evaluations are deferred. |
