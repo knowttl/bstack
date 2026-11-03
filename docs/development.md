@@ -16,7 +16,8 @@ The `how`, `why` and `teach` skills explain a codebase from cited evidence and w
 The `recall` skill summarises prior context from the project's local Claude Code and Codex transcripts, read-only, and keeps its output in scratch ([T2.15](implementation-plan.md#t215-add-the-recall-skill)).
 The `prototype` skill builds throwaway variants in scratch clones, measures each with the project's verification kit and recommends one, writing nothing to the repo ([T2.16](implementation-plan.md#t216-add-the-prototype-skill)).
 The `readme` skill creates or audits a project's `README.md` against a structure, a checklist and a leave-out list, and writes only the README the author approves ([T2.18](implementation-plan.md#t218-add-the-readme-skill)).
-The installation below covers repo-audit, verification, vision, glossary, architecture, foundation, agents-md, maintenance, plan, formal-verification, how, why, teach, recall, prototype and readme; audit usage applies to repo-audit.
+The `no-mistakes-tuning` skill proposes a balanced no-mistakes review profile from a repo and its run history, and writes only the `.no-mistakes.yaml` the user approves ([T2.19](implementation-plan.md#t219-add-the-no-mistakes-tuning-skill)).
+The installation below covers repo-audit, verification, vision, glossary, architecture, foundation, agents-md, maintenance, plan, formal-verification, how, why, teach, recall, prototype, readme and no-mistakes-tuning; audit usage applies to repo-audit.
 
 This checkout contains the slim [repo-audit procedure](../skills/repo-audit/SKILL.md), which reads a target at overview level, prints the checklist of skills to run next with a cited reason per line and writes nothing, the document research brief, read-only starting-state inspection, document inventory and citation validation, and the completed T0.4 shared library described in the [command contract](command-contract.md).
 The [vision skill](../skills/vision/SKILL.md) holds the purpose interview, the vision guide, board build, launch and verdict ingestion with a pinned runtime, and protected writing of the approved `VISION.md`; repo-audit lists `/vision` as a next step instead of reviewing the vision itself.
@@ -641,6 +642,13 @@ The [readme skill](../skills/readme/SKILL.md) is started by the user and creates
 It ships `cite-check` for the facts the README states, and `apply` and `state show` for the one reviewed write.
 Its [structure guide](../skills/readme/references/structure.md), [checklist](../skills/readme/references/checklist.md), [leave-out list](../skills/readme/references/leave-out.md), [audit procedure](../skills/readme/references/audit.md) and [sources](../skills/readme/references/sources.md) hold the guidance.
 It reports the repository description and topics to set on the host and never sets them.
+
+### no-mistakes-tuning
+
+The [no-mistakes-tuning skill](../skills/no-mistakes-tuning/SKILL.md) is started by the user and proposes a review profile for one repo's `.no-mistakes.yaml`.
+It ships `apply` and `state show` for the one reviewed write, and no command of its own.
+Its [configuration surface](../skills/no-mistakes-tuning/references/surface.md) and [profile](../skills/no-mistakes-tuning/references/profile.md) references hold the guidance.
+It edits only `auto_fix`, `ignore_patterns` and `review.path_instructions`, and reports global no-mistakes settings without writing them.
 
 ### plan
 

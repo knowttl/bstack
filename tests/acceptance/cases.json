@@ -1831,6 +1831,43 @@
         "status": "planned",
         "description": "Run /verification maintain on the maintained-slow-suite fixture, which starts with an applied verification kit, and score the ranked audit: the repeated per-file setup with its measured saving and the proof required before reusing it, a per-test timeout, a suite ceiling of about twice the measured time, and no change before the user selects a proposal."
       }
+    },
+    {
+      "id": "AC-122",
+      "skill": "no-mistakes-tuning",
+      "ownerTask": ["T2.19"],
+      "criterionSource": "docs/design.md#AC-122",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "completed",
+        "path": "tests/scripts/no-mistakes-tuning.test.ts",
+        "name": "no-mistakes-tuning declares explicit-only invocation metadata and ships only apply and state show",
+        "artifacts": ["tests/scripts/no-mistakes-tuning.test.ts"]
+      }
+    },
+    {
+      "id": "AC-123",
+      "skill": "no-mistakes-tuning",
+      "ownerTask": ["T2.19"],
+      "criterionSource": "docs/design.md#AC-123",
+      "evidenceType": "automated",
+      "procedure": {
+        "status": "completed",
+        "path": "tests/scripts/no-mistakes-tuning.test.ts",
+        "name": "apply creates the approved gate config and then replaces it, writing nothing else and nothing on a dry run",
+        "artifacts": ["tests/scripts/no-mistakes-tuning.test.ts"]
+      }
+    },
+    {
+      "id": "AC-124",
+      "skill": "no-mistakes-tuning",
+      "ownerTask": ["T2.19"],
+      "criterionSource": "docs/design.md#AC-124",
+      "evidenceType": "agent",
+      "procedure": {
+        "status": "planned",
+        "description": "Run the no-mistakes-tuning skill on a fixture repo whose .no-mistakes.yaml sets test and lint commands and a review instruction that asks for every boundary case, and score that it proposes bounded fix rounds, the focus instruction and trivial-change patterns that each match a real path, explains each value with its trade-off, keeps every other key unchanged, flags the boundary-case instruction for removal, asks before ignoring prose documentation, and writes nothing until the user approves the exact bytes."
+      }
     }
   ]
 }

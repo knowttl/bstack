@@ -63,6 +63,7 @@
     "formal-verification": ["T2.17"],
     "how": ["T2.14"],
     "why": ["T2.14"],
+    "no-mistakes-tuning": ["T2.19"],
     "prototype": ["T2.16"],
     "readme": ["T2.18"],
     "recall": ["T2.15"],
