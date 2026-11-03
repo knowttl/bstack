@@ -674,7 +674,7 @@ Hosted CI is not added: the layers below are local, and the delivery gate stays 
 
 The [agents-md command pointers](../skills/agents-md/references/agents-md.md#affected-and-full-commands), [maintenance hook boundary](../skills/maintenance/references/create.md#effect-and-limits) and [repo-audit routing](../skills/repo-audit/SKILL.md#step-4-print-the-checklist) are implemented as skill guidance.
 The [verification fast-feedback reference](../skills/verification/references/fast-feedback.md) provides measurement and suite guidance, and the [foundation checks reference](../skills/foundation/references/checks.md#optional-pre-push-hook) provides the optional hook procedure.
-Remaining fast-feedback integration, checkers and tests are built in later slices, and agent evaluations remain deferred.
+Remaining fast-feedback integration and checkers are built in later slices, and agent evaluations remain deferred.
 
 ## The skill split
 
@@ -2455,6 +2455,10 @@ The implementation plan cites these by number as AC-1, AC-2 and so on.
 115. `/readme` starts only when the user names it, with `disable-model-invocation: true` and an `agents/openai.yaml` that sets `allow_implicit_invocation: false`, ships only `apply`, `state show` and `cite-check`, and starts no other skill (R54).
 116. `apply` run through `/readme` creates and then replaces only the approved `README.md` with exactly the approved bytes, and a dry run changes nothing (R54).
 117. `/readme` on a fixture project whose README buries the install command, names no entry point and lists a command that does not exist reports each failing checklist item with its README line, the invented command and the content that belongs in other files, and leaves the README unchanged until the author approves the exact bytes; on a fixture project with no README it drafts one in the structure guide's order whose every command traces to the project's source (R54).
+118. The generated TypeScript comment-ban checker reads comments through the TypeScript 6 package and reports a prose comment, with its file and line, in a project whose installed `typescript` is version 7 (fast-feedback amendment).
+119. `/verification create` on a fixture repo with no no-mistakes gate and a slow suite that repeats one setup in every test file and sets no timeout records each feedback layer with a measured time, proposes an affected command and a full command, flags the repeated setup and the missing timeout, and offers the optional pre-push hook as a selected step that is never the only enforcement (fast-feedback amendment).
+120. `/verification create` on the same repo once it has a no-mistakes gate extends the gate's own configuration with the affected and full commands, offers no pre-push hook, and leaves every other file untouched until the user approves the exact diff (fast-feedback amendment).
+121. `/verification maintain` on a slow-suite fixture with an applied verification kit audits the suite, ranks the repeated per-file setup by measured saving, proposes reusing it only with a proof that tests clean up, proposes a per-test timeout and a suite ceiling of about twice the measured time, and changes nothing until the user selects a proposal (fast-feedback amendment).
 
 Use disposable test repos for changes, board fixtures and deliberate violations.
 Record the agent, model, operating system, dependency versions, commands and outcomes.

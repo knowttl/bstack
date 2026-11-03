@@ -1,0 +1,47 @@
+{
+  "schemaVersion": 1,
+  "app": "orders",
+  "description": "Verify order totals and largest-order selection through the library's public exports.",
+  "surface": "a JavaScript library imported by Node consumers",
+  "isolation": "Each command runs in its own process with in-memory order data.",
+  "baseline": ["Node 24 or later is on PATH."],
+  "launch": {
+    "command": ["node", "--input-type=module", "-e", "import './src/orders.js'; console.log('orders ready')"],
+    "ready": { "output": "orders ready" },
+    "readiness": "The library imports successfully.",
+    "teardown": "The import process exits on its own."
+  },
+  "doctor": {
+    "command": ["node", "--input-type=module", "-e", "import assert from 'node:assert/strict'; import { total, largest } from './src/orders.js'; assert.equal(typeof total, 'function'); assert.equal(typeof largest, 'function')"],
+    "asserts": "Both public operations are available to a consumer."
+  },
+  "drive": {
+    "harness": "Node assertions against public library exports",
+    "conventions": ["Run commands from the repo root."]
+  },
+  "evidence": {
+    "directory": ".verification/orders",
+    "standards": ["Keep each command's output and exit status in the proof record."]
+  },
+  "cleanup": { "notes": ["Commands leave no persistent product state."] },
+  "helpers": [],
+  "features": [{
+    "id": "orders",
+    "title": "Order totals and selection",
+    "summary": "A library consumer totals line prices and quantities and selects the order with the largest total.",
+    "sourcePaths": ["src/orders.js"],
+    "subFeatures": [
+      { "id": "total", "description": "Sum price times quantity for every line." },
+      { "id": "largest", "description": "Select the order whose total is greatest." }
+    ],
+    "entryPoints": ["Import total and largest from src/orders.js."],
+    "preconditions": ["The library imports successfully."],
+    "steps": [{
+      "label": "Calculate totals and select an order",
+      "command": ["node", "--input-type=module", "-e", "import assert from 'node:assert/strict'; import { total, largest } from './src/orders.js'; const orders = [{ id: 1, lines: [{ price: 5, quantity: 2 }] }, { id: 2, lines: [{ price: 3, quantity: 7 }, { price: 1, quantity: 1 }] }]; assert.equal(total(orders[0].lines), 10); assert.equal(total(orders[1].lines), 22); assert.equal(largest(orders).id, 2); console.log('totals 10 and 22; largest order 2')"],
+      "expect": "Totals are 10 and 22, and order 2 is largest.",
+      "match": "totals 10 and 22; largest order 2"
+    }],
+    "gotchas": ["largest expects a nonempty list of orders."]
+  }]
+}

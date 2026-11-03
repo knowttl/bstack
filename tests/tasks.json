@@ -35,7 +35,7 @@
   "T2.7": ["tests/scripts/run-checks.test.ts", "tests/scripts/probe.test.ts"],
   "T2.8": ["tests/scripts/existing-repo.test.ts", "tests/scripts/eval.test.ts", "tests/scripts/package-check.test.ts"],
   "T2.9": ["tests/scripts/project.test.ts", "tests/scripts/apply.test.ts", "tests/scripts/eval.test.ts"],
-  "T2.10": ["tests/scripts/package-check.test.ts", "tests/scripts/skill-skeleton.test.ts", "tests/scripts/rule-proof.test.ts", "tests/scripts/baseline.test.ts", "tests/scripts/eval.test.ts", "tests/scripts/acceptance.test.ts"],
+  "T2.10": ["tests/scripts/package-check.test.ts", "tests/scripts/skill-skeleton.test.ts", "tests/scripts/rule-proof.test.ts", "tests/scripts/baseline.test.ts", "tests/scripts/verification-constraints.test.ts", "tests/scripts/eval.test.ts", "tests/scripts/acceptance.test.ts"],
   "T2.11": ["tests/scripts/plan.test.ts", "tests/scripts/cite-check.test.ts", "tests/scripts/fixtures.test.ts", "tests/scripts/package-check.test.ts", "tests/scripts/eval.test.ts", "tests/scripts/acceptance.test.ts"],
   "T2.12": ["tests/scripts/repo-audit-overview.test.ts", "tests/scripts/eval.test.ts", "tests/scripts/acceptance.test.ts"],
   "T2.13": ["tests/scripts/formal.test.ts", "tests/scripts/verification-create.test.ts", "tests/scripts/maintenance.test.ts", "tests/scripts/repo-audit-overview.test.ts", "tests/scripts/fixtures.test.ts", "tests/scripts/upstream.test.ts", "tests/scripts/package-check.test.ts", "tests/scripts/eval.test.ts", "tests/scripts/eval-impact.test.ts", "tests/scripts/acceptance.test.ts"],

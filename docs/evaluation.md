@@ -50,7 +50,7 @@ Runs live under `tests/eval/results/runs/<timestamp-and-UUID>/` by default.
 `--results <directory>` chooses another result directory on start, turn, close, score, correct, compare or selection validation.
 Starting a manual run creates a fresh fixture and unique record, with UTC timestamps, source revision, agent, model, OS, tool versions, fixture revision, checkpoint, criteria hash and case results.
 TypeScript fixtures also record npm and fixture-local TypeScript versions.
-The fixture revision is a SHA-256 of the scenario's effective builder definition, selected source files, overlay, fixture sanity script and builder script.
+The fixture revision is a SHA-256 of the scenario's effective builder definition, selected source files, overlay, kit-plan file when declared, fixture sanity script and builder script.
 It also binds the source fixture's sanity script when the selected sanity script imports it.
 Unrelated fixture changes do not invalidate the run.
 Run a committed checkout when recording evidence.

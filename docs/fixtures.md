@@ -11,6 +11,7 @@ The [fixture registry](../tests/fixtures/fixtures.json) declares the files to co
 Each named fixture keeps its `sanity.ts` and any `FIXTURE.md` outside the built workspace.
 Variants reuse source files through `source`, inject independent `seed` files before history, and share native sanity procedures.
 `base` inherits a registry entry's files and settings; an `overlay` directory supplies only the changed or generated files before history is committed.
+For repo fixtures, `kitPlan` names a plan file in the named fixture's source directory that the builder scaffolds and applies through the public verification commands before committing history.
 `selected-ts-shop` inherits `ts-shop` and overlays the selected findings and approved bounded apply plan, retaining the original failing live journey and boundary defects.
 It appends an uncommitted receipt note to `DESIGN.md` for preservation during selected apply and verification.
 See the [evaluation contract](evaluation.md#isolation-and-authentication) for selected-apply approval and scoring.

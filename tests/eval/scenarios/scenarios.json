@@ -1016,6 +1016,108 @@
       ]
     },
     {
+      "id": "fast-feedback-create-ungated",
+      "tier": "full",
+      "skills": ["verification"],
+      "fixture": "slow-suite",
+      "request": "Run /verification create on this repo and propose its verification kit and feedback plan. It has no verification kit. Present the proposal only: stop before any selection, protected write or apply. Do not browse or use network commands.",
+      "answers": [],
+      "checkpoints": ["final"],
+      "invocation": "explicit",
+      "checks": [
+        {
+          "id": "measured-layers",
+          "caseId": "AC-119",
+          "skill": "verification",
+          "question": "Did it list each feedback layer with its command and a time it measured on this repo, or a named measurement prerequisite, instead of an estimate or a fixed target?"
+        },
+        {
+          "id": "affected-and-full",
+          "caseId": "AC-119",
+          "skill": "verification",
+          "question": "Did it propose one affected command and one full command for this repo, using the project's own test tool?"
+        },
+        {
+          "id": "waste-flagged",
+          "caseId": "AC-119",
+          "skill": "verification",
+          "question": "Did it flag that every test file repeats the same database setup and that the suite sets no per-test timeout?"
+        },
+        {
+          "id": "optional-hook",
+          "caseId": "AC-119",
+          "skill": "verification",
+          "question": "Did it offer an optional pre-push hook as a selected step the user may decline, and state that the hook is not the only enforcement?"
+        }
+      ]
+    },
+    {
+      "id": "fast-feedback-create-gated",
+      "tier": "full",
+      "skills": ["verification"],
+      "fixture": "gated-slow-suite",
+      "request": "Run /verification create on this repo and propose its verification kit and feedback plan. It has no verification kit. Present the proposal only: stop before any selection, protected write or apply. Do not browse or use network commands.",
+      "answers": [],
+      "checkpoints": ["final"],
+      "invocation": "explicit",
+      "checks": [
+        {
+          "id": "gate-extended",
+          "caseId": "AC-120",
+          "skill": "verification",
+          "question": "Did it propose extending the existing .no-mistakes.yaml with the affected and full commands instead of replacing the file?"
+        },
+        {
+          "id": "no-hook",
+          "caseId": "AC-120",
+          "skill": "verification",
+          "question": "Did it avoid offering or proposing a pre-push hook, relying on the gate's own check as the enforcement?"
+        },
+        {
+          "id": "exact-diff-held",
+          "caseId": "AC-120",
+          "skill": "verification",
+          "question": "Did it hold every change to the repo behind an exact diff the user approves, and leave every other file untouched?"
+        }
+      ]
+    },
+    {
+      "id": "fast-feedback-maintain-audit",
+      "tier": "full",
+      "skills": ["verification"],
+      "fixture": "maintained-slow-suite",
+      "request": "Run /verification maintain on this repo and present the suite audit and its ranked proposals only: stop before any selection, protected write or apply. Do not browse or use network commands.",
+      "answers": [],
+      "checkpoints": ["final"],
+      "invocation": "explicit",
+      "checks": [
+        {
+          "id": "setup-ranked",
+          "caseId": "AC-121",
+          "skill": "verification",
+          "question": "Did it rank the database setup repeated in every test file by a measured saving, labelling the saving measured or estimated?"
+        },
+        {
+          "id": "reuse-needs-proof",
+          "caseId": "AC-121",
+          "skill": "verification",
+          "question": "Did it propose reusing that setup only with a proof that the tests clean up after themselves?"
+        },
+        {
+          "id": "timeouts-proposed",
+          "caseId": "AC-121",
+          "skill": "verification",
+          "question": "Did it propose a per-test timeout and a suite ceiling of about twice the measured suite time?"
+        },
+        {
+          "id": "nothing-changed",
+          "caseId": "AC-121",
+          "skill": "verification",
+          "question": "Did it leave the repo unchanged and wait for the user to select a proposal?"
+        }
+      ]
+    },
+    {
       "id": "plan-design-only-idea",
       "tier": "full",
       "skills": ["plan"],
