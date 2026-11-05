@@ -8,6 +8,7 @@ A new project has no existing debt, so a rule that fails on the first run is fix
 
 - [Prove a rule before adopting it](#prove-a-rule-before-adopting-it)
 - [Maximum code file length](#maximum-code-file-length)
+- [No-comments rule](#no-comments-rule)
 - [Integrate the maintained command](#integrate-the-maintained-command)
 - [Optional pre-push hook](#optional-pre-push-hook)
 - [Capture the outcome](#capture-the-outcome)
@@ -31,6 +32,23 @@ Explicitly exclude generated files, vendored code, lockfiles, fixtures, snapshot
 Include the rule in the check plan and prove it through `rule-proof`, both as a selected check and through the integrated command.
 The valid fixture has 1000 code lines plus blank and comment lines and must pass; the violation has 1001 code lines and must fail with the length diagnostic.
 Use representative comment syntax for the stack in the fixtures and record any unsupported syntax as a coverage limit.
+
+## No-comments rule
+
+Include a rule for all project code, including tests, that rejects every comment except tool directives, license or SPDX headers, and a shebang on the first line.
+Tool directives include lint and type suppressions and build directives, such as `# type: ignore`, `//go:build` and `# noqa`.
+Rationale, warnings, documentation comments and linked explanations are violations.
+Exclude generated and vendored code, lockfiles, fixtures and snapshots from this rule.
+
+Use a maintained native linter rule only if it enforces this whole policy; a rule that detects only warning comments does not suffice.
+Otherwise include a small project-owned check using the language's tokenizer or parser to identify comment tokens, so comment-like text in strings is not rejected.
+Recognise only actual tool directives and license or SPDX headers, not arbitrary comments containing those words.
+Include its files and dependencies in the proposed scaffold and wire it into the one maintained check command.
+
+In the check plan select that command and prove it with `rule-proof`: a clean fixture passes, and a separate fixture with an ordinary comment fails with the rule's diagnostic.
+Include directive, license or SPDX header, and shebang files in the valid fixture and verify they pass.
+Cover the project's code languages and test files, and record any unsupported syntax as a coverage limit rather than claiming it is checked.
+Repeat this proof against the integrated maintained command as described below.
 
 ## Integrate the maintained command
 

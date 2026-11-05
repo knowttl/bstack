@@ -6,6 +6,7 @@ It never writes a document's content: terms, boundaries and purpose stay with th
 ## Contents
 
 - Register the documents
+- Offer the no-comments rule
 - Write the ownership map
 - Add the docs gate
 - Install the checker
@@ -29,6 +30,20 @@ Map code to documents with `scopes`: each scope lists the code paths a document 
 A rule names a literal sentence in an authoritative document as its `pointer`, and the checks that prove it.
 Use the project's own check command as a leaf check and never invoke the checker from a leaf.
 Add a `generators` entry only for a section that a command renders into a document between markers.
+
+## Offer the no-comments rule
+
+Offer an owner-selected rule that rejects every comment in project code, including tests, except tool directives, license or SPDX headers, and a shebang on the first line.
+Directives include `# type: ignore`, `//go:build` and `# noqa`; rationale, warnings, documentation comments and linked explanations are violations.
+Exclude generated and vendored code, lockfiles, fixtures and snapshots.
+Existing contributor guidance that permits other comments needs reconciliation before adoption.
+
+Use a maintained native linter rule only when it enforces the whole policy; warning-comment rules alone are insufficient.
+Otherwise propose a small project-owned check using the language's tokenizer or parser, recognising actual directives and headers rather than arbitrary comments containing their words.
+Wire the selected check into the project's one maintained check command, and include all proposed files, dependencies, configuration and handling of existing violations in the review.
+Do not alter existing comments or enforcement without the owner's approval of the exact changes.
+Before adoption, prove the selected rule and the integrated command in disposable fixtures: clean code and files with directives, license or SPDX headers and a shebang pass, while a plain comment fails with the expected diagnostic.
+Record unsupported syntax and languages as coverage limits.
 
 ## Write the ownership map
 
