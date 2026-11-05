@@ -27,6 +27,18 @@ Each story becomes one unit or several, and a slice that cannot be checked on it
 Each unit ends in a verifiable state, and the next unit starts only after the previous one is green.
 Order units so the sequence proves itself: a scaffold before the feature on top of it, and a baseline capture before the change it measures.
 
+Size each implementation unit for one reviewable pull request, targeting about 500 hand-written changed lines and a ceiling of about 800.
+Exclude generated files, lockfiles, evidence and fixtures from the estimate.
+Record the estimated hand-written changed lines for each unit in the document.
+Split a unit expected to exceed the ceiling into independently verifiable units, using a stacked sequence of pull requests when needed.
+Each pull request in the stack is its own unit with its own Done when and independent verification; no unit spans several pull requests.
+
+Cut each behavioural unit around one behaviour, with its own independently verifiable Done when check before a later unit builds on it.
+Put contract, schema and interface units first, without changing behaviour.
+Limit each unit to one adapter, tool or area rather than changing them all at once.
+Keep mechanical changes such as renames, moves and regeneration in their own units, separate from logic.
+Keep security and permission rules in their own small units, with an exhaustive table test in each unit's evidence and Done when.
+
 | Field | Contents |
 |---|---|
 | `id` | A stable ID such as `U1`, which the document's heading repeats |
@@ -77,7 +89,7 @@ Use these sections in this order, each heading stating the task or the finding:
 1. A title and a purpose of under ten lines: what is built, for whom, and the units in order.
 2. "How to read this": a unit is done only when its evidence exists and passes, the plan is a description of the work, not an instruction to start it, and the plan is temporary, so it ends with the line ``Remove this plan when `<path>` exists.`` naming one repo-relative file that exists once the last unit is done.
 3. "Build order": the units in dependency order from `plan check`, each with the units it depends on.
-4. One section per unit, headed `### <id> <title>`, with Depends on, Design, Boundary, Done when and Evidence in that order, where Design is the line `Design:` followed by each citation's `path:line` in backticks.
+4. One section per unit, headed `### <id> <title>`, with Depends on, Design, Boundary, estimated hand-written changed lines, Done when and Evidence in that order, where Design is the line `Design:` followed by each citation's `path:line` in backticks.
 5. "Decisions": each answer from the builder check and each default taken, with its source.
 6. "Open questions" and "Gaps": questions the user left open, and each missing input with the skill that would create it.
 
