@@ -50,17 +50,22 @@ Done when: The installed version, both copies of the config, the effective globa
 
 ### Step 2: Read the run history
 
-Run `no-mistakes runs --limit 50` in the target for the run count, statuses, branches and head commits.
-Run `no-mistakes axi status` for the IDs of the ten most recent runs, then for each `no-mistakes axi status --run <id>` and `no-mistakes axi logs --run <id> --step review --full`; older runs have no listed ID, so say how many runs the detail covers.
-Use `no-mistakes stats --run <id>` for the review passes, fix turns and agent time of each run; plain `no-mistakes stats` reads every repo on the machine and is slow.
+Enumerate every run for the target repo, including its ID, status, branch, base and head commits, and pull request when present.
+Check `no-mistakes runs --help` for the installed version's listing options; do not assume its default or a large limit returns every run or includes IDs.
+When the CLI cannot enumerate all IDs, inspect the no-mistakes state store read-only: identify the target's repo record, verify it matches the target, and query all `runs` rows for its `repo_id`, including a total count.
+For the SQLite store at `~/.no-mistakes/state.sqlite`, open the database read-only, inspect the `repos` and `runs` schema for the installed version, and use the repo ID to select the runs; do not modify the store or its daemon.
+For every run, read `no-mistakes axi status --run <id>`, `no-mistakes axi logs --run <id> --step review --full` and `no-mistakes stats --run <id>` for review findings, rounds, fix turns, step durations and agent time.
+Plain `no-mistakes stats` reads every repo on the machine and is slow.
 Record each step's share of run time: when configured test or lint commands dominate, say so, because the keys this skill edits cannot shorten them, and name `/verification`.
 Find each run's changed files from its pull request on the host, read-only, or from `git diff --name-only` between its base and head when both commits are present.
 Only read: never respond to a gate, rerun, abort or answer anything.
 Count review rounds per run, findings by severity and action, findings the user skipped or approved without a fix, and runs whose changed files were all trivial.
-Classify each sampled review finding with the classes in the [profile reference](references/profile.md#finding-classes).
+Classify each review finding read with the classes in the [profile reference](references/profile.md#finding-classes).
+Use a bounded sample only if the full history is unreadable or too large to read in full.
+Record the runs read versus the total, the selection and date range, which details were unavailable, and the specific reason for any incomplete coverage; do not describe a capped listing as the total.
 When the repo has no run history, say so and use the profile's defaults unchanged.
 
-Done when: The history summary in scratch states the runs read, rounds per run, the finding classes with counts, the trivial-change runs and any data that could not be read, or records that no history exists.
+Done when: The history summary in scratch states runs read versus total runs, rounds per run, the finding classes with counts, the trivial-change runs and any data that could not be read, or records that no history exists.
 
 ### Step 3: Draft the profile
 
@@ -95,7 +100,7 @@ Done when: Only the approved `.no-mistakes.yaml` has been written, with unchange
 
 ### Step 5: Report
 
-State the installed version, the history read, the selected and rejected values with their reasons, and the written path or that nothing was written.
+State the installed version, history coverage as runs read versus total runs and the reason for any incomplete coverage, the selected and rejected values with their reasons, and the written path or that nothing was written.
 State that the review instructions take effect only after the file reaches the default branch, and that `auto_fix` and `ignore_patterns` apply from the pushed branch.
 Give the per-run skip commands from the [profile reference](references/profile.md#per-run-skips) for changes the config cannot recognise by path, and its [driving rules](references/profile.md#driving-rules), because no setting bounds the review passes a driver chooses.
 List the global-config recommendations as not applied, with the exact keys.
