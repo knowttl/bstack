@@ -58,7 +58,6 @@ When a browser or device interaction cannot be observed here, report that part a
 ## Choose the native checks
 
 Include setup, formatting, linting, type checking where the stack has it, and tests, using the stack's own tools and one maintained command that runs them together.
-Include the required [maximum code file length check and its proof](checks.md#maximum-code-file-length).
 Use a formatter, linter or type system only when it expresses a required constraint reliably, and separate formatting from design checks.
 Per-language rule mappings are proven in the created project with `rule-proof`, never asserted from a table.
 Testing rules and the verification kit belong to `/verification create`: list it as a next step and do not draft testing guidance here.
@@ -76,6 +75,8 @@ These examples are not bundled policy: use candidates only where they fit the se
 | Python | Ruff for formatting and linting; evaluate ty as a type-checking candidate while it is in beta |
 | Go | Native checks and golangci-lint with its cache |
 | Rust | Native checks and cargo nextest for test execution |
+
+For example, configure ESLint `max-lines` with `max: 1000`, `skipBlankLines: true` and `skipComments: true`; assess pylint's `too-many-lines` (C0302) for equivalent counting before selecting it for Python.
 
 Prove the representative valid cases still pass and the same seeded violations fail with the expected diagnostics, using `rule-proof`.
 Record tool versions and measured time saved before proposing a replacement; speed alone does not establish equivalence.

@@ -26,7 +26,6 @@ Unavailable native tools, interrupted execution and a failed clean setup are blo
 
 Include a lint rule limiting each code file to 1000 code lines, excluding blank lines and comments.
 Use a maintained native linter rule when it can enforce that count, and verify that the chosen rule counts code lines equivalently.
-For example, configure ESLint `max-lines` with `max: 1000`, `skipBlankLines: true` and `skipComments: true`; assess pylint's `too-many-lines` (C0302) for equivalent counting before selecting it for Python.
 If no native rule provides the equivalent count, include a small maintained project-owned check in the one check command that counts code lines using the language's comment syntax.
 Explicitly exclude generated files, vendored code, lockfiles, fixtures, snapshots and migration dumps with globs suited to the project.
 Include the rule in the check plan and prove it through `rule-proof`, both as a selected check and through the integrated command.
