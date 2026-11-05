@@ -35,10 +35,10 @@ Use representative comment syntax for the stack in the fixtures and record any u
 
 ## No-comments rule
 
-Include a rule for all project code, including tests, that rejects every comment except tool directives, license or SPDX headers, and a shebang on the first line.
+Include a rule for all project-authored code, including tests, test fixtures and snapshots that are code, that rejects every comment except tool directives, license or SPDX headers, and a shebang on the first line.
 Tool directives include lint and type suppressions and build directives, such as `# type: ignore`, `//go:build` and `# noqa`.
 Rationale, warnings, documentation comments and linked explanations are violations.
-Exclude generated and vendored code, lockfiles, fixtures and snapshots from this rule.
+Exclude only vendored third-party code, tool-generated output marked as generated, and non-code files such as lockfiles from this rule.
 
 Use a maintained native linter rule only if it enforces this whole policy; a rule that detects only warning comments does not suffice.
 Otherwise include a small project-owned check using the language's tokenizer or parser to identify comment tokens, so comment-like text in strings is not rejected.
@@ -47,6 +47,7 @@ Include its files and dependencies in the proposed scaffold and wire it into the
 
 In the check plan select that command and prove it with `rule-proof`: a clean fixture passes, and a separate fixture with an ordinary comment fails with the rule's diagnostic.
 Include directive, license or SPDX header, and shebang files in the valid fixture and verify they pass.
+Repeat the proof with a plain comment as the sole violation in a project-authored code fixture, such as `tests/fixtures/example.py` in a Python project, and in a snapshot that is code when the project has one; each must fail with the rule's diagnostic.
 Cover the project's code languages and test files, and record any unsupported syntax as a coverage limit rather than claiming it is checked.
 Repeat this proof against the integrated maintained command as described below.
 

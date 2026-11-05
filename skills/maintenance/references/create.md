@@ -33,9 +33,9 @@ Add a `generators` entry only for a section that a command renders into a docume
 
 ## Offer the no-comments rule
 
-Offer an owner-selected rule that rejects every comment in project code, including tests, except tool directives, license or SPDX headers, and a shebang on the first line.
+Offer an owner-selected rule that rejects every comment in project-authored code, including tests, test fixtures and snapshots that are code, except tool directives, license or SPDX headers, and a shebang on the first line.
 Directives include `# type: ignore`, `//go:build` and `# noqa`; rationale, warnings, documentation comments and linked explanations are violations.
-Exclude generated and vendored code, lockfiles, fixtures and snapshots.
+Exclude only vendored third-party code, tool-generated output marked as generated, and non-code files such as lockfiles from this rule.
 Existing contributor guidance that permits other comments needs reconciliation before adoption.
 
 Use a maintained native linter rule only when it enforces the whole policy; warning-comment rules alone are insufficient.
@@ -43,6 +43,7 @@ Otherwise propose a small project-owned check using the language's tokenizer or 
 Wire the selected check into the project's one maintained check command, and include all proposed files, dependencies, configuration and handling of existing violations in the review.
 Do not alter existing comments or enforcement without the owner's approval of the exact changes.
 Before adoption, prove the selected rule and the integrated command in disposable fixtures: clean code and files with directives, license or SPDX headers and a shebang pass, while a plain comment fails with the expected diagnostic.
+Repeat the proof with a plain comment as the sole violation in a project-authored code fixture, such as `tests/fixtures/example.py` in a Python project, and in a snapshot that is code when the project has one; each must fail with the rule's diagnostic.
 Record unsupported syntax and languages as coverage limits.
 
 ## Write the ownership map
