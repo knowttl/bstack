@@ -30,7 +30,8 @@ Order units so the sequence proves itself: a scaffold before the feature on top 
 Size each implementation unit for one reviewable pull request, targeting about 500 hand-written changed lines and a ceiling of about 800.
 Exclude generated files, lockfiles, evidence and fixtures from the estimate.
 Record the estimated hand-written changed lines for each unit in the document.
-Split a unit expected to exceed the ceiling, or state why it cannot be split and propose a stacked sequence of pull requests.
+Split a unit expected to exceed the ceiling into independently verifiable units, using a stacked sequence of pull requests when needed.
+Each pull request in the stack is its own unit with its own Done when and independent verification; no unit spans several pull requests.
 
 Cut each behavioural unit around one behaviour, with its own independently verifiable Done when check before a later unit builds on it.
 Put contract, schema and interface units first, without changing behaviour.
