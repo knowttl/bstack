@@ -7,6 +7,7 @@ A new project has no existing debt, so a rule that fails on the first run is fix
 ## Contents
 
 - [Prove a rule before adopting it](#prove-a-rule-before-adopting-it)
+- [Maximum code file length](#maximum-code-file-length)
 - [Integrate the maintained command](#integrate-the-maintained-command)
 - [Optional pre-push hook](#optional-pre-push-hook)
 - [Capture the outcome](#capture-the-outcome)
@@ -20,6 +21,16 @@ After preparing native dependencies in the clean and the independently seeded fi
 The plan follows `schemas/check-plan.json`, and the selected check supplies the native child-command object.
 The command runs separate disposable copies, records versions, exits and diagnostics in scratch, and removes the copies.
 Unavailable native tools, interrupted execution and a failed clean setup are blocked, never proof.
+
+## Maximum code file length
+
+Include a lint rule limiting each code file to 1000 code lines, excluding blank lines and comments.
+Use a maintained native linter rule when it can enforce that count, and verify that the chosen rule counts code lines equivalently.
+If no native rule provides the equivalent count, include a small maintained project-owned check in the one check command that counts code lines using the language's comment syntax.
+Explicitly exclude generated files, vendored code, lockfiles, fixtures, snapshots and migration dumps with globs suited to the project.
+Include the rule in the check plan and prove it through `rule-proof`, both as a selected check and through the integrated command.
+The valid fixture has 1000 code lines plus blank and comment lines and must pass; the violation has 1001 code lines and must fail with the length diagnostic.
+Use representative comment syntax for the stack in the fixtures and record any unsupported syntax as a coverage limit.
 
 ## Integrate the maintained command
 

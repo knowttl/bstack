@@ -26,6 +26,14 @@ Keep drafts, previews and transcripts in scratch outside the target.
 Only `apply` writes to the target, after the user approves the exact bytes.
 Do not substitute direct project edits or an invented approval for unavailable tooling.
 
+In either mode, offer a maximum file length check as a proposal for an existing bstack project if it does not already enforce the rule.
+Limit each code file to 1000 code lines, excluding blank lines and comments, using a maintained native linter rule with equivalent counting or a small project-owned check when none exists.
+Exclude generated files, vendored code, lockfiles, fixtures, snapshots and migration dumps with explicit project-specific globs.
+Propose wiring it into the project's one check command, with disposable fixtures showing that 1000 code lines plus blank and comment lines pass and 1001 code lines fail with the length diagnostic.
+Prove both the selected check and the integrated command, and record unsupported comment syntax as a coverage limit.
+Present the exact changes for owner approval; do not apply the proposal without approval.
+In create mode, put selected changes in a separate reviewed change set; sweep remains read-only.
+
 ## Create checklist
 
 Copy this checklist and tick a step only when its Done when criterion is met.

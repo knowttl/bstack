@@ -58,6 +58,8 @@ When a browser or device interaction cannot be observed here, report that part a
 ## Choose the native checks
 
 Include setup, formatting, linting, type checking where the stack has it, and tests, using the stack's own tools and one maintained command that runs them together.
+Include the maximum code file length rule and its proof in the check plan and the maintained command.
+For example, configure ESLint `max-lines` with `max: 1000`, `skipBlankLines: true` and `skipComments: true`; assess pylint's `too-many-lines` (C0302) for equivalent counting before selecting it for Python.
 Use a formatter, linter or type system only when it expresses a required constraint reliably, and separate formatting from design checks.
 Per-language rule mappings are proven in the created project with `rule-proof`, never asserted from a table.
 Testing rules and the verification kit belong to `/verification create`: list it as a next step and do not draft testing guidance here.
