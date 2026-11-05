@@ -59,6 +59,8 @@ Dropped: `require-safety-comment-for-type-assertion`, which conflicts with the c
 ## The comment ban
 
 Ban prose comments except the checker-verifiable keep-list below.
+The public API documentation-comment and linked-constraint comment exemptions apply only to projects without the [no-comments rule](../../foundation/references/checks.md#no-comments-rule).
+For projects that adopt that rule, use its policy and proof requirements instead.
 No mainstream linter bans every comment: the Python rules `ERA001` and `FIX002` and the Go linter `godox` cover parts only, so they do not establish the ban.
 
 | Exempt | Examples |
@@ -85,6 +87,7 @@ Documentation position or a link cannot exempt an otherwise invalid suppression.
 An explanation after `--` does not replace the required rule name.
 
 Generate the checker with `comment-check generate --repo <target> --language python|go|typescript --json`.
+This generator retains the public API documentation-comment and linked-constraint comment exemptions, so its output does not establish enforcement of the no-comments rule.
 It uses the language's own tokenizer, so comment-like text inside strings, regular expressions and templates is never flagged.
 It is self-contained, contains no comments itself, runs without bstack and exits 1 with `path:line:column: no-prose-comments: prose comment: <text>` for each violation.
 Propose it as a selected `create` edit at the returned suggested path and wire it into the maintained check command.

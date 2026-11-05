@@ -92,7 +92,8 @@ Done when: Each selected testing change names its destination, the principle it 
 
 Propose the default slop baseline and the prose-comment ban as selected changes, each implemented with the project's native tools first.
 Research the project's language and tools; a rule name alone never proves equivalent enforcement.
-Generate the comment-ban checker with `node scripts/verification.mjs comment-check generate --repo <target> --language <python|go|typescript> --json`, and propose it as a selected `create` edit wired into the project's one maintained check command.
+Check the project's adopted comment policy against the [slop baseline's exemptions and generator limits](references/slop-baseline.md#the-comment-ban).
+Where those exemptions apply, generate the comment-ban checker with `node scripts/verification.mjs comment-check generate --repo <target> --language <python|go|typescript> --json`, and propose it as a selected `create` edit wired into the project's one maintained check command.
 Triage existing comments into delete, reshape, encode or keep-exempt before baselining unresolved violations, following the slop baseline reference.
 Report product reshaping rather than performing it; removal and encoding stay selected findings requiring approval.
 Prove every enabled rule with `rule-proof` and put unresolved violations into a shrinking baseline with `baseline check`.
