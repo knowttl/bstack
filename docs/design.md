@@ -139,7 +139,7 @@ R29 records the scope amendment.
 | Q4 | Offline network blocking in every repo where the runner supports it |
 | Q5 | Third-party lens only for external service or API integrations involving authentication, secrets or rate limits |
 | Q6 | Full community anti-slop ruleset by default, expressed as language-agnostic principles with native per-project implementations |
-| Q7, Q13 | Ban prose comments; exempt rule-specific machine directives, legally required license headers, doc comments on exported/public declarations and comments carrying a link explaining an external constraint (inverted-pyramid D1) |
+| Q7, Q13 | Ban prose comments under the [comment policy and its project-specific exemptions](#default-slop-baseline-and-comment-ban-q6-q7-q13) (inverted-pyramid D1) |
 | P1-P10 | Keep all ten testing principles and the four-question test gate below |
 | Q8 | Use the kit while building, then independently through no-mistakes using the same kit |
 | Q11 | Also offer selected no-mistakes setup in repos without it |
@@ -598,7 +598,7 @@ The IDs in this section belong to this review, not the earlier testing principle
 
 | Decision | Approved requirement |
 |---|---|
-| D1 | Amend Q7: retain the comment ban and its machine-directive and legal-header exemptions, plus a checker-verifiable keep-list of doc comments on exported/public declarations and comments carrying a link explaining an external constraint |
+| D1 | Amend Q7 with the checker-verifiable keep-list in the [comment policy](#default-slop-baseline-and-comment-ban-q6-q7-q13), subject to the project's adopted no-comments rule |
 | D2 | Retain L6 and L7: new violations fail the one maintained command, existing violations ratchet in a shrinking baseline, and hosted CI is wired only when selected |
 | D3 | `/agents-md` classifies kept non-pointer rules by rung and routes enforceable rules to `/verification correct`; judgment remains prose |
 
@@ -1026,8 +1026,11 @@ The [package check contract](command-contract.md#package-check) owns the tool-na
 Every enabled mapping needs project-specific configuration and `rule-proof` evidence; use a custom syntax-tree check only for a demonstrated native-tool gap.
 
 Ban prose comments, exempting rule-specific machine directives, legally required license headers, doc comments on exported/public declarations and comments carrying a link explaining an external constraint (inverted-pyramid D1 amends Q7).
+The public API documentation-comment and linked-constraint comment exemptions apply only to projects without the [no-comments rule](../skills/foundation/references/checks.md#no-comments-rule).
+For projects that adopt that rule, use its policy and proof requirements instead.
 Examples of exempt directives include build/generate directives, shebangs, named-rule lint suppressions and coded type ignores.
 Generate a language-tokenizer-based check for comment tokens, using syntax-position detection for exported/public doc comments; partial native comment rules do not establish the complete ban.
+The existing verification comment-check generator retains the broader exemptions and does not establish enforcement of the no-comments rule.
 The keep-list must be checker-verifiable; review still judges whether a linked source explains an external constraint.
 Before removing a warning such as a do-not-remove comment, encode its protected requirement as a type, test or lint constraint.
 Before baselining existing comments, triage each listed comment into delete, reshape, encode or keep-exempt under inverted-pyramid P1.

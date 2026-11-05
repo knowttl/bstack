@@ -14,6 +14,7 @@ Resolve the target and the mode, `create` or `sweep`, before proceeding.
 Use `create` when the repo has no `.bstack/project.json` or the user wants its registration or wiring changed, and `sweep` when it has one; if the user's choice contradicts the repo, say so and ask.
 
 Create registers the project's documents, the code scopes that govern them, the rules they state and the checks that prove them in `.bstack/project.json`.
+Offer the [no-comments rule](references/create.md#offer-the-no-comments-rule) as a separate proposal for an existing project; apply it only after the owner approves its exact changes.
 It installs the dependency-free checker at `.bstack/bin/bstack-check.mjs` and wires no-mistakes with an ownership map for its Document step and a docs gate after it, so everyday upkeep needs nothing new from the user.
 Sweep is the user-started, read-only check of every registered document, the verification kit, each `formal-*` formal verification suite and the `AGENTS.md` pointers against the whole repo.
 It returns one list that names the mode that fixes each item and fixes nothing itself.
@@ -127,6 +128,7 @@ Done when: Every registered document is judged drifted with citations, or judged
 ### Step 8: Report one list
 
 Merge the command's problems and the judged items into one list, one line per item, each naming the file, what drifted and the mode that fixes it, such as `3 new terms - run /glossary maintain`.
+Offer the no-comments rule separately as described in the [create guide](references/create.md#offer-the-no-comments-rule), without changing the target during sweep.
 Group items by mode in the order `/maintenance`, `/glossary maintain`, `/architecture maintain`, `/vision`, `/verification maintain` and `/agents-md`.
 State what the sweep checked, what it could not, and that nothing was written.
 Include unresolved coverage limits as unchecked scope in this account, without labelling them drift or assigning a repair mode.

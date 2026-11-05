@@ -55,7 +55,7 @@ Done when: The technical context is agreed or named as gaps, the user has confir
 
 ### Step 3: Propose the foundation
 
-Load the [foundation reference](references/foundation.md), draft the README quickstart for the first user journey, and then propose the stack with its alternatives, the minimal scaffold, the setup commands, the native checks and the first journey with its acceptance check.
+Load the [foundation reference](references/foundation.md), draft the README quickstart for the first user journey, and then propose the stack with its alternatives, the minimal scaffold, the setup commands, the checks including the [no-comments rule](references/checks.md#no-comments-rule), and the first journey with its acceptance check.
 Tie each choice to a requirement from the vision or the confirmed context, and keep out speculative frameworks, services, integrations and empty document templates.
 Write the README and any other proposed document by the [writing reference](references/writing.md).
 Retain the proposal in scratch as findings following `schemas/findings.schema.json` with stage `foundation`, the destination as a workspace target with revision null, and `journey` and `foundation-review` in `requiredOutcomes`.
@@ -91,7 +91,7 @@ Done when: Only the approved scaffold exists at the reviewed destination in a ne
 Read the returned creation record for the captured setup and first-journey results.
 A failed or interrupted command leaves the project unverified and available for recovery, and an attempted command is never rerun automatically.
 Run the maintained command and capture fresh evidence on the created project, following the [checks reference](references/checks.md#capture-the-outcome).
-Prove each selected native rule with `rule-proof`, and add later selected changes to the created project through `apply --repo <destination>` with the same review rules.
+Prove each selected rule, including the no-comments rule, with `rule-proof`, and add later selected changes to the created project through `apply --repo <destination>` with the same review rules.
 State the destination, the stack and its alternatives, the first journey and its evidence, the proved rules, the written paths, the unresolved decisions and every verification limit.
 List `/verification create`, `/maintenance` and `/agents-md` as next steps for the user to run, and `/architecture` when no design was supplied, and start none of them.
 
