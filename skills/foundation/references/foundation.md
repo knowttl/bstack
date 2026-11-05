@@ -3,7 +3,7 @@
 Use this reference to propose the smallest sound foundation for a new project.
 Start from the approved vision, the confirmed technical context, the glossary and the design when the user ran them.
 Stack and scaffold choices below are candidates tied to requirements, never defaults.
-The [no-comments rule](checks.md#no-comments-rule) is part of the proposed foundation.
+The no-comments rule is part of the proposed foundation.
 
 ## Contents
 
@@ -59,7 +59,7 @@ When a browser or device interaction cannot be observed here, report that part a
 ## Choose the native checks
 
 Include setup, formatting, linting, type checking where the stack has it, and tests, using the stack's own tools and one maintained command that runs them together.
-Include the [no-comments rule and its proof](checks.md#no-comments-rule).
+Include the no-comments rule and its proof.
 Use a formatter, linter or type system only when it expresses a required constraint reliably, and separate formatting from design checks.
 Per-language rule mappings are proven in the created project with `rule-proof`, never asserted from a table.
 Testing rules and the verification kit belong to `/verification create`: list it as a next step and do not draft testing guidance here.

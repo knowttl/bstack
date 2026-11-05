@@ -59,7 +59,7 @@ Dropped: `require-safety-comment-for-type-assertion`, which conflicts with the c
 ## The comment ban
 
 Ban prose comments except the checker-verifiable keep-list below.
-The public API documentation-comment and linked-constraint comment exemptions apply only to projects without the [no-comments rule](../../foundation/references/checks.md#no-comments-rule).
+The public API documentation-comment and linked-constraint comment exemptions apply only to projects without the no-comments rule.
 For projects that adopt that rule, use its policy and proof requirements instead.
 No mainstream linter bans every comment: the Python rules `ERA001` and `FIX002` and the Go linter `godox` cover parts only, so they do not establish the ban.
 
