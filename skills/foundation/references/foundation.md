@@ -2,7 +2,7 @@
 
 Use this reference to propose the smallest sound foundation for a new project.
 Start from the approved vision, the confirmed technical context, the glossary and the design when the user ran them.
-Every choice below is a candidate tied to a requirement, never a default.
+Stack and scaffold choices below are candidates tied to requirements, never defaults.
 
 ## Contents
 
@@ -75,6 +75,8 @@ These examples are not bundled policy: use candidates only where they fit the se
 | Python | Ruff for formatting and linting; evaluate ty as a type-checking candidate while it is in beta |
 | Go | Native checks and golangci-lint with its cache |
 | Rust | Native checks and cargo nextest for test execution |
+
+For example, configure ESLint `max-lines` with `max: 1000`, `skipBlankLines: true` and `skipComments: true`; assess pylint's `too-many-lines` (C0302) for equivalent counting before selecting it for Python.
 
 Prove the representative valid cases still pass and the same seeded violations fail with the expected diagnostics, using `rule-proof`.
 Record tool versions and measured time saved before proposing a replacement; speed alone does not establish equivalence.
