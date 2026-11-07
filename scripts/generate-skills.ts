@@ -1,7 +1,7 @@
 import { mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises'
 import { dirname, join, relative } from 'node:path'
 import { fileURLToPath, pathToFileURL } from 'node:url'
-import { bundle } from './lib/bundle.ts'
+import { bundle, commandModule } from './lib/bundle.ts'
 import type { SkillBundle, CommandRegistry } from './lib/bundle.ts'
 import type { Plugin } from 'esbuild'
 
@@ -25,11 +25,12 @@ const resourceUrls: Plugin = {
   }
 }
 
-function entryFor(skill: string, names: readonly string[], registry: CommandRegistry) {
-  const modules = [...new Set(names.map((name) => registry[name].module))]
+function entryFor(skill: string, names: readonly string[], registry: CommandRegistry, definition: SkillBundle) {
+  const moduleOf = (name: string) => commandModule(definition, registry, name)
+  const modules = [...new Set(names.map(moduleOf))]
   const commands = names.map((name) => {
-    const { module, options, help } = registry[name]
-    return `  ${JSON.stringify(name)}: { options: ${JSON.stringify(options)}, help: ${JSON.stringify(help.replaceAll('{entry}', `${skill}.mjs`))}, run: run${modules.indexOf(module)} }`
+    const { options, help } = registry[name]
+    return `  ${JSON.stringify(name)}: { options: ${JSON.stringify(options)}, help: ${JSON.stringify(help.replaceAll('{entry}', `${skill}.mjs`))}, run: run${modules.indexOf(moduleOf(name))} }`
   })
   return [`import { dispatch } from './dispatch.mjs'`, ...modules.map((module, index) => `import { run as run${index} } from ${JSON.stringify(module)}`),
     `await dispatch(process.argv.slice(2), ${JSON.stringify(skill)}, {\n${commands.join(',\n')}\n})`].join('\n') + '\n'
@@ -40,13 +41,14 @@ async function generatedFiles() {
   const skills: Record<string, SkillBundle> = JSON.parse(await readFile(join(source, 'skills.json'), 'utf8'))
   const files = new Map<string, Buffer>()
   const problems = []
-  for (const [skill, { commands, schemas, assets, references = [], vendored = [] }] of Object.entries(skills)) {
+  for (const [skill, definition] of Object.entries(skills)) {
+    const { commands, schemas, assets, references = [], vendored = [] } = definition
     const unknown = commands.filter((name) => !Object.hasOwn(registry, name))
     if (unknown.length) {
       problems.push(`${skill} lists commands missing from runtime/scripts/commands.mjs: ${unknown.join(', ')}`)
       continue
     }
-    const result = await bundle(root, { stdin: { contents: entryFor(skill, Object.keys(registry).filter(name => commands.includes(name)), registry),
+    const result = await bundle(root, { stdin: { contents: entryFor(skill, Object.keys(registry).filter(name => commands.includes(name)), registry, definition),
       resolveDir: join(source, 'scripts'), sourcefile: `runtime/scripts/${skill}.mjs` }, plugins: [resourceUrls] })
     // An import outside runtime/ would pull an unreviewed dependency into the skill's single file.
     const outside = Object.keys(result.metafile.inputs).filter(path => !path.startsWith('runtime/') && path !== 'node_modules/marked/lib/marked.esm.js')

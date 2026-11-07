@@ -110,6 +110,43 @@ Missing or unsupported arguments are a usage error (exit 3).`);
   }
 }
 
+// runtime/scripts/commands/no-mistakes-tuning-apply.mjs
+import { readFile as readFile4 } from "node:fs/promises";
+
+// runtime/scripts/lib/json.mjs
+function inspectJSON(text) {
+  const value = JSON.parse(text, (key, value2) => {
+    if (typeof value2 === "number" && !Number.isFinite(value2)) throw new CommandError("failed", [{ code: "nonfinite-number", message: "JSON numbers must be finite.", fix: "Supply finite numbers in every JSON value." }]);
+    return value2;
+  });
+  const tokens = [...text.matchAll(/"(?:[^"\\]|\\.)*"|[{}\[\],:]|[^\s{}\[\],:]+/g)];
+  const entries = /* @__PURE__ */ new Map();
+  let index = 0;
+  function consume(root = false) {
+    const token = tokens[index++][0];
+    if (token !== "{" && token !== "[") return;
+    const keys = /* @__PURE__ */ new Set();
+    const close = token === "{" ? "}" : "]";
+    while (tokens[index][0] !== close) {
+      let key;
+      if (token === "{") {
+        key = JSON.parse(tokens[index++][0]);
+        if (keys.has(key)) throw new CommandError("failed", [{ code: "duplicate-key", message: `Duplicate JSON key: ${key}`, fix: "Supply JSON with unique member names in every object." }]);
+        keys.add(key);
+        index++;
+      }
+      const start = tokens[index].index;
+      consume();
+      const last = tokens[index - 1];
+      if (root && token === "{") entries.set(key, { start, end: last.index + last[0].length });
+      if (tokens[index][0] === ",") index++;
+    }
+    index++;
+  }
+  consume(true);
+  return { value, entries, close: tokens[index - 1].index };
+}
+
 // runtime/scripts/commands/apply.mjs
 import { readFile as readFile3 } from "node:fs/promises";
 import { dirname as dirname4, relative as relative3, resolve as resolve4 } from "node:path";
@@ -201,40 +238,6 @@ async function resolveFilePath(root, input2, reviewedPath, allowMissingLinks = f
     throw error;
   }
   throw new CommandError("failed", [{ code: "invalid-scope", message: "Reviewed scope must identify a regular file or a planned absent file.", fix: "List concrete file paths, including planned absent files.", path: input2 }]);
-}
-
-// runtime/scripts/lib/json.mjs
-function inspectJSON(text) {
-  const value = JSON.parse(text, (key, value2) => {
-    if (typeof value2 === "number" && !Number.isFinite(value2)) throw new CommandError("failed", [{ code: "nonfinite-number", message: "JSON numbers must be finite.", fix: "Supply finite numbers in every JSON value." }]);
-    return value2;
-  });
-  const tokens = [...text.matchAll(/"(?:[^"\\]|\\.)*"|[{}\[\],:]|[^\s{}\[\],:]+/g)];
-  const entries = /* @__PURE__ */ new Map();
-  let index = 0;
-  function consume(root = false) {
-    const token = tokens[index++][0];
-    if (token !== "{" && token !== "[") return;
-    const keys = /* @__PURE__ */ new Set();
-    const close = token === "{" ? "}" : "]";
-    while (tokens[index][0] !== close) {
-      let key;
-      if (token === "{") {
-        key = JSON.parse(tokens[index++][0]);
-        if (keys.has(key)) throw new CommandError("failed", [{ code: "duplicate-key", message: `Duplicate JSON key: ${key}`, fix: "Supply JSON with unique member names in every object." }]);
-        keys.add(key);
-        index++;
-      }
-      const start = tokens[index].index;
-      consume();
-      const last = tokens[index - 1];
-      if (root && token === "{") entries.set(key, { start, end: last.index + last[0].length });
-      if (tokens[index][0] === ",") index++;
-    }
-    index++;
-  }
-  consume(true);
-  return { value, entries, close: tokens[index - 1].index };
 }
 
 // runtime/scripts/lib/fingerprint.mjs
@@ -2847,8 +2850,33 @@ async function run(options) {
   return result.status ? { inputs, ...result } : { inputs, data: result };
 }
 
-// runtime/scripts/commands/state.mjs
+// runtime/scripts/commands/no-mistakes-tuning-apply.mjs
+var gateConfig = ".no-mistakes.yaml";
+function listsGateConfig(text) {
+  const section = text.match(/^ignore_patterns:.*(?:\n(?!\S).*)*/m)?.[0] ?? "";
+  return /(?:["'\s\[,])\.no-mistakes\.yaml(?=["'\s\],]|$)/m.test(section.replace(/#.*$/gm, ""));
+}
+async function proposedGateConfigs(file) {
+  try {
+    return inspectJSON(await readFile4(file, "utf8")).value.edits.filter((edit) => edit.path === gateConfig).map((edit) => edit.proposedContent ?? "");
+  } catch {
+    return [];
+  }
+}
 async function run2(options) {
+  if ((await proposedGateConfigs(options.plan)).some((text) => !listsGateConfig(text))) {
+    throw new CommandError("failed", [{
+      code: "gate-config-not-ignored",
+      message: "The proposed .no-mistakes.yaml must list itself in ignore_patterns.",
+      path: gateConfig,
+      fix: "Propose ignore_patterns that include .no-mistakes.yaml, then review the exact bytes again."
+    }]);
+  }
+  return run(options);
+}
+
+// runtime/scripts/commands/state.mjs
+async function run3(options) {
   if (!options.run) throw new CommandError("usage-error", [{ code: "missing-run", message: "--run is required.", fix: "Supply the run ID returned by apply." }]);
   const target = await resolveTarget(options, { draftOnly: true });
   const { journal } = await loadJournal(target, options.run);
@@ -2858,6 +2886,6 @@ async function run2(options) {
 
 // runtime/scripts/runtime/scripts/no-mistakes-tuning.mjs
 await dispatch(process.argv.slice(2), "no-mistakes-tuning", {
-  "apply": { options: ["plan", "dry-run", "approved-fingerprint"], help: "Apply or resume a reviewed change set with recoverable originals.\nUsage: no-mistakes-tuning.mjs apply --repo <path>|--workspace <path> --plan <file> [--dry-run] [--approved-fingerprint <planDigest>] [--json]\nPlan follows schemas/change-set.schema.json. --dry-run previews exact bytes without writes. Assessment writes require --approved-fingerprint matching the preview planDigest; that value must come from the owner's approval reply for the exact preview, never from the agent's own approval. Repeating a plan resumes its digest-bound run and still requires the approved fingerprint for assessment writes.\nDigests use SHA-256 of UTF-8 JSON: recursively sort object keys, preserve array order, encode keys and primitive values with JSON.stringify and omit whitespace between tokens. Hash the complete findings object for findingsDigest; omit only the top-level planDigest when hashing each plan. Creation changeSetDigest equals the referenced change set's planDigest.", run },
-  "state show": { options: ["run"], help: "Inspect actual pending, applied and conflicting edits without writes.\nUsage: no-mistakes-tuning.mjs state show --repo <path>|--workspace <path> --run <id> [--json]", run: run2 }
+  "apply": { options: ["plan", "dry-run", "approved-fingerprint"], help: "Apply or resume a reviewed change set with recoverable originals.\nUsage: no-mistakes-tuning.mjs apply --repo <path>|--workspace <path> --plan <file> [--dry-run] [--approved-fingerprint <planDigest>] [--json]\nPlan follows schemas/change-set.schema.json. --dry-run previews exact bytes without writes. Assessment writes require --approved-fingerprint matching the preview planDigest; that value must come from the owner's approval reply for the exact preview, never from the agent's own approval. Repeating a plan resumes its digest-bound run and still requires the approved fingerprint for assessment writes.\nDigests use SHA-256 of UTF-8 JSON: recursively sort object keys, preserve array order, encode keys and primitive values with JSON.stringify and omit whitespace between tokens. Hash the complete findings object for findingsDigest; omit only the top-level planDigest when hashing each plan. Creation changeSetDigest equals the referenced change set's planDigest.", run: run2 },
+  "state show": { options: ["run"], help: "Inspect actual pending, applied and conflicting edits without writes.\nUsage: no-mistakes-tuning.mjs state show --repo <path>|--workspace <path> --run <id> [--json]", run: run3 }
 });

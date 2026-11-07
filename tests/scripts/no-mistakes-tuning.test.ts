@@ -61,8 +61,8 @@ test('no-mistakes-tuning declares explicit-only invocation metadata and ships on
 
 test('apply creates the approved gate config and then replaces it, writing nothing else and nothing on a dry run', async t => {
   const { directory, repo } = await emptyRepo(t)
-  const first = 'commands:\n  test: npm test\n'
-  const second = `${first}auto_fix:\n  review: 2\nignore_patterns:\n  - ".gitignore"\n`
+  const first = 'commands:\n  test: npm test\nignore_patterns:\n  - ".no-mistakes.yaml"\n'
+  const second = 'commands:\n  test: npm test\nauto_fix:\n  review: 2\nignore_patterns:\n  - ".gitignore"\n  - ".no-mistakes.yaml"\n'
 
   const before = await snapshot(repo)
   const createPlan = await approvedPlan(directory, repo, null, first)
@@ -78,3 +78,36 @@ test('apply creates the approved gate config and then replaces it, writing nothi
   assert.deepEqual(await snapshot(repo), { ...before, [config]: hash(second) })
   assert.equal(tuning(directory, ['state', 'show', '--repo', repo, '--run', replaced.data.runId]).exit, 0)
 })
+
+const refusedGateConfigs = {
+  'no ignore_patterns key': 'commands:\n  test: npm test\n',
+  'ignore_patterns without the gate config': 'ignore_patterns:\n  - ".gitignore"\n',
+  'gate config only in a comment': 'ignore_patterns:\n  - ".gitignore" # .no-mistakes.yaml\n',
+  'gate config under another directory': 'ignore_patterns:\n  - "upstream/.no-mistakes.yaml"\n',
+}
+
+for (const [name, proposed] of Object.entries(refusedGateConfigs)) {
+  test(`apply refuses a gate config that does not list itself in ignore_patterns: ${name}`, async t => {
+    const { directory, repo } = await emptyRepo(t)
+    const before = await snapshot(repo)
+    const plan = await approvedPlan(directory, repo, null, proposed)
+    const dryRun = tuning(directory, ['apply', '--repo', repo, '--plan', plan, '--dry-run'])
+    assert.equal(dryRun.status, 'failed')
+    assert.deepEqual(dryRun.problems.map((problem: { code: string }) => problem.code), ['gate-config-not-ignored'])
+    assert.equal(tuning(directory, ['apply', '--repo', repo, '--plan', plan]).exit, 1)
+    assert.deepEqual(await snapshot(repo), before)
+  })
+}
+
+const acceptedGateConfigs = {
+  'block list': 'ignore_patterns:\n  - ".gitignore"\n  - ".no-mistakes.yaml"\n',
+  'single-quoted flow list': "ignore_patterns: ['upstream/**', '.no-mistakes.yaml']\n",
+}
+
+for (const [name, proposed] of Object.entries(acceptedGateConfigs)) {
+  test(`apply accepts a gate config that lists itself in ignore_patterns: ${name}`, async t => {
+    const { directory, repo } = await emptyRepo(t)
+    const plan = await approvedPlan(directory, repo, null, proposed)
+    assert.equal(tuning(directory, ['apply', '--repo', repo, '--plan', plan, '--dry-run']).status, 'passed')
+  })
+}

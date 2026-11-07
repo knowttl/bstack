@@ -44,6 +44,8 @@ These patterns come from several thousand recorded runs across about thirty repo
 | Review focus in `review.path_instructions` | The [focus instruction](#focus-instruction) under path `**` | Narrows findings to ordinary-use defects and makes everything else non-blocking `info` | Rare edge cases and speculative hardening are no longer blocking unless the change targets them |
 | `ignore_patterns` | The [trivial-change list](#trivial-changes) entries that match real paths | When every changed file is trivial, review and documentation skip with no agent call | Changes to those files get no agent review |
 
+Every proposed `ignore_patterns` always includes `.no-mistakes.yaml`, even when the file does not exist yet, so the gate config is excluded from agent review by default.
+
 Leave `auto_fix.lint`, `auto_fix.ci` and `auto_fix.rebase` at their current values unless the history shows rounds wasted there.
 Keep any existing test-quality rule to one short instruction, because each test-quality finding costs a full review pass.
 

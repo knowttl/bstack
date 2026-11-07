@@ -80,6 +80,7 @@
   },
   "no-mistakes-tuning": {
     "commands": ["apply", "state show"],
+    "commandModules": { "apply": "./commands/no-mistakes-tuning-apply.mjs" },
     "schemas": ["change-set.schema.json", "evidence.schema.json", "findings.schema.json", "resume-state.schema.json"],
     "assets": []
   },
