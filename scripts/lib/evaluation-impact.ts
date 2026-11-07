@@ -3,7 +3,7 @@ import { join, posix } from 'node:path'
 import { pathToFileURL } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { evaluatedSkills, fail } from './evaluation.ts'
-import type { SkillBundle } from './bundle.ts'
+import { commandModule, type SkillBundle } from './bundle.ts'
 import type { Scenario } from './evaluation-types.ts'
 
 // Skill-owned keys are qualified by the skill folder; shared runtime and installer keys are not.
@@ -53,7 +53,7 @@ async function scenarioCovers(repo: string, definition: Scenario, skills: Record
   const { commands } = await import(pathToFileURL(join(repo, 'runtime/scripts/commands.mjs')).href)
   const covers = ['install/']
   for (const skill of await evaluatedSkills(definition, definition.checkpoints.at(-1)!)) {
-    const modules = skills[skill].commands.map((name) => posix.join('scripts', commands[name].module))
+    const modules = skills[skill].commands.map((name) => posix.join('scripts', commandModule(skills[skill], commands, name)))
     covers.push(`${skill}/`, ...bundleFiles(skills[skill]), ...await bundledSources(repo, ['scripts/dispatch.mjs', ...modules]))
   }
   return covers

@@ -15,6 +15,7 @@ Resolve the target before proceeding: an existing repo is passed as `--repo`.
 This skill proposes a balanced review profile for the repo's `.no-mistakes.yaml` and explains every choice.
 The profile keeps review on defects a real user or caller would hit, bounds the automatic fix loop, and lets changes that touch only trivial or configuration files skip the agent review.
 It edits only the review-tuning keys: `auto_fix`, `ignore_patterns` and `review.path_instructions`.
+Every proposed `ignore_patterns` always includes `.no-mistakes.yaml`, so the gate config itself is excluded from agent review by default.
 Every other key in the file stays byte-for-byte as it is.
 Test and lint commands and gates belong to `/verification`, and the Document step's ownership map belongs to `/maintenance`; name those skills instead of editing their keys.
 Settings that live only in the machine's global no-mistakes config, such as review models and effort, are reported as recommendations and never written.
@@ -46,7 +47,7 @@ Read the global config at `~/.no-mistakes/config.yaml`, read-only, for its `auto
 Inventory the repo: languages and manifests, lockfiles, generated or vendored trees, documentation folders, CI and editor configuration, agent instruction files and test layout.
 List the files that count as trivial for this repo using the trivial-change list in the [profile reference](references/profile.md#trivial-changes), and check each glob against real paths in the repo.
 
-Done when: The installed version, both copies of the config, the effective global values and the repo inventory are recorded, and every trivial-change glob matches at least one real path or is dropped.
+Done when: The installed version, both copies of the config, the effective global values and the repo inventory are recorded, and every trivial-change glob matches at least one real path or is dropped, except `.no-mistakes.yaml`, which always stays.
 
 ### Step 2: Read the run history
 
