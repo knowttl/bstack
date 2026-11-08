@@ -19,7 +19,7 @@ The `readme` skill creates or audits a project's `README.md` against a structure
 The `no-mistakes-tuning` skill proposes a balanced no-mistakes review profile from a repo and its run history, and writes only the `.no-mistakes.yaml` the user approves ([T2.19](implementation-plan.md#t219-add-the-no-mistakes-tuning-skill)).
 The installation below covers repo-audit, verification, vision, glossary, architecture, foundation, agents-md, maintenance, plan, formal-verification, how, why, teach, recall, prototype, readme and no-mistakes-tuning; audit usage applies to repo-audit.
 
-This checkout contains the slim [repo-audit procedure](../skills/repo-audit/SKILL.md), which reads a target at overview level, prints the checklist of skills to run next with a cited reason per line and writes nothing, the document research brief, read-only starting-state inspection, document inventory and citation validation, and the completed T0.4 shared library described in the [command contract](command-contract.md).
+This checkout contains the slim [repo-audit procedure](../skills/repo-audit/SKILL.md), which reads a target at overview level, prints the checklist of skills to run next with a cited reason per line and writes nothing, the [research briefs](../skills/repo-audit/references/research-briefs.md), read-only starting-state inspection, document inventory and citation validation, and the completed T0.4 shared library described in the [command contract](command-contract.md).
 The [vision skill](../skills/vision/SKILL.md) holds the purpose interview, the vision guide, board build, launch and verdict ingestion with a pinned runtime, and protected writing of the approved `VISION.md`; repo-audit lists `/vision` as a next step instead of reviewing the vision itself.
 The procedure prints one checklist for a new idea and one for an existing repo; see the [repo-audit checklists](../skills/repo-audit/SKILL.md#step-4-print-the-checklist) for the skills the user runs next.
 Review before apply, protected writes and outcome verification belong to the skill that makes each change.
@@ -617,6 +617,7 @@ node skills/repo-audit/scripts/repo-audit.mjs history --repo <target> --json
 ```
 
 See the [history command contract](command-contract.md#no-mistakes-history) for store discovery, counting rules and coverage limitations.
+Use the [history brief](../skills/repo-audit/references/research-briefs.md#run-history) to interpret the output and route findings to the next skill.
 
 Run the documents [research brief](../skills/repo-audit/references/research-briefs.md) as bounded read-only discovery, using a subagent where available or the main thread.
 Save the common [research report](../skills/repo-audit/schemas/research-report.json) in scratch, open each cited source and check it before using the observations:

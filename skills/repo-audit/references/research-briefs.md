@@ -9,6 +9,7 @@ Read relevant repo instructions and indexes first.
 
 - Execution and report contract
 - Document inventory
+- Run history
 
 ## Execution and report contract
 
@@ -70,3 +71,41 @@ No incidental instance means test quality was not sampled, not that the suite is
 Paths in scope: The main thread's selected instructions, indexes and linked README, vision, design, requirements, glossary, standards, decision and prior audit files under the target, and the user's brief for a new idea.
 Report format: State each observed file's purpose, explicit goals and principles, conflicts and absent sources using the common entry format with path:line citations.
 Word limit: 250 words.
+
+## Run history
+
+ID: history.
+Question: Which classes of mistake recur in this repo's no-mistakes runs, and which of the seven agent-first practices does each belong to?
+Run it only for a Git repo, on the `history` command's output kept in scratch.
+Read finding text for a class only as the history reference named in `SKILL.md` allows, and read nothing else about the runs.
+Report the runs read versus the total and every limitation the output names; when the output shows no linked history, report that and no classes.
+
+Group the findings of the runs read into classes by what went wrong, then place each class under one practice:
+
+| Practice | Finding classes that belong to it | Next skill when a class counts |
+|---|---|---|
+| 1. Write instructions around real damage | Killing processes by name, leaked processes or files, hardcoded absolute paths or origins, destructive file or Git operations | `/verification correct` |
+| 2. Turn repeated conventions into executable rules | The same convention broken in several runs, a written rule that findings keep citing | `/verification correct` |
+| 3. Treat always-loaded context as a budget | Instruction files that grew, copied text, stale or unused lines | `/agents-md` |
+| 4. Isolate real data and live state | Writes to user, shared or live state, tests that reach the network or the host, fixtures too synthetic to show the bug | `/verification correct` |
+| 5. Enforce completeness and reversibility | A missed sibling surface, contract drift between producer and consumer, stale documentation, no rollback, resume or reverse operation | `/verification correct`, or `/maintenance` for stale documentation |
+| 6. Keep verification focused and deterministic | Flaky, sleep-based or timeout-based tests, duplicated assertions, a slow gate with test or lint time dominating the step time shares | `/verification maintain` for a repo with a kit, otherwise `/verification create` |
+| 7. Architecture defaults | Unbounded work, over-fetching, ignored remote or multi-environment modes, competing terms, needless configuration | `/architecture`, or `/glossary` for competing terms |
+
+A class counts once it has two cited occurrences, the same threshold `/verification correct` applies before it proposes a rule.
+An occurrence is one finding in one run, identified by run ID and finding ID, so a finding that stays listed across rounds is one occurrence.
+Name a class with one occurrence as below the threshold and leave it out of the checklist.
+Count an occurrence that recurs despite a written rule as a repeat of its class and name the rule.
+Cite each class with its run and finding IDs in the findings text, and with a `path:line` in the current files, where the file still exists, to which the finding applied; run and finding IDs come from the local state store and `cite-check` cannot verify them.
+
+Also report, each with the runs read versus the total:
+
+- The share of findings first raised in round 2 or later and in round 3 or later, for `/no-mistakes-tuning`.
+- The files flagged in two or more runs, as the places where a class shows.
+- Each step's share of run time, so that a gate dominated by test or lint time is routed to `/verification` and not to `/no-mistakes-tuning`.
+- The fix and revert commit counts from Git history, as a cross-check on the classes and never as a class by themselves.
+
+Do not propose rules, configuration values or edits: that is the work of the skills the checklist names.
+Paths in scope: The `history` output, the finding text the history reference allows for the classes and the current files the findings name.
+Report format: State the coverage, then each counted class with its practice, occurrences and next skill, then the classes below the threshold, using the common entry format.
+Word limit: 300 words.

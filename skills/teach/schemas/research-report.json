@@ -18,7 +18,7 @@
         "type": "object", "additionalProperties": false,
         "required": ["id", "scope", "findings", "limitations", "files", "web"],
         "properties": {
-          "id": { "enum": ["documents", "architecture", "checks", "language", "outside"] },
+          "id": { "enum": ["documents", "architecture", "checks", "language", "outside", "history"] },
           "scope": { "type": "array", "items": { "type": "string", "minLength": 1 } },
           "findings": { "type": "string", "minLength": 1 },
           "limitations": { "type": "array", "items": { "type": "string", "minLength": 1 } },

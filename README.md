@@ -228,7 +228,7 @@ Bundled scripts enforce the controls below; `baseline check --refresh` can write
   Motivation research also reads pull request discussions and host-exposed connectors, following the [why-evidence reference](runtime/references/why-evidence.md).
   `/recall` and `/verification correct` use host session launch metadata to select this project's Claude Code and Codex transcripts for read-only digestion through the [recall command](docs/command-contract.md#recall-skill-command).
   Correct mode's use of past corrections follows [its evidence collection contract](skills/verification/SKILL.md#step-c1-collect-mistake-evidence).
-  `/no-mistakes-tuning`, `/verification correct` and `/verification maintain` also read the target repo's no-mistakes history, including its external state store when needed, following the shared [history reference](runtime/references/no-mistakes-history.md).
+  `/repo-audit`, `/no-mistakes-tuning`, `/verification correct` and `/verification maintain` also read the target repo's no-mistakes history, including its external state store when needed, following the shared [history reference](runtime/references/no-mistakes-history.md).
 - **Scratch**: drafts, evidence and previews stay in scratch outside the target until you approve.
 - **Recovery**: `apply` keeps backups of original bytes and a journal, so an interrupted run resumes from verified hashes.
 - **Credentials and network**: skills need no credentials or account, and bstack operates no service.
