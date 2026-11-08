@@ -610,6 +610,14 @@ Follow the [host loading check](../skills/agents-md/references/agents-md.md#host
 Both commands are read-only and do not run native project checks.
 See the [discovery contract](command-contract.md#inspect-and-inventory) for the supported name families and traversal limits.
 
+Summarise the repo's no-mistakes run history without querying the state store by hand:
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs history --repo <target> --json
+```
+
+See the [history command contract](command-contract.md#no-mistakes-history) for store discovery, counting rules and coverage limitations.
+
 Run the documents [research brief](../skills/repo-audit/references/research-briefs.md) as bounded read-only discovery, using a subagent where available or the main thread.
 Save the common [research report](../skills/repo-audit/schemas/research-report.json) in scratch, open each cited source and check it before using the observations:
 
