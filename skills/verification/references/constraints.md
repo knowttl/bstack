@@ -32,6 +32,7 @@ Start at the top rung and move down only when the rung above cannot express the 
 - **L6** The rule fails the one maintained check command; CI runs that same command, wired only when the owner selects it.
 - **L7** Existing violations go into a visible, shrinking baseline; new ones fail; exceptions are narrow, reasoned and have a removal condition.
 - **L8** No arbitrary size limits, and no design call disguised as a lint error.
+  The one sanctioned limit is the 1000-code-line file maximum from the foundation checks reference, kept because a file that large exceeds what a reader or agent can hold in mind, and the ceiling is high enough to flag only extreme files without judging design.
 
 Separate formatting from design checks so a cosmetic change cannot conceal an architectural failure.
 Do not disguise a human design judgement as a deterministic violation; give the reviewer the relevant authority, example and evidence instead.
