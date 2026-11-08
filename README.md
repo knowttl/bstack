@@ -291,18 +291,7 @@ Use `BSTACK_SKILLS` from [Quickstart](#quickstart) for your agent and installati
 node "$BSTACK_SKILLS/repo-audit/scripts/repo-audit.mjs" --help
 ```
 
-```text
-Usage: node skills/repo-audit/scripts/repo-audit.mjs <command> [options]
-
-Available commands:
-  inspect
-  inventory
-  cite-check
-  contract-test
-
-Use --help to show this help (exit 0).
-Missing or unsupported arguments are a usage error (exit 3).
-```
+Repo-audit's [`history` command](docs/command-contract.md#no-mistakes-history) summarises the repo's no-mistakes runs read-only.
 
 The full command list, with a runnable example per command group, is in [docs/development.md](docs/development.md#command-reference) and the exact syntax and results are in the [command contract](docs/command-contract.md).
 

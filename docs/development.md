@@ -616,10 +616,7 @@ Summarise the repo's no-mistakes run history without querying the state store by
 node skills/repo-audit/scripts/repo-audit.mjs history --repo <target> --json
 ```
 
-`history` finds the repo through its `no-mistakes` Git remote and opens `state.sqlite` in the no-mistakes folder (`~/.no-mistakes`, or `NM_HOME`) read-only, never through the daemon.
-It reports runs read versus total, review rounds per run, findings by severity, action and step, the share first raised in round 2 or later and in round 3 or later, skipped findings, files flagged in two or more runs, each step's share of run time and the fix and revert commit counts.
-A finding that stays listed across rounds counts once per run and step.
-A repo with no linked remote, store, repo record or runs passes with a limitation, and a run with unreadable findings is left out of the aggregates and named.
+See the [history command contract](command-contract.md#no-mistakes-history) for store discovery, counting rules and coverage limitations.
 
 Run the documents [research brief](../skills/repo-audit/references/research-briefs.md) as bounded read-only discovery, using a subagent where available or the main thread.
 Save the common [research report](../skills/repo-audit/schemas/research-report.json) in scratch, open each cited source and check it before using the observations:

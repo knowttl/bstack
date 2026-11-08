@@ -583,6 +583,28 @@ Distinct nested guidance stays scoped and produces no root consolidation candida
 An exact-byte equivalent nested file or a lone import of the same scope's existing `AGENTS.md` yields only a candidate targeting that scope's `AGENTS.md`.
 Local variants inside the repo are possible shadowing reports with `modifiable: false`, never consolidation candidates.
 
+## No-mistakes history
+
+`history --repo <target> [--json]` summarises the target's no-mistakes runs without writes or daemon access.
+It identifies the repo from the basename of its `no-mistakes` Git remote URL, removing a `.git` suffix, and opens `state.sqlite` under `NM_HOME` (default `~/.no-mistakes`) read-only.
+Repo, run, round and step records are read within one SQLite transaction.
+
+`data.runs` reports total and readable run counts, readable counts by status, the first and last recorded run dates, and each readable run's ID, status, branch, highest review round and finding count.
+Findings are counted once per run, step and finding ID, using their first recorded round, severity, action and file.
+`data.findings` reports the total, counts by severity, action (including `ask-user`) and step, skipped count, and counts and shares first raised in round 2 or later and in round 3 or later.
+A skipped finding was declined by the user and never selected for a fix in any recorded round.
+`data.hotspots` lists files flagged in at least two distinct readable runs, with run and finding counts.
+`data.stepTime` reports recorded milliseconds per step and each step's share of the sum of recorded step durations, rather than elapsed wall-clock time.
+Shares are fractions rounded to three decimal places, or zero when the denominator is zero.
+
+`data.git` counts commits reachable from the current HEAD, fixes whose subjects start with a Conventional Commit `fix:` prefix (including a scope or breaking-change marker), and reverts whose subjects start with the word `revert`, case-insensitively.
+These are subject-based counts of locally available Git history, independent of the linked run records; missing ancestors are never fetched.
+Unreadable Git history returns `git: null` and a limitation.
+
+A missing remote, store, repo record or run history returns pass with zero run counts and a limitation, preserving any available Git counts.
+A run with unparseable findings or selection lists is named in `data.limitations` and excluded from readable run, finding, hotspot and step-time aggregates; it remains in the total and recorded date range.
+The command supplies aggregate evidence; the shared [history-reading reference](../runtime/references/no-mistakes-history.md) owns the procedure for reading every run and recording incomplete coverage.
+
 ## Research citation check
 
 `node skills/repo-audit/scripts/repo-audit.mjs cite-check --repo <path>|--workspace <path> --report <file> [--json]` checks a scratch research report without target writes.
