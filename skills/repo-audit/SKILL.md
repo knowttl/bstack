@@ -16,7 +16,7 @@ An empty directory is a new idea, and an established repo can need only a scoped
 This skill reads the target at overview level and prints a checklist of the skills the user should run next.
 It writes nothing to the target and keeps no audit record: keep the research report and notes in scratch outside the target, and rerun the skill to see which steps now look done.
 It never starts another skill, interviews the user, drafts a vision, glossary, design, project, test guidance, contract or instruction file, opens a pull request or selects a delivery service.
-Each of those belongs to the skill the checklist names: `/vision`, `/glossary`, `/architecture`, `/foundation`, `/verification`, `/formal-verification`, `/maintenance`, `/agents-md` and `/plan`.
+Each of those belongs to the skill the checklist names: `/vision`, `/glossary`, `/architecture`, `/foundation`, `/verification`, `/formal-verification`, `/no-mistakes-tuning`, `/maintenance`, `/readme`, `/agents-md` and `/plan`.
 Security hardening of created skills and licensing review are outside scope.
 Do not substitute direct project edits or an invented approval for unavailable tooling.
 
@@ -57,13 +57,18 @@ Include the documents brief's test-policy and review-instruction signal without 
 If the brief happened to read a test-quality instance, retain one checked `path:line` and rule for the existing `/verification create` checklist line; otherwise state that test quality was not sampled.
 Also retain the brief's cited statement that the suite or the gate is slow, if the documents hold one; do not time a run to find out.
 
-Done when: The report passes `cite-check` against the current bytes, or the missing source is named, and each finding says whether it is documented, observed or inferred.
+For a Git repo, also run `node scripts/repo-audit.mjs history --repo <target> --json` and keep the output in scratch.
+Run the one history brief from the research briefs reference on that output, reading the run history only as the [history reference](references/no-mistakes-history.md) allows, and add its entry to the same report.
+The brief reports the runs read versus the total, or that the repo has no linked history, and names only mistake classes with two cited occurrences.
+
+Done when: The report passes `cite-check` against the current bytes, or the missing source is named, each finding says whether it is documented, observed or inferred, and the history output states the runs read versus the total or that no history exists.
 
 ### Step 4: Print the checklist
 
 Print the checklist for the chosen path, one line per skill in the order shown, each with one reason in the form `path:line` or an inventory kind reported absent, taken from the checked report and the inventory output.
 Mark a line `looks done` when its output already exists and the cited source shows it, otherwise `to do`; this is a pointer for the user and not a verdict on quality.
 A reason that cites nothing is not a reason: drop the claim or mark the line `no evidence` and say what could not be read.
+On the existing-repo path, a reason may instead cite the history output by run ID and finding ID or by its late-round share with the runs read versus the total, as the history brief routes it.
 Do not start any listed skill, and do not write the checklist into the target.
 
 New idea:
@@ -85,8 +90,11 @@ Existing repo:
 - [ ] `/glossary` (only if terms are unclear) - the cited terms that are missing or compete
 - [ ] `/architecture` - the cited boundary, decision or design gap, or the design document found absent
 - [ ] `/verification create` - the cited test and check state from the manifests and standards, including the test-quality policy signal and one cited instance with its rule if encountered; when a cited statement says the suite or the gate is slow, name `/verification maintain` for a repo that has a kit and `/verification create` for one that has none, as the skill that audits and speeds up the suite
+- [ ] `/verification correct` (only with history evidence) - a mistake class the history brief cites at least twice, with its run and finding IDs
 - [ ] `/formal-verification create` (only with cited risk evidence) - the cited spot where a mistake costs money or data and depends on timing or a rare input
+- [ ] `/no-mistakes-tuning` (only with history evidence) - the late-round share of findings with the runs read versus the total, or the gate config found absent
 - [ ] `/maintenance` - the cited documents that no registered contract covers
+- [ ] `/readme` - the README that inventory found with a cited gap, or the context kind reported absent
 - [ ] `/agents-md` - the cited instruction files, pointer gaps and `CLAUDE.md` merge candidates
 - [ ] `/plan` - the cited approved design that has no implementation plan yet, or the design document found absent, last
 
@@ -103,6 +111,6 @@ Never recursively search bundled reference or schema directories to discover gui
 
 | When | Open |
 |---|---|
-| Running the documents research brief | `references/research-briefs.md` |
+| Running the documents or history research brief | `references/research-briefs.md` |
 | Recording citations for evidence | `schemas/research-report.json` |
-| Reading the target's no-mistakes runs | `references/no-mistakes-history.md` |
+| Reading finding text from the target's no-mistakes runs | `references/no-mistakes-history.md` |

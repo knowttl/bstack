@@ -617,6 +617,7 @@ node skills/repo-audit/scripts/repo-audit.mjs history --repo <target> --json
 ```
 
 See the [history command contract](command-contract.md#no-mistakes-history) for store discovery, counting rules and coverage limitations.
+The [history brief](../skills/repo-audit/references/research-briefs.md#run-history) maps recurring finding classes to the seven agent-first practices and to the next skill, counting a class only at two cited occurrences.
 
 Run the documents [research brief](../skills/repo-audit/references/research-briefs.md) as bounded read-only discovery, using a subagent where available or the main thread.
 Save the common [research report](../skills/repo-audit/schemas/research-report.json) in scratch, open each cited source and check it before using the observations:

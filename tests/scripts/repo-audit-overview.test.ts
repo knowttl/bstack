@@ -18,7 +18,7 @@ test('installed repo-audit prompt emits both checklist orders with plan last', a
   const blocks = marked.lexer(prompt).filter(token => token.type !== 'space')
   for (const [label, expected] of [
     ['New idea:', ['/vision', '/glossary', '/architecture', '/foundation', '/verification create', '/formal-verification create', '/maintenance', '/agents-md', '/plan']],
-    ['Existing repo:', ['/repo-audit', '/vision', '/glossary', '/architecture', '/verification create', '/formal-verification create', '/maintenance', '/agents-md', '/plan']]
+    ['Existing repo:', ['/repo-audit', '/vision', '/glossary', '/architecture', '/verification create', '/verification correct', '/formal-verification create', '/no-mistakes-tuning', '/maintenance', '/readme', '/agents-md', '/plan']]
   ] satisfies [unknown, unknown][]) {
     const index = blocks.findIndex(token => token.type === 'paragraph' && token.text === label)
     assert.ok(index >= 0, label)
