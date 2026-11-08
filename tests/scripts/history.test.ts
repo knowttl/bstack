@@ -8,7 +8,7 @@ import { emptyRepo, git, run } from './discovery-fixture.ts'
 
 type Finding = { id: string; severity: string; file: string; action: string }
 type Round = { round: number; findings: Finding[]; selected?: string[]; source?: string }
-type Step = { name: string; ms: number; approval?: string; rounds: Round[] }
+type Step = { name: string; ms: number; rounds: Round[] }
 type Run = { id: string; status: string; branch: string; steps: Step[]; unreadable?: boolean }
 
 const finding = (id: string, file: string, severity = 'error', action = 'auto-fix'): Finding => ({ id, severity, file, action })
@@ -24,7 +24,7 @@ async function fixture(t: import('node:test').TestContext, runs: Run[], { remote
     database.exec(`
       CREATE TABLE repos (id TEXT PRIMARY KEY, working_path TEXT, upstream_url TEXT);
       CREATE TABLE runs (id TEXT PRIMARY KEY, repo_id TEXT, branch TEXT, status TEXT, created_at INTEGER);
-      CREATE TABLE step_results (id TEXT PRIMARY KEY, run_id TEXT, step_name TEXT, duration_ms INTEGER, approval_reason TEXT);
+      CREATE TABLE step_results (id TEXT PRIMARY KEY, run_id TEXT, step_name TEXT, duration_ms INTEGER);
       CREATE TABLE step_rounds (id TEXT PRIMARY KEY, step_result_id TEXT, round INTEGER, findings_json TEXT, selected_finding_ids TEXT, selection_source TEXT);
       INSERT INTO repos VALUES ('abc123', '/work/demo', 'https://example.invalid/demo.git');
       INSERT INTO repos VALUES ('other', '/work/other', 'https://example.invalid/other.git');
@@ -35,7 +35,7 @@ async function fixture(t: import('node:test').TestContext, runs: Run[], { remote
       database.prepare('INSERT INTO runs VALUES (?, ?, ?, ?, ?)').run(entry.id, 'abc123', entry.branch, entry.status, 1000 + index)
       for (const step of entry.steps) {
         const stepId = `step-${++sequence}`
-        database.prepare('INSERT INTO step_results VALUES (?, ?, ?, ?, ?)').run(stepId, entry.id, step.name, step.ms, step.approval ?? null)
+        database.prepare('INSERT INTO step_results VALUES (?, ?, ?, ?)').run(stepId, entry.id, step.name, step.ms)
         for (const round of step.rounds) {
           database.prepare('INSERT INTO step_rounds VALUES (?, ?, ?, ?, ?, ?)').run(`round-${++sequence}`, stepId, round.round,
             entry.unreadable ? '{not json' : JSON.stringify({ findings: round.findings }), JSON.stringify(round.selected ?? []), round.source ?? null)
@@ -54,7 +54,7 @@ const history: Run[] = [
       { round: 2, findings: [finding('R2', 'b.mjs', 'warning', 'ask-user'), finding('R3', 'a.mjs')], selected: ['R2', 'R3'], source: 'user' },
       { round: 3, findings: [finding('R4', 'c.mjs', 'warning', 'ask-user')], selected: [], source: 'user_declined' }
     ] },
-    { name: 'test', ms: 500, approval: 'No runtime surface.', rounds: [{ round: 1, findings: [] }] }
+    { name: 'test', ms: 500, rounds: [{ round: 1, findings: [] }] }
   ] },
   { id: 'run-b', status: 'failed', branch: 'feat/b', steps: [
     { name: 'review', ms: 1500, rounds: [{ round: 1, findings: [finding('R1', 'a.mjs')], selected: ['R1'], source: 'auto_fix' }] }
@@ -75,7 +75,7 @@ test('history aggregates rounds, findings, hotspots, step time and Git counts fo
   ])
   assert.deepEqual(result.data.findings, {
     total: 5, bySeverity: { error: 3, warning: 2 }, byAction: { 'auto-fix': 3, 'ask-user': 2 }, byStep: { review: 5 },
-    skipped: 1, approvedSteps: 1, firstRaisedFromRound2: 2, firstRaisedFromRound3: 1, lateRoundShare: { fromRound2: 0.4, fromRound3: 0.2 }
+    skipped: 1, firstRaisedFromRound2: 2, firstRaisedFromRound3: 1, lateRoundShare: { fromRound2: 0.4, fromRound3: 0.2 }
   })
   assert.deepEqual(result.data.hotspots, [{ file: 'a.mjs', runs: 2, findings: 3 }])
   assert.deepEqual(result.data.stepTime, [{ step: 'review', ms: 4500, share: 0.9 }, { step: 'test', ms: 500, share: 0.1 }])

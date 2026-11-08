@@ -451,7 +451,7 @@ async function run3(options) {
     const rounds = database.prepare(`SELECT sr.run_id, sr.step_name, r.round, r.findings_json, r.selected_finding_ids, r.selection_source
       FROM step_rounds r JOIN step_results sr ON sr.id = r.step_result_id JOIN runs ru ON ru.id = sr.run_id
       WHERE ru.repo_id = ? ORDER BY sr.run_id, sr.step_name, r.round`).all(repoId);
-    const steps = database.prepare(`SELECT sr.run_id, sr.step_name, sr.duration_ms, sr.approval_reason
+    const steps = database.prepare(`SELECT sr.run_id, sr.step_name, sr.duration_ms
       FROM step_results sr JOIN runs ru ON ru.id = sr.run_id WHERE ru.repo_id = ?`).all(repoId);
     database.exec("COMMIT");
     const unreadable = /* @__PURE__ */ new Set();
@@ -523,7 +523,6 @@ async function run3(options) {
           byAction,
           byStep,
           skipped: findings.filter((finding) => finding.declined && !finding.selected).length,
-          approvedSteps: readSteps.filter((step) => step.approval_reason).length,
           firstRaisedFromRound2: fromRound2,
           firstRaisedFromRound3: fromRound3,
           lateRoundShare: { fromRound2: share(fromRound2, findings.length), fromRound3: share(fromRound3, findings.length) }
@@ -749,7 +748,7 @@ async function run5(options) {
 await dispatch(process.argv.slice(2), "repo-audit", {
   "inspect": { options: [], help: "Inspect starting Git state, manifests and prerequisite versions without writes.\nUsage: repo-audit.mjs inspect --repo <path> [--json]", run },
   "inventory": { options: [], help: "Discover document sources and scoped instructions without writes.\nUsage: repo-audit.mjs inventory --repo <path>|--workspace <path> [--json]\nAbsent document kinds are reported without failure. Instruction consolidation is a candidate requiring review.", run: run2 },
-  "history": { options: [], help: "Summarise this repo's no-mistakes run history without writes.\nUsage: repo-audit.mjs history --repo <path> [--json]\nIdentifies the repo from its no-mistakes remote and opens ~/.no-mistakes/state.sqlite (NM_HOME overrides the folder) read-only, never through the daemon. Returns runs read versus total with rounds per run, findings by severity, action and step, the share of findings first raised in round 2 or later and in round 3 or later, skipped findings (declined by the user and never selected for a fix), steps approved with a reason, files flagged in two or more runs, each step's share of run time and the counts of fix and revert commits in Git history. A finding that stays listed across rounds counts once per run and step, in the round that first raised it. A repo with no linked history is a pass with a limitation, never a reason to infer prior runs.", run: run3 },
+  "history": { options: [], help: "Summarise this repo's no-mistakes run history without writes.\nUsage: repo-audit.mjs history --repo <path> [--json]\nIdentifies the repo from its no-mistakes remote and opens ~/.no-mistakes/state.sqlite (NM_HOME overrides the folder) read-only, never through the daemon. Returns runs read versus total with rounds per run, findings by severity, action and step, the share of findings first raised in round 2 or later and in round 3 or later, skipped findings (declined by the user and never selected for a fix), files flagged in two or more runs, each step's share of run time and the counts of fix and revert commits in Git history. A finding that stays listed across rounds counts once per run and step, in the round that first raised it. A repo with no linked history is a pass with a limitation, never a reason to infer prior runs.", run: run3 },
   "cite-check": { options: ["report"], help: "Check file citation locations and exact-byte freshness without writes.\nUsage: repo-audit.mjs cite-check --repo <path>|--workspace <path> --report <file> [--json]\nReport follows schemas/research-report.json. Web URL/date records are validated without fetching sources.", run: run4 },
   "contract-test": { options: ["input", "schema"], help: "Validate shared schema and joining-ID contracts without writes.\nUsage: repo-audit.mjs contract-test --repo <path>|--workspace <path> --input <file> [--schema <file>] [--json]\n--schema selects a schema definition for subset validation tests.", run: run5 }
 });

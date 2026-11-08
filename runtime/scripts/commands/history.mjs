@@ -44,7 +44,7 @@ export async function run(options) {
     const rounds = database.prepare(`SELECT sr.run_id, sr.step_name, r.round, r.findings_json, r.selected_finding_ids, r.selection_source
       FROM step_rounds r JOIN step_results sr ON sr.id = r.step_result_id JOIN runs ru ON ru.id = sr.run_id
       WHERE ru.repo_id = ? ORDER BY sr.run_id, sr.step_name, r.round`).all(repoId)
-    const steps = database.prepare(`SELECT sr.run_id, sr.step_name, sr.duration_ms, sr.approval_reason
+    const steps = database.prepare(`SELECT sr.run_id, sr.step_name, sr.duration_ms
       FROM step_results sr JOIN runs ru ON ru.id = sr.run_id WHERE ru.repo_id = ?`).all(repoId)
     database.exec('COMMIT')
 
@@ -119,7 +119,6 @@ export async function run(options) {
           byAction,
           byStep,
           skipped: findings.filter(finding => finding.declined && !finding.selected).length,
-          approvedSteps: readSteps.filter(step => step.approval_reason).length,
           firstRaisedFromRound2: fromRound2,
           firstRaisedFromRound3: fromRound3,
           lateRoundShare: { fromRound2: share(fromRound2, findings.length), fromRound3: share(fromRound3, findings.length) }
