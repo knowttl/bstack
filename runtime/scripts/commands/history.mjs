@@ -36,6 +36,7 @@ export async function run(options) {
 
   const database = new DatabaseSync(store, { readOnly: true })
   try {
+    database.exec('BEGIN')
     const repo = database.prepare('SELECT working_path, upstream_url FROM repos WHERE id = ?').get(repoId)
     if (!repo) return noHistory(`The state store has no repo record ${repoId}.`)
     const runs = database.prepare('SELECT id, status, branch, created_at FROM runs WHERE repo_id = ? ORDER BY created_at, id').all(repoId)
@@ -45,6 +46,7 @@ export async function run(options) {
       WHERE ru.repo_id = ? ORDER BY sr.run_id, sr.step_name, r.round`).all(repoId)
     const steps = database.prepare(`SELECT sr.run_id, sr.step_name, sr.duration_ms, sr.approval_reason
       FROM step_results sr JOIN runs ru ON ru.id = sr.run_id WHERE ru.repo_id = ?`).all(repoId)
+    database.exec('COMMIT')
 
     const unreadable = new Set()
     const reviewRounds = new Map()

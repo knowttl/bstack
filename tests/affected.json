@@ -8,6 +8,7 @@
   "commands": {
     "cite-check": { "tasks": ["T2.1"], "dependents": ["plan-check", "formal-check", "formal-scaffold", "findings", "vision-board-build", "evaluation"] },
     "inspect": { "tasks": ["T2.2", "T2.8"], "dependents": [] },
+    "history": { "tasks": ["history"], "dependents": [] },
     "inventory": { "tasks": ["T2.3", "T2.8", "agents-md", "T2.12"], "dependents": [] },
     "measure": { "tasks": ["T2.4", "architecture"], "dependents": [] },
     "overlap": { "tasks": ["T2.4", "architecture"], "dependents": [] },

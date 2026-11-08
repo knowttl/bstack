@@ -443,6 +443,7 @@ async function run3(options) {
   if (!existsSync(store)) return noHistory(`No no-mistakes state store exists at ${store}.`);
   const database = new DatabaseSync(store, { readOnly: true });
   try {
+    database.exec("BEGIN");
     const repo = database.prepare("SELECT working_path, upstream_url FROM repos WHERE id = ?").get(repoId);
     if (!repo) return noHistory(`The state store has no repo record ${repoId}.`);
     const runs = database.prepare("SELECT id, status, branch, created_at FROM runs WHERE repo_id = ? ORDER BY created_at, id").all(repoId);
@@ -452,6 +453,7 @@ async function run3(options) {
       WHERE ru.repo_id = ? ORDER BY sr.run_id, sr.step_name, r.round`).all(repoId);
     const steps = database.prepare(`SELECT sr.run_id, sr.step_name, sr.duration_ms, sr.approval_reason
       FROM step_results sr JOIN runs ru ON ru.id = sr.run_id WHERE ru.repo_id = ?`).all(repoId);
+    database.exec("COMMIT");
     const unreadable = /* @__PURE__ */ new Set();
     const reviewRounds = /* @__PURE__ */ new Map();
     const found = /* @__PURE__ */ new Map();
