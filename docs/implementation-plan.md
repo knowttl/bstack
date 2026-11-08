@@ -17,8 +17,8 @@ This copy is now authoritative, and readers need no access to that source.
 
 This plan is temporary: it describes the original build and is deleted in the release that closes T5.2.
 Its lasting content lives in [development.md](development.md) and the [design](design.md).
-Remove this plan when `tests/eval/results/release/v0.1.0.json` exists.
-The file must record a fully qualified release closing T5.2, produced by `node scripts/acceptance.ts --release v0.1.0 --candidate <full-commit> --checks <hard-break-report.json> --results tests/eval/results`, with a `passed` verdict, zero pending measurements and zero blocking failures.
+Remove this plan when `tests/eval/results/release/0.1.0.json` exists.
+The file must record a fully qualified release closing T5.2, produced by `node scripts/acceptance.ts --release 0.1.0 --candidate <full-commit> --checks <hard-break-report.json> --results tests/eval/results`, with a `passed` verdict, zero pending measurements and zero blocking failures.
 
 The design owns the requirements: what to build and why.
 This plan owns the build sequence and evidence: how to build it, in what order, and how each task proves it is done.
