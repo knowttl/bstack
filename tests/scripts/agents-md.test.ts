@@ -141,6 +141,63 @@ test('instructions measure counts descriptions of model-invocable skills only', 
   assert.equal(result.data.total.bytes, 40)
 })
 
+test('instructions measure expands imports from an AGENTS.md already counted as a root', async t => {
+  const { directory, repo } = await emptyRepo(t)
+  await writeFiles(repo, {
+    'AGENTS.md': '@docs/rules.md\n',
+    'CLAUDE.md': '@AGENTS.md\n',
+    'docs/rules.md': 'Rules\n'
+  })
+  const result = agentsMd(directory, ['instructions', 'measure', '--repo', repo])
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.deepEqual(result.data.sources.map((source: { path: string }) => source.path), ['AGENTS.md', 'CLAUDE.md', 'docs/rules.md'])
+  assert.deepEqual(result.data.total, { bytes: 32, lines: 3, tokens: 9 })
+})
+
+test('instructions measure revisits shared imports at shorter depths without exceeding five hops or counting cycles twice', async t => {
+  const { directory, repo } = await emptyRepo(t)
+  await writeFiles(repo, {
+    'CLAUDE.md': '@one.md\n@shared.md\n',
+    'one.md': '@two.md\n',
+    'two.md': '@three.md\n',
+    'three.md': '@four.md\n',
+    'four.md': '@shared.md\n',
+    'shared.md': '@leaf.md\n@CLAUDE.md\n',
+    'leaf.md': '@end.md\n',
+    'end.md': '@limit.md\n',
+    'limit.md': '@fifth.md\n',
+    'fifth.md': '@outside.md\n',
+    'outside.md': 'Beyond five hops\n'
+  })
+  const result = agentsMd(directory, ['instructions', 'measure', '--repo', repo])
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.deepEqual(result.data.sources.map((source: { path: string }) => source.path), [
+    'CLAUDE.md', 'one.md', 'two.md', 'three.md', 'four.md', 'shared.md', 'leaf.md', 'end.md', 'limit.md', 'fifth.md'
+  ])
+  assert.deepEqual(result.data.sources.find((source: { path: string }) => source.path === 'shared.md').imports, ['leaf.md', 'CLAUDE.md'])
+  assert.deepEqual(result.data.sources.find((source: { path: string }) => source.path === 'fifth.md').imports, [])
+})
+
+for (const { name, content, imported } of [
+  { name: 'indented backtick fences', content: '   ```md\n@hidden.md\n   ```\n@visible.md\n', imported: ['visible.md'] },
+  { name: 'indented tilde fences', content: '  ~~~md\n@hidden.md\n ~~~\n@visible.md\n', imported: ['visible.md'] },
+  { name: 'shorter delimiters inside a longer fence', content: '````\n```\n@hidden.md\n````\n@visible.md\n', imported: ['visible.md'] },
+  { name: 'shorter tilde delimiters inside a longer fence', content: '~~~~\n~~~\n@hidden.md\n~~~~\n@visible.md\n', imported: ['visible.md'] },
+  { name: 'longer closing delimiters', content: '```\n@hidden.md\n`````\n@visible.md\n', imported: ['visible.md'] },
+  { name: 'different delimiter characters', content: '```\n~~~\n@hidden.md\n```\n@visible.md\n', imported: ['visible.md'] },
+  { name: 'closing delimiters with trailing text', content: '~~~\n~~~ text\n@hidden.md\n~~~\n@visible.md\n', imported: ['visible.md'] },
+  { name: 'unclosed fences', content: '   ```\n@hidden.md\n@visible.md\n', imported: [] }
+]) {
+  test(`instructions measure skips imports in ${name}`, async t => {
+    const { directory, repo } = await emptyRepo(t)
+    await writeFiles(repo, { 'CLAUDE.md': content, 'hidden.md': 'Hidden\n', 'visible.md': 'Visible\n' })
+    const result = agentsMd(directory, ['instructions', 'measure', '--repo', repo])
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.deepEqual(result.data.sources.map((source: { path: string }) => source.path), ['CLAUDE.md', ...imported])
+    assert.deepEqual(result.data.sources[0].imports, imported)
+  })
+}
+
 test('configured exclusions leave fixture trees out of inventory and measure', async t => {
   const { directory, repo } = await emptyRepo(t)
   const contract = { schemaVersion: 1, documents: [], scopes: [], rules: [], checks: [], generators: [], acceptanceSources: [], instructions: { exclude: ['tests/fixtures/**'] } }

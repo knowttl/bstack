@@ -3119,7 +3119,19 @@ function description(text) {
   return block.join(value.startsWith(">") ? " " : "\n").trim();
 }
 function importsIn(text) {
-  const prose = text.replace(/^(```|~~~)[\s\S]*?^\1/gm, "").replace(/`[^`\n]*`/g, "");
+  let fence = null;
+  const lines = [];
+  for (const line of text.split(/\r?\n/)) {
+    if (fence) {
+      const closing = /^ {0,3}(`+|~+)[ \t]*$/.exec(line)?.[1];
+      if (closing && closing[0] === fence[0] && closing.length >= fence.length) fence = null;
+      continue;
+    }
+    const opening = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line);
+    if (opening && (opening[1][0] === "~" || !opening[2].includes("`"))) fence = opening[1];
+    else lines.push(line);
+  }
+  const prose = lines.join("\n").replace(/`[^`\n]*`/g, "");
   return [...prose.matchAll(/(?:^|\s)@(\S+)/g)].map((match) => match[1].replace(/[.,;:!?)]+$/, ""));
 }
 function size(text) {
@@ -3129,18 +3141,16 @@ function size(text) {
 async function measureInstructions(root, files) {
   const present = new Set(files);
   const sources = /* @__PURE__ */ new Map();
+  const expandedDepth = /* @__PURE__ */ new Map();
   async function load(path, depth) {
-    if (sources.has(path)) return;
     const text = await readFile4(join6(root, path), "utf8");
-    const source = { path, kind: instructionFile.test(path) ? "instructions" : "import", ...size(text), imports: [] };
+    const source = sources.get(path) ?? { path, kind: instructionFile.test(path) ? "instructions" : "import", ...size(text), imports: [] };
     sources.set(path, source);
     if (posix2.basename(path) !== "CLAUDE.md" && depth === 0 || depth === importDepth) return;
-    for (const target of importsIn(text)) {
-      const imported = posix2.normalize(posix2.join(posix2.dirname(path), target));
-      if (!present.has(imported)) continue;
-      source.imports.push(imported);
-      await load(imported, depth + 1);
-    }
+    if ((expandedDepth.get(path) ?? Infinity) <= depth) return;
+    expandedDepth.set(path, depth);
+    source.imports = importsIn(text).map((target) => posix2.normalize(posix2.join(posix2.dirname(path), target))).filter((imported) => present.has(imported));
+    for (const imported of source.imports) await load(imported, depth + 1);
   }
   for (const path of files.filter((path2) => instructionFile.test(path2))) await load(path, 0);
   for (const path of files.filter((path2) => skillDescription.test(path2))) {
