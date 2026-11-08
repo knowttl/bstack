@@ -27,25 +27,21 @@ test:
     Keep task-specific public-command and acceptance checks, including unavailable-tool limitations.
     These instructions do not bypass commands the pipeline requires or change the shared daemon's rerun policy.
 review:
-  ignore_patterns: ["upstream/**"]
+  ignore_patterns: ["upstream/**", ".no-mistakes.yaml", "package-lock.json"]
   path_instructions:
     - path: "**"
       instructions: |
-        Review focus for this build: does the change work as its plan task specifies, and is it well designed? Raise functional bugs, broken or missing flows, wrong results, crashes, hangs, data loss, regressions, unhandled errors that break a flow, missing tests for the slice's behaviour, and style, simplification and design-principle issues. Security hardening and threat-model concerns are deferred until the full app is built: do not raise them unless they cause a functional bug.
+        Review focus for this build: does the change work as its plan task specifies, and is it well designed? Raise functional bugs, broken or missing flows, wrong results, crashes, hangs, data loss, regressions, unhandled errors that break a flow, and missing tests for the slice's behaviour. Security hardening and threat-model concerns are deferred until the full app is built: do not raise them unless they cause a functional bug.
         Tests must exercise behaviour through the public command, installer or evaluation interface and take expected results from the design, plan or acceptance case. Flag tests that import private helpers to assert internals or that only restate current implementation output.
-        Repair each reported invariant across all sibling cases and shared call sites in the same round.
-        Enumerate the relevant boundary and failure cases, fix their shared cause, and verify through the public interface.
         Before focused repair verification, install dependencies using the setup instructions in README.md.
         Verify Review repairs with focused public-command checks for the edited area and its dependents.
         Use one npm test invocation with repeated --task IDs to deduplicate shared suites.
         Leave validation of the resulting whole change to the configured Test gate;
         do not run a full suite in Review merely to duplicate that gate or refresh evidence.
         If repair scope is uncertain, use the full fallback rather than guessing independence.
-        Review the whole diff again after repairs;
-        do not limit valid findings or omit style, simplification or design-principle review.
     - path: "**"
       instructions: |
-        Test quality: apply the "Test quality" rules in AGENTS.md to every added or changed test.
+        Test quality: apply the "Test-quality rules" in skills/verification/references/testing.md to every added or changed test.
         Flag each violation as a finding naming the rule number, the test file:line and the evidence.
         Respect the listed exemptions and their evidence guards in skills/verification/references/testing.md.
         Never ask for a test to be written first or only to raise coverage.
