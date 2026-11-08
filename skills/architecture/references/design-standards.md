@@ -34,6 +34,7 @@ Recommend a native duplication linter only when language research supports its s
 Clone detection supplies review candidates, not proof that similar code represents the same knowledge, and neither duplication nor complexity scores establish DRY or KISS compliance.
 Use a debt baseline, as the boundary checks reference describes, for accepted exceptions instead of silently weakening either rule.
 Avoid arbitrary file, function or rule-count limits without a project-specific reason.
+The one sanctioned limit is the 1000-code-line file maximum from the foundation checks reference, kept because a file that large exceeds what a reader or agent can hold in mind, and the ceiling is high enough to flag only extreme files without judging design.
 
 ## One authoritative source per rule
 
