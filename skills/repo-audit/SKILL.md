@@ -105,3 +105,4 @@ Never recursively search bundled reference or schema directories to discover gui
 |---|---|
 | Running the documents research brief | `references/research-briefs.md` |
 | Recording citations for evidence | `schemas/research-report.json` |
+| Reading the target's no-mistakes runs | `references/no-mistakes-history.md` |

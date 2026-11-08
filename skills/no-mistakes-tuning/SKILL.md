@@ -51,20 +51,11 @@ Done when: The installed version, both copies of the config, the effective globa
 
 ### Step 2: Read the run history
 
-Enumerate every run for the target repo, including its ID, status, branch, base and head commits, and pull request when present.
-Check `no-mistakes runs --help` for the installed version's listing options; do not assume its default or a large limit returns every run or includes IDs.
-When the CLI cannot enumerate all IDs, inspect the no-mistakes state store read-only: identify the target's repo record, verify it matches the target, and query all `runs` rows for its `repo_id`, including a total count.
-For the SQLite store at `~/.no-mistakes/state.sqlite`, open the database read-only, inspect the `repos` and `runs` schema for the installed version, and use the repo ID to select the runs; do not modify the store or its daemon.
-For every run, read `no-mistakes axi status --run <id>`, `no-mistakes axi logs --run <id> --step review --full` and `no-mistakes stats --run <id>` for review findings, rounds, fix turns, step durations and agent time.
-Plain `no-mistakes stats` reads every repo on the machine and is slow.
+Read every run for the target repo by following the [no-mistakes history reference](references/no-mistakes-history.md).
 Record each step's share of run time: when configured test or lint commands dominate, say so, because the keys this skill edits cannot shorten them, and name `/verification`.
-Find each run's changed files from its pull request on the host, read-only, or from `git diff --name-only` between its base and head when both commits are present.
-Only read: never respond to a gate, rerun, abort or answer anything.
 Count review rounds per run, findings by severity and action, findings the user skipped or approved without a fix, and runs whose changed files were all trivial.
 Classify each review finding read with the classes in the [profile reference](references/profile.md#finding-classes).
-Use a bounded sample only if the full history is unreadable or too large to read in full.
-Record the runs read versus the total, the selection and date range, which details were unavailable, and the specific reason for any incomplete coverage; do not describe a capped listing as the total.
-When the repo has no run history, say so and use the profile's defaults unchanged.
+When the repo has no run history, use the profile's defaults unchanged.
 
 Done when: The history summary in scratch states runs read versus total runs, rounds per run, the finding classes with counts, the trivial-change runs and any data that could not be read, or records that no history exists.
 
@@ -136,4 +127,5 @@ Never recursively search bundled reference or schema directories to discover gui
 |---|---|
 | Checking which keys exist, where each is read from and what no-mistakes cannot do | `references/surface.md` |
 | Choosing values, classifying findings or listing trivial changes | `references/profile.md` |
+| Enumerating and reading the target's no-mistakes runs | `references/no-mistakes-history.md` |
 | Writing approved changes | `schemas/findings.schema.json`, `schemas/change-set.schema.json` |
