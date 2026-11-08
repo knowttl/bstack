@@ -583,6 +583,25 @@ Distinct nested guidance stays scoped and produces no root consolidation candida
 An exact-byte equivalent nested file or a lone import of the same scope's existing `AGENTS.md` yields only a candidate targeting that scope's `AGENTS.md`.
 Local variants inside the repo are possible shadowing reports with `modifiable: false`, never consolidation candidates.
 
+Paths matching a glob in `instructions.exclude` of `.bstack/project.json` are left out of `inventory` and `instructions measure`, so fixture trees can be configured out of scope.
+That file is read only when it exists and is checked against the [project schema](../runtime/schemas/project.schema.json), and a schema violation fails the command.
+Nothing is excluded by default.
+
+### Instructions measure
+
+```sh
+node skills/agents-md/scripts/agents-md.mjs instructions measure --repo <path> --json
+```
+
+The command accepts `--repo` or `--workspace` and writes nothing.
+It returns `data.sources`, `data.total` and `data.exclude`.
+Each source has `path`, `kind`, `bytes`, `lines` and `tokens`, where `tokens` is `bytes` divided by four, rounded up, and `total` sums each source once.
+`instructions` sources are `AGENTS.md`, `CLAUDE.md` and `.claude/CLAUDE.md` files at any depth, with `imports` listing the files a `CLAUDE.md` imports with `@path`.
+An imported file is an `import` source unless it is itself an instruction file.
+Imports resolve relative to the importing file, follow at most five hops, stay inside the repo and skip fenced and inline code; a missing, outside or symlinked target is not counted.
+`skill-description` sources are the `description` of each `.claude/skills/*/SKILL.md` and `.agents/skills/*/SKILL.md` that lacks `disable-model-invocation: true`, read from plain, quoted or `>`/`|` block frontmatter values.
+`CLAUDE.local.md` is per machine and is not measured.
+
 ## No-mistakes history
 
 `history --repo <target> [--json]` summarises the target's no-mistakes runs without writes or daemon access.

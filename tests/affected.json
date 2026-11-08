@@ -10,6 +10,7 @@
     "inspect": { "tasks": ["T2.2", "T2.8"], "dependents": [] },
     "history": { "tasks": ["history"], "dependents": [] },
     "inventory": { "tasks": ["T2.3", "T2.8", "agents-md", "T2.12"], "dependents": [] },
+    "instructions-measure": { "tasks": ["agents-md"], "dependents": [] },
     "measure": { "tasks": ["T2.4", "architecture"], "dependents": [] },
     "overlap": { "tasks": ["T2.4", "architecture"], "dependents": [] },
     "findings": { "tasks": ["T2.5", "T2.8"], "dependents": ["apply", "baseline", "evidence-validate", "evaluation"] },

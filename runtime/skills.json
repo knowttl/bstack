@@ -66,10 +66,10 @@
     "references": ["agents-pointer.md", "writing.md"]
   },
   "agents-md": {
-    "commands": ["inventory", "apply", "state show"],
-    "schemas": ["change-set.schema.json", "evidence.schema.json", "findings.schema.json", "resume-state.schema.json"],
+    "commands": ["inventory", "instructions measure", "apply", "state show"],
+    "schemas": ["change-set.schema.json", "evidence.schema.json", "findings.schema.json", "project.schema.json", "resume-state.schema.json"],
     "assets": [],
-    "references": ["agents-pointer.md", "writing.md"]
+    "references": ["agents-pointer.md", "writing.md", "no-mistakes-history.md"]
   },
   "readme": {
     "commands": ["apply", "state show", "cite-check"],

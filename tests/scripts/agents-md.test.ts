@@ -54,7 +54,7 @@ async function approvedPlan(directory: string, repo: string, edits: ({ path: str
 test('the agents-md skill ships only the commands its procedure runs', () => {
   const result = spawnSync(process.execPath, [entry, '--help'], { encoding: 'utf8' })
   assert.equal(result.status, 0, result.stderr)
-  assert.deepEqual(result.stdout.match(/^ {2}\S.*$/gm)!.map(line => line.trim()).sort(), ['apply', 'inventory', 'state show'])
+  assert.deepEqual(result.stdout.match(/^ {2}\S.*$/gm)!.map(line => line.trim()).sort(), ['apply', 'instructions measure', 'inventory', 'state show'])
 })
 
 for (const mode of ['repo', 'workspace']) {
@@ -96,3 +96,75 @@ for (const mode of ['repo', 'workspace']) {
     assert.deepEqual(rechecked.data.shadowing.map((file: NonNullable<typeof rechecked.data.shadowing>[number]) => file.path), ['CLAUDE.local.md'])
   })
 }
+
+async function writeFiles(repo: string, files: Record<string, string>) {
+  for (const [path, content] of Object.entries(files)) {
+    await mkdir(dirname(join(repo, path)), { recursive: true })
+    await writeFile(join(repo, path), content)
+  }
+}
+
+test('instructions measure counts each instruction file and import once and skips code and local variants', async t => {
+  const { directory, repo } = await emptyRepo(t)
+  await writeFiles(repo, {
+    'AGENTS.md': 'Root rules\n',
+    'CLAUDE.md': '@AGENTS.md\n',
+    'packages/web/CLAUDE.md': 'Web rules\n@docs/web.md\n```\n@docs/ignored.md\n```\n',
+    'packages/web/docs/web.md': 'Web import\n',
+    'packages/web/docs/ignored.md': 'Ignored\n',
+    'CLAUDE.local.md': 'Local\n'
+  })
+  const result = agentsMd(directory, ['instructions', 'measure', '--repo', repo])
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.deepEqual(result.data.sources.map(({ path, kind, bytes, lines, tokens, imports }: NonNullable<typeof result.data.sources>[number]) => ({ path, kind, bytes, lines, tokens, imports })), [
+    { path: 'AGENTS.md', kind: 'instructions', bytes: 11, lines: 1, tokens: 3, imports: [] },
+    { path: 'CLAUDE.md', kind: 'instructions', bytes: 11, lines: 1, tokens: 3, imports: ['AGENTS.md'] },
+    { path: 'packages/web/CLAUDE.md', kind: 'instructions', bytes: 48, lines: 5, tokens: 12, imports: ['packages/web/docs/web.md'] },
+    { path: 'packages/web/docs/web.md', kind: 'import', bytes: 11, lines: 1, tokens: 3, imports: [] }
+  ])
+  assert.deepEqual(result.data.total, { bytes: 81, lines: 8, tokens: 21 })
+})
+
+test('instructions measure counts descriptions of model-invocable skills only', async t => {
+  const { directory, repo } = await emptyRepo(t)
+  await writeFiles(repo, {
+    '.claude/skills/alpha/SKILL.md': '---\nname: alpha\ndescription: Does alpha things.\n---\nBody\n',
+    '.agents/skills/beta/SKILL.md': '---\nname: beta\ndescription: >\n  First part\n  second part\n---\nBody\n',
+    '.claude/skills/gamma/SKILL.md': '---\nname: gamma\ndescription: User only.\ndisable-model-invocation: true\n---\nBody\n'
+  })
+  const result = agentsMd(directory, ['instructions', 'measure', '--repo', repo])
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.deepEqual(result.data.sources.map(({ path, kind, bytes }: NonNullable<typeof result.data.sources>[number]) => ({ path, kind, bytes })), [
+    { path: '.agents/skills/beta/SKILL.md', kind: 'skill-description', bytes: 22 },
+    { path: '.claude/skills/alpha/SKILL.md', kind: 'skill-description', bytes: 18 }
+  ])
+  assert.equal(result.data.total.bytes, 40)
+})
+
+test('configured exclusions leave fixture trees out of inventory and measure', async t => {
+  const { directory, repo } = await emptyRepo(t)
+  const contract = { schemaVersion: 1, documents: [], scopes: [], rules: [], checks: [], generators: [], acceptanceSources: [], instructions: { exclude: ['tests/fixtures/**'] } }
+  await writeFiles(repo, { 'AGENTS.md': 'Root rules\n', 'tests/fixtures/shop/AGENTS.md': 'Fixture rules\n', '.bstack/project.json': JSON.stringify(contract) })
+  const inventory = agentsMd(directory, ['inventory', '--repo', repo])
+  assert.deepEqual(inventory.data.files.map((file: NonNullable<typeof inventory.data.files>[number]) => file.path), ['AGENTS.md'])
+  const measured = agentsMd(directory, ['instructions', 'measure', '--repo', repo])
+  assert.deepEqual(measured.data.sources.map((source: NonNullable<typeof measured.data.sources>[number]) => source.path), ['AGENTS.md'])
+  assert.deepEqual(measured.data.exclude, ['tests/fixtures/**'])
+})
+
+test('without configuration inventory and measure include fixture trees', async t => {
+  const { directory, repo } = await emptyRepo(t)
+  await writeFiles(repo, { 'AGENTS.md': 'Root rules\n', 'tests/fixtures/shop/AGENTS.md': 'Fixture rules\n' })
+  const inventory = agentsMd(directory, ['inventory', '--repo', repo])
+  assert.deepEqual(inventory.data.files.map((file: NonNullable<typeof inventory.data.files>[number]) => file.path), ['AGENTS.md', 'tests/fixtures/shop/AGENTS.md'])
+  const measured = agentsMd(directory, ['instructions', 'measure', '--repo', repo])
+  assert.deepEqual(measured.data.sources.map((source: NonNullable<typeof measured.data.sources>[number]) => source.path), ['AGENTS.md', 'tests/fixtures/shop/AGENTS.md'])
+})
+
+test('an invalid project contract fails measure with its schema problem', async t => {
+  const { directory, repo } = await emptyRepo(t)
+  await writeFiles(repo, { 'AGENTS.md': 'Root rules\n', '.bstack/project.json': JSON.stringify({ schemaVersion: 1, instructions: { exclude: 'tests/**' } }) })
+  const result = agentsMd(directory, ['instructions', 'measure', '--repo', repo])
+  assert.equal(result.status, 'failed')
+  assert.ok(result.problems.some((problem: { code: string }) => problem.code === 'invalid-type'))
+})

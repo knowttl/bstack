@@ -860,6 +860,13 @@ var project_schema_default = {
         }
       }
     },
+    instructions: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        exclude: { type: "array", uniqueItems: true, items: { type: "string", minLength: 1 } }
+      }
+    },
     acceptanceSources: {
       type: "array",
       items: {
@@ -4067,4 +4074,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"2af1b3e8ca08e6a4f89920a84d1c6a04cfd07ba5acce57e8a24e3fce8e4de054"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"ff146dacda99f75a64f8851ca6f59c712d82d1f833ecce996318a1cdb9aade37"}

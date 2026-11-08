@@ -15,7 +15,7 @@ Resolve the target before proceeding: an existing repo is passed as `--repo`, an
 This skill creates the root `AGENTS.md` when the project has none and maintains it when it has one.
 The file holds pointers to the project's rules, evidence requirements and maintained check commands, never full copies of them.
 Every other skill adds only the one line for what it wrote; this skill owns the file, its structure, the `CLAUDE.md` merge and the pointer audit.
-It keeps distinct nested instruction files as they are, reports `CLAUDE.local.md` as possible shadowing without editing it, and inspects and reports nothing outside the selected repo, including ancestor directories and user profiles.
+It measures the size of the instructions an agent loads and audits the content of distinct nested instruction files for review only, editing a line there only when the user selects it, reports `CLAUDE.local.md` as possible shadowing without editing it, and inspects and reports nothing outside the selected repo, including ancestor directories and user profiles.
 It removes a `CLAUDE.md` only after rechecking the host's official loading documentation and getting the author's approval.
 It writes no document other than instruction files, and it neither edits product code nor opens pull requests.
 Return the result to the project's chosen workflow instead of starting another skill.
@@ -28,7 +28,7 @@ Do not substitute direct project edits or an invented approval for unavailable t
 Copy this checklist and tick a step only when its Done when criterion is met.
 
 - [ ] Step 1: Inventory the instruction files
-- [ ] Step 2: Audit the pointers
+- [ ] Step 2: Audit the lines
 - [ ] Step 3: Decide the merge
 - [ ] Step 4: Draft AGENTS.md
 - [ ] Step 5: Review and apply
@@ -37,13 +37,19 @@ Copy this checklist and tick a step only when its Done when criterion is met.
 ### Step 1: Inventory the instruction files
 
 Run `node scripts/agents-md.mjs inventory --repo <target> --json`, with `--workspace` for a directory that is not a Git repo, and keep the output in scratch.
+Run `node scripts/agents-md.mjs instructions measure --repo <target> --json` the same way and keep its bytes, lines and approximate tokens as the starting size.
 Read every instruction file it lists, and read the sources the project already has for rules, evidence requirements and check commands.
 Classify each instruction file as the root `AGENTS.md`, a scoped file that governs a nested directory, a repo-owned `CLAUDE.md`, or a local variant.
-Load the [AGENTS.md guide](references/agents-md.md) for the classes, equivalence and what counts as a source.
+Load the [AGENTS.md guide](references/agents-md.md) for the classes, equivalence, what counts as a source and what the size measure covers.
 
-Done when: Every instruction file is classified, the merge candidates and shadowing reports from `inventory` are noted, and the project's rule, evidence and check-command sources are listed or reported as absent.
+Done when: Every instruction file is classified, the merge candidates and shadowing reports from `inventory` are noted, the starting size is recorded, and the project's rule, evidence and check-command sources are listed or reported as absent.
 
-### Step 2: Audit the pointers
+### Step 2: Audit the lines
+
+Give every line of the root `AGENTS.md`, and of each scoped file the author wants audited, one line-value class from the guide with its evidence.
+Open the line's target, command or path before classifying it.
+Propose removing a dead line for the user to select, and list a line that restates an agent default as a removal candidate only when no no-mistakes history finding cites it, reading the history as the [history reference](references/no-mistakes-history.md) describes or reporting that none is available.
+Never remove a line automatically, and edit a scoped file only for lines the user selects.
 
 Check each existing pointer line in the root `AGENTS.md` against the repo.
 Report a link whose target is missing, a pointer to something that is not a project source, a line that copies a rule instead of pointing to it, and a source of rules, evidence requirements or check commands that no line points to.
@@ -54,7 +60,7 @@ Classify each kept non-pointer rule as enforceable or judgment using the guide's
 For an enforceable rule, name the highest workable rung and suggest `/verification correct` with the cited rule as a candidate; do not start it or implement enforcement here.
 When a proven check already enforces the rule, propose replacing the prose with a pointer to that check for the user to select.
 
-Done when: Every pointer is marked resolving, broken or copying with its evidence, every unpointed source is listed, each kept non-pointer rule has a classification and any enforcement route, and no existing line has been judged without opening its target.
+Done when: Every audited line has a line-value class with its evidence, every pointer is marked resolving, broken or copying, every unpointed source is listed, each kept non-pointer rule has a classification and any enforcement route, and no existing line has been judged without opening its target.
 
 ### Step 3: Decide the merge
 
@@ -96,6 +102,7 @@ Open each pointer target in the written file to confirm it resolves.
 State the target, the instruction files found and their classes, each pointer's result, the merge decisions with the host check and its limits, and the written and deleted paths.
 Name every shadowing report, every unpointed source left for its skill or the author, and any step left blocked with its missing prerequisite.
 Report each kept non-pointer rule's classification with its file and line, the highest workable rung and `/verification correct` route for enforceable candidates, and any proposed pointer to an existing proven check.
+Run `instructions measure` again and report the bytes, lines and approximate tokens before and after, with each dead or default-restating line left for the user to select.
 Name the skills that add pointers, `/glossary`, `/vision`, `/architecture`, `/foundation`, `/verification` and `/maintenance`, as the way later pointers arrive, and start none of them.
 
 Done when: The report names what was written or why nothing was, the host check behind any removal, and every open decision.
@@ -128,4 +135,6 @@ Never recursively search bundled reference or schema directories to discover gui
 | Classifying instruction files, judging equivalence or checking the host before a removal | `references/agents-md.md` |
 | Writing the sentences of the file | `references/writing.md` |
 | Drafting the file or auditing its pointers | `references/agents-pointer.md` |
+| Reading no-mistakes history for the default-restating class | `references/no-mistakes-history.md` |
 | Writing approved changes | `schemas/findings.schema.json`, `schemas/change-set.schema.json` |
+| Reading or writing `instructions.exclude` in `.bstack/project.json` | `schemas/project.schema.json` |

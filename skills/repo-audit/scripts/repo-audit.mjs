@@ -216,6 +216,20 @@ async function resolveLinks(destination, allowMissingLinks = false) {
   }
   return join2(path, ...missing);
 }
+async function resolveFilePath(root, input, reviewedPath, allowMissingLinks = false) {
+  const path = await resolvePath(root, input, reviewedPath, allowMissingLinks);
+  if (/[*?\[\]{}]/.test(input)) {
+    throw new CommandError("failed", [{ code: "invalid-scope", message: "Reviewed scope cannot contain globs.", fix: "List concrete file paths, including planned absent files.", path: input }]);
+  }
+  try {
+    if ((await stat2(path)).isFile()) return path;
+  } catch (error) {
+    if (error.code === "ENOENT") return path;
+    if (error.code === "ENOTDIR") throw new CommandError("blocked", [{ code: "unresolved-path", message: "An existing path or link cannot be resolved.", fix: "Repair the link or select a resolvable path.", path: input }]);
+    throw error;
+  }
+  throw new CommandError("failed", [{ code: "invalid-scope", message: "Reviewed scope must identify a regular file or a planned absent file.", fix: "List concrete file paths, including planned absent files.", path: input }]);
+}
 
 // runtime/scripts/lib/fingerprint.mjs
 function hashBytes(bytes) {
@@ -334,8 +348,332 @@ async function run(options) {
 }
 
 // runtime/scripts/commands/inventory.mjs
-import { readFile as readFile2 } from "node:fs/promises";
+import { readFile as readFile3 } from "node:fs/promises";
 import { basename, dirname as dirname3, join as join5, relative as relative3, sep as sep3 } from "node:path";
+
+// runtime/scripts/lib/instructions.mjs
+import { readFile as readFile2 } from "node:fs/promises";
+
+// runtime/scripts/lib/glob.mjs
+import { posix, win32 as win322 } from "node:path";
+function pathGlob(pattern) {
+  if (!pattern || pattern.includes("\0") || pattern.includes("\\") || posix.isAbsolute(pattern) || win322.isAbsolute(pattern) || /^[A-Za-z]:/.test(pattern) || pattern.split("/").some((part) => !part || part === "." || part === "..") || /[\[\]{}()!]/u.test(pattern) || pattern.split("/").some((part) => part.includes("**") && part !== "**")) {
+    throw new CommandError("failed", [{ code: "invalid-glob", path: pattern, message: "Expected a relative forward-slash path using only * and ? within segments, or ** as a whole segment.", fix: "Remove unsupported glob syntax, absolute paths and traversal." }]);
+  }
+  const states = [[]];
+  const characters = Array.from(pattern);
+  let current = 0;
+  const edge = (from, to, symbol) => states[from].push({ to, symbol });
+  const next = () => states.push([]) - 1;
+  for (let index = 0; index < characters.length; index++) {
+    const end = next();
+    if (characters.slice(index, index + 3).join("") === "**/") {
+      const directory = next();
+      edge(current, end, null);
+      edge(current, directory, "segment");
+      edge(directory, directory, "segment");
+      edge(directory, current, "/");
+      index += 2;
+    } else if (characters.slice(index, index + 2).join("") === "**") {
+      edge(current, end, null);
+      edge(current, current, "any");
+      index++;
+    } else if (characters[index] === "*") {
+      edge(current, end, null);
+      edge(current, current, "segment");
+    } else edge(current, end, characters[index] === "?" ? "segment" : characters[index]);
+    current = end;
+  }
+  return { states, end: current, pattern };
+}
+function accepts(symbol, character) {
+  return symbol === "any" || (symbol === "segment" ? character !== "/" : symbol === character);
+}
+function sharedPath(left, right) {
+  const queue = [{ a: 0, b: 0, segment: "", path: "" }];
+  const visited = /* @__PURE__ */ new Set();
+  for (let index = 0; index < queue.length; index++) {
+    const item = queue[index];
+    const key = JSON.stringify([item.a, item.b, item.segment]);
+    if (visited.has(key)) continue;
+    visited.add(key);
+    if (item.a === left.end && item.b === right.end && item.segment === "valid") return item.path;
+    for (const edge of left.states[item.a]) if (edge.symbol === null) queue.push({ ...item, a: edge.to });
+    for (const edge of right.states[item.b]) if (edge.symbol === null) queue.push({ ...item, b: edge.to });
+    for (const a of left.states[item.a].filter((edge) => edge.symbol !== null)) {
+      for (const b of right.states[item.b].filter((edge) => edge.symbol !== null)) {
+        for (const character of new Set([a.symbol, b.symbol, "a", "/"].filter((value) => value !== "any" && value !== "segment"))) {
+          if (!accepts(a.symbol, character) || !accepts(b.symbol, character)) continue;
+          if (character === "/" && item.segment !== "valid") continue;
+          const segment = character === "/" ? "" : item.segment === "" && character === "." ? "." : item.segment === "." && character === "." ? ".." : "valid";
+          queue.push({ a: a.to, b: b.to, segment, path: item.path + character });
+        }
+      }
+    }
+  }
+  return null;
+}
+function matchesPath(glob, path) {
+  const states = Array.from(path, (character, index) => [{ to: index + 1, symbol: character }]);
+  states.push([]);
+  return sharedPath(glob, { states, end: states.length - 1 }) !== null;
+}
+
+// runtime/scripts/lib/schema.mjs
+var keywords = ["$schema", "title", "type", "const", "enum", "properties", "required", "additionalProperties", "items", "minItems", "minLength", "pattern", "uniqueItems"];
+var types = ["object", "array", "string", "number", "integer", "boolean", "null"];
+function object(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
+}
+function matchesType(value, type) {
+  if (type === "object") return object(value);
+  if (type === "array") return Array.isArray(value);
+  if (type === "null") return value === null;
+  if (type === "integer") return Number.isInteger(value);
+  return typeof value === type && (type !== "number" || Number.isFinite(value));
+}
+function validateSchema(schema) {
+  const problems = [];
+  function visit(node, path) {
+    const invalid = (message) => problems.push({ code: "invalid-schema", message, path, fix: "Use the documented schema subset and keyword value types." });
+    if (!object(node)) {
+      invalid("A schema must be an object.");
+      return;
+    }
+    for (const key of Object.keys(node)) {
+      if (!keywords.includes(key)) problems.push({ code: "unsupported-keyword", message: `Unsupported schema keyword: ${key}`, path: `${path}/${key}`, fix: `Remove ${key} or extend the tested schema subset in its owning task.` });
+    }
+    for (const key of ["$schema", "title", "pattern"]) {
+      if (Object.hasOwn(node, key) && typeof node[key] !== "string") invalid(`${key} must be a string.`);
+    }
+    if (typeof node.pattern === "string") {
+      try {
+        new RegExp(node.pattern, "u");
+      } catch {
+        invalid(`Invalid pattern: ${node.pattern}`);
+      }
+    }
+    if (Object.hasOwn(node, "type")) {
+      const selected = Array.isArray(node.type) ? node.type : [node.type];
+      if (!selected.length || selected.some((type) => !types.includes(type)) || new Set(selected).size !== selected.length) invalid("type must name unique supported JSON types.");
+    }
+    for (const key of ["minItems", "minLength"]) {
+      if (Object.hasOwn(node, key) && (!Number.isSafeInteger(node[key]) || node[key] < 0)) invalid(`${key} must be a nonnegative safe integer.`);
+    }
+    if (Object.hasOwn(node, "enum") && (!Array.isArray(node.enum) || !node.enum.length || new Set(node.enum.map(canonicalJSON)).size !== node.enum.length)) invalid("enum must be a nonempty array of unique JSON values.");
+    if (Object.hasOwn(node, "required") && (!Array.isArray(node.required) || node.required.some((key) => typeof key !== "string") || new Set(node.required).size !== node.required.length)) invalid("required must be an array of unique field names.");
+    if (Object.hasOwn(node, "properties")) {
+      if (!object(node.properties)) invalid("properties must be an object of schemas.");
+      else for (const [key, child] of Object.entries(node.properties)) visit(child, `${path}/properties/${key}`);
+    }
+    if (Object.hasOwn(node, "items")) visit(node.items, `${path}/items`);
+    if (Object.hasOwn(node, "uniqueItems") && typeof node.uniqueItems !== "boolean") invalid("uniqueItems must be a boolean.");
+    if (Object.hasOwn(node, "additionalProperties") && typeof node.additionalProperties !== "boolean") visit(node.additionalProperties, `${path}/additionalProperties`);
+  }
+  visit(schema, "$");
+  if (problems.length) throw new CommandError("failed", problems);
+}
+function validateData(schema, data) {
+  validateSchema(schema);
+  const problems = [];
+  function visit(node, value, path) {
+    const problem = (code, message, at = path) => problems.push({ code, message, path: at, fix: "Supply data matching the documented input schema." });
+    if (node.type && !(Array.isArray(node.type) ? node.type : [node.type]).some((type) => matchesType(value, type))) {
+      problem("invalid-type", `Expected ${JSON.stringify(node.type)}.`);
+      return;
+    }
+    if (Object.hasOwn(node, "const") && canonicalJSON(value) !== canonicalJSON(node.const)) problem("invalid-const", `Expected constant ${JSON.stringify(node.const)}.`);
+    if (node.enum && !node.enum.some((item) => canonicalJSON(item) === canonicalJSON(value))) problem("invalid-enum", "Value is not in the allowed enum.");
+    if (typeof value === "string") {
+      if (node.minLength !== void 0 && [...value].length < node.minLength) problem("min-length", `Expected at least ${node.minLength} characters.`);
+      if (node.pattern !== void 0 && !new RegExp(node.pattern, "u").test(value)) problem("invalid-pattern", `Value must match ${node.pattern}.`);
+    }
+    if (Array.isArray(value)) {
+      if (node.uniqueItems && new Set(value.map(canonicalJSON)).size !== value.length) problem("duplicate-item", "Array items must be unique.");
+      if (node.minItems !== void 0 && value.length < node.minItems) problem("min-items", `Expected at least ${node.minItems} items.`);
+      if (node.items) value.forEach((item, index) => visit(node.items, item, `${path}/${index}`));
+    }
+    if (object(value)) {
+      for (const key of node.required ?? []) {
+        if (!Object.hasOwn(value, key)) problem("missing-field", `Missing required field: ${key}`, `${path}/${key}`);
+      }
+      for (const [key, item] of Object.entries(value)) {
+        if (Object.hasOwn(node.properties ?? {}, key)) visit(node.properties[key], item, `${path}/${key}`);
+        else if (node.additionalProperties === false) problem("unknown-field", `Unknown input field: ${key}`, `${path}/${key}`);
+        else if (object(node.additionalProperties)) visit(node.additionalProperties, item, `${path}/${key}`);
+      }
+    }
+  }
+  visit(schema, data, "$");
+  if (problems.length) throw new CommandError("failed", problems);
+}
+function validateIds(records, path) {
+  const problems = [];
+  const seen = /* @__PURE__ */ new Set();
+  records.forEach((record, index) => {
+    const id = record?.id;
+    const location = `${path}/${index}/id`;
+    if (typeof id !== "string" || !id.trim()) problems.push({ code: "missing-id", message: "Missing nonempty joining ID.", path: location, fix: "Supply a nonempty string ID for every record." });
+    else if (seen.has(id)) problems.push({ code: "duplicate-id", message: `Duplicate joining ID: ${id}`, path: location, fix: "Use a unique ID for each record in this collection." });
+    else seen.add(id);
+  });
+  if (problems.length) throw new CommandError("failed", problems);
+}
+
+// runtime/schemas/project.schema.json
+var project_schema_default = {
+  title: "Project maintenance contract version 1",
+  type: "object",
+  additionalProperties: false,
+  required: ["schemaVersion", "documents", "scopes", "rules", "checks", "generators", "acceptanceSources"],
+  properties: {
+    schemaVersion: { const: 1 },
+    documents: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["id", "path"],
+        properties: {
+          id: { type: "string", minLength: 1, pattern: "\\S" },
+          path: { type: "string", minLength: 1 },
+          glossary: {
+            type: "object",
+            additionalProperties: false,
+            required: ["context", "format"],
+            properties: {
+              context: { type: "string", minLength: 1, pattern: "\\S" },
+              format: { type: "string", minLength: 1, pattern: "\\S" }
+            }
+          }
+        }
+      }
+    },
+    scopes: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["id", "paths", "documentIds", "ruleIds"],
+        properties: {
+          id: { type: "string", minLength: 1, pattern: "\\S" },
+          paths: { type: "array", minItems: 1, uniqueItems: true, items: { type: "string", minLength: 1 } },
+          documentIds: { type: "array", uniqueItems: true, items: { type: "string", minLength: 1 } },
+          ruleIds: { type: "array", uniqueItems: true, items: { type: "string", minLength: 1 } }
+        }
+      }
+    },
+    rules: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["id", "path", "pointer", "checkIds"],
+        properties: {
+          id: { type: "string", minLength: 1, pattern: "\\S" },
+          path: { type: "string", minLength: 1 },
+          pointer: { type: "string", minLength: 1, pattern: "\\S" },
+          checkIds: { type: "array", uniqueItems: true, items: { type: "string", minLength: 1 } }
+        }
+      }
+    },
+    checks: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["id", "command", "inputScopes"],
+        properties: {
+          id: { type: "string", minLength: 1, pattern: "\\S" },
+          command: {
+            type: "object",
+            additionalProperties: false,
+            required: ["executable", "args", "cwd", "versionArgs"],
+            properties: {
+              executable: { type: "string", minLength: 1, pattern: "^(?=[\\s\\S]*\\S)[^\\u0000]+$" },
+              args: { type: "array", items: { type: "string", pattern: "^[^\\u0000]*$" } },
+              cwd: { type: "string", minLength: 1 },
+              versionArgs: { type: "array", items: { type: "string", pattern: "^[^\\u0000]*$" } },
+              timeoutMs: { type: "integer" }
+            }
+          },
+          inputScopes: { type: "array", minItems: 1, uniqueItems: true, items: { type: "string", minLength: 1 } }
+        }
+      }
+    },
+    generators: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["id", "command", "inputScopes", "outputPaths"],
+        properties: {
+          id: { type: "string", minLength: 1, pattern: "\\S" },
+          command: {
+            type: "object",
+            additionalProperties: false,
+            required: ["executable", "args", "cwd", "versionArgs"],
+            properties: {
+              executable: { type: "string", minLength: 1, pattern: "^(?=[\\s\\S]*\\S)[^\\u0000]+$" },
+              args: { type: "array", items: { type: "string", pattern: "^[^\\u0000]*$" } },
+              cwd: { type: "string", minLength: 1 },
+              versionArgs: { type: "array", items: { type: "string", pattern: "^[^\\u0000]*$" } },
+              timeoutMs: { type: "integer" }
+            }
+          },
+          inputScopes: { type: "array", minItems: 1, uniqueItems: true, items: { type: "string", minLength: 1 } },
+          outputPaths: { type: "array", minItems: 1, uniqueItems: true, items: { type: "string", minLength: 1 } }
+        }
+      }
+    },
+    instructions: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        exclude: { type: "array", uniqueItems: true, items: { type: "string", minLength: 1 } }
+      }
+    },
+    acceptanceSources: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["id", "path", "pointer"],
+        properties: {
+          id: { type: "string", minLength: 1, pattern: "\\S" },
+          path: { type: "string", minLength: 1 },
+          pointer: { type: "string", minLength: 1, pattern: "\\S" }
+        }
+      }
+    }
+  }
+};
+
+// runtime/scripts/lib/instructions.mjs
+var contractPath = ".bstack/project.json";
+async function loadInstructionSettings(root) {
+  let text;
+  try {
+    text = await readFile2(await resolveFilePath(root, contractPath), "utf8");
+  } catch (error) {
+    if (error.code === "ENOENT") return { exclude: [] };
+    throw error;
+  }
+  let contract;
+  try {
+    contract = JSON.parse(text);
+  } catch {
+    throw new CommandError("blocked", [{ code: "contract-unavailable", path: contractPath, message: "The project contract must be readable JSON.", fix: "Repair .bstack/project.json or remove it." }]);
+  }
+  validateData(project_schema_default, contract);
+  return { exclude: contract.instructions?.exclude ?? [] };
+}
+async function includedFiles(root, exclude) {
+  const globs = exclude.map(pathGlob);
+  return (await repoFiles(root)).filter((path) => !globs.some((glob) => matchesPath(glob, path)));
+}
+
+// runtime/scripts/commands/inventory.mjs
 var documentNames = {
   vision: /^(?:vision|goals|purpose|product[-_ ]?requirements|requirements|prd)$/i,
   design: /^(?:design|architecture|technical[-_ ]?design|principles)$/i,
@@ -360,12 +698,13 @@ async function run2(options) {
   const files = [];
   const candidates = [];
   const shadowing = [];
-  const paths = new Set(await repoFiles(target.root));
+  const { exclude } = await loadInstructionSettings(target.root);
+  const paths = new Set(await includedFiles(target.root, exclude));
   async function add(path) {
     const absolute = join5(target.root, path);
     const kind = kindFor(path);
     if (!kind) return;
-    const bytes = await readFile2(absolute);
+    const bytes = await readFile3(absolute);
     const file = { path, hash: hashBytes(bytes), kind };
     if (kind === "instructions") {
       const directory = dirname3(absolute);
@@ -383,7 +722,7 @@ async function run2(options) {
         const destination = relative3(target.root, join5(scopeDirectory, "AGENTS.md")).split(sep3).join("/");
         let equivalent = false;
         try {
-          const agents = paths.has(destination) ? await readFile2(join5(scopeDirectory, "AGENTS.md")) : null;
+          const agents = paths.has(destination) ? await readFile3(join5(scopeDirectory, "AGENTS.md")) : null;
           const content = bytes.toString("utf8").trim();
           const importPath = relative3(directory, join5(scopeDirectory, "AGENTS.md")).split(sep3).join("/");
           equivalent = agents !== null && (bytes.equals(agents) || content === `@${importPath}` || content === `@./${importPath}`);
@@ -540,10 +879,10 @@ async function run3(options) {
 }
 
 // runtime/scripts/commands/cite-check.mjs
-import { readFile as readFile4 } from "node:fs/promises";
+import { readFile as readFile5 } from "node:fs/promises";
 
 // runtime/scripts/lib/citations.mjs
-import { readFile as readFile3 } from "node:fs/promises";
+import { readFile as readFile4 } from "node:fs/promises";
 import { spawnSync as spawnSync4 } from "node:child_process";
 async function fileCitationProblems(root, citation) {
   const [, path, number] = citation.location.match(/^(.*):([1-9][0-9]*)$/u);
@@ -551,7 +890,7 @@ async function fileCitationProblems(root, citation) {
   const problem = (code, message) => problems.push({ code, message, path: citation.location, fix: "Reopen the cited source and regenerate its location and state." });
   let bytes;
   try {
-    bytes = await readFile3(await resolvePath(root, path));
+    bytes = await readFile4(await resolvePath(root, path));
   } catch (error) {
     if (error instanceof CommandError) return error.problems;
     problem("citation-file-unavailable", "Cited path must be a readable file.");
@@ -575,118 +914,17 @@ async function fileCitationProblems(root, citation) {
   return problems;
 }
 
-// runtime/scripts/lib/schema.mjs
-var keywords = ["$schema", "title", "type", "const", "enum", "properties", "required", "additionalProperties", "items", "minItems", "minLength", "pattern", "uniqueItems"];
-var types = ["object", "array", "string", "number", "integer", "boolean", "null"];
-function object(value) {
-  return value !== null && typeof value === "object" && !Array.isArray(value);
-}
-function matchesType(value, type) {
-  if (type === "object") return object(value);
-  if (type === "array") return Array.isArray(value);
-  if (type === "null") return value === null;
-  if (type === "integer") return Number.isInteger(value);
-  return typeof value === type && (type !== "number" || Number.isFinite(value));
-}
-function validateSchema(schema) {
-  const problems = [];
-  function visit(node, path) {
-    const invalid = (message) => problems.push({ code: "invalid-schema", message, path, fix: "Use the documented schema subset and keyword value types." });
-    if (!object(node)) {
-      invalid("A schema must be an object.");
-      return;
-    }
-    for (const key of Object.keys(node)) {
-      if (!keywords.includes(key)) problems.push({ code: "unsupported-keyword", message: `Unsupported schema keyword: ${key}`, path: `${path}/${key}`, fix: `Remove ${key} or extend the tested schema subset in its owning task.` });
-    }
-    for (const key of ["$schema", "title", "pattern"]) {
-      if (Object.hasOwn(node, key) && typeof node[key] !== "string") invalid(`${key} must be a string.`);
-    }
-    if (typeof node.pattern === "string") {
-      try {
-        new RegExp(node.pattern, "u");
-      } catch {
-        invalid(`Invalid pattern: ${node.pattern}`);
-      }
-    }
-    if (Object.hasOwn(node, "type")) {
-      const selected = Array.isArray(node.type) ? node.type : [node.type];
-      if (!selected.length || selected.some((type) => !types.includes(type)) || new Set(selected).size !== selected.length) invalid("type must name unique supported JSON types.");
-    }
-    for (const key of ["minItems", "minLength"]) {
-      if (Object.hasOwn(node, key) && (!Number.isSafeInteger(node[key]) || node[key] < 0)) invalid(`${key} must be a nonnegative safe integer.`);
-    }
-    if (Object.hasOwn(node, "enum") && (!Array.isArray(node.enum) || !node.enum.length || new Set(node.enum.map(canonicalJSON)).size !== node.enum.length)) invalid("enum must be a nonempty array of unique JSON values.");
-    if (Object.hasOwn(node, "required") && (!Array.isArray(node.required) || node.required.some((key) => typeof key !== "string") || new Set(node.required).size !== node.required.length)) invalid("required must be an array of unique field names.");
-    if (Object.hasOwn(node, "properties")) {
-      if (!object(node.properties)) invalid("properties must be an object of schemas.");
-      else for (const [key, child] of Object.entries(node.properties)) visit(child, `${path}/properties/${key}`);
-    }
-    if (Object.hasOwn(node, "items")) visit(node.items, `${path}/items`);
-    if (Object.hasOwn(node, "uniqueItems") && typeof node.uniqueItems !== "boolean") invalid("uniqueItems must be a boolean.");
-    if (Object.hasOwn(node, "additionalProperties") && typeof node.additionalProperties !== "boolean") visit(node.additionalProperties, `${path}/additionalProperties`);
-  }
-  visit(schema, "$");
-  if (problems.length) throw new CommandError("failed", problems);
-}
-function validateData(schema, data) {
-  validateSchema(schema);
-  const problems = [];
-  function visit(node, value, path) {
-    const problem = (code, message, at = path) => problems.push({ code, message, path: at, fix: "Supply data matching the documented input schema." });
-    if (node.type && !(Array.isArray(node.type) ? node.type : [node.type]).some((type) => matchesType(value, type))) {
-      problem("invalid-type", `Expected ${JSON.stringify(node.type)}.`);
-      return;
-    }
-    if (Object.hasOwn(node, "const") && canonicalJSON(value) !== canonicalJSON(node.const)) problem("invalid-const", `Expected constant ${JSON.stringify(node.const)}.`);
-    if (node.enum && !node.enum.some((item) => canonicalJSON(item) === canonicalJSON(value))) problem("invalid-enum", "Value is not in the allowed enum.");
-    if (typeof value === "string") {
-      if (node.minLength !== void 0 && [...value].length < node.minLength) problem("min-length", `Expected at least ${node.minLength} characters.`);
-      if (node.pattern !== void 0 && !new RegExp(node.pattern, "u").test(value)) problem("invalid-pattern", `Value must match ${node.pattern}.`);
-    }
-    if (Array.isArray(value)) {
-      if (node.uniqueItems && new Set(value.map(canonicalJSON)).size !== value.length) problem("duplicate-item", "Array items must be unique.");
-      if (node.minItems !== void 0 && value.length < node.minItems) problem("min-items", `Expected at least ${node.minItems} items.`);
-      if (node.items) value.forEach((item, index) => visit(node.items, item, `${path}/${index}`));
-    }
-    if (object(value)) {
-      for (const key of node.required ?? []) {
-        if (!Object.hasOwn(value, key)) problem("missing-field", `Missing required field: ${key}`, `${path}/${key}`);
-      }
-      for (const [key, item] of Object.entries(value)) {
-        if (Object.hasOwn(node.properties ?? {}, key)) visit(node.properties[key], item, `${path}/${key}`);
-        else if (node.additionalProperties === false) problem("unknown-field", `Unknown input field: ${key}`, `${path}/${key}`);
-        else if (object(node.additionalProperties)) visit(node.additionalProperties, item, `${path}/${key}`);
-      }
-    }
-  }
-  visit(schema, data, "$");
-  if (problems.length) throw new CommandError("failed", problems);
-}
-function validateIds(records, path) {
-  const problems = [];
-  const seen = /* @__PURE__ */ new Set();
-  records.forEach((record, index) => {
-    const id = record?.id;
-    const location = `${path}/${index}/id`;
-    if (typeof id !== "string" || !id.trim()) problems.push({ code: "missing-id", message: "Missing nonempty joining ID.", path: location, fix: "Supply a nonempty string ID for every record." });
-    else if (seen.has(id)) problems.push({ code: "duplicate-id", message: `Duplicate joining ID: ${id}`, path: location, fix: "Use a unique ID for each record in this collection." });
-    else seen.add(id);
-  });
-  if (problems.length) throw new CommandError("failed", problems);
-}
-
 // runtime/scripts/commands/cite-check.mjs
 async function run4(options) {
   if (!options.report) throw new CommandError("usage-error", [{ code: "missing-report", message: "--report is required.", fix: "Supply --report <research-report.json>." }]);
   const target = await resolveTarget(options, { draftOnly: true });
   let report;
   try {
-    report = JSON.parse(await readFile4(options.report, "utf8"));
+    report = JSON.parse(await readFile5(options.report, "utf8"));
   } catch {
     throw new CommandError("failed", [{ code: "invalid-report", message: "Report must be readable JSON.", path: options.report, fix: "Supply a readable research report." }]);
   }
-  const schema = JSON.parse(await readFile4(new URL("../schemas/research-report.json", import.meta.url), "utf8"));
+  const schema = JSON.parse(await readFile5(new URL("../schemas/research-report.json", import.meta.url), "utf8"));
   validateData(schema, report);
   validateIds(report.briefs, "$/briefs");
   const problems = [];
@@ -712,10 +950,10 @@ async function run4(options) {
 }
 
 // runtime/scripts/commands/contract-test.mjs
-import { readFile as readFile5 } from "node:fs/promises";
+import { readFile as readFile6 } from "node:fs/promises";
 async function readJSON(path) {
   try {
-    return JSON.parse(await readFile5(path, "utf8"));
+    return JSON.parse(await readFile6(path, "utf8"));
   } catch {
     throw new CommandError("failed", [{ code: "invalid-input", message: `Input must be readable JSON: ${path}`, fix: "Supply a readable JSON file.", path: String(path) }]);
   }

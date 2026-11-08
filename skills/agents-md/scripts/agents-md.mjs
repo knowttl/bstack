@@ -2876,8 +2876,282 @@ async function run2(options) {
 }
 
 // runtime/scripts/commands/inventory.mjs
+import { readFile as readFile5 } from "node:fs/promises";
+import { basename as basename3, dirname as dirname5, join as join7, relative as relative5, sep as sep3 } from "node:path";
+
+// runtime/scripts/lib/instructions.mjs
 import { readFile as readFile4 } from "node:fs/promises";
-import { basename as basename3, dirname as dirname5, join as join6, relative as relative5, sep as sep3 } from "node:path";
+import { join as join6, posix as posix2 } from "node:path";
+
+// runtime/scripts/lib/glob.mjs
+import { posix, win32 as win322 } from "node:path";
+function pathGlob(pattern) {
+  if (!pattern || pattern.includes("\0") || pattern.includes("\\") || posix.isAbsolute(pattern) || win322.isAbsolute(pattern) || /^[A-Za-z]:/.test(pattern) || pattern.split("/").some((part) => !part || part === "." || part === "..") || /[\[\]{}()!]/u.test(pattern) || pattern.split("/").some((part) => part.includes("**") && part !== "**")) {
+    throw new CommandError("failed", [{ code: "invalid-glob", path: pattern, message: "Expected a relative forward-slash path using only * and ? within segments, or ** as a whole segment.", fix: "Remove unsupported glob syntax, absolute paths and traversal." }]);
+  }
+  const states = [[]];
+  const characters = Array.from(pattern);
+  let current = 0;
+  const edge = (from, to, symbol) => states[from].push({ to, symbol });
+  const next = () => states.push([]) - 1;
+  for (let index = 0; index < characters.length; index++) {
+    const end = next();
+    if (characters.slice(index, index + 3).join("") === "**/") {
+      const directory = next();
+      edge(current, end, null);
+      edge(current, directory, "segment");
+      edge(directory, directory, "segment");
+      edge(directory, current, "/");
+      index += 2;
+    } else if (characters.slice(index, index + 2).join("") === "**") {
+      edge(current, end, null);
+      edge(current, current, "any");
+      index++;
+    } else if (characters[index] === "*") {
+      edge(current, end, null);
+      edge(current, current, "segment");
+    } else edge(current, end, characters[index] === "?" ? "segment" : characters[index]);
+    current = end;
+  }
+  return { states, end: current, pattern };
+}
+function accepts(symbol, character) {
+  return symbol === "any" || (symbol === "segment" ? character !== "/" : symbol === character);
+}
+function sharedPath(left, right) {
+  const queue = [{ a: 0, b: 0, segment: "", path: "" }];
+  const visited = /* @__PURE__ */ new Set();
+  for (let index = 0; index < queue.length; index++) {
+    const item = queue[index];
+    const key = JSON.stringify([item.a, item.b, item.segment]);
+    if (visited.has(key)) continue;
+    visited.add(key);
+    if (item.a === left.end && item.b === right.end && item.segment === "valid") return item.path;
+    for (const edge of left.states[item.a]) if (edge.symbol === null) queue.push({ ...item, a: edge.to });
+    for (const edge of right.states[item.b]) if (edge.symbol === null) queue.push({ ...item, b: edge.to });
+    for (const a of left.states[item.a].filter((edge) => edge.symbol !== null)) {
+      for (const b of right.states[item.b].filter((edge) => edge.symbol !== null)) {
+        for (const character of new Set([a.symbol, b.symbol, "a", "/"].filter((value) => value !== "any" && value !== "segment"))) {
+          if (!accepts(a.symbol, character) || !accepts(b.symbol, character)) continue;
+          if (character === "/" && item.segment !== "valid") continue;
+          const segment = character === "/" ? "" : item.segment === "" && character === "." ? "." : item.segment === "." && character === "." ? ".." : "valid";
+          queue.push({ a: a.to, b: b.to, segment, path: item.path + character });
+        }
+      }
+    }
+  }
+  return null;
+}
+function matchesPath(glob, path) {
+  const states = Array.from(path, (character, index) => [{ to: index + 1, symbol: character }]);
+  states.push([]);
+  return sharedPath(glob, { states, end: states.length - 1 }) !== null;
+}
+
+// runtime/schemas/project.schema.json
+var project_schema_default = {
+  title: "Project maintenance contract version 1",
+  type: "object",
+  additionalProperties: false,
+  required: ["schemaVersion", "documents", "scopes", "rules", "checks", "generators", "acceptanceSources"],
+  properties: {
+    schemaVersion: { const: 1 },
+    documents: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["id", "path"],
+        properties: {
+          id: { type: "string", minLength: 1, pattern: "\\S" },
+          path: { type: "string", minLength: 1 },
+          glossary: {
+            type: "object",
+            additionalProperties: false,
+            required: ["context", "format"],
+            properties: {
+              context: { type: "string", minLength: 1, pattern: "\\S" },
+              format: { type: "string", minLength: 1, pattern: "\\S" }
+            }
+          }
+        }
+      }
+    },
+    scopes: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["id", "paths", "documentIds", "ruleIds"],
+        properties: {
+          id: { type: "string", minLength: 1, pattern: "\\S" },
+          paths: { type: "array", minItems: 1, uniqueItems: true, items: { type: "string", minLength: 1 } },
+          documentIds: { type: "array", uniqueItems: true, items: { type: "string", minLength: 1 } },
+          ruleIds: { type: "array", uniqueItems: true, items: { type: "string", minLength: 1 } }
+        }
+      }
+    },
+    rules: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["id", "path", "pointer", "checkIds"],
+        properties: {
+          id: { type: "string", minLength: 1, pattern: "\\S" },
+          path: { type: "string", minLength: 1 },
+          pointer: { type: "string", minLength: 1, pattern: "\\S" },
+          checkIds: { type: "array", uniqueItems: true, items: { type: "string", minLength: 1 } }
+        }
+      }
+    },
+    checks: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["id", "command", "inputScopes"],
+        properties: {
+          id: { type: "string", minLength: 1, pattern: "\\S" },
+          command: {
+            type: "object",
+            additionalProperties: false,
+            required: ["executable", "args", "cwd", "versionArgs"],
+            properties: {
+              executable: { type: "string", minLength: 1, pattern: "^(?=[\\s\\S]*\\S)[^\\u0000]+$" },
+              args: { type: "array", items: { type: "string", pattern: "^[^\\u0000]*$" } },
+              cwd: { type: "string", minLength: 1 },
+              versionArgs: { type: "array", items: { type: "string", pattern: "^[^\\u0000]*$" } },
+              timeoutMs: { type: "integer" }
+            }
+          },
+          inputScopes: { type: "array", minItems: 1, uniqueItems: true, items: { type: "string", minLength: 1 } }
+        }
+      }
+    },
+    generators: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["id", "command", "inputScopes", "outputPaths"],
+        properties: {
+          id: { type: "string", minLength: 1, pattern: "\\S" },
+          command: {
+            type: "object",
+            additionalProperties: false,
+            required: ["executable", "args", "cwd", "versionArgs"],
+            properties: {
+              executable: { type: "string", minLength: 1, pattern: "^(?=[\\s\\S]*\\S)[^\\u0000]+$" },
+              args: { type: "array", items: { type: "string", pattern: "^[^\\u0000]*$" } },
+              cwd: { type: "string", minLength: 1 },
+              versionArgs: { type: "array", items: { type: "string", pattern: "^[^\\u0000]*$" } },
+              timeoutMs: { type: "integer" }
+            }
+          },
+          inputScopes: { type: "array", minItems: 1, uniqueItems: true, items: { type: "string", minLength: 1 } },
+          outputPaths: { type: "array", minItems: 1, uniqueItems: true, items: { type: "string", minLength: 1 } }
+        }
+      }
+    },
+    instructions: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        exclude: { type: "array", uniqueItems: true, items: { type: "string", minLength: 1 } }
+      }
+    },
+    acceptanceSources: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["id", "path", "pointer"],
+        properties: {
+          id: { type: "string", minLength: 1, pattern: "\\S" },
+          path: { type: "string", minLength: 1 },
+          pointer: { type: "string", minLength: 1, pattern: "\\S" }
+        }
+      }
+    }
+  }
+};
+
+// runtime/scripts/lib/instructions.mjs
+var contractPath = ".bstack/project.json";
+var importDepth = 5;
+var skillDescription = /^\.(?:claude|agents)\/skills\/[^/]+\/SKILL\.md$/;
+var instructionFile = /(?:^|\/)(?:AGENTS\.md|CLAUDE\.md)$/;
+async function loadInstructionSettings(root) {
+  let text;
+  try {
+    text = await readFile4(await resolveFilePath(root, contractPath), "utf8");
+  } catch (error) {
+    if (error.code === "ENOENT") return { exclude: [] };
+    throw error;
+  }
+  let contract;
+  try {
+    contract = JSON.parse(text);
+  } catch {
+    throw new CommandError("blocked", [{ code: "contract-unavailable", path: contractPath, message: "The project contract must be readable JSON.", fix: "Repair .bstack/project.json or remove it." }]);
+  }
+  validateData(project_schema_default, contract);
+  return { exclude: contract.instructions?.exclude ?? [] };
+}
+async function includedFiles(root, exclude) {
+  const globs = exclude.map(pathGlob);
+  return (await repoFiles(root)).filter((path) => !globs.some((glob) => matchesPath(glob, path)));
+}
+function description(text) {
+  const frontmatter = /^---\r?\n([\s\S]*?)\r?\n---/.exec(text)?.[1];
+  if (!frontmatter || /^disable-model-invocation:[ \t]*true[ \t]*$/m.test(frontmatter)) return null;
+  const lines = frontmatter.split(/\r?\n/);
+  const start = lines.findIndex((line) => line.startsWith("description:"));
+  if (start === -1) return null;
+  const value = lines[start].slice("description:".length).trim();
+  if (!/^[>|][+-]?$/.test(value)) return value.replace(/^(["'])([\s\S]*)\1$/, "$2");
+  const block = [];
+  for (const line of lines.slice(start + 1)) {
+    if (line.trim() && !/^\s/.test(line)) break;
+    block.push(line.trim());
+  }
+  return block.join(value.startsWith(">") ? " " : "\n").trim();
+}
+function importsIn(text) {
+  const prose = text.replace(/^(```|~~~)[\s\S]*?^\1/gm, "").replace(/`[^`\n]*`/g, "");
+  return [...prose.matchAll(/(?:^|\s)@(\S+)/g)].map((match) => match[1].replace(/[.,;:!?)]+$/, ""));
+}
+function size(text) {
+  const bytes = Buffer.byteLength(text);
+  return { bytes, lines: text === "" ? 0 : text.split("\n").length - (text.endsWith("\n") ? 1 : 0), tokens: Math.ceil(bytes / 4) };
+}
+async function measureInstructions(root, files) {
+  const present = new Set(files);
+  const sources = /* @__PURE__ */ new Map();
+  async function load(path, depth) {
+    if (sources.has(path)) return;
+    const text = await readFile4(join6(root, path), "utf8");
+    const source = { path, kind: instructionFile.test(path) ? "instructions" : "import", ...size(text), imports: [] };
+    sources.set(path, source);
+    if (posix2.basename(path) !== "CLAUDE.md" && depth === 0 || depth === importDepth) return;
+    for (const target of importsIn(text)) {
+      const imported = posix2.normalize(posix2.join(posix2.dirname(path), target));
+      if (!present.has(imported)) continue;
+      source.imports.push(imported);
+      await load(imported, depth + 1);
+    }
+  }
+  for (const path of files.filter((path2) => instructionFile.test(path2))) await load(path, 0);
+  for (const path of files.filter((path2) => skillDescription.test(path2))) {
+    const text = description(await readFile4(join6(root, path), "utf8"));
+    if (text !== null) sources.set(path, { path, kind: "skill-description", ...size(text) });
+  }
+  const list = [...sources.values()];
+  return { sources: list, total: Object.fromEntries(["bytes", "lines", "tokens"].map((key) => [key, list.reduce((sum, source) => sum + source[key], 0)])) };
+}
+
+// runtime/scripts/commands/inventory.mjs
 var documentNames = {
   vision: /^(?:vision|goals|purpose|product[-_ ]?requirements|requirements|prd)$/i,
   design: /^(?:design|architecture|technical[-_ ]?design|principles)$/i,
@@ -2902,12 +3176,13 @@ async function run3(options) {
   const files = [];
   const candidates = [];
   const shadowing = [];
-  const paths = new Set(await repoFiles(target.root));
+  const { exclude } = await loadInstructionSettings(target.root);
+  const paths = new Set(await includedFiles(target.root, exclude));
   async function add(path) {
-    const absolute = join6(target.root, path);
+    const absolute = join7(target.root, path);
     const kind = kindFor(path);
     if (!kind) return;
-    const bytes = await readFile4(absolute);
+    const bytes = await readFile5(absolute);
     const file = { path, hash: hashBytes(bytes), kind };
     if (kind === "instructions") {
       const directory = dirname5(absolute);
@@ -2922,12 +3197,12 @@ async function run3(options) {
       });
       if (file.local) shadowing.push({ path, scope, insideRepo: true, modifiable: false, reason: "Possible shadowing of AGENTS.md. Preserve this instruction source." });
       else if (basename3(path) === "CLAUDE.md") {
-        const destination = relative5(target.root, join6(scopeDirectory, "AGENTS.md")).split(sep3).join("/");
+        const destination = relative5(target.root, join7(scopeDirectory, "AGENTS.md")).split(sep3).join("/");
         let equivalent = false;
         try {
-          const agents = paths.has(destination) ? await readFile4(join6(scopeDirectory, "AGENTS.md")) : null;
+          const agents = paths.has(destination) ? await readFile5(join7(scopeDirectory, "AGENTS.md")) : null;
           const content = bytes.toString("utf8").trim();
-          const importPath = relative5(directory, join6(scopeDirectory, "AGENTS.md")).split(sep3).join("/");
+          const importPath = relative5(directory, join7(scopeDirectory, "AGENTS.md")).split(sep3).join("/");
           equivalent = agents !== null && (bytes.equals(agents) || content === `@${importPath}` || content === `@./${importPath}`);
         } catch (error) {
           if (error.code !== "ENOENT") throw error;
@@ -2950,9 +3225,18 @@ async function run3(options) {
   return { data: { root: target.root, files, absent, candidates, shadowing }, inputs: { repo: target.root } };
 }
 
+// runtime/scripts/commands/instructions-measure.mjs
+async function run4(options) {
+  const target = await resolveTarget(options, { draftOnly: true });
+  const { exclude } = await loadInstructionSettings(target.root);
+  const measured = await measureInstructions(target.root, await includedFiles(target.root, exclude));
+  return { data: { root: target.root, exclude, ...measured }, inputs: { repo: target.root } };
+}
+
 // runtime/scripts/runtime/scripts/agents-md.mjs
 await dispatch(process.argv.slice(2), "agents-md", {
   "apply": { options: ["plan", "dry-run", "approved-fingerprint"], help: "Apply or resume a reviewed change set with recoverable originals.\nUsage: agents-md.mjs apply --repo <path>|--workspace <path> --plan <file> [--dry-run] [--approved-fingerprint <planDigest>] [--json]\nPlan follows schemas/change-set.schema.json. --dry-run previews exact bytes without writes. Assessment writes require --approved-fingerprint matching the preview planDigest; that value must come from the owner's approval reply for the exact preview, never from the agent's own approval. Repeating a plan resumes its digest-bound run and still requires the approved fingerprint for assessment writes.\nDigests use SHA-256 of UTF-8 JSON: recursively sort object keys, preserve array order, encode keys and primitive values with JSON.stringify and omit whitespace between tokens. Hash the complete findings object for findingsDigest; omit only the top-level planDigest when hashing each plan. Creation changeSetDigest equals the referenced change set's planDigest.", run },
   "state show": { options: ["run"], help: "Inspect actual pending, applied and conflicting edits without writes.\nUsage: agents-md.mjs state show --repo <path>|--workspace <path> --run <id> [--json]", run: run2 },
-  "inventory": { options: [], help: "Discover document sources and scoped instructions without writes.\nUsage: agents-md.mjs inventory --repo <path>|--workspace <path> [--json]\nAbsent document kinds are reported without failure. Instruction consolidation is a candidate requiring review.", run: run3 }
+  "inventory": { options: [], help: "Discover document sources and scoped instructions without writes.\nUsage: agents-md.mjs inventory --repo <path>|--workspace <path> [--json]\nAbsent document kinds are reported without failure. Instruction consolidation is a candidate requiring review.", run: run3 },
+  "instructions measure": { options: [], help: "Measure the size of the instructions an agent loads in this repo without writes.\nUsage: agents-md.mjs instructions measure --repo <path>|--workspace <path> [--json]\nReports bytes, lines and approximate tokens (bytes divided by four, rounded up) for each AGENTS.md and CLAUDE.md file, each file a CLAUDE.md imports with @path (up to five hops, inside the repo only, skipping fenced and inline code) and the description of each model-invocable skill under .claude/skills and .agents/skills, with a total that counts every file once. CLAUDE.local.md and skills with disable-model-invocation: true are not measured. Paths matching instructions.exclude in .bstack/project.json, such as fixture trees, are left out of this command and of inventory.", run: run4 }
 });

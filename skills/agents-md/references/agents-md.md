@@ -1,5 +1,15 @@
 # AGENTS.md guide
 
+## Contents
+
+- [Instruction file classes](#instruction-file-classes)
+- [Size measure](#size-measure)
+- [What the root file points to](#what-the-root-file-points-to)
+- [Pointer audit](#pointer-audit)
+- [Line-value audit](#line-value-audit)
+- [Kept-rule audit](#kept-rule-audit)
+- [Host loading check](#host-loading-check)
+
 ## Instruction file classes
 
 `inventory` lists discovered regular files named `AGENTS.md`, `CLAUDE.md`, `.claude/CLAUDE.md` or `CLAUDE.local.md` inside the target, with their scope.
@@ -16,6 +26,23 @@ A `CLAUDE.md` is mechanically equivalent when its bytes equal the existing `AGEN
 `inventory` reports every root-scope `CLAUDE.md` as a review candidate, even without an existing `AGENTS.md`; it reports a nested candidate only for those mechanically equivalent cases.
 A `CLAUDE.md` with other content is distinct: its extra content is repo-owned guidance for the author to place, so compare it line by line with `AGENTS.md` and propose a merge only for what the author confirms is the same guidance.
 A nested file is a candidate only for the `AGENTS.md` in its own scope.
+
+`inventory` and `instructions measure` leave out paths matching `instructions.exclude` in `.bstack/project.json`, a list of repo-relative globs such as `tests/fixtures/**`.
+Use it for test inputs and fixture trees whose `AGENTS.md` and `CLAUDE.md` files are data and not the project's instructions.
+Nothing is excluded unless the project lists it, and the format is in `schemas/project.schema.json`.
+
+## Size measure
+
+`instructions measure` reports bytes, lines and approximate tokens, which are bytes divided by four and rounded up, for each source below and a total that counts each file once.
+
+| Source | Counted as |
+|---|---|
+| `AGENTS.md`, `CLAUDE.md`, `.claude/CLAUDE.md`, at any depth | The whole file |
+| A file a `CLAUDE.md` imports with `@path` | The whole file, followed up to five hops inside the repo, skipping fenced and inline code |
+| `.claude/skills/*/SKILL.md` and `.agents/skills/*/SKILL.md` without `disable-model-invocation: true` | The `description` only, because the host loads it to decide when to invoke the skill |
+
+`CLAUDE.local.md` is per machine and is not measured.
+An import of a file outside the repo, or a symlink, is not followed, so the total can undercount what a host loads.
 
 ## What the root file points to
 
@@ -60,6 +87,24 @@ For each line of the root file, open its target and record one result:
 
 A line with no link is either merged text the author chose to keep or a copy, so ask which.
 A pointer to a command is resolving only when the project defines that command.
+
+## Line-value audit
+
+Give every line of the audited files exactly one class, with the evidence you opened.
+Audit the root file, and audit a scoped or nested file's content the same way when the author asks; a scoped file keeps its scope and its file, and only a line the user selects is edited.
+
+| Class | Evidence | Treatment |
+|---|---|---|
+| Resolving pointer | The target exists and the sentence says when to use it | Keep |
+| Copy of a source | The owning source holds equivalent text | Propose a pointer in its place |
+| Enforced by a proven check | The check and its proof evidence are open | Propose a pointer to the check |
+| Dead | The target file, command or path no longer exists, or the command is undefined | Propose removal |
+| Restates an agent default | The line says only what an agent does without being told, such as "write tests" or "follow the style", and no no-mistakes history finding cites it | List as a removal candidate for the user to select |
+| Project-specific rule | None of the above | Keep, classified by the kept-rule audit |
+
+Remove nothing automatically.
+A dead line is proposed and a default-restating line is only listed, because the history may be unavailable and the line may still be doing work.
+When the history is unavailable, say so and keep the line.
 
 ## Kept-rule audit
 

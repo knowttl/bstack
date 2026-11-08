@@ -2102,6 +2102,13 @@ var project_schema_default = {
         }
       }
     },
+    instructions: {
+      type: "object",
+      additionalProperties: false,
+      properties: {
+        exclude: { type: "array", uniqueItems: true, items: { type: "string", minLength: 1 } }
+      }
+    },
     acceptanceSources: {
       type: "array",
       items: {
