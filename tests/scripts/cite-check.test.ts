@@ -45,6 +45,14 @@ test('correct exact-byte citations pass from another cwd without changing the ta
   assert.equal(await readFile(join(context.repo, context.path), 'utf8'), 'Purpose\r\nHousehold scope\r\n')
 })
 
+test('a history brief entry passes the report schema with its file citation', async t => {
+  const context = await fixture(t)
+  context.report.briefs[0].id = 'history'
+  const result = await run(context)
+  assert.equal(result.exit, 0)
+  assert.equal(result.data.filesChecked, 1)
+})
+
 test('wrong path and wrong line are both reported as failed citations', async t => {
   const context = await fixture(t)
   context.report.briefs[0].files.push({ ...context.report.briefs[0].files[0], location: 'missing.md:1' })

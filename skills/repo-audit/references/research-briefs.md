@@ -77,7 +77,7 @@ Word limit: 250 words.
 ID: history.
 Question: Which classes of mistake recur in this repo's no-mistakes runs, and which of the seven agent-first practices does each belong to?
 Run it only for a Git repo, on the `history` command's output kept in scratch.
-Read finding text for a class only as the [history reference](no-mistakes-history.md) allows, and read nothing else about the runs.
+Read finding text for a class only as the history reference named in `SKILL.md` allows, and read nothing else about the runs.
 Report the runs read versus the total and every limitation the output names; when the output shows no linked history, report that and no classes.
 
 Group the findings of the runs read into classes by what went wrong, then place each class under one practice:
