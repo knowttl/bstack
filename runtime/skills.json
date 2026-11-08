@@ -1,6 +1,6 @@
 {
   "repo-audit": {
-    "commands": ["inspect", "inventory", "cite-check", "contract-test"],
+    "commands": ["inspect", "inventory", "history", "cite-check", "contract-test"],
     "schemas": ["contract-test.json", "research-report.json"],
     "assets": [],
     "references": ["no-mistakes-history.md"]

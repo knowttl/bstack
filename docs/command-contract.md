@@ -124,7 +124,7 @@ An absent or incompatible prior checker blocks for a recorded migration decision
 A selected first-installation foundation with no previous policy has no prior checker to execute.
 The delivery process must actually invoke these checks; changed scripts can omit their own checker, so forge enforcement and hosted CI behavior remain unverified.
 
-The production interface is `node skills/<skill>/scripts/<skill>.mjs <command> [options]`; repo-audit ships only `inspect`, `inventory`, `cite-check` and the `contract-test` dispatch harness, and each other command ships with the skills that list it in `runtime/skills.json`.
+The production interface is `node skills/<skill>/scripts/<skill>.mjs <command> [options]`; repo-audit ships only `inspect`, `inventory`, `history`, `cite-check` and the `contract-test` dispatch harness, and each other command ships with the skills that list it in `runtime/skills.json`.
 Resource paths are relative to the installed skill, never the caller's current directory.
 Command-specific options and input formats belong to their owning tasks and command help.
 C4a establishes arguments, targets, paths, scratch and results.

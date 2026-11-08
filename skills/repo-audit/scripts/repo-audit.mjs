@@ -408,6 +408,136 @@ async function run2(options) {
   return { data: { root: target.root, files, absent, candidates, shadowing }, inputs: { repo: target.root } };
 }
 
+// runtime/scripts/commands/history.mjs
+import { existsSync } from "node:fs";
+import { homedir } from "node:os";
+import { basename as basename2, join as join6 } from "node:path";
+import { DatabaseSync } from "node:sqlite";
+var share = (part, whole) => whole ? Math.round(part / whole * 1e3) / 1e3 : 0;
+var count = (counts, key) => {
+  counts[key] = (counts[key] ?? 0) + 1;
+};
+function parseList(json, key) {
+  const value = json ? JSON.parse(json) : [];
+  const items = key ? value[key] ?? [] : value;
+  if (!Array.isArray(items)) throw new TypeError("Expected a list.");
+  return items;
+}
+async function run3(options) {
+  const target = await resolveTarget(options);
+  const inputs = { repo: target.root };
+  const limitations = [];
+  const log = readGit(target.root, ["log", "--format=%s"]);
+  const subjects = log.status === 0 ? log.stdout.split("\n").filter(Boolean) : null;
+  if (!subjects) limitations.push("Git history is unreadable, so fix and revert counts are unavailable.");
+  const git = subjects && {
+    commits: subjects.length,
+    fixes: subjects.filter((subject) => /^fix(\([^)]*\))?!?:/i.test(subject)).length,
+    reverts: subjects.filter((subject) => /^revert\b/i.test(subject)).length
+  };
+  const store = join6(process.env.NM_HOME ?? join6(homedir(), ".no-mistakes"), "state.sqlite");
+  const noHistory = (reason) => ({ data: { root: target.root, store, runs: { total: 0, read: 0 }, git, limitations: [...limitations, reason] }, inputs });
+  const gate = readGit(target.root, ["remote", "get-url", "no-mistakes"]);
+  if (gate.status !== 0) return noHistory("The repo has no no-mistakes remote, so no run history is linked to it.");
+  const repoId = basename2(gate.stdout.trim(), ".git");
+  if (!existsSync(store)) return noHistory(`No no-mistakes state store exists at ${store}.`);
+  const database = new DatabaseSync(store, { readOnly: true });
+  try {
+    const repo = database.prepare("SELECT working_path, upstream_url FROM repos WHERE id = ?").get(repoId);
+    if (!repo) return noHistory(`The state store has no repo record ${repoId}.`);
+    const runs = database.prepare("SELECT id, status, branch, created_at FROM runs WHERE repo_id = ? ORDER BY created_at, id").all(repoId);
+    if (!runs.length) return noHistory("The repo record has no runs.");
+    const rounds = database.prepare(`SELECT sr.run_id, sr.step_name, r.round, r.findings_json, r.selected_finding_ids, r.selection_source
+      FROM step_rounds r JOIN step_results sr ON sr.id = r.step_result_id JOIN runs ru ON ru.id = sr.run_id
+      WHERE ru.repo_id = ? ORDER BY sr.run_id, sr.step_name, r.round`).all(repoId);
+    const steps = database.prepare(`SELECT sr.run_id, sr.step_name, sr.duration_ms, sr.approval_reason
+      FROM step_results sr JOIN runs ru ON ru.id = sr.run_id WHERE ru.repo_id = ?`).all(repoId);
+    const unreadable = /* @__PURE__ */ new Set();
+    const reviewRounds = /* @__PURE__ */ new Map();
+    const found = /* @__PURE__ */ new Map();
+    for (const row of rounds) {
+      let listed;
+      let selected;
+      try {
+        listed = parseList(row.findings_json, "findings");
+        selected = parseList(row.selected_finding_ids);
+      } catch {
+        unreadable.add(row.run_id);
+        continue;
+      }
+      if (row.step_name === "review") reviewRounds.set(row.run_id, Math.max(reviewRounds.get(row.run_id) ?? 0, row.round));
+      const userDecided = row.selection_source === "user" || row.selection_source === "user_declined";
+      for (const finding of listed) {
+        const key = `${row.run_id}\0${row.step_name}\0${finding.id}`;
+        const entry = found.get(key) ?? { run: row.run_id, step: row.step_name, file: finding.file, severity: finding.severity, action: finding.action, firstRound: row.round, selected: false, declined: false };
+        if (selected.includes(finding.id)) entry.selected = true;
+        else if (userDecided) entry.declined = true;
+        found.set(key, entry);
+      }
+    }
+    if (unreadable.size) limitations.push(`${unreadable.size} runs have unreadable findings and are left out of every aggregate: ${[...unreadable].join(", ")}.`);
+    const readRuns = runs.filter((entry) => !unreadable.has(entry.id));
+    const findings = [...found.values()].filter((entry) => !unreadable.has(entry.run));
+    const readSteps = steps.filter((step) => !unreadable.has(step.run_id));
+    const bySeverity = {};
+    const byAction = {};
+    const byStep = {};
+    const byRun = {};
+    const byFile = /* @__PURE__ */ new Map();
+    for (const finding of findings) {
+      count(bySeverity, finding.severity);
+      count(byAction, finding.action);
+      count(byStep, finding.step);
+      count(byRun, finding.run);
+      if (!finding.file) continue;
+      const hotspot = byFile.get(finding.file) ?? { file: finding.file, runs: /* @__PURE__ */ new Set(), findings: 0 };
+      hotspot.runs.add(finding.run);
+      hotspot.findings++;
+      byFile.set(finding.file, hotspot);
+    }
+    const fromRound2 = findings.filter((finding) => finding.firstRound >= 2).length;
+    const fromRound3 = findings.filter((finding) => finding.firstRound >= 3).length;
+    const stepMs = {};
+    for (const step of readSteps) stepMs[step.step_name] = (stepMs[step.step_name] ?? 0) + (step.duration_ms ?? 0);
+    const totalMs = Object.values(stepMs).reduce((sum, ms) => sum + ms, 0);
+    const byStatus = {};
+    for (const entry of readRuns) count(byStatus, entry.status);
+    return {
+      data: {
+        root: target.root,
+        store,
+        repo: { id: repoId, workingPath: repo.working_path, upstreamUrl: repo.upstream_url },
+        runs: {
+          total: runs.length,
+          read: readRuns.length,
+          byStatus,
+          firstAt: new Date(runs[0].created_at * 1e3).toISOString(),
+          lastAt: new Date(runs.at(-1).created_at * 1e3).toISOString(),
+          perRun: readRuns.map((entry) => ({ id: entry.id, status: entry.status, branch: entry.branch, reviewRounds: reviewRounds.get(entry.id) ?? 0, findings: byRun[entry.id] ?? 0 }))
+        },
+        findings: {
+          total: findings.length,
+          bySeverity,
+          byAction,
+          byStep,
+          skipped: findings.filter((finding) => finding.declined && !finding.selected).length,
+          approvedSteps: readSteps.filter((step) => step.approval_reason).length,
+          firstRaisedFromRound2: fromRound2,
+          firstRaisedFromRound3: fromRound3,
+          lateRoundShare: { fromRound2: share(fromRound2, findings.length), fromRound3: share(fromRound3, findings.length) }
+        },
+        hotspots: [...byFile.values()].filter((hotspot) => hotspot.runs.size >= 2).map((hotspot) => ({ file: hotspot.file, runs: hotspot.runs.size, findings: hotspot.findings })).sort((a, b) => b.runs - a.runs || b.findings - a.findings || a.file.localeCompare(b.file)),
+        stepTime: Object.entries(stepMs).map(([step, ms]) => ({ step, ms, share: share(ms, totalMs) })).sort((a, b) => b.ms - a.ms || a.step.localeCompare(b.step)),
+        git,
+        limitations
+      },
+      inputs
+    };
+  } finally {
+    database.close();
+  }
+}
+
 // runtime/scripts/commands/cite-check.mjs
 import { readFile as readFile4 } from "node:fs/promises";
 
@@ -546,7 +676,7 @@ function validateIds(records, path) {
 }
 
 // runtime/scripts/commands/cite-check.mjs
-async function run3(options) {
+async function run4(options) {
   if (!options.report) throw new CommandError("usage-error", [{ code: "missing-report", message: "--report is required.", fix: "Supply --report <research-report.json>." }]);
   const target = await resolveTarget(options, { draftOnly: true });
   let report;
@@ -589,7 +719,7 @@ async function readJSON(path) {
     throw new CommandError("failed", [{ code: "invalid-input", message: `Input must be readable JSON: ${path}`, fix: "Supply a readable JSON file.", path: String(path) }]);
   }
 }
-async function run4(options) {
+async function run5(options) {
   if (!options.input) throw new CommandError("usage-error", [{ code: "missing-input", message: "--input is required.", fix: "Supply --input <file>." }]);
   const target = await resolveTarget(options, { draftOnly: true });
   const schema = await readJSON(options.schema ?? new URL("../schemas/contract-test.json", import.meta.url));
@@ -617,6 +747,7 @@ async function run4(options) {
 await dispatch(process.argv.slice(2), "repo-audit", {
   "inspect": { options: [], help: "Inspect starting Git state, manifests and prerequisite versions without writes.\nUsage: repo-audit.mjs inspect --repo <path> [--json]", run },
   "inventory": { options: [], help: "Discover document sources and scoped instructions without writes.\nUsage: repo-audit.mjs inventory --repo <path>|--workspace <path> [--json]\nAbsent document kinds are reported without failure. Instruction consolidation is a candidate requiring review.", run: run2 },
-  "cite-check": { options: ["report"], help: "Check file citation locations and exact-byte freshness without writes.\nUsage: repo-audit.mjs cite-check --repo <path>|--workspace <path> --report <file> [--json]\nReport follows schemas/research-report.json. Web URL/date records are validated without fetching sources.", run: run3 },
-  "contract-test": { options: ["input", "schema"], help: "Validate shared schema and joining-ID contracts without writes.\nUsage: repo-audit.mjs contract-test --repo <path>|--workspace <path> --input <file> [--schema <file>] [--json]\n--schema selects a schema definition for subset validation tests.", run: run4 }
+  "history": { options: [], help: "Summarise this repo's no-mistakes run history without writes.\nUsage: repo-audit.mjs history --repo <path> [--json]\nIdentifies the repo from its no-mistakes remote and opens ~/.no-mistakes/state.sqlite (NM_HOME overrides the folder) read-only, never through the daemon. Returns runs read versus total with rounds per run, findings by severity, action and step, the share of findings first raised in round 2 or later and in round 3 or later, skipped findings (declined by the user and never selected for a fix), steps approved with a reason, files flagged in two or more runs, each step's share of run time and the counts of fix and revert commits in Git history. A finding that stays listed across rounds counts once per run and step, in the round that first raised it. A repo with no linked history is a pass with a limitation, never a reason to infer prior runs.", run: run3 },
+  "cite-check": { options: ["report"], help: "Check file citation locations and exact-byte freshness without writes.\nUsage: repo-audit.mjs cite-check --repo <path>|--workspace <path> --report <file> [--json]\nReport follows schemas/research-report.json. Web URL/date records are validated without fetching sources.", run: run4 },
+  "contract-test": { options: ["input", "schema"], help: "Validate shared schema and joining-ID contracts without writes.\nUsage: repo-audit.mjs contract-test --repo <path>|--workspace <path> --input <file> [--schema <file>] [--json]\n--schema selects a schema definition for subset validation tests.", run: run5 }
 });

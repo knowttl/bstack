@@ -94,6 +94,11 @@ export const commands = {
     options: [],
     help: 'Discover document sources and scoped instructions without writes.\nUsage: {entry} inventory --repo <path>|--workspace <path> [--json]\nAbsent document kinds are reported without failure. Instruction consolidation is a candidate requiring review.'
   },
+  history: {
+    module: './commands/history.mjs',
+    options: [],
+    help: 'Summarise this repo\'s no-mistakes run history without writes.\nUsage: {entry} history --repo <path> [--json]\nIdentifies the repo from its no-mistakes remote and opens ~/.no-mistakes/state.sqlite (NM_HOME overrides the folder) read-only, never through the daemon. Returns runs read versus total with rounds per run, findings by severity, action and step, the share of findings first raised in round 2 or later and in round 3 or later, skipped findings (declined by the user and never selected for a fix), steps approved with a reason, files flagged in two or more runs, each step\'s share of run time and the counts of fix and revert commits in Git history. A finding that stays listed across rounds counts once per run and step, in the round that first raised it. A repo with no linked history is a pass with a limitation, never a reason to infer prior runs.'
+  },
   measure: {
     module: './commands/measure.mjs',
     options: ['range', 'exclusions'],
