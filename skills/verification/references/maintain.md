@@ -58,7 +58,7 @@ Set `coverageGate` to `true` to render the gate script into the kit; the no-mist
 
 ## Repeated mistakes
 
-Run Steps C1 and C2 of the Correct checklist in `SKILL.md` over the project's recent no-mistakes findings and review comments, where the host and the user make them available.
+Run Steps C1 and C2 of the Correct checklist in `SKILL.md` over the findings of every no-mistakes run, following the [history reference](no-mistakes-history.md) for enumeration, reading and coverage, and the project's review comments.
 Propose each resulting rung as a selected change with its problem, consequence, fix, scope and verification; do not widen scope silently.
 
 ## Outcomes
