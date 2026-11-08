@@ -131,6 +131,27 @@ Hosted CI behaviour, CI adapter execution and forge enforcement are unverified.
 This repository has no hosted CI workflow; local clean-checkout results do not establish hosted execution.
 Repeated-run release qualification and release approval remain separate work.
 
+## Conventions
+
+- **Language.** Repository tests and development tooling use strict TypeScript (`.ts`), executed directly by Node 24 or later.
+Shipped runtime scripts remain JavaScript ES modules (`.mjs`) (design D3).
+- **Dependencies.** Installed skill scripts use Node built-in modules only.
+The one runtime dependency is `lavish-axi` for the VISION board.
+Repository development tools may use the root development dependencies declared in `package.json`.
+Tests use `node:test` and `node:assert`.
+- **Paths.** Use `node:path` and `node:url`.
+Never build a path by joining strings with `/`.
+Keep portable path handling for Windows, macOS and Linux.
+Installer support and acceptance for C25c/AC-74 are Linux-only under R27; other platform execution remains unverified.
+- **Child processes.** Use `execFile` or `spawn` with an argument array.
+Never build a shell string from project data.
+- **Writing.** No em dashes or en dashes in any file.
+Canadian spelling.
+One term for each concept, matching the design.
+- **Constants.** Each top-level constant has a comment on the line above that gives its reason.
+The [package check contract](command-contract.md#package-check) defines the implemented syntactic enforcement and its limits.
+- **Tests.** Each script has tests in `tests/scripts/` that call it through its command interface, not its internal functions.
+
 ## Validate
 
 After installing dependencies as described above, validate with Node 24 or later:
