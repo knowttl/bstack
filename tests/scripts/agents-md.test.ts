@@ -175,6 +175,32 @@ test('instructions measure reports invalid skill frontmatter instead of returnin
   assert.deepEqual(result.problems.map(({ code, path }: { code: string; path: string }) => ({ code, path })), [{ code: 'invalid-skill-frontmatter', path }])
 })
 
+for (const host of ['.agents', '.claude']) {
+  for (const { metadata, measured, total } of [
+    { metadata: '', measured: { bytes: 39, lines: 4, tokens: 10 }, total: { bytes: 78, lines: 6, tokens: 21 } },
+    { metadata: 'disable-model-invocation: true\n', measured: { bytes: 70, lines: 5, tokens: 18 }, total: { bytes: 109, lines: 7, tokens: 29 } }
+  ]) {
+    test(`instructions measure preserves whole imported skills in ${host} with metadata ${JSON.stringify(metadata)}`, async t => {
+      const { directory, repo } = await emptyRepo(t)
+      const path = `${host}/skills/example/SKILL.md`
+      const rules = `${host}/skills/example/rules.md`
+      await writeFiles(repo, {
+        'CLAUDE.md': `@${path}\n`,
+        [path]: `---\ndescription: Useful.\n${metadata}---\n@rules.md\n`,
+        [rules]: 'Rules\n'
+      })
+      const result = agentsMd(directory, ['instructions', 'measure', '--repo', repo])
+      assert.equal(result.exit, 0, JSON.stringify(result))
+      assert.deepEqual(result.data.sources, [
+        { path: 'CLAUDE.md', kind: 'instructions', bytes: 33, lines: 1, tokens: 9, imports: [path] },
+        { path, kind: 'import', ...measured, imports: [rules] },
+        { path: rules, kind: 'import', bytes: 6, lines: 1, tokens: 2, imports: [] }
+      ])
+      assert.deepEqual(result.data.total, total)
+    })
+  }
+}
+
 test('instructions measure expands imports from an AGENTS.md already counted as a root', async t => {
   const { directory, repo } = await emptyRepo(t)
   await writeFiles(repo, {
@@ -250,6 +276,30 @@ for (const content of [
     assert.deepEqual(result.data.sources.map((source: { path: string }) => source.path), ['CLAUDE.md', 'visible.md'])
     assert.deepEqual(result.data.sources[0].imports, ['visible.md'])
   })
+}
+
+for (const content of [
+  '<instructions>\n@visible.md\n</instructions>\n',
+  '<div>\n@visible.md\n</div>\n',
+  '<!--\n@visible.md\n-->\n',
+  '<instructions>\n`` @hidden.md ``\n@visible.md\n</instructions>\n',
+  '<instructions>\n   ```md\n@hidden.md\n   ```\n@visible.md\n</instructions>\n',
+  'Example: ` unmatched\n\n@visible.md\n`\n',
+  'Example: \\` @visible.md \\`\n'
+]) {
+  for (const { path, sources } of [
+    { path: 'CLAUDE.md', sources: ['CLAUDE.md', 'visible.md'] },
+    { path: 'container.md', sources: ['CLAUDE.md', 'container.md', 'visible.md'] }
+  ]) {
+    test(`instructions measure preserves non-code imports in ${path}: ${JSON.stringify(content)}`, async t => {
+      const { directory, repo } = await emptyRepo(t)
+      await writeFiles(repo, { 'CLAUDE.md': '@container.md\n', [path]: content, 'visible.md': 'Visible\n', 'hidden.md': 'Hidden\n' })
+      const result = agentsMd(directory, ['instructions', 'measure', '--repo', repo])
+      assert.equal(result.exit, 0, JSON.stringify(result))
+      assert.deepEqual(result.data.sources.map((source: { path: string }) => source.path), sources)
+      assert.deepEqual(result.data.sources.find((source: { path: string }) => source.path === path).imports, ['visible.md'])
+    })
+  }
 }
 
 test('configured exclusions leave fixture trees out of inventory and measure', async t => {

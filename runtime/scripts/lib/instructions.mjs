@@ -1,7 +1,5 @@
 import { readFile } from 'node:fs/promises'
 import { join, posix } from 'node:path'
-import { walkTokens } from 'marked'
-import { markdownTokens } from './document-references.mjs'
 import { repoFiles } from './discovery.mjs'
 import { matchesPath, pathGlob } from './glob.mjs'
 import { resolveFilePath } from './paths.mjs'
@@ -47,13 +45,38 @@ async function description(text, path) {
 }
 
 function importsIn(text) {
-  const imports = []
-  walkTokens(markdownTokens(text), token => {
-    if (token.type === 'text' && !token.tokens) {
-      imports.push(...[...token.raw.matchAll(/(?:^|\s)@(\S+)/g)].map(match => match[1].replace(/[.,;:!?)]+$/, '')))
+  let fence = null
+  const lines = []
+  for (const line of text.split(/\r?\n/)) {
+    if (fence) {
+      const closing = /^ {0,3}(`+|~+)[ \t]*$/.exec(line)?.[1]
+      if (closing && closing[0] === fence[0] && closing.length >= fence.length) fence = null
+      lines.push('')
+      continue
     }
-  })
-  return imports
+    const opening = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line)
+    if (opening && (opening[1][0] === '~' || !opening[2].includes('`'))) {
+      fence = opening[1]
+      lines.push('')
+    } else lines.push(line)
+  }
+  const prose = lines.join('\n')
+  const delimiters = /\\[\s\S]|`+/g
+  let cursor = 0
+  let outsideCode = ''
+  let delimiter
+  while ((delimiter = delimiters.exec(prose))) {
+    if (delimiter[0][0] !== '`') continue
+    const closing = new RegExp('(?<!`)`{' + delimiter[0].length + '}(?!`)', 'g')
+    closing.lastIndex = delimiters.lastIndex
+    const end = closing.exec(prose)
+    if (!end || /\n[ \t]*\n/.test(prose.slice(delimiters.lastIndex, end.index))) continue
+    outsideCode += prose.slice(cursor, delimiter.index) + ' '
+    cursor = closing.lastIndex
+    delimiters.lastIndex = cursor
+  }
+  outsideCode += prose.slice(cursor)
+  return [...outsideCode.matchAll(/(?:^|\s)@(\S+)/g)].map(match => match[1].replace(/[.,;:!?)]+$/, ''))
 }
 
 function size(text) {
@@ -77,6 +100,7 @@ export async function measureInstructions(root, files) {
   }
   for (const path of files.filter(path => instructionFile.test(path))) await load(path, 0)
   for (const path of files.filter(path => skillDescription.test(path))) {
+    if (sources.has(path)) continue
     const text = await description(await readFile(join(root, path), 'utf8'), path)
     if (text !== null) sources.set(path, { path, kind: 'skill-description', ...size(text) })
   }
