@@ -573,7 +573,7 @@ node .bstack/bin/bstack-check.mjs --repo <target> --base <commit> --assessment <
 See the [execution contract](command-contract.md#standalone-checker-execution) for portable review preparation, fresh leaf execution, previous-policy validation and the missing-base fetch prerequisite.
 Hosted CI behavior remains unverified.
 
-Add `--docs-only` to check the current tree's registered document links, glossary structure and generated sections with no base, assessment or leaf execution; this is the command of the no-mistakes docs gate:
+Add `--docs-only` to run the [docs gate checks](command-contract.md#docs-only-mode) on the current tree without a base, assessment or leaf execution:
 
 ```sh
 node .bstack/bin/bstack-check.mjs --repo <target> --docs-only --json

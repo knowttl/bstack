@@ -770,7 +770,7 @@ The `/maintenance sweep` mode, not repo-audit, reports later drift.
 - `create`: registers the docs, scopes and checks in `.bstack/project.json`, and writes the no-mistakes wiring described under "Upkeep".
 - `sweep`: user-started and read-only. It checks every registered doc, the verification kit and the `AGENTS.md` pointers against the whole repo, then returns one list naming which `maintain` mode fixes each item. It fixes nothing itself.
 - The full per-change assessment record from ["Change evidence contract"](#change-evidence-contract) stays available when signed-off evidence is wanted.
-- Owns the generated repo checker, whose committed home is `skills/maintenance/scripts/bstack-check.mjs`. The checker gains a `--docs-only` mode that runs `docs check` and `docs generate --check` on the current tree with no base, assessment or leaf execution, and the docs gate calls it.
+- Owns the generated repo checker, whose committed home is `skills/maintenance/scripts/bstack-check.mjs`. The docs gate calls its [`--docs-only` mode](command-contract.md#docs-only-mode).
 - The sweep is one shared command, `sweep`, whose checks follow the [sweep command contract](command-contract.md#sweep).
   It reads a document's owner from its registration (the `glossary` field, or the IDs `design` and `vision`).
   Plan lifetime follows A6 in the [research amendment](#research-prototyping-and-writing-amendment-2026-10-24): the sweep reports the document registered as `plan` as finished or orphaned, as the [sweep command contract](command-contract.md#sweep) describes.
@@ -859,7 +859,7 @@ Docs stay current in two layers, and neither adds a step to the user's everyday 
 | When | User does | What happens |
 |---|---|---|
 | Once per repo | Runs `/maintenance create`, approves and merges | Registers the docs and adds two things to `.no-mistakes.yaml`: an ownership map in `document.instructions` (`GLOSSARY.md` owns terms, the design doc owns boundaries, `VISION.md` owns purpose) and a docs gate after `document` |
-| Every change | Nothing new; runs no-mistakes as today | The Document step updates `GLOSSARY.md` or the design doc in the same branch when a term or boundary changed. A change to purpose comes back as a finding for the user. The docs gate checks links, glossary structure and stale generated sections. The run stops only if the vision would change or the gate fails |
+| Every change | Nothing new; runs no-mistakes as today | The Document step updates `GLOSSARY.md` or the design doc in the same branch when a term or boundary changed. A change to purpose comes back as a finding for the user. The [docs gate](command-contract.md#docs-only-mode) checks the current tree. The run stops only if the vision would change or the gate fails |
 | Now and then | Runs `/maintenance sweep` | One list of what drifted and which `maintain` mode fixes it, for example "3 new terms - run /glossary maintain" |
 
 The pinned no-mistakes reference cited under ["Independent verification and automatic map upkeep"](#independent-verification-and-automatic-map-upkeep-q3-q8-q11) sets these constraints:
