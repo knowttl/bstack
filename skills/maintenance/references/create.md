@@ -36,14 +36,15 @@ Add a `generators` entry only for a section that a command renders into a docume
 
 The instructions an agent loads grow by accretion, so the contract records how large they are and the docs gate fails when they grow past it.
 Put test inputs and fixture trees in the draft contract's `instructions.exclude`, because their `AGENTS.md` and `CLAUDE.md` files are data and not loaded instructions.
-Place the draft contract and final proposed wiring edits, including any instruction-file pointer, in a scratch clone of the target.
+Prepare a scratch clone reflecting the target's current filesystem state, including staged, unstaged, untracked and ignored files.
+Place the draft contract and final proposed wiring edits, including any instruction-file pointer, in that clone.
 Run `instructions measure --repo <scratch-clone> --json` and record `data.total.bytes` as `bytes` in `instructions.baseline`, with a `reason` saying why that size is right now, such as `Measured when registered`:
 
 ```json
 "instructions": { "exclude": ["tests/fixtures/**"], "baseline": { "bytes": 6457, "reason": "Measured when registered" } }
 ```
 
-If a selection or revision changes the proposed instruction tree or exclusions while the contract edit remains selected, update the clone, remeasure and update the baseline, then validate and present the revised bytes for approval.
+If a selection or revision changes the proposed instruction tree or exclusions while the contract edit remains selected, refresh the clone from the target's current filesystem state, apply the selected edits, remeasure and update the baseline, then validate and present the revised bytes for approval.
 If the contract edit is deselected, leave the existing contract unchanged, validate the selected tree in scratch, and report any resulting failure.
 The gate measures the same sources as `instructions measure` and passes while the total is at or below `bytes`.
 A change that needs more must raise `bytes` to the new measure in the same change and replace `reason` with why the growth is worth its cost, so the increase shows in the diff for review.
