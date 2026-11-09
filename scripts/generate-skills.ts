@@ -4,6 +4,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url'
 import { bundle, commandModule } from './lib/bundle.ts'
 import type { SkillBundle, CommandRegistry } from './lib/bundle.ts'
 import type { Plugin } from 'esbuild'
+import { transform } from 'esbuild'
 
 // The source and every generated file resolve from this checkout, independent of the caller's directory.
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
@@ -14,6 +15,10 @@ const source = join(root, 'runtime')
 const resourceUrls: Plugin = {
   name: 'resource-urls',
   setup(build) {
+    build.onLoad({ filter: /node_modules[/\\]yaml[/\\]browser[/\\].*\.js$/ }, async ({ path }) => {
+      const { code } = await transform(await readFile(path, 'utf8'), { minifyWhitespace: true, legalComments: 'none' })
+      return { contents: code, loader: 'js' }
+    })
     build.onLoad({ filter: /\.mjs$/ }, async ({ path }) => {
       const text = (await readFile(path, 'utf8')).replaceAll(/new URL\((['"`])\.\.\/\.\.\//g, 'new URL($1../')
       // Any other import.meta use would resolve against the bundle and fail only when a command runs.

@@ -151,3 +151,21 @@ test('committed skill files match the shared runtime source', () => {
   const result = spawnSync(process.execPath, [join(root, 'scripts', 'generate-skills.ts'), '--check'], { encoding: 'utf8', cwd: tmpdir() })
   assert.equal(result.status, 0, result.stderr)
 })
+
+test('bundled YAML passes package policy and preserves alias serialization', async t => {
+  const directory = await sandbox(t, {
+    'scripts/commands/alpha.mjs': "import { stringify } from 'yaml'\nexport async function run() { const shared = { value: 1 }; return { data: { yaml: stringify({ first: shared, second: shared }) } } }\n"
+  })
+  await rm(join(directory, 'node_modules'))
+  await mkdir(join(directory, 'node_modules'))
+  await symlink(join(root, 'node_modules/esbuild'), join(directory, 'node_modules/esbuild'), 'junction')
+  await cp(join(root, 'node_modules/yaml'), join(directory, 'node_modules/yaml'), { recursive: true })
+  const generated = generate(directory)
+  assert.equal(generated.status, 0, generated.stdout + generated.stderr)
+  await cp(join(root, 'tests/package-check/valid'), join(directory, 'skills/one'), { recursive: true })
+  const checked = spawnSync(process.execPath, [join(root, 'scripts/check-package.mjs'), '--skill', join(directory, 'skills/one')], { encoding: 'utf8' })
+  assert.equal(checked.status, 0, checked.stdout + checked.stderr)
+  const result = entry(directory, 'one', 'alpha', '--repo', directory, '--json')
+  assert.equal(result.status, 0, result.stdout + result.stderr)
+  assert.equal(JSON.parse(result.stdout).data.yaml, 'first: &a1\n  value: 1\nsecond: *a1\n')
+})

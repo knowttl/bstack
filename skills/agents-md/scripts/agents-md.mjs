@@ -16,23 +16,21 @@ var __export = (target, all) => {
 
 // node_modules/yaml/browser/dist/nodes/identity.js
 function isCollection(node) {
-  if (node && typeof node === "object")
-    switch (node[NODE_TYPE]) {
-      case MAP:
-      case SEQ:
-        return true;
-    }
+  if (node && typeof node === "object") switch (node[NODE_TYPE]) {
+    case MAP:
+    case SEQ:
+      return true;
+  }
   return false;
 }
 function isNode(node) {
-  if (node && typeof node === "object")
-    switch (node[NODE_TYPE]) {
-      case ALIAS:
-      case MAP:
-      case SCALAR:
-      case SEQ:
-        return true;
-    }
+  if (node && typeof node === "object") switch (node[NODE_TYPE]) {
+    case ALIAS:
+    case MAP:
+    case SCALAR:
+    case SEQ:
+      return true;
+  }
   return false;
 }
 var ALIAS, DOC, MAP, PAIR, SCALAR, SEQ, NODE_TYPE, isAlias, isDocument, isMap, isPair, isScalar, isSeq, hasAnchor;
@@ -60,10 +58,8 @@ function visit(node, visitor) {
   const visitor_ = initVisitor(visitor);
   if (isDocument(node)) {
     const cd = visit_(null, node.contents, visitor_, Object.freeze([node]));
-    if (cd === REMOVE)
-      node.contents = null;
-  } else
-    visit_(null, node, visitor_, Object.freeze([]));
+    if (cd === REMOVE) node.contents = null;
+  } else visit_(null, node, visitor_, Object.freeze([]));
 }
 function visit_(key, node, visitor, path) {
   const ctrl = callVisitor(key, node, visitor, path);
@@ -76,10 +72,8 @@ function visit_(key, node, visitor, path) {
       path = Object.freeze(path.concat(node));
       for (let i = 0; i < node.items.length; ++i) {
         const ci = visit_(i, node.items[i], visitor, path);
-        if (typeof ci === "number")
-          i = ci - 1;
-        else if (ci === BREAK)
-          return BREAK;
+        if (typeof ci === "number") i = ci - 1;
+        else if (ci === BREAK) return BREAK;
         else if (ci === REMOVE) {
           node.items.splice(i, 1);
           i -= 1;
@@ -88,15 +82,11 @@ function visit_(key, node, visitor, path) {
     } else if (isPair(node)) {
       path = Object.freeze(path.concat(node));
       const ck = visit_("key", node.key, visitor, path);
-      if (ck === BREAK)
-        return BREAK;
-      else if (ck === REMOVE)
-        node.key = null;
+      if (ck === BREAK) return BREAK;
+      else if (ck === REMOVE) node.key = null;
       const cv = visit_("value", node.value, visitor, path);
-      if (cv === BREAK)
-        return BREAK;
-      else if (cv === REMOVE)
-        node.value = null;
+      if (cv === BREAK) return BREAK;
+      else if (cv === REMOVE) node.value = null;
     }
   }
   return ctrl;
@@ -105,10 +95,8 @@ async function visitAsync(node, visitor) {
   const visitor_ = initVisitor(visitor);
   if (isDocument(node)) {
     const cd = await visitAsync_(null, node.contents, visitor_, Object.freeze([node]));
-    if (cd === REMOVE)
-      node.contents = null;
-  } else
-    await visitAsync_(null, node, visitor_, Object.freeze([]));
+    if (cd === REMOVE) node.contents = null;
+  } else await visitAsync_(null, node, visitor_, Object.freeze([]));
 }
 async function visitAsync_(key, node, visitor, path) {
   const ctrl = await callVisitor(key, node, visitor, path);
@@ -121,10 +109,8 @@ async function visitAsync_(key, node, visitor, path) {
       path = Object.freeze(path.concat(node));
       for (let i = 0; i < node.items.length; ++i) {
         const ci = await visitAsync_(i, node.items[i], visitor, path);
-        if (typeof ci === "number")
-          i = ci - 1;
-        else if (ci === BREAK)
-          return BREAK;
+        if (typeof ci === "number") i = ci - 1;
+        else if (ci === BREAK) return BREAK;
         else if (ci === REMOVE) {
           node.items.splice(i, 1);
           i -= 1;
@@ -133,50 +119,28 @@ async function visitAsync_(key, node, visitor, path) {
     } else if (isPair(node)) {
       path = Object.freeze(path.concat(node));
       const ck = await visitAsync_("key", node.key, visitor, path);
-      if (ck === BREAK)
-        return BREAK;
-      else if (ck === REMOVE)
-        node.key = null;
+      if (ck === BREAK) return BREAK;
+      else if (ck === REMOVE) node.key = null;
       const cv = await visitAsync_("value", node.value, visitor, path);
-      if (cv === BREAK)
-        return BREAK;
-      else if (cv === REMOVE)
-        node.value = null;
+      if (cv === BREAK) return BREAK;
+      else if (cv === REMOVE) node.value = null;
     }
   }
   return ctrl;
 }
 function initVisitor(visitor) {
   if (typeof visitor === "object" && (visitor.Collection || visitor.Node || visitor.Value)) {
-    return Object.assign({
-      Alias: visitor.Node,
-      Map: visitor.Node,
-      Scalar: visitor.Node,
-      Seq: visitor.Node
-    }, visitor.Value && {
-      Map: visitor.Value,
-      Scalar: visitor.Value,
-      Seq: visitor.Value
-    }, visitor.Collection && {
-      Map: visitor.Collection,
-      Seq: visitor.Collection
-    }, visitor);
+    return Object.assign({ Alias: visitor.Node, Map: visitor.Node, Scalar: visitor.Node, Seq: visitor.Node }, visitor.Value && { Map: visitor.Value, Scalar: visitor.Value, Seq: visitor.Value }, visitor.Collection && { Map: visitor.Collection, Seq: visitor.Collection }, visitor);
   }
   return visitor;
 }
 function callVisitor(key, node, visitor, path) {
-  if (typeof visitor === "function")
-    return visitor(key, node, path);
-  if (isMap(node))
-    return visitor.Map?.(key, node, path);
-  if (isSeq(node))
-    return visitor.Seq?.(key, node, path);
-  if (isPair(node))
-    return visitor.Pair?.(key, node, path);
-  if (isScalar(node))
-    return visitor.Scalar?.(key, node, path);
-  if (isAlias(node))
-    return visitor.Alias?.(key, node, path);
+  if (typeof visitor === "function") return visitor(key, node, path);
+  if (isMap(node)) return visitor.Map?.(key, node, path);
+  if (isSeq(node)) return visitor.Seq?.(key, node, path);
+  if (isPair(node)) return visitor.Pair?.(key, node, path);
+  if (isScalar(node)) return visitor.Scalar?.(key, node, path);
+  if (isAlias(node)) return visitor.Alias?.(key, node, path);
   return void 0;
 }
 function replaceNode(key, path, node) {
@@ -184,10 +148,8 @@ function replaceNode(key, path, node) {
   if (isCollection(parent)) {
     parent.items[key] = node;
   } else if (isPair(parent)) {
-    if (key === "key")
-      parent.key = node;
-    else
-      parent.value = node;
+    if (key === "key") parent.key = node;
+    else parent.value = node;
   } else if (isDocument(parent)) {
     parent.contents = node;
   } else {
@@ -217,14 +179,7 @@ var init_directives = __esm({
   "node_modules/yaml/browser/dist/doc/directives.js"() {
     init_identity();
     init_visit();
-    escapeChars = {
-      "!": "%21",
-      ",": "%2C",
-      "[": "%5B",
-      "]": "%5D",
-      "{": "%7B",
-      "}": "%7D"
-    };
+    escapeChars = { "!": "%21", ",": "%2C", "[": "%5B", "]": "%5D", "{": "%7B", "}": "%7D" };
     escapeTagName = (tn) => tn.replace(/[!,[\]{}]/g, (ch) => escapeChars[ch]);
     Directives = class _Directives {
       constructor(yaml, tags) {
@@ -238,10 +193,6 @@ var init_directives = __esm({
         copy.docStart = this.docStart;
         return copy;
       }
-      /**
-       * During parsing, get a Directives instance for the current document and
-       * update the stream state according to the current version's spec.
-       */
       atDocument() {
         const res = new _Directives(this.yaml, this.tags);
         switch (this.yaml.version) {
@@ -250,19 +201,12 @@ var init_directives = __esm({
             break;
           case "1.2":
             this.atNextDocument = false;
-            this.yaml = {
-              explicit: _Directives.defaultYaml.explicit,
-              version: "1.2"
-            };
+            this.yaml = { explicit: _Directives.defaultYaml.explicit, version: "1.2" };
             this.tags = Object.assign({}, _Directives.defaultTags);
             break;
         }
         return res;
       }
-      /**
-       * @param onError - May be called even if the action was successful
-       * @returns `true` on success
-       */
       add(line, onError) {
         if (this.atNextDocument) {
           this.yaml = { explicit: _Directives.defaultYaml.explicit, version: "1.1" };
@@ -275,8 +219,7 @@ var init_directives = __esm({
           case "%TAG": {
             if (parts.length !== 2) {
               onError(0, "%TAG directive should contain exactly two parts");
-              if (parts.length < 2)
-                return false;
+              if (parts.length < 2) return false;
             }
             const [handle, prefix] = parts;
             this.tags[handle] = prefix;
@@ -303,15 +246,8 @@ var init_directives = __esm({
             return false;
         }
       }
-      /**
-       * Resolves a tag, matching handles to those defined in %TAG directives.
-       *
-       * @returns Resolved tag, which may also be the non-specific tag `'!'` or a
-       *   `'!local'` tag, or `null` if unresolvable.
-       */
       tagName(source, onError) {
-        if (source === "!")
-          return "!";
+        if (source === "!") return "!";
         if (source[0] !== "!") {
           onError(`Not a valid tag: ${source}`);
           return null;
@@ -322,13 +258,11 @@ var init_directives = __esm({
             onError(`Verbatim tags aren't resolved, so ${source} is invalid.`);
             return null;
           }
-          if (source[source.length - 1] !== ">")
-            onError("Verbatim tags must end with a >");
+          if (source[source.length - 1] !== ">") onError("Verbatim tags must end with a >");
           return verbatim;
         }
         const [, handle, suffix] = source.match(/^(.*!)([^!]*)$/s);
-        if (!suffix)
-          onError(`The ${source} tag has no suffix`);
+        if (!suffix) onError(`The ${source} tag has no suffix`);
         const prefix = this.tags[handle];
         if (prefix) {
           try {
@@ -338,19 +272,13 @@ var init_directives = __esm({
             return null;
           }
         }
-        if (handle === "!")
-          return source;
+        if (handle === "!") return source;
         onError(`Could not resolve tag: ${source}`);
         return null;
       }
-      /**
-       * Given a fully resolved tag, returns its printable string form,
-       * taking into account current tag prefixes and defaults.
-       */
       tagString(tag) {
         for (const [handle, prefix] of Object.entries(this.tags)) {
-          if (tag.startsWith(prefix))
-            return handle + escapeTagName(tag.substring(prefix.length));
+          if (tag.startsWith(prefix)) return handle + escapeTagName(tag.substring(prefix.length));
         }
         return tag[0] === "!" ? tag : `!<${tag}>`;
       }
@@ -361,17 +289,13 @@ var init_directives = __esm({
         if (doc && tagEntries.length > 0 && isNode(doc.contents)) {
           const tags = {};
           visit(doc.contents, (_key, node) => {
-            if (isNode(node) && node.tag)
-              tags[node.tag] = true;
+            if (isNode(node) && node.tag) tags[node.tag] = true;
           });
           tagNames = Object.keys(tags);
-        } else
-          tagNames = [];
+        } else tagNames = [];
         for (const [handle, prefix] of tagEntries) {
-          if (handle === "!!" && prefix === "tag:yaml.org,2002:")
-            continue;
-          if (!doc || tagNames.some((tn) => tn.startsWith(prefix)))
-            lines.push(`%TAG ${handle} ${prefix}`);
+          if (handle === "!!" && prefix === "tag:yaml.org,2002:") continue;
+          if (!doc || tagNames.some((tn) => tn.startsWith(prefix))) lines.push(`%TAG ${handle} ${prefix}`);
         }
         return lines.join("\n");
       }
@@ -392,52 +316,39 @@ function anchorIsValid(anchor) {
 }
 function anchorNames(root) {
   const anchors = /* @__PURE__ */ new Set();
-  visit(root, {
-    Value(_key, node) {
-      if (node.anchor)
-        anchors.add(node.anchor);
-    }
-  });
+  visit(root, { Value(_key, node) {
+    if (node.anchor) anchors.add(node.anchor);
+  } });
   return anchors;
 }
 function findNewAnchor(prefix, exclude) {
   for (let i = 1; true; ++i) {
     const name = `${prefix}${i}`;
-    if (!exclude.has(name))
-      return name;
+    if (!exclude.has(name)) return name;
   }
 }
 function createNodeAnchors(doc, prefix) {
   const aliasObjects = [];
   const sourceObjects = /* @__PURE__ */ new Map();
   let prevAnchors = null;
-  return {
-    onAnchor: (source) => {
-      aliasObjects.push(source);
-      prevAnchors ?? (prevAnchors = anchorNames(doc));
-      const anchor = findNewAnchor(prefix, prevAnchors);
-      prevAnchors.add(anchor);
-      return anchor;
-    },
-    /**
-     * With circular references, the source node is only resolved after all
-     * of its child nodes are. This is why anchors are set only after all of
-     * the nodes have been created.
-     */
-    setAnchors: () => {
-      for (const source of aliasObjects) {
-        const ref = sourceObjects.get(source);
-        if (typeof ref === "object" && ref.anchor && (isScalar(ref.node) || isCollection(ref.node))) {
-          ref.node.anchor = ref.anchor;
-        } else {
-          const error = new Error("Failed to resolve repeated object (this should not happen)");
-          error.source = source;
-          throw error;
-        }
+  return { onAnchor: (source) => {
+    aliasObjects.push(source);
+    prevAnchors ?? (prevAnchors = anchorNames(doc));
+    const anchor = findNewAnchor(prefix, prevAnchors);
+    prevAnchors.add(anchor);
+    return anchor;
+  }, setAnchors: () => {
+    for (const source of aliasObjects) {
+      const ref = sourceObjects.get(source);
+      if (typeof ref === "object" && ref.anchor && (isScalar(ref.node) || isCollection(ref.node))) {
+        ref.node.anchor = ref.anchor;
+      } else {
+        const error = new Error("Failed to resolve repeated object (this should not happen)");
+        error.source = source;
+        throw error;
       }
-    },
-    sourceObjects
-  };
+    }
+  }, sourceObjects };
 }
 var init_anchors = __esm({
   "node_modules/yaml/browser/dist/doc/anchors.js"() {
@@ -453,25 +364,20 @@ function applyReviver(reviver, obj, key, val) {
       for (let i = 0, len = val.length; i < len; ++i) {
         const v0 = val[i];
         const v1 = applyReviver(reviver, val, String(i), v0);
-        if (v1 === void 0)
-          delete val[i];
-        else if (v1 !== v0)
-          val[i] = v1;
+        if (v1 === void 0) delete val[i];
+        else if (v1 !== v0) val[i] = v1;
       }
     } else if (val instanceof Map) {
       for (const k2 of Array.from(val.keys())) {
         const v0 = val.get(k2);
         const v1 = applyReviver(reviver, val, k2, v0);
-        if (v1 === void 0)
-          val.delete(k2);
-        else if (v1 !== v0)
-          val.set(k2, v1);
+        if (v1 === void 0) val.delete(k2);
+        else if (v1 !== v0) val.set(k2, v1);
       }
     } else if (val instanceof Set) {
       for (const v0 of Array.from(val)) {
         const v1 = applyReviver(reviver, val, v0, v0);
-        if (v1 === void 0)
-          val.delete(v0);
+        if (v1 === void 0) val.delete(v0);
         else if (v1 !== v0) {
           val.delete(v0);
           val.add(v1);
@@ -480,10 +386,8 @@ function applyReviver(reviver, obj, key, val) {
     } else {
       for (const [k2, v0] of Object.entries(val)) {
         const v1 = applyReviver(reviver, val, k2, v0);
-        if (v1 === void 0)
-          delete val[k2];
-        else if (v1 !== v0)
-          val[k2] = v1;
+        if (v1 === void 0) delete val[k2];
+        else if (v1 !== v0) val[k2] = v1;
       }
     }
   }
@@ -496,11 +400,9 @@ var init_applyReviver = __esm({
 
 // node_modules/yaml/browser/dist/nodes/toJS.js
 function toJS(value, arg, ctx) {
-  if (Array.isArray(value))
-    return value.map((v, i) => toJS(v, String(i), ctx));
+  if (Array.isArray(value)) return value.map((v, i) => toJS(v, String(i), ctx));
   if (value && typeof value.toJSON === "function") {
-    if (!ctx || !hasAnchor(value))
-      return value.toJSON(arg, ctx);
+    if (!ctx || !hasAnchor(value)) return value.toJSON(arg, ctx);
     const data = { aliasCount: 0, count: 1, res: void 0 };
     ctx.anchors.set(value, data);
     ctx.onCreate = (res2) => {
@@ -508,12 +410,10 @@ function toJS(value, arg, ctx) {
       delete ctx.onCreate;
     };
     const res = value.toJSON(arg, ctx);
-    if (ctx.onCreate)
-      ctx.onCreate(res);
+    if (ctx.onCreate) ctx.onCreate(res);
     return res;
   }
-  if (typeof value === "bigint" && !ctx?.keep)
-    return Number(value);
+  if (typeof value === "bigint" && !ctx?.keep) return Number(value);
   return value;
 }
 var init_toJS = __esm({
@@ -533,29 +433,16 @@ var init_Node = __esm({
       constructor(type) {
         Object.defineProperty(this, NODE_TYPE, { value: type });
       }
-      /** Create a copy of this node.  */
       clone() {
         const copy = Object.create(Object.getPrototypeOf(this), Object.getOwnPropertyDescriptors(this));
-        if (this.range)
-          copy.range = this.range.slice();
+        if (this.range) copy.range = this.range.slice();
         return copy;
       }
-      /** A plain JavaScript representation of this node. */
       toJS(doc, { mapAsMap, maxAliasCount, onAnchor, reviver } = {}) {
-        if (!isDocument(doc))
-          throw new TypeError("A document argument is required");
-        const ctx = {
-          anchors: /* @__PURE__ */ new Map(),
-          doc,
-          keep: true,
-          mapAsMap: mapAsMap === true,
-          mapKeyWarned: false,
-          maxAliasCount: typeof maxAliasCount === "number" ? maxAliasCount : 100
-        };
+        if (!isDocument(doc)) throw new TypeError("A document argument is required");
+        const ctx = { anchors: /* @__PURE__ */ new Map(), doc, keep: true, mapAsMap: mapAsMap === true, mapKeyWarned: false, maxAliasCount: typeof maxAliasCount === "number" ? maxAliasCount : 100 };
         const res = toJS(this, "", ctx);
-        if (typeof onAnchor === "function")
-          for (const { count, res: res2 } of ctx.anchors.values())
-            onAnchor(res2, count);
+        if (typeof onAnchor === "function") for (const { count, res: res2 } of ctx.anchors.values()) onAnchor(res2, count);
         return typeof reviver === "function" ? applyReviver(reviver, { "": res }, "", res) : res;
       }
     };
@@ -572,8 +459,7 @@ function getAliasCount(doc, node, anchors) {
     let count = 0;
     for (const item of node.items) {
       const c = getAliasCount(doc, item, anchors);
-      if (c > count)
-        count = c;
+      if (c > count) count = c;
     }
     return count;
   } else if (isPair(node)) {
@@ -595,39 +481,26 @@ var init_Alias = __esm({
       constructor(source) {
         super(ALIAS);
         this.source = source;
-        Object.defineProperty(this, "tag", {
-          set() {
-            throw new Error("Alias nodes cannot have tags");
-          }
-        });
+        Object.defineProperty(this, "tag", { set() {
+          throw new Error("Alias nodes cannot have tags");
+        } });
       }
-      /**
-       * Resolve the value of this alias within `doc`, finding the last
-       * instance of the `source` anchor before this node.
-       */
       resolve(doc, ctx) {
-        if (ctx?.maxAliasCount === 0)
-          throw new ReferenceError("Alias resolution is disabled");
+        if (ctx?.maxAliasCount === 0) throw new ReferenceError("Alias resolution is disabled");
         let nodes;
         if (ctx?.aliasResolveCache) {
           nodes = ctx.aliasResolveCache;
         } else {
           nodes = [];
-          visit(doc, {
-            Node: (_key, node) => {
-              if (isAlias(node) || hasAnchor(node))
-                nodes.push(node);
-            }
-          });
-          if (ctx)
-            ctx.aliasResolveCache = nodes;
+          visit(doc, { Node: (_key, node) => {
+            if (isAlias(node) || hasAnchor(node)) nodes.push(node);
+          } });
+          if (ctx) ctx.aliasResolveCache = nodes;
         }
         let found = void 0;
         for (const node of nodes) {
-          if (node === this)
-            break;
-          if (node.anchor === this.source)
-            found = node;
+          if (node === this) break;
+          if (node.anchor === this.source) found = node;
         }
         if (found && ctx) {
           const { anchors, doc: doc2, maxAliasCount } = ctx;
@@ -642,8 +515,7 @@ var init_Alias = __esm({
           }
           if (maxAliasCount >= 0) {
             data.count += 1;
-            if (data.aliasCount === 0)
-              data.aliasCount = getAliasCount(doc2, found, anchors);
+            if (data.aliasCount === 0) data.aliasCount = getAliasCount(doc2, found, anchors);
             if (data.count * data.aliasCount > maxAliasCount) {
               const msg = "Excessive alias count indicates a resource exhaustion attack";
               throw new ReferenceError(msg);
@@ -653,8 +525,7 @@ var init_Alias = __esm({
         return found;
       }
       toJSON(_arg, ctx) {
-        if (!ctx)
-          return { source: this.source };
+        if (!ctx) return { source: this.source };
         const source = this.resolve(ctx.doc, ctx);
         if (!source) {
           const msg = `Unresolved alias (the anchor must be set before the alias): ${this.source}`;
@@ -670,8 +541,7 @@ var init_Alias = __esm({
             const msg = `Unresolved alias (the anchor must be set before the alias): ${this.source}`;
             throw new Error(msg);
           }
-          if (ctx.implicitKey)
-            return `${src} `;
+          if (ctx.implicitKey) return `${src} `;
         }
         return src;
       }
@@ -712,17 +582,14 @@ function findTagObject(value, tagName, tags) {
   if (tagName) {
     const match = tags.filter((t) => t.tag === tagName);
     const tagObj = match.find((t) => !t.format) ?? match[0];
-    if (!tagObj)
-      throw new Error(`Tag ${tagName} not found`);
+    if (!tagObj) throw new Error(`Tag ${tagName} not found`);
     return tagObj;
   }
   return tags.find((t) => t.identify?.(value) && !t.format);
 }
 function createNode(value, tagName, ctx) {
-  if (isDocument(value))
-    value = value.contents;
-  if (isNode(value))
-    return value;
+  if (isDocument(value)) value = value.contents;
+  if (isNode(value)) return value;
   if (isPair(value)) {
     const map2 = ctx.schema[MAP].createNode?.(ctx.schema, null, ctx);
     map2.items.push(value);
@@ -743,8 +610,7 @@ function createNode(value, tagName, ctx) {
       sourceObjects.set(value, ref);
     }
   }
-  if (tagName?.startsWith("!!"))
-    tagName = defaultTagPrefix + tagName.slice(2);
+  if (tagName?.startsWith("!!")) tagName = defaultTagPrefix + tagName.slice(2);
   let tagObj = findTagObject(value, tagName, schema4.tags);
   if (!tagObj) {
     if (value && typeof value.toJSON === "function") {
@@ -752,8 +618,7 @@ function createNode(value, tagName, ctx) {
     }
     if (!value || typeof value !== "object") {
       const node2 = new Scalar(value);
-      if (ref)
-        ref.node = node2;
+      if (ref) ref.node = node2;
       return node2;
     }
     tagObj = value instanceof Map ? schema4[MAP] : Symbol.iterator in Object(value) ? schema4[SEQ] : schema4[MAP];
@@ -763,12 +628,9 @@ function createNode(value, tagName, ctx) {
     delete ctx.onTagObj;
   }
   const node = tagObj?.createNode ? tagObj.createNode(ctx.schema, value, ctx) : typeof tagObj?.nodeClass?.from === "function" ? tagObj.nodeClass.from(ctx.schema, value, ctx) : new Scalar(value);
-  if (tagName)
-    node.tag = tagName;
-  else if (!tagObj.default)
-    node.tag = tagObj.tag;
-  if (ref)
-    ref.node = node;
+  if (tagName) node.tag = tagName;
+  else if (!tagObj.default) node.tag = tagObj.tag;
+  if (ref) ref.node = node;
   return node;
 }
 var defaultTagPrefix;
@@ -794,15 +656,9 @@ function collectionFromPath(schema4, path, value) {
       v = /* @__PURE__ */ new Map([[k2, v]]);
     }
   }
-  return createNode(v, void 0, {
-    aliasDuplicateObjects: false,
-    keepUndefined: false,
-    onAnchor: () => {
-      throw new Error("This should not happen, please report a bug.");
-    },
-    schema: schema4,
-    sourceObjects: /* @__PURE__ */ new Map()
-  });
+  return createNode(v, void 0, { aliasDuplicateObjects: false, keepUndefined: false, onAnchor: () => {
+    throw new Error("This should not happen, please report a bug.");
+  }, schema: schema4, sourceObjects: /* @__PURE__ */ new Map() });
 }
 var isEmptyPath, Collection;
 var init_Collection = __esm({
@@ -814,107 +670,60 @@ var init_Collection = __esm({
     Collection = class extends NodeBase {
       constructor(type, schema4) {
         super(type);
-        Object.defineProperty(this, "schema", {
-          value: schema4,
-          configurable: true,
-          enumerable: false,
-          writable: true
-        });
+        Object.defineProperty(this, "schema", { value: schema4, configurable: true, enumerable: false, writable: true });
       }
-      /**
-       * Create a copy of this collection.
-       *
-       * @param schema - If defined, overwrites the original's schema
-       */
       clone(schema4) {
         const copy = Object.create(Object.getPrototypeOf(this), Object.getOwnPropertyDescriptors(this));
-        if (schema4)
-          copy.schema = schema4;
+        if (schema4) copy.schema = schema4;
         copy.items = copy.items.map((it2) => isNode(it2) || isPair(it2) ? it2.clone(schema4) : it2);
-        if (this.range)
-          copy.range = this.range.slice();
+        if (this.range) copy.range = this.range.slice();
         return copy;
       }
-      /**
-       * Adds a value to the collection. For `!!map` and `!!omap` the value must
-       * be a Pair instance or a `{ key, value }` object, which may not have a key
-       * that already exists in the map.
-       */
       addIn(path, value) {
-        if (isEmptyPath(path))
-          this.add(value);
+        if (isEmptyPath(path)) this.add(value);
         else {
           const [key, ...rest] = path;
           const node = this.get(key, true);
-          if (isCollection(node))
-            node.addIn(rest, value);
-          else if (node === void 0 && this.schema)
-            this.set(key, collectionFromPath(this.schema, rest, value));
-          else
-            throw new Error(`Expected YAML collection at ${key}. Remaining path: ${rest}`);
+          if (isCollection(node)) node.addIn(rest, value);
+          else if (node === void 0 && this.schema) this.set(key, collectionFromPath(this.schema, rest, value));
+          else throw new Error(`Expected YAML collection at ${key}. Remaining path: ${rest}`);
         }
       }
-      /**
-       * Removes a value from the collection.
-       * @returns `true` if the item was found and removed.
-       */
       deleteIn(path) {
         const [key, ...rest] = path;
-        if (rest.length === 0)
-          return this.delete(key);
+        if (rest.length === 0) return this.delete(key);
         const node = this.get(key, true);
-        if (isCollection(node))
-          return node.deleteIn(rest);
-        else
-          throw new Error(`Expected YAML collection at ${key}. Remaining path: ${rest}`);
+        if (isCollection(node)) return node.deleteIn(rest);
+        else throw new Error(`Expected YAML collection at ${key}. Remaining path: ${rest}`);
       }
-      /**
-       * Returns item at `key`, or `undefined` if not found. By default unwraps
-       * scalar values from their surrounding node; to disable set `keepScalar` to
-       * `true` (collections are always returned intact).
-       */
       getIn(path, keepScalar) {
         const [key, ...rest] = path;
         const node = this.get(key, true);
-        if (rest.length === 0)
-          return !keepScalar && isScalar(node) ? node.value : node;
-        else
-          return isCollection(node) ? node.getIn(rest, keepScalar) : void 0;
+        if (rest.length === 0) return !keepScalar && isScalar(node) ? node.value : node;
+        else return isCollection(node) ? node.getIn(rest, keepScalar) : void 0;
       }
       hasAllNullValues(allowScalar) {
         return this.items.every((node) => {
-          if (!isPair(node))
-            return false;
+          if (!isPair(node)) return false;
           const n = node.value;
           return n == null || allowScalar && isScalar(n) && n.value == null && !n.commentBefore && !n.comment && !n.tag;
         });
       }
-      /**
-       * Checks if the collection includes a value with the key `key`.
-       */
       hasIn(path) {
         const [key, ...rest] = path;
-        if (rest.length === 0)
-          return this.has(key);
+        if (rest.length === 0) return this.has(key);
         const node = this.get(key, true);
         return isCollection(node) ? node.hasIn(rest) : false;
       }
-      /**
-       * Sets a value in this collection. For `!!set`, `value` needs to be a
-       * boolean to add/remove the item from the set.
-       */
       setIn(path, value) {
         const [key, ...rest] = path;
         if (rest.length === 0) {
           this.set(key, value);
         } else {
           const node = this.get(key, true);
-          if (isCollection(node))
-            node.setIn(rest, value);
-          else if (node === void 0 && this.schema)
-            this.set(key, collectionFromPath(this.schema, rest, value));
-          else
-            throw new Error(`Expected YAML collection at ${key}. Remaining path: ${rest}`);
+          if (isCollection(node)) node.setIn(rest, value);
+          else if (node === void 0 && this.schema) this.set(key, collectionFromPath(this.schema, rest, value));
+          else throw new Error(`Expected YAML collection at ${key}. Remaining path: ${rest}`);
         }
       }
     };
@@ -923,8 +732,7 @@ var init_Collection = __esm({
 
 // node_modules/yaml/browser/dist/stringify/stringifyComment.js
 function indentComment(comment, indent) {
-  if (/^\n+$/.test(comment))
-    return comment.substring(1);
+  if (/^\n+$/.test(comment)) return comment.substring(1);
   return indent ? comment.replace(/^(?! *$)/gm, indent) : comment;
 }
 var stringifyComment, lineComment;
@@ -937,21 +745,16 @@ var init_stringifyComment = __esm({
 
 // node_modules/yaml/browser/dist/stringify/foldFlowLines.js
 function foldFlowLines(text, indent, mode = "flow", { indentAtStart, lineWidth = 80, minContentWidth = 20, onFold, onOverflow } = {}) {
-  if (!lineWidth || lineWidth < 0)
-    return text;
-  if (lineWidth < minContentWidth)
-    minContentWidth = 0;
+  if (!lineWidth || lineWidth < 0) return text;
+  if (lineWidth < minContentWidth) minContentWidth = 0;
   const endStep = Math.max(1 + minContentWidth, 1 + lineWidth - indent.length);
-  if (text.length <= endStep)
-    return text;
+  if (text.length <= endStep) return text;
   const folds = [];
   const escapedFolds = {};
   let end = lineWidth - indent.length;
   if (typeof indentAtStart === "number") {
-    if (indentAtStart > lineWidth - Math.max(2, minContentWidth))
-      folds.push(0);
-    else
-      end = lineWidth - indentAtStart;
+    if (indentAtStart > lineWidth - Math.max(2, minContentWidth)) folds.push(0);
+    else end = lineWidth - indentAtStart;
   }
   let split = void 0;
   let prev = void 0;
@@ -961,8 +764,7 @@ function foldFlowLines(text, indent, mode = "flow", { indentAtStart, lineWidth =
   let escEnd = -1;
   if (mode === FOLD_BLOCK) {
     i = consumeMoreIndentedLines(text, i, indent.length);
-    if (i !== -1)
-      end = i + endStep;
+    if (i !== -1) end = i + endStep;
   }
   for (let ch; ch = text[i += 1]; ) {
     if (mode === FOLD_QUOTED && ch === "\\") {
@@ -983,15 +785,13 @@ function foldFlowLines(text, indent, mode = "flow", { indentAtStart, lineWidth =
       escEnd = i;
     }
     if (ch === "\n") {
-      if (mode === FOLD_BLOCK)
-        i = consumeMoreIndentedLines(text, i, indent.length);
+      if (mode === FOLD_BLOCK) i = consumeMoreIndentedLines(text, i, indent.length);
       end = i + indent.length + endStep;
       split = void 0;
     } else {
       if (ch === " " && prev && prev !== " " && prev !== "\n" && prev !== "	") {
         const next = text[i + 1];
-        if (next && next !== " " && next !== "\n" && next !== "	")
-          split = i;
+        if (next && next !== " " && next !== "\n" && next !== "	") split = i;
       }
       if (i >= end) {
         if (split) {
@@ -1005,8 +805,7 @@ function foldFlowLines(text, indent, mode = "flow", { indentAtStart, lineWidth =
             overflow = true;
           }
           const j2 = i > escEnd + 1 ? i - 2 : escStart - 1;
-          if (escapedFolds[j2])
-            return text;
+          if (escapedFolds[j2]) return text;
           folds.push(j2);
           escapedFolds[j2] = true;
           end = j2 + endStep;
@@ -1018,22 +817,17 @@ function foldFlowLines(text, indent, mode = "flow", { indentAtStart, lineWidth =
     }
     prev = ch;
   }
-  if (overflow && onOverflow)
-    onOverflow();
-  if (folds.length === 0)
-    return text;
-  if (onFold)
-    onFold();
+  if (overflow && onOverflow) onOverflow();
+  if (folds.length === 0) return text;
+  if (onFold) onFold();
   let res = text.slice(0, folds[0]);
   for (let i2 = 0; i2 < folds.length; ++i2) {
     const fold = folds[i2];
     const end2 = folds[i2 + 1] || text.length;
-    if (fold === 0)
-      res = `
+    if (fold === 0) res = `
 ${indent}${text.slice(0, end2)}`;
     else {
-      if (mode === FOLD_QUOTED && escapedFolds[fold])
-        res += `${text[fold]}\\`;
+      if (mode === FOLD_QUOTED && escapedFolds[fold]) res += `${text[fold]}\\`;
       res += `
 ${indent}${text.slice(fold + 1, end2)}`;
     }
@@ -1069,27 +863,22 @@ var init_foldFlowLines = __esm({
 
 // node_modules/yaml/browser/dist/stringify/stringifyString.js
 function lineLengthOverLimit(str, lineWidth, indentLength) {
-  if (!lineWidth || lineWidth < 0)
-    return false;
+  if (!lineWidth || lineWidth < 0) return false;
   const limit = lineWidth - indentLength;
   const strLen = str.length;
-  if (strLen <= limit)
-    return false;
+  if (strLen <= limit) return false;
   for (let i = 0, start = 0; i < strLen; ++i) {
     if (str[i] === "\n") {
-      if (i - start > limit)
-        return true;
+      if (i - start > limit) return true;
       start = i + 1;
-      if (strLen - start <= limit)
-        return false;
+      if (strLen - start <= limit) return false;
     }
   }
   return true;
 }
 function doubleQuotedString(value, ctx) {
   const json = JSON.stringify(value);
-  if (ctx.options.doubleQuotedAsJSON)
-    return json;
+  if (ctx.options.doubleQuotedAsJSON) return json;
   const { implicitKey } = ctx;
   const minMultiLineLength = ctx.options.doubleQuotedMinMultiLineLength;
   const indent = ctx.indent || (containsDocumentMarker(value) ? "  " : "");
@@ -1102,73 +891,68 @@ function doubleQuotedString(value, ctx) {
       start = i;
       ch = "\\";
     }
-    if (ch === "\\")
-      switch (json[i + 1]) {
-        case "u":
-          {
-            str += json.slice(start, i);
-            const code = json.substr(i + 2, 4);
-            switch (code) {
-              case "0000":
-                str += "\\0";
-                break;
-              case "0007":
-                str += "\\a";
-                break;
-              case "000b":
-                str += "\\v";
-                break;
-              case "001b":
-                str += "\\e";
-                break;
-              case "0085":
-                str += "\\N";
-                break;
-              case "00a0":
-                str += "\\_";
-                break;
-              case "2028":
-                str += "\\L";
-                break;
-              case "2029":
-                str += "\\P";
-                break;
-              default:
-                if (code.substr(0, 2) === "00")
-                  str += "\\x" + code.substr(2);
-                else
-                  str += json.substr(i, 6);
-            }
-            i += 5;
-            start = i + 1;
+    if (ch === "\\") switch (json[i + 1]) {
+      case "u":
+        {
+          str += json.slice(start, i);
+          const code = json.substr(i + 2, 4);
+          switch (code) {
+            case "0000":
+              str += "\\0";
+              break;
+            case "0007":
+              str += "\\a";
+              break;
+            case "000b":
+              str += "\\v";
+              break;
+            case "001b":
+              str += "\\e";
+              break;
+            case "0085":
+              str += "\\N";
+              break;
+            case "00a0":
+              str += "\\_";
+              break;
+            case "2028":
+              str += "\\L";
+              break;
+            case "2029":
+              str += "\\P";
+              break;
+            default:
+              if (code.substr(0, 2) === "00") str += "\\x" + code.substr(2);
+              else str += json.substr(i, 6);
           }
-          break;
-        case "n":
-          if (implicitKey || json[i + 2] === '"' || json.length < minMultiLineLength) {
-            i += 1;
-          } else {
-            str += json.slice(start, i) + "\n\n";
-            while (json[i + 2] === "\\" && json[i + 3] === "n" && json[i + 4] !== '"') {
-              str += "\n";
-              i += 2;
-            }
-            str += indent;
-            if (json[i + 2] === " ")
-              str += "\\";
-            i += 1;
-            start = i + 1;
-          }
-          break;
-        default:
+          i += 5;
+          start = i + 1;
+        }
+        break;
+      case "n":
+        if (implicitKey || json[i + 2] === '"' || json.length < minMultiLineLength) {
           i += 1;
-      }
+        } else {
+          str += json.slice(start, i) + "\n\n";
+          while (json[i + 2] === "\\" && json[i + 3] === "n" && json[i + 4] !== '"') {
+            str += "\n";
+            i += 2;
+          }
+          str += indent;
+          if (json[i + 2] === " ") str += "\\";
+          i += 1;
+          start = i + 1;
+        }
+        break;
+      default:
+        i += 1;
+    }
   }
   str = start ? str + json.slice(start) : json;
   return implicitKey ? str : foldFlowLines(str, indent, FOLD_QUOTED, getFoldOptions(ctx, false));
 }
 function singleQuotedString(value, ctx) {
-  if (ctx.options.singleQuote === false || ctx.implicitKey && value.includes("\n") || /[ \t]\n|\n[ \t]/.test(value))
-    return doubleQuotedString(value, ctx);
+  if (ctx.options.singleQuote === false || ctx.implicitKey && value.includes("\n") || /[ \t]\n|\n[ \t]/.test(value)) return doubleQuotedString(value, ctx);
   const indent = ctx.indent || (containsDocumentMarker(value) ? "  " : "");
   const res = "'" + value.replace(/'/g, "''").replace(/\n+/g, `$&
 ${indent}`) + "'";
@@ -1177,17 +961,13 @@ ${indent}`) + "'";
 function quotedString(value, ctx) {
   const { singleQuote } = ctx.options;
   let qs;
-  if (singleQuote === false)
-    qs = doubleQuotedString;
+  if (singleQuote === false) qs = doubleQuotedString;
   else {
     const hasDouble = value.includes('"');
     const hasSingle = value.includes("'");
-    if (hasDouble && !hasSingle)
-      qs = singleQuotedString;
-    else if (hasSingle && !hasDouble)
-      qs = doubleQuotedString;
-    else
-      qs = singleQuote ? singleQuotedString : doubleQuotedString;
+    if (hasDouble && !hasSingle) qs = singleQuotedString;
+    else if (hasSingle && !hasDouble) qs = doubleQuotedString;
+    else qs = singleQuote ? singleQuotedString : doubleQuotedString;
   }
   return qs(value, ctx);
 }
@@ -1198,14 +978,12 @@ function blockString({ comment, type, value }, ctx, onComment, onChompKeep) {
   }
   const indent = ctx.indent || (ctx.forceBlockIndent || containsDocumentMarker(value) ? "  " : "");
   const literal = blockQuote === "literal" ? true : blockQuote === "folded" || type === Scalar.BLOCK_FOLDED ? false : type === Scalar.BLOCK_LITERAL ? true : !lineLengthOverLimit(value, lineWidth, indent.length);
-  if (!value)
-    return literal ? "|\n" : ">\n";
+  if (!value) return literal ? "|\n" : ">\n";
   let chomp;
   let endStart;
   for (endStart = value.length; endStart > 0; --endStart) {
     const ch = value[endStart - 1];
-    if (ch !== "\n" && ch !== "	" && ch !== " ")
-      break;
+    if (ch !== "\n" && ch !== "	" && ch !== " ") break;
   }
   let end = value.substring(endStart);
   const endNlPos = end.indexOf("\n");
@@ -1213,15 +991,13 @@ function blockString({ comment, type, value }, ctx, onComment, onChompKeep) {
     chomp = "-";
   } else if (value === end || endNlPos !== end.length - 1) {
     chomp = "+";
-    if (onChompKeep)
-      onChompKeep();
+    if (onChompKeep) onChompKeep();
   } else {
     chomp = "";
   }
   if (end) {
     value = value.slice(0, -end.length);
-    if (end[end.length - 1] === "\n")
-      end = end.slice(0, -1);
+    if (end[end.length - 1] === "\n") end = end.slice(0, -1);
     end = end.replace(blockEndNewlines, `$&${indent}`);
   }
   let startWithSpace = false;
@@ -1229,12 +1005,9 @@ function blockString({ comment, type, value }, ctx, onComment, onChompKeep) {
   let startNlPos = -1;
   for (startEnd = 0; startEnd < value.length; ++startEnd) {
     const ch = value[startEnd];
-    if (ch === " ")
-      startWithSpace = true;
-    else if (ch === "\n")
-      startNlPos = startEnd;
-    else
-      break;
+    if (ch === " ") startWithSpace = true;
+    else if (ch === "\n") startNlPos = startEnd;
+    else break;
   }
   let start = value.substring(0, startNlPos < startEnd ? startNlPos + 1 : startEnd);
   if (start) {
@@ -1245,8 +1018,7 @@ function blockString({ comment, type, value }, ctx, onComment, onChompKeep) {
   let header = (startWithSpace ? indentSize : "") + chomp;
   if (comment) {
     header += " " + commentString(comment.replace(/ ?[\r\n]+/g, " "));
-    if (onComment)
-      onComment();
+    if (onComment) onComment();
   }
   if (!literal) {
     const foldedValue = value.replace(/\n+/g, "\n$&").replace(/(?:^|\n)([\t ].*)(?:([\n\t ]*)\n(?![\n\t ]))?/g, "$1$2").replace(/\n+/g, `$&${indent}`);
@@ -1258,8 +1030,7 @@ function blockString({ comment, type, value }, ctx, onComment, onChompKeep) {
       };
     }
     const body = foldFlowLines(`${start}${foldedValue}${end}`, indent, FOLD_BLOCK, foldOptions);
-    if (!literalFallback)
-      return `>${header}
+    if (!literalFallback) return `>${header}
 ${indent}${body}`;
   }
   value = value.replace(/\n+/g, `$&${indent}`);
@@ -1291,8 +1062,7 @@ ${indent}`);
   if (actualString) {
     const test = (tag) => tag.default && tag.tag !== "tag:yaml.org,2002:str" && tag.test?.test(str);
     const { compat, tags } = ctx.doc.schema;
-    if (tags.some(test) || compat?.some(test))
-      return quotedString(value, ctx);
+    if (tags.some(test) || compat?.some(test)) return quotedString(value, ctx);
   }
   return implicitKey ? str : foldFlowLines(str, indent, FOLD_FLOW, getFoldOptions(ctx, false));
 }
@@ -1301,8 +1071,7 @@ function stringifyString(item, ctx, onComment, onChompKeep) {
   const ss = typeof item.value === "string" ? item : Object.assign({}, item, { value: String(item.value) });
   let { type } = item;
   if (type !== Scalar.QUOTE_DOUBLE) {
-    if (/[\x00-\x08\x0b-\x1f\x7f-\x9f\u{D800}-\u{DFFF}]/u.test(ss.value))
-      type = Scalar.QUOTE_DOUBLE;
+    if (/[\x00-\x08\x0b-\x1f\x7f-\x9f\u{D800}-\u{DFFF}]/u.test(ss.value)) type = Scalar.QUOTE_DOUBLE;
   }
   const _stringify = (_type) => {
     switch (_type) {
@@ -1324,8 +1093,7 @@ function stringifyString(item, ctx, onComment, onChompKeep) {
     const { defaultKeyType, defaultStringType } = ctx.options;
     const t = implicitKey && defaultKeyType || defaultStringType;
     res = _stringify(t);
-    if (res === null)
-      throw new Error(`Unsupported default string type ${t}`);
+    if (res === null) throw new Error(`Unsupported default string type ${t}`);
   }
   return res;
 }
@@ -1334,11 +1102,7 @@ var init_stringifyString = __esm({
   "node_modules/yaml/browser/dist/stringify/stringifyString.js"() {
     init_Scalar();
     init_foldFlowLines();
-    getFoldOptions = (ctx, isBlock2) => ({
-      indentAtStart: isBlock2 ? ctx.indent.length : ctx.indentAtStart,
-      lineWidth: ctx.options.lineWidth,
-      minContentWidth: ctx.options.minContentWidth
-    });
+    getFoldOptions = (ctx, isBlock2) => ({ indentAtStart: isBlock2 ? ctx.indent.length : ctx.indentAtStart, lineWidth: ctx.options.lineWidth, minContentWidth: ctx.options.minContentWidth });
     containsDocumentMarker = (str) => /^(%|---|\.\.\.)/m.test(str);
     try {
       blockEndNewlines = new RegExp("(^|(?<!\n))\n+(?!\n|$)", "g");
@@ -1350,26 +1114,7 @@ var init_stringifyString = __esm({
 
 // node_modules/yaml/browser/dist/stringify/stringify.js
 function createStringifyContext(doc, options) {
-  const opt = Object.assign({
-    blockQuote: true,
-    commentString: stringifyComment,
-    defaultKeyType: null,
-    defaultStringType: "PLAIN",
-    directives: null,
-    doubleQuotedAsJSON: false,
-    doubleQuotedMinMultiLineLength: 40,
-    falseStr: "false",
-    flowCollectionPadding: true,
-    indentSeq: true,
-    lineWidth: 80,
-    minContentWidth: 20,
-    nullStr: "null",
-    simpleKeys: false,
-    singleQuote: null,
-    trailingComma: false,
-    trueStr: "true",
-    verifyAliasOrder: true
-  }, doc.schema.toStringOptions, options);
+  const opt = Object.assign({ blockQuote: true, commentString: stringifyComment, defaultKeyType: null, defaultStringType: "PLAIN", directives: null, doubleQuotedAsJSON: false, doubleQuotedMinMultiLineLength: 40, falseStr: "false", flowCollectionPadding: true, indentSeq: true, lineWidth: 80, minContentWidth: 20, nullStr: "null", simpleKeys: false, singleQuote: null, trailingComma: false, trueStr: "true", verifyAliasOrder: true }, doc.schema.toStringOptions, options);
   let inFlow;
   switch (opt.collectionStyle) {
     case "block":
@@ -1381,21 +1126,12 @@ function createStringifyContext(doc, options) {
     default:
       inFlow = null;
   }
-  return {
-    anchors: /* @__PURE__ */ new Set(),
-    doc,
-    flowCollectionPadding: opt.flowCollectionPadding ? " " : "",
-    indent: "",
-    indentStep: typeof opt.indent === "number" ? " ".repeat(opt.indent) : "  ",
-    inFlow,
-    options: opt
-  };
+  return { anchors: /* @__PURE__ */ new Set(), doc, flowCollectionPadding: opt.flowCollectionPadding ? " " : "", indent: "", indentStep: typeof opt.indent === "number" ? " ".repeat(opt.indent) : "  ", inFlow, options: opt };
 }
 function getTagObject(tags, item) {
   if (item.tag) {
     const match = tags.filter((t) => t.tag === item.tag);
-    if (match.length > 0)
-      return match.find((t) => t.format === item.format) ?? match[0];
+    if (match.length > 0) return match.find((t) => t.format === item.format) ?? match[0];
   }
   let tagObj = void 0;
   let obj;
@@ -1404,8 +1140,7 @@ function getTagObject(tags, item) {
     let match = tags.filter((t) => t.identify?.(obj));
     if (match.length > 1) {
       const testMatch = match.filter((t) => t.test);
-      if (testMatch.length > 0)
-        match = testMatch;
+      if (testMatch.length > 0) match = testMatch;
     }
     tagObj = match.find((t) => t.format === item.format) ?? match.find((t) => !t.format);
   } else {
@@ -1419,8 +1154,7 @@ function getTagObject(tags, item) {
   return tagObj;
 }
 function stringifyProps(node, tagObj, { anchors, doc }) {
-  if (!doc.directives)
-    return "";
+  if (!doc.directives) return "";
   const props = [];
   const anchor = (isScalar(node) || isCollection(node)) && node.anchor;
   if (anchor && anchorIsValid(anchor)) {
@@ -1428,23 +1162,18 @@ function stringifyProps(node, tagObj, { anchors, doc }) {
     props.push(`&${anchor}`);
   }
   const tag = node.tag ?? (tagObj.default ? null : tagObj.tag);
-  if (tag)
-    props.push(doc.directives.tagString(tag));
+  if (tag) props.push(doc.directives.tagString(tag));
   return props.join(" ");
 }
 function stringify(item, ctx, onComment, onChompKeep) {
-  if (isPair(item))
-    return item.toString(ctx, onComment, onChompKeep);
+  if (isPair(item)) return item.toString(ctx, onComment, onChompKeep);
   if (isAlias(item)) {
-    if (ctx.doc.directives)
-      return item.toString(ctx);
+    if (ctx.doc.directives) return item.toString(ctx);
     if (ctx.resolvedAliases?.has(item)) {
       throw new TypeError(`Cannot stringify circular structure without alias nodes`);
     } else {
-      if (ctx.resolvedAliases)
-        ctx.resolvedAliases.add(item);
-      else
-        ctx.resolvedAliases = /* @__PURE__ */ new Set([item]);
+      if (ctx.resolvedAliases) ctx.resolvedAliases.add(item);
+      else ctx.resolvedAliases = /* @__PURE__ */ new Set([item]);
       item = item.resolve(ctx.doc);
     }
   }
@@ -1452,11 +1181,9 @@ function stringify(item, ctx, onComment, onChompKeep) {
   const node = isNode(item) ? item : ctx.doc.createNode(item, { onTagObj: (o) => tagObj = o });
   tagObj ?? (tagObj = getTagObject(ctx.doc.schema.tags, node));
   const props = stringifyProps(node, tagObj, ctx);
-  if (props.length > 0)
-    ctx.indentAtStart = (ctx.indentAtStart ?? 0) + props.length + 1;
+  if (props.length > 0) ctx.indentAtStart = (ctx.indentAtStart ?? 0) + props.length + 1;
   const str = typeof tagObj.stringify === "function" ? tagObj.stringify(node, ctx, onComment, onChompKeep) : isScalar(node) ? stringifyString(node, ctx, onComment, onChompKeep) : node.toString(ctx, onComment, onChompKeep);
-  if (!props)
-    return str;
+  if (!props) return str;
   return isScalar(node) || str[0] === "{" || str[0] === "[" ? `${props} ${str}` : `${props}
 ${ctx.indent}${str}`;
 }
@@ -1483,44 +1210,34 @@ function stringifyPair({ key, value }, ctx, onComment, onChompKeep) {
     }
   }
   let explicitKey = !simpleKeys && (!key || keyComment && value == null && !ctx.inFlow || isCollection(key) || (isScalar(key) ? key.type === Scalar.BLOCK_FOLDED || key.type === Scalar.BLOCK_LITERAL : typeof key === "object"));
-  ctx = Object.assign({}, ctx, {
-    allNullValues: false,
-    implicitKey: !explicitKey && (simpleKeys || !allNullValues),
-    indent: indent + indentStep
-  });
+  ctx = Object.assign({}, ctx, { allNullValues: false, implicitKey: !explicitKey && (simpleKeys || !allNullValues), indent: indent + indentStep });
   let keyCommentDone = false;
   let chompKeep = false;
   let str = stringify(key, ctx, () => keyCommentDone = true, () => chompKeep = true);
   if (!explicitKey && !ctx.inFlow && str.length > 1024) {
-    if (simpleKeys)
-      throw new Error("With simple keys, single line scalar must not span more than 1024 characters");
+    if (simpleKeys) throw new Error("With simple keys, single line scalar must not span more than 1024 characters");
     explicitKey = true;
   }
   if (ctx.inFlow) {
     if (allNullValues || value == null) {
-      if (keyCommentDone && onComment)
-        onComment();
+      if (keyCommentDone && onComment) onComment();
       return str === "" ? "?" : explicitKey ? `? ${str}` : str;
     }
   } else if (allNullValues && !simpleKeys || value == null && explicitKey) {
     str = `? ${str}`;
     if (keyComment && !keyCommentDone) {
       str += lineComment(str, ctx.indent, commentString(keyComment));
-    } else if (chompKeep && onChompKeep)
-      onChompKeep();
+    } else if (chompKeep && onChompKeep) onChompKeep();
     return str;
   }
-  if (keyCommentDone)
-    keyComment = null;
+  if (keyCommentDone) keyComment = null;
   if (explicitKey) {
-    if (keyComment)
-      str += lineComment(str, ctx.indent, commentString(keyComment));
+    if (keyComment) str += lineComment(str, ctx.indent, commentString(keyComment));
     str = `? ${str}
 ${indent}:`;
   } else {
     str = `${str}:`;
-    if (keyComment)
-      str += lineComment(str, ctx.indent, commentString(keyComment));
+    if (keyComment) str += lineComment(str, ctx.indent, commentString(keyComment));
   }
   let vsb, vcb, valueComment;
   if (isNode(value)) {
@@ -1531,12 +1248,10 @@ ${indent}:`;
     vsb = false;
     vcb = null;
     valueComment = null;
-    if (value && typeof value === "object")
-      value = doc.createNode(value);
+    if (value && typeof value === "object") value = doc.createNode(value);
   }
   ctx.implicitKey = false;
-  if (!explicitKey && !keyComment && isScalar(value))
-    ctx.indentAtStart = str.length + 1;
+  if (!explicitKey && !keyComment && isScalar(value)) ctx.indentAtStart = str.length + 1;
   chompKeep = false;
   if (!indentSeq && indentStep.length >= 2 && !ctx.inFlow && !explicitKey && isSeq(value) && !value.flow && !value.tag && !value.anchor) {
     ctx.indent = ctx.indent.substring(2);
@@ -1552,8 +1267,7 @@ ${indent}:`;
 ${indentComment(cs, ctx.indent)}`;
     }
     if (valueStr === "" && !ctx.inFlow) {
-      if (ws === "\n" && valueComment)
-        ws = "\n\n";
+      if (ws === "\n" && valueComment) ws = "\n\n";
     } else {
       ws += `
 ${ctx.indent}`;
@@ -1570,11 +1284,9 @@ ${ctx.indent}`;
         if (vs0 === "&" && sp0 !== -1 && sp0 < nl0 && valueStr[sp0 + 1] === "!") {
           sp0 = valueStr.indexOf(" ", sp0 + 1);
         }
-        if (sp0 === -1 || nl0 < sp0)
-          hasPropsLine = true;
+        if (sp0 === -1 || nl0 < sp0) hasPropsLine = true;
       }
-      if (!hasPropsLine)
-        ws = `
+      if (!hasPropsLine) ws = `
 ${ctx.indent}`;
     }
   } else if (valueStr === "" || valueStr[0] === "\n") {
@@ -1582,8 +1294,7 @@ ${ctx.indent}`;
   }
   str += ws + valueStr;
   if (ctx.inFlow) {
-    if (valueCommentDone && onComment)
-      onComment();
+    if (valueCommentDone && onComment) onComment();
   } else if (valueComment && !valueCommentDone) {
     str += lineComment(str, ctx.indent, commentString(valueComment));
   } else if (chompKeep && onChompKeep) {
@@ -1614,33 +1325,21 @@ var init_log = __esm({
 // node_modules/yaml/browser/dist/schema/yaml-1.1/merge.js
 function addMergeToJSMap(ctx, map2, value) {
   const source = resolveAliasValue(ctx, value);
-  if (isSeq(source))
-    for (const it2 of source.items)
-      mergeValue(ctx, map2, it2);
-  else if (Array.isArray(source))
-    for (const it2 of source)
-      mergeValue(ctx, map2, it2);
-  else
-    mergeValue(ctx, map2, source);
+  if (isSeq(source)) for (const it2 of source.items) mergeValue(ctx, map2, it2);
+  else if (Array.isArray(source)) for (const it2 of source) mergeValue(ctx, map2, it2);
+  else mergeValue(ctx, map2, source);
 }
 function mergeValue(ctx, map2, value) {
   const source = resolveAliasValue(ctx, value);
-  if (!isMap(source))
-    throw new Error("Merge sources must be maps or map aliases");
+  if (!isMap(source)) throw new Error("Merge sources must be maps or map aliases");
   const srcMap = source.toJSON(null, ctx, Map);
   for (const [key, value2] of srcMap) {
     if (map2 instanceof Map) {
-      if (!map2.has(key))
-        map2.set(key, value2);
+      if (!map2.has(key)) map2.set(key, value2);
     } else if (map2 instanceof Set) {
       map2.add(key);
     } else if (!Object.prototype.hasOwnProperty.call(map2, key)) {
-      Object.defineProperty(map2, key, {
-        value: value2,
-        writable: true,
-        enumerable: true,
-        configurable: true
-      });
+      Object.defineProperty(map2, key, { value: value2, writable: true, enumerable: true, configurable: true });
     }
   }
   return map2;
@@ -1654,26 +1353,15 @@ var init_merge = __esm({
     init_identity();
     init_Scalar();
     MERGE_KEY = "<<";
-    merge = {
-      identify: (value) => value === MERGE_KEY || typeof value === "symbol" && value.description === MERGE_KEY,
-      default: "key",
-      tag: "tag:yaml.org,2002:merge",
-      test: /^<<$/,
-      resolve: () => Object.assign(new Scalar(Symbol(MERGE_KEY)), {
-        addToJSMap: addMergeToJSMap
-      }),
-      stringify: () => MERGE_KEY
-    };
+    merge = { identify: (value) => value === MERGE_KEY || typeof value === "symbol" && value.description === MERGE_KEY, default: "key", tag: "tag:yaml.org,2002:merge", test: /^<<$/, resolve: () => Object.assign(new Scalar(Symbol(MERGE_KEY)), { addToJSMap: addMergeToJSMap }), stringify: () => MERGE_KEY };
     isMergeKey = (ctx, key) => (merge.identify(key) || isScalar(key) && (!key.type || key.type === Scalar.PLAIN) && merge.identify(key.value)) && ctx?.doc.schema.tags.some((tag) => tag.tag === merge.tag && tag.default);
   }
 });
 
 // node_modules/yaml/browser/dist/nodes/addPairToJSMap.js
 function addPairToJSMap(ctx, map2, { key, value }) {
-  if (isNode(key) && key.addToJSMap)
-    key.addToJSMap(ctx, map2, value);
-  else if (isMergeKey(ctx, key))
-    addMergeToJSMap(ctx, map2, value);
+  if (isNode(key) && key.addToJSMap) key.addToJSMap(ctx, map2, value);
+  else if (isMergeKey(ctx, key)) addMergeToJSMap(ctx, map2, value);
   else {
     const jsKey = toJS(key, "", ctx);
     if (map2 instanceof Map) {
@@ -1683,36 +1371,25 @@ function addPairToJSMap(ctx, map2, { key, value }) {
     } else {
       const stringKey = stringifyKey(key, jsKey, ctx);
       const jsValue = toJS(value, stringKey, ctx);
-      if (stringKey in map2)
-        Object.defineProperty(map2, stringKey, {
-          value: jsValue,
-          writable: true,
-          enumerable: true,
-          configurable: true
-        });
-      else
-        map2[stringKey] = jsValue;
+      if (stringKey in map2) Object.defineProperty(map2, stringKey, { value: jsValue, writable: true, enumerable: true, configurable: true });
+      else map2[stringKey] = jsValue;
     }
   }
   return map2;
 }
 function stringifyKey(key, jsKey, ctx) {
-  if (jsKey === null)
-    return "";
-  if (typeof jsKey !== "object")
-    return String(jsKey);
+  if (jsKey === null) return "";
+  if (typeof jsKey !== "object") return String(jsKey);
   if (isNode(key) && ctx?.doc) {
     const strCtx = createStringifyContext(ctx.doc, {});
     strCtx.anchors = /* @__PURE__ */ new Set();
-    for (const node of ctx.anchors.keys())
-      strCtx.anchors.add(node.anchor);
+    for (const node of ctx.anchors.keys()) strCtx.anchors.add(node.anchor);
     strCtx.inFlow = true;
     strCtx.inStringifyKey = true;
     const strKey = key.toString(strCtx);
     if (!ctx.mapKeyWarned) {
       let jsonStr = JSON.stringify(strKey);
-      if (jsonStr.length > 40)
-        jsonStr = jsonStr.substring(0, 36) + '..."';
+      if (jsonStr.length > 40) jsonStr = jsonStr.substring(0, 36) + '..."';
       warn(ctx.doc.options.logLevel, `Keys with collection values will be stringified due to JS Object restrictions: ${jsonStr}. Set mapAsMap: true to use object keys.`);
       ctx.mapKeyWarned = true;
     }
@@ -1751,10 +1428,8 @@ var init_Pair = __esm({
       }
       clone(schema4) {
         let { key, value } = this;
-        if (isNode(key))
-          key = key.clone(schema4);
-        if (isNode(value))
-          value = value.clone(schema4);
+        if (isNode(key)) key = key.clone(schema4);
+        if (isNode(value)) value = value.clone(schema4);
         return new _Pair(key, value);
       }
       toJSON(_2, ctx) {
@@ -1771,8 +1446,8 @@ var init_Pair = __esm({
 // node_modules/yaml/browser/dist/stringify/stringifyCollection.js
 function stringifyCollection(collection, ctx, options) {
   const flow = ctx.inFlow ?? collection.flow;
-  const stringify4 = flow ? stringifyFlowCollection : stringifyBlockCollection;
-  return stringify4(collection, ctx, options);
+  const stringify22 = flow ? stringifyFlowCollection : stringifyBlockCollection;
+  return stringify22(collection, ctx, options);
 }
 function stringifyBlockCollection({ comment, items }, ctx, { blockItemPrefix, flowChars, itemIndent, onChompKeep, onComment }) {
   const { indent, options: { commentString } } = ctx;
@@ -1783,25 +1458,20 @@ function stringifyBlockCollection({ comment, items }, ctx, { blockItemPrefix, fl
     const item = items[i];
     let comment2 = null;
     if (isNode(item)) {
-      if (!chompKeep && item.spaceBefore)
-        lines.push("");
+      if (!chompKeep && item.spaceBefore) lines.push("");
       addCommentBefore(ctx, lines, item.commentBefore, chompKeep);
-      if (item.comment)
-        comment2 = item.comment;
+      if (item.comment) comment2 = item.comment;
     } else if (isPair(item)) {
       const ik = isNode(item.key) ? item.key : null;
       if (ik) {
-        if (!chompKeep && ik.spaceBefore)
-          lines.push("");
+        if (!chompKeep && ik.spaceBefore) lines.push("");
         addCommentBefore(ctx, lines, ik.commentBefore, chompKeep);
       }
     }
     chompKeep = false;
     let str2 = stringify(item, itemCtx, () => comment2 = null, () => chompKeep = true);
-    if (comment2)
-      str2 += lineComment(str2, itemIndent, commentString(comment2));
-    if (chompKeep && comment2)
-      chompKeep = false;
+    if (comment2) str2 += lineComment(str2, itemIndent, commentString(comment2));
+    if (chompKeep && comment2) chompKeep = false;
     lines.push(blockItemPrefix + str2);
   }
   let str;
@@ -1817,20 +1487,14 @@ ${indent}${line}` : "\n";
   }
   if (comment) {
     str += "\n" + indentComment(commentString(comment), indent);
-    if (onComment)
-      onComment();
-  } else if (chompKeep && onChompKeep)
-    onChompKeep();
+    if (onComment) onComment();
+  } else if (chompKeep && onChompKeep) onChompKeep();
   return str;
 }
 function stringifyFlowCollection({ items }, ctx, { flowChars, itemIndent }) {
   const { indent, indentStep, flowCollectionPadding: fcPadding, options: { commentString } } = ctx;
   itemIndent += indentStep;
-  const itemCtx = Object.assign({}, ctx, {
-    indent: itemIndent,
-    inFlow: true,
-    type: null
-  });
+  const itemCtx = Object.assign({}, ctx, { indent: itemIndent, inFlow: true, type: null });
   let reqNewline = false;
   let linesAtValue = 0;
   const lines = [];
@@ -1838,32 +1502,25 @@ function stringifyFlowCollection({ items }, ctx, { flowChars, itemIndent }) {
     const item = items[i];
     let comment = null;
     if (isNode(item)) {
-      if (item.spaceBefore)
-        lines.push("");
+      if (item.spaceBefore) lines.push("");
       addCommentBefore(ctx, lines, item.commentBefore, false);
-      if (item.comment)
-        comment = item.comment;
+      if (item.comment) comment = item.comment;
     } else if (isPair(item)) {
       const ik = isNode(item.key) ? item.key : null;
       if (ik) {
-        if (ik.spaceBefore)
-          lines.push("");
+        if (ik.spaceBefore) lines.push("");
         addCommentBefore(ctx, lines, ik.commentBefore, false);
-        if (ik.comment)
-          reqNewline = true;
+        if (ik.comment) reqNewline = true;
       }
       const iv = isNode(item.value) ? item.value : null;
       if (iv) {
-        if (iv.comment)
-          comment = iv.comment;
-        if (iv.commentBefore)
-          reqNewline = true;
+        if (iv.comment) comment = iv.comment;
+        if (iv.commentBefore) reqNewline = true;
       } else if (item.value == null && ik?.comment) {
         comment = ik.comment;
       }
     }
-    if (comment)
-      reqNewline = true;
+    if (comment) reqNewline = true;
     let str = stringify(item, itemCtx, () => comment = null);
     reqNewline || (reqNewline = lines.length > linesAtValue || str.includes("\n"));
     if (i < items.length - 1) {
@@ -1876,8 +1533,7 @@ function stringifyFlowCollection({ items }, ctx, { flowChars, itemIndent }) {
         str += ",";
       }
     }
-    if (comment)
-      str += lineComment(str, itemIndent, commentString(comment));
+    if (comment) str += lineComment(str, itemIndent, commentString(comment));
     lines.push(str);
     linesAtValue = lines.length;
   }
@@ -1891,8 +1547,7 @@ function stringifyFlowCollection({ items }, ctx, { flowChars, itemIndent }) {
     }
     if (reqNewline) {
       let str = start;
-      for (const line of lines)
-        str += line ? `
+      for (const line of lines) str += line ? `
 ${indentStep}${indent}${line}` : "\n";
       return `${str}
 ${indent}${end}`;
@@ -1902,8 +1557,7 @@ ${indent}${end}`;
   }
 }
 function addCommentBefore({ indent, options: { commentString } }, lines, comment, chompKeep) {
-  if (comment && chompKeep)
-    comment = comment.replace(/^\n+/, "");
+  if (comment && chompKeep) comment = comment.replace(/^\n+/, "");
   if (comment) {
     const ic = indentComment(commentString(comment), indent);
     lines.push(ic.trimStart());
@@ -1922,10 +1576,8 @@ function findPair(items, key) {
   const k2 = isScalar(key) ? key.value : key;
   for (const it2 of items) {
     if (isPair(it2)) {
-      if (it2.key === key || it2.key === k2)
-        return it2;
-      if (isScalar(it2.key) && it2.key.value === k2)
-        return it2;
+      if (it2.key === key || it2.key === k2) return it2;
+      if (isScalar(it2.key) && it2.key.value === k2) return it2;
     }
   }
   return void 0;
@@ -1947,70 +1599,47 @@ var init_YAMLMap = __esm({
         super(MAP, schema4);
         this.items = [];
       }
-      /**
-       * A generic collection parsing method that can be extended
-       * to other node classes that inherit from YAMLMap
-       */
       static from(schema4, obj, ctx) {
         const { keepUndefined, replacer } = ctx;
         const map2 = new this(schema4);
         const add = (key, value) => {
-          if (typeof replacer === "function")
-            value = replacer.call(obj, key, value);
-          else if (Array.isArray(replacer) && !replacer.includes(key))
-            return;
-          if (value !== void 0 || keepUndefined)
-            map2.items.push(createPair(key, value, ctx));
+          if (typeof replacer === "function") value = replacer.call(obj, key, value);
+          else if (Array.isArray(replacer) && !replacer.includes(key)) return;
+          if (value !== void 0 || keepUndefined) map2.items.push(createPair(key, value, ctx));
         };
         if (obj instanceof Map) {
-          for (const [key, value] of obj)
-            add(key, value);
+          for (const [key, value] of obj) add(key, value);
         } else if (obj && typeof obj === "object") {
-          for (const key of Object.keys(obj))
-            add(key, obj[key]);
+          for (const key of Object.keys(obj)) add(key, obj[key]);
         }
         if (typeof schema4.sortMapEntries === "function") {
           map2.items.sort(schema4.sortMapEntries);
         }
         return map2;
       }
-      /**
-       * Adds a value to the collection.
-       *
-       * @param overwrite - If not set `true`, using a key that is already in the
-       *   collection will throw. Otherwise, overwrites the previous value.
-       */
       add(pair, overwrite) {
         let _pair;
-        if (isPair(pair))
-          _pair = pair;
+        if (isPair(pair)) _pair = pair;
         else if (!pair || typeof pair !== "object" || !("key" in pair)) {
           _pair = new Pair(pair, pair?.value);
-        } else
-          _pair = new Pair(pair.key, pair.value);
+        } else _pair = new Pair(pair.key, pair.value);
         const prev = findPair(this.items, _pair.key);
         const sortEntries = this.schema?.sortMapEntries;
         if (prev) {
-          if (!overwrite)
-            throw new Error(`Key ${_pair.key} already set`);
-          if (isScalar(prev.value) && isScalarValue(_pair.value))
-            prev.value.value = _pair.value;
-          else
-            prev.value = _pair.value;
+          if (!overwrite) throw new Error(`Key ${_pair.key} already set`);
+          if (isScalar(prev.value) && isScalarValue(_pair.value)) prev.value.value = _pair.value;
+          else prev.value = _pair.value;
         } else if (sortEntries) {
           const i = this.items.findIndex((item) => sortEntries(_pair, item) < 0);
-          if (i === -1)
-            this.items.push(_pair);
-          else
-            this.items.splice(i, 0, _pair);
+          if (i === -1) this.items.push(_pair);
+          else this.items.splice(i, 0, _pair);
         } else {
           this.items.push(_pair);
         }
       }
       delete(key) {
         const it2 = findPair(this.items, key);
-        if (!it2)
-          return false;
+        if (!it2) return false;
         const del = this.items.splice(this.items.indexOf(it2), 1);
         return del.length > 0;
       }
@@ -2025,35 +1654,19 @@ var init_YAMLMap = __esm({
       set(key, value) {
         this.add(new Pair(key, value), true);
       }
-      /**
-       * @param ctx - Conversion context, originally set in Document#toJS()
-       * @param {Class} Type - If set, forces the returned collection type
-       * @returns Instance of Type, Map, or Object
-       */
       toJSON(_2, ctx, Type) {
         const map2 = Type ? new Type() : ctx?.mapAsMap ? /* @__PURE__ */ new Map() : {};
-        if (ctx?.onCreate)
-          ctx.onCreate(map2);
-        for (const item of this.items)
-          addPairToJSMap(ctx, map2, item);
+        if (ctx?.onCreate) ctx.onCreate(map2);
+        for (const item of this.items) addPairToJSMap(ctx, map2, item);
         return map2;
       }
       toString(ctx, onComment, onChompKeep) {
-        if (!ctx)
-          return JSON.stringify(this);
+        if (!ctx) return JSON.stringify(this);
         for (const item of this.items) {
-          if (!isPair(item))
-            throw new Error(`Map items must all be pairs; found ${JSON.stringify(item)} instead`);
+          if (!isPair(item)) throw new Error(`Map items must all be pairs; found ${JSON.stringify(item)} instead`);
         }
-        if (!ctx.allNullValues && this.hasAllNullValues(false))
-          ctx = Object.assign({}, ctx, { allNullValues: true });
-        return stringifyCollection(this, ctx, {
-          blockItemPrefix: "",
-          flowChars: { start: "{", end: "}" },
-          itemIndent: ctx.indent || "",
-          onChompKeep,
-          onComment
-        });
+        if (!ctx.allNullValues && this.hasAllNullValues(false)) ctx = Object.assign({}, ctx, { allNullValues: true });
+        return stringifyCollection(this, ctx, { blockItemPrefix: "", flowChars: { start: "{", end: "}" }, itemIndent: ctx.indent || "", onChompKeep, onComment });
       }
     };
   }
@@ -2065,26 +1678,17 @@ var init_map = __esm({
   "node_modules/yaml/browser/dist/schema/common/map.js"() {
     init_identity();
     init_YAMLMap();
-    map = {
-      collection: "map",
-      default: true,
-      nodeClass: YAMLMap,
-      tag: "tag:yaml.org,2002:map",
-      resolve(map2, onError) {
-        if (!isMap(map2))
-          onError("Expected a mapping for this tag");
-        return map2;
-      },
-      createNode: (schema4, obj, ctx) => YAMLMap.from(schema4, obj, ctx)
-    };
+    map = { collection: "map", default: true, nodeClass: YAMLMap, tag: "tag:yaml.org,2002:map", resolve(map2, onError) {
+      if (!isMap(map2)) onError("Expected a mapping for this tag");
+      return map2;
+    }, createNode: (schema4, obj, ctx) => YAMLMap.from(schema4, obj, ctx) };
   }
 });
 
 // node_modules/yaml/browser/dist/nodes/YAMLSeq.js
 function asItemIndex(key) {
   let idx = isScalar(key) ? key.value : key;
-  if (idx && typeof idx === "string")
-    idx = Number(idx);
+  if (idx && typeof idx === "string") idx = Number(idx);
   return typeof idx === "number" && Number.isInteger(idx) && idx >= 0 ? idx : null;
 }
 var YAMLSeq;
@@ -2107,74 +1711,39 @@ var init_YAMLSeq = __esm({
       add(value) {
         this.items.push(value);
       }
-      /**
-       * Removes a value from the collection.
-       *
-       * `key` must contain a representation of an integer for this to succeed.
-       * It may be wrapped in a `Scalar`.
-       *
-       * @returns `true` if the item was found and removed.
-       */
       delete(key) {
         const idx = asItemIndex(key);
-        if (typeof idx !== "number")
-          return false;
+        if (typeof idx !== "number") return false;
         const del = this.items.splice(idx, 1);
         return del.length > 0;
       }
       get(key, keepScalar) {
         const idx = asItemIndex(key);
-        if (typeof idx !== "number")
-          return void 0;
+        if (typeof idx !== "number") return void 0;
         const it2 = this.items[idx];
         return !keepScalar && isScalar(it2) ? it2.value : it2;
       }
-      /**
-       * Checks if the collection includes a value with the key `key`.
-       *
-       * `key` must contain a representation of an integer for this to succeed.
-       * It may be wrapped in a `Scalar`.
-       */
       has(key) {
         const idx = asItemIndex(key);
         return typeof idx === "number" && idx < this.items.length;
       }
-      /**
-       * Sets a value in this collection. For `!!set`, `value` needs to be a
-       * boolean to add/remove the item from the set.
-       *
-       * If `key` does not contain a representation of an integer, this will throw.
-       * It may be wrapped in a `Scalar`.
-       */
       set(key, value) {
         const idx = asItemIndex(key);
-        if (typeof idx !== "number")
-          throw new Error(`Expected a valid index, not ${key}.`);
+        if (typeof idx !== "number") throw new Error(`Expected a valid index, not ${key}.`);
         const prev = this.items[idx];
-        if (isScalar(prev) && isScalarValue(value))
-          prev.value = value;
-        else
-          this.items[idx] = value;
+        if (isScalar(prev) && isScalarValue(value)) prev.value = value;
+        else this.items[idx] = value;
       }
       toJSON(_2, ctx) {
         const seq2 = [];
-        if (ctx?.onCreate)
-          ctx.onCreate(seq2);
+        if (ctx?.onCreate) ctx.onCreate(seq2);
         let i = 0;
-        for (const item of this.items)
-          seq2.push(toJS(item, String(i++), ctx));
+        for (const item of this.items) seq2.push(toJS(item, String(i++), ctx));
         return seq2;
       }
       toString(ctx, onComment, onChompKeep) {
-        if (!ctx)
-          return JSON.stringify(this);
-        return stringifyCollection(this, ctx, {
-          blockItemPrefix: "- ",
-          flowChars: { start: "[", end: "]" },
-          itemIndent: (ctx.indent || "") + "  ",
-          onChompKeep,
-          onComment
-        });
+        if (!ctx) return JSON.stringify(this);
+        return stringifyCollection(this, ctx, { blockItemPrefix: "- ", flowChars: { start: "[", end: "]" }, itemIndent: (ctx.indent || "") + "  ", onChompKeep, onComment });
       }
       static from(schema4, obj, ctx) {
         const { replacer } = ctx;
@@ -2201,18 +1770,10 @@ var init_seq = __esm({
   "node_modules/yaml/browser/dist/schema/common/seq.js"() {
     init_identity();
     init_YAMLSeq();
-    seq = {
-      collection: "seq",
-      default: true,
-      nodeClass: YAMLSeq,
-      tag: "tag:yaml.org,2002:seq",
-      resolve(seq2, onError) {
-        if (!isSeq(seq2))
-          onError("Expected a sequence for this tag");
-        return seq2;
-      },
-      createNode: (schema4, obj, ctx) => YAMLSeq.from(schema4, obj, ctx)
-    };
+    seq = { collection: "seq", default: true, nodeClass: YAMLSeq, tag: "tag:yaml.org,2002:seq", resolve(seq2, onError) {
+      if (!isSeq(seq2)) onError("Expected a sequence for this tag");
+      return seq2;
+    }, createNode: (schema4, obj, ctx) => YAMLSeq.from(schema4, obj, ctx) };
   }
 });
 
@@ -2221,16 +1782,10 @@ var string;
 var init_string = __esm({
   "node_modules/yaml/browser/dist/schema/common/string.js"() {
     init_stringifyString();
-    string = {
-      identify: (value) => typeof value === "string",
-      default: true,
-      tag: "tag:yaml.org,2002:str",
-      resolve: (str) => str,
-      stringify(item, ctx, onComment, onChompKeep) {
-        ctx = Object.assign({ actualString: true }, ctx);
-        return stringifyString(item, ctx, onComment, onChompKeep);
-      }
-    };
+    string = { identify: (value) => typeof value === "string", default: true, tag: "tag:yaml.org,2002:str", resolve: (str) => str, stringify(item, ctx, onComment, onChompKeep) {
+      ctx = Object.assign({ actualString: true }, ctx);
+      return stringifyString(item, ctx, onComment, onChompKeep);
+    } };
   }
 });
 
@@ -2239,15 +1794,7 @@ var nullTag;
 var init_null = __esm({
   "node_modules/yaml/browser/dist/schema/common/null.js"() {
     init_Scalar();
-    nullTag = {
-      identify: (value) => value == null,
-      createNode: () => new Scalar(null),
-      default: true,
-      tag: "tag:yaml.org,2002:null",
-      test: /^(?:~|[Nn]ull|NULL)?$/,
-      resolve: () => new Scalar(null),
-      stringify: ({ source }, ctx) => typeof source === "string" && nullTag.test.test(source) ? source : ctx.options.nullStr
-    };
+    nullTag = { identify: (value) => value == null, createNode: () => new Scalar(null), default: true, tag: "tag:yaml.org,2002:null", test: /^(?:~|[Nn]ull|NULL)?$/, resolve: () => new Scalar(null), stringify: ({ source }, ctx) => typeof source === "string" && nullTag.test.test(source) ? source : ctx.options.nullStr };
   }
 });
 
@@ -2256,31 +1803,21 @@ var boolTag;
 var init_bool = __esm({
   "node_modules/yaml/browser/dist/schema/core/bool.js"() {
     init_Scalar();
-    boolTag = {
-      identify: (value) => typeof value === "boolean",
-      default: true,
-      tag: "tag:yaml.org,2002:bool",
-      test: /^(?:[Tt]rue|TRUE|[Ff]alse|FALSE)$/,
-      resolve: (str) => new Scalar(str[0] === "t" || str[0] === "T"),
-      stringify({ source, value }, ctx) {
-        if (source && boolTag.test.test(source)) {
-          const sv = source[0] === "t" || source[0] === "T";
-          if (value === sv)
-            return source;
-        }
-        return value ? ctx.options.trueStr : ctx.options.falseStr;
+    boolTag = { identify: (value) => typeof value === "boolean", default: true, tag: "tag:yaml.org,2002:bool", test: /^(?:[Tt]rue|TRUE|[Ff]alse|FALSE)$/, resolve: (str) => new Scalar(str[0] === "t" || str[0] === "T"), stringify({ source, value }, ctx) {
+      if (source && boolTag.test.test(source)) {
+        const sv = source[0] === "t" || source[0] === "T";
+        if (value === sv) return source;
       }
-    };
+      return value ? ctx.options.trueStr : ctx.options.falseStr;
+    } };
   }
 });
 
 // node_modules/yaml/browser/dist/stringify/stringifyNumber.js
 function stringifyNumber({ format, minFractionDigits, tag, value }) {
-  if (typeof value === "bigint")
-    return String(value);
+  if (typeof value === "bigint") return String(value);
   const num = typeof value === "number" ? value : Number(value);
-  if (!isFinite(num))
-    return isNaN(num) ? ".nan" : num < 0 ? "-.inf" : ".inf";
+  if (!isFinite(num)) return isNaN(num) ? ".nan" : num < 0 ? "-.inf" : ".inf";
   let n = Object.is(value, -0) ? "-0" : JSON.stringify(value);
   if (!format && minFractionDigits && (!tag || tag === "tag:yaml.org,2002:float") && /^-?\d/.test(n) && !n.includes("e")) {
     let i = n.indexOf(".");
@@ -2289,8 +1826,7 @@ function stringifyNumber({ format, minFractionDigits, tag, value }) {
       n += ".";
     }
     let d = minFractionDigits - (n.length - i - 1);
-    while (d-- > 0)
-      n += "0";
+    while (d-- > 0) n += "0";
   }
   return n;
 }
@@ -2305,48 +1841,24 @@ var init_float = __esm({
   "node_modules/yaml/browser/dist/schema/core/float.js"() {
     init_Scalar();
     init_stringifyNumber();
-    floatNaN = {
-      identify: (value) => typeof value === "number",
-      default: true,
-      tag: "tag:yaml.org,2002:float",
-      test: /^(?:[-+]?\.(?:inf|Inf|INF)|\.nan|\.NaN|\.NAN)$/,
-      resolve: (str) => str.slice(-3).toLowerCase() === "nan" ? NaN : str[0] === "-" ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY,
-      stringify: stringifyNumber
-    };
-    floatExp = {
-      identify: (value) => typeof value === "number",
-      default: true,
-      tag: "tag:yaml.org,2002:float",
-      format: "EXP",
-      test: /^[-+]?(?:\.[0-9]+|[0-9]+(?:\.[0-9]*)?)[eE][-+]?[0-9]+$/,
-      resolve: (str) => parseFloat(str),
-      stringify(node) {
-        const num = Number(node.value);
-        return isFinite(num) ? num.toExponential() : stringifyNumber(node);
-      }
-    };
-    float = {
-      identify: (value) => typeof value === "number",
-      default: true,
-      tag: "tag:yaml.org,2002:float",
-      test: /^[-+]?(?:\.[0-9]+|[0-9]+\.[0-9]*)$/,
-      resolve(str) {
-        const node = new Scalar(parseFloat(str));
-        const dot = str.indexOf(".");
-        if (dot !== -1 && str[str.length - 1] === "0")
-          node.minFractionDigits = str.length - dot - 1;
-        return node;
-      },
-      stringify: stringifyNumber
-    };
+    floatNaN = { identify: (value) => typeof value === "number", default: true, tag: "tag:yaml.org,2002:float", test: /^(?:[-+]?\.(?:inf|Inf|INF)|\.nan|\.NaN|\.NAN)$/, resolve: (str) => str.slice(-3).toLowerCase() === "nan" ? NaN : str[0] === "-" ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY, stringify: stringifyNumber };
+    floatExp = { identify: (value) => typeof value === "number", default: true, tag: "tag:yaml.org,2002:float", format: "EXP", test: /^[-+]?(?:\.[0-9]+|[0-9]+(?:\.[0-9]*)?)[eE][-+]?[0-9]+$/, resolve: (str) => parseFloat(str), stringify(node) {
+      const num = Number(node.value);
+      return isFinite(num) ? num.toExponential() : stringifyNumber(node);
+    } };
+    float = { identify: (value) => typeof value === "number", default: true, tag: "tag:yaml.org,2002:float", test: /^[-+]?(?:\.[0-9]+|[0-9]+\.[0-9]*)$/, resolve(str) {
+      const node = new Scalar(parseFloat(str));
+      const dot = str.indexOf(".");
+      if (dot !== -1 && str[str.length - 1] === "0") node.minFractionDigits = str.length - dot - 1;
+      return node;
+    }, stringify: stringifyNumber };
   }
 });
 
 // node_modules/yaml/browser/dist/schema/core/int.js
 function intStringify(node, radix, prefix) {
   const { value } = node;
-  if (intIdentify(value) && value >= 0)
-    return prefix + value.toString(radix);
+  if (intIdentify(value) && value >= 0) return prefix + value.toString(radix);
   return stringifyNumber(node);
 }
 var intIdentify, intResolve, intOct, int, intHex;
@@ -2355,32 +1867,9 @@ var init_int = __esm({
     init_stringifyNumber();
     intIdentify = (value) => typeof value === "bigint" || Number.isInteger(value);
     intResolve = (str, offset, radix, { intAsBigInt }) => intAsBigInt ? BigInt(str) : parseInt(str.substring(offset), radix);
-    intOct = {
-      identify: (value) => intIdentify(value) && value >= 0,
-      default: true,
-      tag: "tag:yaml.org,2002:int",
-      format: "OCT",
-      test: /^0o[0-7]+$/,
-      resolve: (str, _onError, opt) => intResolve(str, 2, 8, opt),
-      stringify: (node) => intStringify(node, 8, "0o")
-    };
-    int = {
-      identify: intIdentify,
-      default: true,
-      tag: "tag:yaml.org,2002:int",
-      test: /^[-+]?[0-9]+$/,
-      resolve: (str, _onError, opt) => intResolve(str, 0, 10, opt),
-      stringify: stringifyNumber
-    };
-    intHex = {
-      identify: (value) => intIdentify(value) && value >= 0,
-      default: true,
-      tag: "tag:yaml.org,2002:int",
-      format: "HEX",
-      test: /^0x[0-9a-fA-F]+$/,
-      resolve: (str, _onError, opt) => intResolve(str, 2, 16, opt),
-      stringify: (node) => intStringify(node, 16, "0x")
-    };
+    intOct = { identify: (value) => intIdentify(value) && value >= 0, default: true, tag: "tag:yaml.org,2002:int", format: "OCT", test: /^0o[0-7]+$/, resolve: (str, _onError, opt) => intResolve(str, 2, 8, opt), stringify: (node) => intStringify(node, 8, "0o") };
+    int = { identify: intIdentify, default: true, tag: "tag:yaml.org,2002:int", test: /^[-+]?[0-9]+$/, resolve: (str, _onError, opt) => intResolve(str, 0, 10, opt), stringify: stringifyNumber };
+    intHex = { identify: (value) => intIdentify(value) && value >= 0, default: true, tag: "tag:yaml.org,2002:int", format: "HEX", test: /^0x[0-9a-fA-F]+$/, resolve: (str, _onError, opt) => intResolve(str, 2, 16, opt), stringify: (node) => intStringify(node, 16, "0x") };
   }
 });
 
@@ -2395,19 +1884,7 @@ var init_schema = __esm({
     init_bool();
     init_float();
     init_int();
-    schema = [
-      map,
-      seq,
-      string,
-      nullTag,
-      boolTag,
-      intOct,
-      int,
-      intHex,
-      floatNaN,
-      floatExp,
-      float
-    ];
+    schema = [map, seq, string, nullTag, boolTag, intOct, int, intHex, floatNaN, floatExp, float];
   }
 });
 
@@ -2422,57 +1899,11 @@ var init_schema2 = __esm({
     init_map();
     init_seq();
     stringifyJSON = ({ value }) => JSON.stringify(value);
-    jsonScalars = [
-      {
-        identify: (value) => typeof value === "string",
-        default: true,
-        tag: "tag:yaml.org,2002:str",
-        resolve: (str) => str,
-        stringify: stringifyJSON
-      },
-      {
-        identify: (value) => value == null,
-        createNode: () => new Scalar(null),
-        default: true,
-        tag: "tag:yaml.org,2002:null",
-        test: /^null$/,
-        resolve: () => null,
-        stringify: stringifyJSON
-      },
-      {
-        identify: (value) => typeof value === "boolean",
-        default: true,
-        tag: "tag:yaml.org,2002:bool",
-        test: /^true$|^false$/,
-        resolve: (str) => str === "true",
-        stringify: stringifyJSON
-      },
-      {
-        identify: intIdentify2,
-        default: true,
-        tag: "tag:yaml.org,2002:int",
-        test: /^-?(?:0|[1-9][0-9]*)$/,
-        resolve: (str, _onError, { intAsBigInt }) => intAsBigInt ? BigInt(str) : parseInt(str, 10),
-        stringify: ({ value }) => intIdentify2(value) ? value.toString() : JSON.stringify(value)
-      },
-      {
-        identify: (value) => typeof value === "number",
-        default: true,
-        tag: "tag:yaml.org,2002:float",
-        test: /^-?(?:0|[1-9][0-9]*)(?:\.[0-9]*)?(?:[eE][-+]?[0-9]+)?$/,
-        resolve: (str) => parseFloat(str),
-        stringify: stringifyJSON
-      }
-    ];
-    jsonError = {
-      default: true,
-      tag: "",
-      test: /^/,
-      resolve(str, onError) {
-        onError(`Unresolved plain scalar ${JSON.stringify(str)}`);
-        return str;
-      }
-    };
+    jsonScalars = [{ identify: (value) => typeof value === "string", default: true, tag: "tag:yaml.org,2002:str", resolve: (str) => str, stringify: stringifyJSON }, { identify: (value) => value == null, createNode: () => new Scalar(null), default: true, tag: "tag:yaml.org,2002:null", test: /^null$/, resolve: () => null, stringify: stringifyJSON }, { identify: (value) => typeof value === "boolean", default: true, tag: "tag:yaml.org,2002:bool", test: /^true$|^false$/, resolve: (str) => str === "true", stringify: stringifyJSON }, { identify: intIdentify2, default: true, tag: "tag:yaml.org,2002:int", test: /^-?(?:0|[1-9][0-9]*)$/, resolve: (str, _onError, { intAsBigInt }) => intAsBigInt ? BigInt(str) : parseInt(str, 10), stringify: ({ value }) => intIdentify2(value) ? value.toString() : JSON.stringify(value) }, { identify: (value) => typeof value === "number", default: true, tag: "tag:yaml.org,2002:float", test: /^-?(?:0|[1-9][0-9]*)(?:\.[0-9]*)?(?:[eE][-+]?[0-9]+)?$/, resolve: (str) => parseFloat(str), stringify: stringifyJSON }];
+    jsonError = { default: true, tag: "", test: /^/, resolve(str, onError) {
+      onError(`Unresolved plain scalar ${JSON.stringify(str)}`);
+      return str;
+    } };
     schema2 = [map, seq].concat(jsonScalars, jsonError);
   }
 });
@@ -2483,57 +1914,39 @@ var init_binary = __esm({
   "node_modules/yaml/browser/dist/schema/yaml-1.1/binary.js"() {
     init_Scalar();
     init_stringifyString();
-    binary = {
-      identify: (value) => value instanceof Uint8Array,
-      // Buffer inherits from Uint8Array
-      default: false,
-      tag: "tag:yaml.org,2002:binary",
-      /**
-       * Returns a Buffer in node and an Uint8Array in browsers
-       *
-       * To use the resulting buffer as an image, you'll want to do something like:
-       *
-       *   const blob = new Blob([buffer], { type: 'image/jpeg' })
-       *   document.querySelector('#photo').src = URL.createObjectURL(blob)
-       */
-      resolve(src, onError) {
-        if (typeof atob === "function") {
-          const str = atob(src.replace(/[\n\r]/g, ""));
-          const buffer = new Uint8Array(str.length);
-          for (let i = 0; i < str.length; ++i)
-            buffer[i] = str.charCodeAt(i);
-          return buffer;
-        } else {
-          onError("This environment does not support reading binary tags; either Buffer or atob is required");
-          return src;
-        }
-      },
-      stringify({ comment, type, value }, ctx, onComment, onChompKeep) {
-        if (!value)
-          return "";
-        const buf = value;
-        let str;
-        if (typeof btoa === "function") {
-          let s = "";
-          for (let i = 0; i < buf.length; ++i)
-            s += String.fromCharCode(buf[i]);
-          str = btoa(s);
-        } else {
-          throw new Error("This environment does not support writing binary tags; either Buffer or btoa is required");
-        }
-        type ?? (type = Scalar.BLOCK_LITERAL);
-        if (type !== Scalar.QUOTE_DOUBLE) {
-          const lineWidth = Math.max(ctx.options.lineWidth - ctx.indent.length, ctx.options.minContentWidth);
-          const n = Math.ceil(str.length / lineWidth);
-          const lines = new Array(n);
-          for (let i = 0, o = 0; i < n; ++i, o += lineWidth) {
-            lines[i] = str.substr(o, lineWidth);
-          }
-          str = lines.join(type === Scalar.BLOCK_LITERAL ? "\n" : " ");
-        }
-        return stringifyString({ comment, type, value: str }, ctx, onComment, onChompKeep);
+    binary = { identify: (value) => value instanceof Uint8Array, default: false, tag: "tag:yaml.org,2002:binary", resolve(src, onError) {
+      if (typeof atob === "function") {
+        const str = atob(src.replace(/[\n\r]/g, ""));
+        const buffer = new Uint8Array(str.length);
+        for (let i = 0; i < str.length; ++i) buffer[i] = str.charCodeAt(i);
+        return buffer;
+      } else {
+        onError("This environment does not support reading binary tags; either Buffer or atob is required");
+        return src;
       }
-    };
+    }, stringify({ comment, type, value }, ctx, onComment, onChompKeep) {
+      if (!value) return "";
+      const buf = value;
+      let str;
+      if (typeof btoa === "function") {
+        let s = "";
+        for (let i = 0; i < buf.length; ++i) s += String.fromCharCode(buf[i]);
+        str = btoa(s);
+      } else {
+        throw new Error("This environment does not support writing binary tags; either Buffer or btoa is required");
+      }
+      type ?? (type = Scalar.BLOCK_LITERAL);
+      if (type !== Scalar.QUOTE_DOUBLE) {
+        const lineWidth = Math.max(ctx.options.lineWidth - ctx.indent.length, ctx.options.minContentWidth);
+        const n = Math.ceil(str.length / lineWidth);
+        const lines = new Array(n);
+        for (let i = 0, o = 0; i < n; ++i, o += lineWidth) {
+          lines[i] = str.substr(o, lineWidth);
+        }
+        str = lines.join(type === Scalar.BLOCK_LITERAL ? "\n" : " ");
+      }
+      return stringifyString({ comment, type, value: str }, ctx, onComment, onChompKeep);
+    } };
   }
 });
 
@@ -2542,14 +1955,11 @@ function resolvePairs(seq2, onError) {
   if (isSeq(seq2)) {
     for (let i = 0; i < seq2.items.length; ++i) {
       let item = seq2.items[i];
-      if (isPair(item))
-        continue;
+      if (isPair(item)) continue;
       else if (isMap(item)) {
-        if (item.items.length > 1)
-          onError("Each pair must have its own sequence indicator");
+        if (item.items.length > 1) onError("Each pair must have its own sequence indicator");
         const pair = item.items[0] || new Pair(new Scalar(null));
-        if (item.commentBefore)
-          pair.key.commentBefore = pair.key.commentBefore ? `${item.commentBefore}
+        if (item.commentBefore) pair.key.commentBefore = pair.key.commentBefore ? `${item.commentBefore}
 ${pair.key.commentBefore}` : item.commentBefore;
         if (item.comment) {
           const cn = pair.value ?? pair.key;
@@ -2560,8 +1970,7 @@ ${cn.comment}` : item.comment;
       }
       seq2.items[i] = isPair(item) ? item : new Pair(item);
     }
-  } else
-    onError("Expected a sequence for this tag");
+  } else onError("Expected a sequence for this tag");
   return seq2;
 }
 function createPairs(schema4, iterable, ctx) {
@@ -2569,30 +1978,27 @@ function createPairs(schema4, iterable, ctx) {
   const pairs2 = new YAMLSeq(schema4);
   pairs2.tag = "tag:yaml.org,2002:pairs";
   let i = 0;
-  if (iterable && Symbol.iterator in Object(iterable))
-    for (let it2 of iterable) {
-      if (typeof replacer === "function")
-        it2 = replacer.call(iterable, String(i++), it2);
-      let key, value;
-      if (Array.isArray(it2)) {
-        if (it2.length === 2) {
-          key = it2[0];
-          value = it2[1];
-        } else
-          throw new TypeError(`Expected [key, value] tuple: ${it2}`);
-      } else if (it2 && it2 instanceof Object) {
-        const keys = Object.keys(it2);
-        if (keys.length === 1) {
-          key = keys[0];
-          value = it2[key];
-        } else {
-          throw new TypeError(`Expected tuple with one key, not ${keys.length} keys`);
-        }
+  if (iterable && Symbol.iterator in Object(iterable)) for (let it2 of iterable) {
+    if (typeof replacer === "function") it2 = replacer.call(iterable, String(i++), it2);
+    let key, value;
+    if (Array.isArray(it2)) {
+      if (it2.length === 2) {
+        key = it2[0];
+        value = it2[1];
+      } else throw new TypeError(`Expected [key, value] tuple: ${it2}`);
+    } else if (it2 && it2 instanceof Object) {
+      const keys = Object.keys(it2);
+      if (keys.length === 1) {
+        key = keys[0];
+        value = it2[key];
       } else {
-        key = it2;
+        throw new TypeError(`Expected tuple with one key, not ${keys.length} keys`);
       }
-      pairs2.items.push(createPair(key, value, ctx));
+    } else {
+      key = it2;
     }
+    pairs2.items.push(createPair(key, value, ctx));
+  }
   return pairs2;
 }
 var pairs;
@@ -2602,13 +2008,7 @@ var init_pairs = __esm({
     init_Pair();
     init_Scalar();
     init_YAMLSeq();
-    pairs = {
-      collection: "seq",
-      default: false,
-      tag: "tag:yaml.org,2002:pairs",
-      resolve: resolvePairs,
-      createNode: createPairs
-    };
+    pairs = { collection: "seq", default: false, tag: "tag:yaml.org,2002:pairs", resolve: resolvePairs, createNode: createPairs };
   }
 });
 
@@ -2631,16 +2031,10 @@ var init_omap = __esm({
         this.set = YAMLMap.prototype.set.bind(this);
         this.tag = _YAMLOMap.tag;
       }
-      /**
-       * If `ctx` is given, the return type is actually `Map<unknown, unknown>`,
-       * but TypeScript won't allow widening the signature of a child method.
-       */
       toJSON(_2, ctx) {
-        if (!ctx)
-          return super.toJSON(_2);
+        if (!ctx) return super.toJSON(_2);
         const map2 = /* @__PURE__ */ new Map();
-        if (ctx?.onCreate)
-          ctx.onCreate(map2);
+        if (ctx?.onCreate) ctx.onCreate(map2);
         for (const pair of this.items) {
           let key, value;
           if (isPair(pair)) {
@@ -2649,8 +2043,7 @@ var init_omap = __esm({
           } else {
             key = toJS(pair, "", ctx);
           }
-          if (map2.has(key))
-            throw new Error("Ordered maps must not include duplicate keys");
+          if (map2.has(key)) throw new Error("Ordered maps must not include duplicate keys");
           map2.set(key, value);
         }
         return map2;
@@ -2663,58 +2056,35 @@ var init_omap = __esm({
       }
     };
     YAMLOMap.tag = "tag:yaml.org,2002:omap";
-    omap = {
-      collection: "seq",
-      identify: (value) => value instanceof Map,
-      nodeClass: YAMLOMap,
-      default: false,
-      tag: "tag:yaml.org,2002:omap",
-      resolve(seq2, onError) {
-        const pairs2 = resolvePairs(seq2, onError);
-        const seenKeys = [];
-        for (const { key } of pairs2.items) {
-          if (isScalar(key)) {
-            if (seenKeys.includes(key.value)) {
-              onError(`Ordered maps must not include duplicate keys: ${key.value}`);
-            } else {
-              seenKeys.push(key.value);
-            }
+    omap = { collection: "seq", identify: (value) => value instanceof Map, nodeClass: YAMLOMap, default: false, tag: "tag:yaml.org,2002:omap", resolve(seq2, onError) {
+      const pairs2 = resolvePairs(seq2, onError);
+      const seenKeys = [];
+      for (const { key } of pairs2.items) {
+        if (isScalar(key)) {
+          if (seenKeys.includes(key.value)) {
+            onError(`Ordered maps must not include duplicate keys: ${key.value}`);
+          } else {
+            seenKeys.push(key.value);
           }
         }
-        return Object.assign(new YAMLOMap(), pairs2);
-      },
-      createNode: (schema4, iterable, ctx) => YAMLOMap.from(schema4, iterable, ctx)
-    };
+      }
+      return Object.assign(new YAMLOMap(), pairs2);
+    }, createNode: (schema4, iterable, ctx) => YAMLOMap.from(schema4, iterable, ctx) };
   }
 });
 
 // node_modules/yaml/browser/dist/schema/yaml-1.1/bool.js
 function boolStringify({ value, source }, ctx) {
   const boolObj = value ? trueTag : falseTag;
-  if (source && boolObj.test.test(source))
-    return source;
+  if (source && boolObj.test.test(source)) return source;
   return value ? ctx.options.trueStr : ctx.options.falseStr;
 }
 var trueTag, falseTag;
 var init_bool2 = __esm({
   "node_modules/yaml/browser/dist/schema/yaml-1.1/bool.js"() {
     init_Scalar();
-    trueTag = {
-      identify: (value) => value === true,
-      default: true,
-      tag: "tag:yaml.org,2002:bool",
-      test: /^(?:Y|y|[Yy]es|YES|[Tt]rue|TRUE|[Oo]n|ON)$/,
-      resolve: () => new Scalar(true),
-      stringify: boolStringify
-    };
-    falseTag = {
-      identify: (value) => value === false,
-      default: true,
-      tag: "tag:yaml.org,2002:bool",
-      test: /^(?:N|n|[Nn]o|NO|[Ff]alse|FALSE|[Oo]ff|OFF)$/,
-      resolve: () => new Scalar(false),
-      stringify: boolStringify
-    };
+    trueTag = { identify: (value) => value === true, default: true, tag: "tag:yaml.org,2002:bool", test: /^(?:Y|y|[Yy]es|YES|[Tt]rue|TRUE|[Oo]n|ON)$/, resolve: () => new Scalar(true), stringify: boolStringify };
+    falseTag = { identify: (value) => value === false, default: true, tag: "tag:yaml.org,2002:bool", test: /^(?:N|n|[Nn]o|NO|[Ff]alse|FALSE|[Oo]ff|OFF)$/, resolve: () => new Scalar(false), stringify: boolStringify };
   }
 });
 
@@ -2724,51 +2094,27 @@ var init_float2 = __esm({
   "node_modules/yaml/browser/dist/schema/yaml-1.1/float.js"() {
     init_Scalar();
     init_stringifyNumber();
-    floatNaN2 = {
-      identify: (value) => typeof value === "number",
-      default: true,
-      tag: "tag:yaml.org,2002:float",
-      test: /^(?:[-+]?\.(?:inf|Inf|INF)|\.nan|\.NaN|\.NAN)$/,
-      resolve: (str) => str.slice(-3).toLowerCase() === "nan" ? NaN : str[0] === "-" ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY,
-      stringify: stringifyNumber
-    };
-    floatExp2 = {
-      identify: (value) => typeof value === "number",
-      default: true,
-      tag: "tag:yaml.org,2002:float",
-      format: "EXP",
-      test: /^[-+]?(?:[0-9][0-9_]*)?(?:\.[0-9_]*)?[eE][-+]?[0-9]+$/,
-      resolve: (str) => parseFloat(str.replace(/_/g, "")),
-      stringify(node) {
-        const num = Number(node.value);
-        return isFinite(num) ? num.toExponential() : stringifyNumber(node);
+    floatNaN2 = { identify: (value) => typeof value === "number", default: true, tag: "tag:yaml.org,2002:float", test: /^(?:[-+]?\.(?:inf|Inf|INF)|\.nan|\.NaN|\.NAN)$/, resolve: (str) => str.slice(-3).toLowerCase() === "nan" ? NaN : str[0] === "-" ? Number.NEGATIVE_INFINITY : Number.POSITIVE_INFINITY, stringify: stringifyNumber };
+    floatExp2 = { identify: (value) => typeof value === "number", default: true, tag: "tag:yaml.org,2002:float", format: "EXP", test: /^[-+]?(?:[0-9][0-9_]*)?(?:\.[0-9_]*)?[eE][-+]?[0-9]+$/, resolve: (str) => parseFloat(str.replace(/_/g, "")), stringify(node) {
+      const num = Number(node.value);
+      return isFinite(num) ? num.toExponential() : stringifyNumber(node);
+    } };
+    float2 = { identify: (value) => typeof value === "number", default: true, tag: "tag:yaml.org,2002:float", test: /^[-+]?(?:[0-9][0-9_]*)?\.[0-9_]*$/, resolve(str) {
+      const node = new Scalar(parseFloat(str.replace(/_/g, "")));
+      const dot = str.indexOf(".");
+      if (dot !== -1) {
+        const f = str.substring(dot + 1).replace(/_/g, "");
+        if (f[f.length - 1] === "0") node.minFractionDigits = f.length;
       }
-    };
-    float2 = {
-      identify: (value) => typeof value === "number",
-      default: true,
-      tag: "tag:yaml.org,2002:float",
-      test: /^[-+]?(?:[0-9][0-9_]*)?\.[0-9_]*$/,
-      resolve(str) {
-        const node = new Scalar(parseFloat(str.replace(/_/g, "")));
-        const dot = str.indexOf(".");
-        if (dot !== -1) {
-          const f = str.substring(dot + 1).replace(/_/g, "");
-          if (f[f.length - 1] === "0")
-            node.minFractionDigits = f.length;
-        }
-        return node;
-      },
-      stringify: stringifyNumber
-    };
+      return node;
+    }, stringify: stringifyNumber };
   }
 });
 
 // node_modules/yaml/browser/dist/schema/yaml-1.1/int.js
 function intResolve2(str, offset, radix, { intAsBigInt }) {
   const sign = str[0];
-  if (sign === "-" || sign === "+")
-    offset += 1;
+  if (sign === "-" || sign === "+") offset += 1;
   str = str.substring(offset).replace(/_/g, "");
   if (intAsBigInt) {
     switch (radix) {
@@ -2801,41 +2147,10 @@ var init_int2 = __esm({
   "node_modules/yaml/browser/dist/schema/yaml-1.1/int.js"() {
     init_stringifyNumber();
     intIdentify3 = (value) => typeof value === "bigint" || Number.isInteger(value);
-    intBin = {
-      identify: intIdentify3,
-      default: true,
-      tag: "tag:yaml.org,2002:int",
-      format: "BIN",
-      test: /^[-+]?0b[0-1_]+$/,
-      resolve: (str, _onError, opt) => intResolve2(str, 2, 2, opt),
-      stringify: (node) => intStringify2(node, 2, "0b")
-    };
-    intOct2 = {
-      identify: intIdentify3,
-      default: true,
-      tag: "tag:yaml.org,2002:int",
-      format: "OCT",
-      test: /^[-+]?0[0-7_]+$/,
-      resolve: (str, _onError, opt) => intResolve2(str, 1, 8, opt),
-      stringify: (node) => intStringify2(node, 8, "0")
-    };
-    int2 = {
-      identify: intIdentify3,
-      default: true,
-      tag: "tag:yaml.org,2002:int",
-      test: /^[-+]?[0-9][0-9_]*$/,
-      resolve: (str, _onError, opt) => intResolve2(str, 0, 10, opt),
-      stringify: stringifyNumber
-    };
-    intHex2 = {
-      identify: intIdentify3,
-      default: true,
-      tag: "tag:yaml.org,2002:int",
-      format: "HEX",
-      test: /^[-+]?0x[0-9a-fA-F_]+$/,
-      resolve: (str, _onError, opt) => intResolve2(str, 2, 16, opt),
-      stringify: (node) => intStringify2(node, 16, "0x")
-    };
+    intBin = { identify: intIdentify3, default: true, tag: "tag:yaml.org,2002:int", format: "BIN", test: /^[-+]?0b[0-1_]+$/, resolve: (str, _onError, opt) => intResolve2(str, 2, 2, opt), stringify: (node) => intStringify2(node, 2, "0b") };
+    intOct2 = { identify: intIdentify3, default: true, tag: "tag:yaml.org,2002:int", format: "OCT", test: /^[-+]?0[0-7_]+$/, resolve: (str, _onError, opt) => intResolve2(str, 1, 8, opt), stringify: (node) => intStringify2(node, 8, "0") };
+    int2 = { identify: intIdentify3, default: true, tag: "tag:yaml.org,2002:int", test: /^[-+]?[0-9][0-9_]*$/, resolve: (str, _onError, opt) => intResolve2(str, 0, 10, opt), stringify: stringifyNumber };
+    intHex2 = { identify: intIdentify3, default: true, tag: "tag:yaml.org,2002:int", format: "HEX", test: /^[-+]?0x[0-9a-fA-F_]+$/, resolve: (str, _onError, opt) => intResolve2(str, 2, 16, opt), stringify: (node) => intStringify2(node, 16, "0x") };
   }
 });
 
@@ -2853,27 +2168,18 @@ var init_set = __esm({
       }
       add(key) {
         let pair;
-        if (isPair(key))
-          pair = key;
-        else if (key && typeof key === "object" && "key" in key && "value" in key && key.value === null)
-          pair = new Pair(key.key, null);
-        else
-          pair = new Pair(key, null);
+        if (isPair(key)) pair = key;
+        else if (key && typeof key === "object" && "key" in key && "value" in key && key.value === null) pair = new Pair(key.key, null);
+        else pair = new Pair(key, null);
         const prev = findPair(this.items, pair.key);
-        if (!prev)
-          this.items.push(pair);
+        if (!prev) this.items.push(pair);
       }
-      /**
-       * If `keepPair` is `true`, returns the Pair matching `key`.
-       * Otherwise, returns the value of that Pair's key.
-       */
       get(key, keepPair) {
         const pair = findPair(this.items, key);
         return !keepPair && isPair(pair) ? isScalar(pair.key) ? pair.key.value : pair.key : pair;
       }
       set(key, value) {
-        if (typeof value !== "boolean")
-          throw new Error(`Expected boolean value for set(key, value) in a YAML set, not ${typeof value}`);
+        if (typeof value !== "boolean") throw new Error(`Expected boolean value for set(key, value) in a YAML set, not ${typeof value}`);
         const prev = findPair(this.items, key);
         if (prev && !value) {
           this.items.splice(this.items.indexOf(prev), 1);
@@ -2885,44 +2191,28 @@ var init_set = __esm({
         return super.toJSON(_2, ctx, Set);
       }
       toString(ctx, onComment, onChompKeep) {
-        if (!ctx)
-          return JSON.stringify(this);
-        if (this.hasAllNullValues(true))
-          return super.toString(Object.assign({}, ctx, { allNullValues: true }), onComment, onChompKeep);
-        else
-          throw new Error("Set items must all have null values");
+        if (!ctx) return JSON.stringify(this);
+        if (this.hasAllNullValues(true)) return super.toString(Object.assign({}, ctx, { allNullValues: true }), onComment, onChompKeep);
+        else throw new Error("Set items must all have null values");
       }
       static from(schema4, iterable, ctx) {
         const { replacer } = ctx;
         const set2 = new this(schema4);
-        if (iterable && Symbol.iterator in Object(iterable))
-          for (let value of iterable) {
-            if (typeof replacer === "function")
-              value = replacer.call(iterable, value, value);
-            set2.items.push(createPair(value, null, ctx));
-          }
+        if (iterable && Symbol.iterator in Object(iterable)) for (let value of iterable) {
+          if (typeof replacer === "function") value = replacer.call(iterable, value, value);
+          set2.items.push(createPair(value, null, ctx));
+        }
         return set2;
       }
     };
     YAMLSet.tag = "tag:yaml.org,2002:set";
-    set = {
-      collection: "map",
-      identify: (value) => value instanceof Set,
-      nodeClass: YAMLSet,
-      default: false,
-      tag: "tag:yaml.org,2002:set",
-      createNode: (schema4, iterable, ctx) => YAMLSet.from(schema4, iterable, ctx),
-      resolve(map2, onError) {
-        if (isMap(map2)) {
-          if (map2.hasAllNullValues(true))
-            return Object.assign(new YAMLSet(), map2);
-          else
-            onError("Set items must all have null values");
-        } else
-          onError("Expected a mapping for this tag");
-        return map2;
-      }
-    };
+    set = { collection: "map", identify: (value) => value instanceof Set, nodeClass: YAMLSet, default: false, tag: "tag:yaml.org,2002:set", createNode: (schema4, iterable, ctx) => YAMLSet.from(schema4, iterable, ctx), resolve(map2, onError) {
+      if (isMap(map2)) {
+        if (map2.hasAllNullValues(true)) return Object.assign(new YAMLSet(), map2);
+        else onError("Set items must all have null values");
+      } else onError("Expected a mapping for this tag");
+      return map2;
+    } };
   }
 });
 
@@ -2937,10 +2227,8 @@ function parseSexagesimal(str, asBigInt) {
 function stringifySexagesimal(node) {
   let { value } = node;
   let num = (n) => n;
-  if (typeof value === "bigint")
-    num = (n) => BigInt(n);
-  else if (isNaN(value) || !isFinite(value))
-    return stringifyNumber(node);
+  if (typeof value === "bigint") num = (n) => BigInt(n);
+  else if (isNaN(value) || !isFinite(value)) return stringifyNumber(node);
   let sign = "";
   if (value < 0) {
     sign = "-";
@@ -2964,50 +2252,22 @@ var intTime, floatTime, timestamp;
 var init_timestamp = __esm({
   "node_modules/yaml/browser/dist/schema/yaml-1.1/timestamp.js"() {
     init_stringifyNumber();
-    intTime = {
-      identify: (value) => typeof value === "bigint" || Number.isInteger(value),
-      default: true,
-      tag: "tag:yaml.org,2002:int",
-      format: "TIME",
-      test: /^[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+$/,
-      resolve: (str, _onError, { intAsBigInt }) => parseSexagesimal(str, intAsBigInt),
-      stringify: stringifySexagesimal
-    };
-    floatTime = {
-      identify: (value) => typeof value === "number",
-      default: true,
-      tag: "tag:yaml.org,2002:float",
-      format: "TIME",
-      test: /^[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\.[0-9_]*$/,
-      resolve: (str) => parseSexagesimal(str, false),
-      stringify: stringifySexagesimal
-    };
-    timestamp = {
-      identify: (value) => value instanceof Date,
-      default: true,
-      tag: "tag:yaml.org,2002:timestamp",
-      // If the time zone is omitted, the timestamp is assumed to be specified in UTC. The time part
-      // may be omitted altogether, resulting in a date format. In such a case, the time part is
-      // assumed to be 00:00:00Z (start of day, UTC).
-      test: RegExp("^([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})(?:(?:t|T|[ \\t]+)([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2}(\\.[0-9]+)?)(?:[ \\t]*(Z|[-+][012]?[0-9](?::[0-9]{2})?))?)?$"),
-      resolve(str) {
-        const match = str.match(timestamp.test);
-        if (!match)
-          throw new Error("!!timestamp expects a date, starting with yyyy-mm-dd");
-        const [, year, month, day, hour, minute, second] = match.map(Number);
-        const millisec = match[7] ? Number((match[7] + "00").substr(1, 3)) : 0;
-        let date = Date.UTC(year, month - 1, day, hour || 0, minute || 0, second || 0, millisec);
-        const tz = match[8];
-        if (tz && tz !== "Z") {
-          let d = parseSexagesimal(tz, false);
-          if (Math.abs(d) < 30)
-            d *= 60;
-          date -= 6e4 * d;
-        }
-        return new Date(date);
-      },
-      stringify: ({ value }) => value?.toISOString().replace(/(T00:00:00)?\.000Z$/, "") ?? ""
-    };
+    intTime = { identify: (value) => typeof value === "bigint" || Number.isInteger(value), default: true, tag: "tag:yaml.org,2002:int", format: "TIME", test: /^[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+$/, resolve: (str, _onError, { intAsBigInt }) => parseSexagesimal(str, intAsBigInt), stringify: stringifySexagesimal };
+    floatTime = { identify: (value) => typeof value === "number", default: true, tag: "tag:yaml.org,2002:float", format: "TIME", test: /^[-+]?[0-9][0-9_]*(?::[0-5]?[0-9])+\.[0-9_]*$/, resolve: (str) => parseSexagesimal(str, false), stringify: stringifySexagesimal };
+    timestamp = { identify: (value) => value instanceof Date, default: true, tag: "tag:yaml.org,2002:timestamp", test: RegExp("^([0-9]{4})-([0-9]{1,2})-([0-9]{1,2})(?:(?:t|T|[ \\t]+)([0-9]{1,2}):([0-9]{1,2}):([0-9]{1,2}(\\.[0-9]+)?)(?:[ \\t]*(Z|[-+][012]?[0-9](?::[0-9]{2})?))?)?$"), resolve(str) {
+      const match = str.match(timestamp.test);
+      if (!match) throw new Error("!!timestamp expects a date, starting with yyyy-mm-dd");
+      const [, year, month, day, hour, minute, second] = match.map(Number);
+      const millisec = match[7] ? Number((match[7] + "00").substr(1, 3)) : 0;
+      let date = Date.UTC(year, month - 1, day, hour || 0, minute || 0, second || 0, millisec);
+      const tz = match[8];
+      if (tz && tz !== "Z") {
+        let d = parseSexagesimal(tz, false);
+        if (Math.abs(d) < 30) d *= 60;
+        date -= 6e4 * d;
+      }
+      return new Date(date);
+    }, stringify: ({ value }) => value?.toISOString().replace(/(T00:00:00)?\.000Z$/, "") ?? "" };
   }
 });
 
@@ -3028,29 +2288,7 @@ var init_schema3 = __esm({
     init_pairs();
     init_set();
     init_timestamp();
-    schema3 = [
-      map,
-      seq,
-      string,
-      nullTag,
-      trueTag,
-      falseTag,
-      intBin,
-      intOct2,
-      int2,
-      intHex2,
-      floatNaN2,
-      floatExp2,
-      float2,
-      binary,
-      merge,
-      omap,
-      pairs,
-      set,
-      intTime,
-      floatTime,
-      timestamp
-    ];
+    schema3 = [map, seq, string, nullTag, trueTag, falseTag, intBin, intOct2, int2, intHex2, floatNaN2, floatExp2, float2, binary, merge, omap, pairs, set, intTime, floatTime, timestamp];
   }
 });
 
@@ -3062,21 +2300,18 @@ function getTags(customTags, schemaName, addMergeTag) {
   }
   let tags = schemaTags;
   if (!tags) {
-    if (Array.isArray(customTags))
-      tags = [];
+    if (Array.isArray(customTags)) tags = [];
     else {
       const keys = Array.from(schemas.keys()).filter((key) => key !== "yaml11").map((key) => JSON.stringify(key)).join(", ");
       throw new Error(`Unknown schema "${schemaName}"; use one of ${keys} or define customTags array`);
     }
   }
   if (Array.isArray(customTags)) {
-    for (const tag of customTags)
-      tags = tags.concat(tag);
+    for (const tag of customTags) tags = tags.concat(tag);
   } else if (typeof customTags === "function") {
     tags = customTags(tags.slice());
   }
-  if (addMergeTag)
-    tags = tags.concat(merge);
+  if (addMergeTag) tags = tags.concat(merge);
   return tags.reduce((tags2, tag) => {
     const tagObj = typeof tag === "string" ? tagsByName[tag] : tag;
     if (!tagObj) {
@@ -3084,8 +2319,7 @@ function getTags(customTags, schemaName, addMergeTag) {
       const keys = Object.keys(tagsByName).map((key) => JSON.stringify(key)).join(", ");
       throw new Error(`Unknown custom tag ${tagName}; use one of ${keys}`);
     }
-    if (!tags2.includes(tagObj))
-      tags2.push(tagObj);
+    if (!tags2.includes(tagObj)) tags2.push(tagObj);
     return tags2;
   }, []);
 }
@@ -3108,41 +2342,9 @@ var init_tags = __esm({
     init_schema3();
     init_set();
     init_timestamp();
-    schemas = /* @__PURE__ */ new Map([
-      ["core", schema],
-      ["failsafe", [map, seq, string]],
-      ["json", schema2],
-      ["yaml11", schema3],
-      ["yaml-1.1", schema3]
-    ]);
-    tagsByName = {
-      binary,
-      bool: boolTag,
-      float,
-      floatExp,
-      floatNaN,
-      floatTime,
-      int,
-      intHex,
-      intOct,
-      intTime,
-      map,
-      merge,
-      null: nullTag,
-      omap,
-      pairs,
-      seq,
-      set,
-      timestamp
-    };
-    coreKnownTags = {
-      "tag:yaml.org,2002:binary": binary,
-      "tag:yaml.org,2002:merge": merge,
-      "tag:yaml.org,2002:omap": omap,
-      "tag:yaml.org,2002:pairs": pairs,
-      "tag:yaml.org,2002:set": set,
-      "tag:yaml.org,2002:timestamp": timestamp
-    };
+    schemas = /* @__PURE__ */ new Map([["core", schema], ["failsafe", [map, seq, string]], ["json", schema2], ["yaml11", schema3], ["yaml-1.1", schema3]]);
+    tagsByName = { binary, bool: boolTag, float, floatExp, floatNaN, floatTime, int, intHex, intOct, intTime, map, merge, null: nullTag, omap, pairs, seq, set, timestamp };
+    coreKnownTags = { "tag:yaml.org,2002:binary": binary, "tag:yaml.org,2002:merge": merge, "tag:yaml.org,2002:omap": omap, "tag:yaml.org,2002:pairs": pairs, "tag:yaml.org,2002:set": set, "tag:yaml.org,2002:timestamp": timestamp };
   }
 });
 
@@ -3186,16 +2388,13 @@ function stringifyDocument(doc, options) {
     if (dir) {
       lines.push(dir);
       hasDirectives = true;
-    } else if (doc.directives.docStart)
-      hasDirectives = true;
+    } else if (doc.directives.docStart) hasDirectives = true;
   }
-  if (hasDirectives)
-    lines.push("---");
+  if (hasDirectives) lines.push("---");
   const ctx = createStringifyContext(doc, options);
   const { commentString } = ctx.options;
   if (doc.commentBefore) {
-    if (lines.length !== 1)
-      lines.unshift("");
+    if (lines.length !== 1) lines.unshift("");
     const cs = commentString(doc.commentBefore);
     lines.unshift(indentComment(cs, ""));
   }
@@ -3203,8 +2402,7 @@ function stringifyDocument(doc, options) {
   let contentComment = null;
   if (doc.contents) {
     if (isNode(doc.contents)) {
-      if (doc.contents.spaceBefore && hasDirectives)
-        lines.push("");
+      if (doc.contents.spaceBefore && hasDirectives) lines.push("");
       if (doc.contents.commentBefore) {
         const cs = commentString(doc.contents.commentBefore);
         lines.push(indentComment(cs, ""));
@@ -3214,12 +2412,10 @@ function stringifyDocument(doc, options) {
     }
     const onChompKeep = contentComment ? void 0 : () => chompKeep = true;
     let body = stringify(doc.contents, ctx, () => contentComment = null, onChompKeep);
-    if (contentComment)
-      body += lineComment(body, "", commentString(contentComment));
+    if (contentComment) body += lineComment(body, "", commentString(contentComment));
     if ((body[0] === "|" || body[0] === ">") && lines[lines.length - 1] === "---") {
       lines[lines.length - 1] = `--- ${body}`;
-    } else
-      lines.push(body);
+    } else lines.push(body);
   } else {
     lines.push(stringify(doc.contents, ctx));
   }
@@ -3237,11 +2433,9 @@ function stringifyDocument(doc, options) {
     }
   } else {
     let dc = doc.comment;
-    if (dc && chompKeep)
-      dc = dc.replace(/^\n+/, "");
+    if (dc && chompKeep) dc = dc.replace(/^\n+/, "");
     if (dc) {
-      if ((!chompKeep || contentComment) && lines[lines.length - 1] !== "")
-        lines.push("");
+      if ((!chompKeep || contentComment) && lines[lines.length - 1] !== "") lines.push("");
       lines.push(indentComment(commentString(dc), ""));
     }
   }
@@ -3257,8 +2451,7 @@ var init_stringifyDocument = __esm({
 
 // node_modules/yaml/browser/dist/doc/Document.js
 function assertCollection(contents) {
-  if (isCollection(contents))
-    return true;
+  if (isCollection(contents)) return true;
   throw new Error("Expected a YAML collection as document contents");
 }
 var Document;
@@ -3289,73 +2482,39 @@ var init_Document = __esm({
           options = replacer;
           replacer = void 0;
         }
-        const opt = Object.assign({
-          intAsBigInt: false,
-          keepSourceTokens: false,
-          logLevel: "warn",
-          prettyErrors: true,
-          strict: true,
-          stringKeys: false,
-          uniqueKeys: true,
-          version: "1.2"
-        }, options);
+        const opt = Object.assign({ intAsBigInt: false, keepSourceTokens: false, logLevel: "warn", prettyErrors: true, strict: true, stringKeys: false, uniqueKeys: true, version: "1.2" }, options);
         this.options = opt;
         let { version } = opt;
         if (options?._directives) {
           this.directives = options._directives.atDocument();
-          if (this.directives.yaml.explicit)
-            version = this.directives.yaml.version;
-        } else
-          this.directives = new Directives({ version });
+          if (this.directives.yaml.explicit) version = this.directives.yaml.version;
+        } else this.directives = new Directives({ version });
         this.setSchema(version, options);
         this.contents = value === void 0 ? null : this.createNode(value, _replacer, options);
       }
-      /**
-       * Create a deep copy of this Document and its contents.
-       *
-       * Custom Node values that inherit from `Object` still refer to their original instances.
-       */
       clone() {
-        const copy = Object.create(_Document.prototype, {
-          [NODE_TYPE]: { value: DOC }
-        });
+        const copy = Object.create(_Document.prototype, { [NODE_TYPE]: { value: DOC } });
         copy.commentBefore = this.commentBefore;
         copy.comment = this.comment;
         copy.errors = this.errors.slice();
         copy.warnings = this.warnings.slice();
         copy.options = Object.assign({}, this.options);
-        if (this.directives)
-          copy.directives = this.directives.clone();
+        if (this.directives) copy.directives = this.directives.clone();
         copy.schema = this.schema.clone();
         copy.contents = isNode(this.contents) ? this.contents.clone(copy.schema) : this.contents;
-        if (this.range)
-          copy.range = this.range.slice();
+        if (this.range) copy.range = this.range.slice();
         return copy;
       }
-      /** Adds a value to the document. */
       add(value) {
-        if (assertCollection(this.contents))
-          this.contents.add(value);
+        if (assertCollection(this.contents)) this.contents.add(value);
       }
-      /** Adds a value to the document. */
       addIn(path, value) {
-        if (assertCollection(this.contents))
-          this.contents.addIn(path, value);
+        if (assertCollection(this.contents)) this.contents.addIn(path, value);
       }
-      /**
-       * Create a new `Alias` node, ensuring that the target `node` has the required anchor.
-       *
-       * If `node` already has an anchor, `name` is ignored.
-       * Otherwise, the `node.anchor` value will be set to `name`,
-       * or if an anchor with that name is already present in the document,
-       * `name` will be used as a prefix for a new unique anchor.
-       * If `name` is undefined, the generated anchor will use 'a' as a prefix.
-       */
       createAlias(node, name) {
         if (!node.anchor) {
           const prev = anchorNames(this);
-          node.anchor = // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-          !name || prev.has(name) ? findNewAnchor(name || "a", prev) : name;
+          node.anchor = !name || prev.has(name) ? findNewAnchor(name || "a", prev) : name;
         }
         return new Alias(node.anchor);
       }
@@ -3367,99 +2526,50 @@ var init_Document = __esm({
         } else if (Array.isArray(replacer)) {
           const keyToStr = (v) => typeof v === "number" || v instanceof String || v instanceof Number;
           const asStr = replacer.filter(keyToStr).map(String);
-          if (asStr.length > 0)
-            replacer = replacer.concat(asStr);
+          if (asStr.length > 0) replacer = replacer.concat(asStr);
           _replacer = replacer;
         } else if (options === void 0 && replacer) {
           options = replacer;
           replacer = void 0;
         }
         const { aliasDuplicateObjects, anchorPrefix, flow, keepUndefined, onTagObj, tag } = options ?? {};
-        const { onAnchor, setAnchors, sourceObjects } = createNodeAnchors(
-          this,
-          // eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
-          anchorPrefix || "a"
-        );
-        const ctx = {
-          aliasDuplicateObjects: aliasDuplicateObjects ?? true,
-          keepUndefined: keepUndefined ?? false,
-          onAnchor,
-          onTagObj,
-          replacer: _replacer,
-          schema: this.schema,
-          sourceObjects
-        };
+        const { onAnchor, setAnchors, sourceObjects } = createNodeAnchors(this, anchorPrefix || "a");
+        const ctx = { aliasDuplicateObjects: aliasDuplicateObjects ?? true, keepUndefined: keepUndefined ?? false, onAnchor, onTagObj, replacer: _replacer, schema: this.schema, sourceObjects };
         const node = createNode(value, tag, ctx);
-        if (flow && isCollection(node))
-          node.flow = true;
+        if (flow && isCollection(node)) node.flow = true;
         setAnchors();
         return node;
       }
-      /**
-       * Convert a key and a value into a `Pair` using the current schema,
-       * recursively wrapping all values as `Scalar` or `Collection` nodes.
-       */
       createPair(key, value, options = {}) {
         const k2 = this.createNode(key, null, options);
         const v = this.createNode(value, null, options);
         return new Pair(k2, v);
       }
-      /**
-       * Removes a value from the document.
-       * @returns `true` if the item was found and removed.
-       */
       delete(key) {
         return assertCollection(this.contents) ? this.contents.delete(key) : false;
       }
-      /**
-       * Removes a value from the document.
-       * @returns `true` if the item was found and removed.
-       */
       deleteIn(path) {
         if (isEmptyPath(path)) {
-          if (this.contents == null)
-            return false;
+          if (this.contents == null) return false;
           this.contents = null;
           return true;
         }
         return assertCollection(this.contents) ? this.contents.deleteIn(path) : false;
       }
-      /**
-       * Returns item at `key`, or `undefined` if not found. By default unwraps
-       * scalar values from their surrounding node; to disable set `keepScalar` to
-       * `true` (collections are always returned intact).
-       */
       get(key, keepScalar) {
         return isCollection(this.contents) ? this.contents.get(key, keepScalar) : void 0;
       }
-      /**
-       * Returns item at `path`, or `undefined` if not found. By default unwraps
-       * scalar values from their surrounding node; to disable set `keepScalar` to
-       * `true` (collections are always returned intact).
-       */
       getIn(path, keepScalar) {
-        if (isEmptyPath(path))
-          return !keepScalar && isScalar(this.contents) ? this.contents.value : this.contents;
+        if (isEmptyPath(path)) return !keepScalar && isScalar(this.contents) ? this.contents.value : this.contents;
         return isCollection(this.contents) ? this.contents.getIn(path, keepScalar) : void 0;
       }
-      /**
-       * Checks if the document includes a value with the key `key`.
-       */
       has(key) {
         return isCollection(this.contents) ? this.contents.has(key) : false;
       }
-      /**
-       * Checks if the document includes a value at `path`.
-       */
       hasIn(path) {
-        if (isEmptyPath(path))
-          return this.contents !== void 0;
+        if (isEmptyPath(path)) return this.contents !== void 0;
         return isCollection(this.contents) ? this.contents.hasIn(path) : false;
       }
-      /**
-       * Sets a value in this document. For `!!set`, `value` needs to be a
-       * boolean to add/remove the item from the set.
-       */
       set(key, value) {
         if (this.contents == null) {
           this.contents = collectionFromPath(this.schema, [key], value);
@@ -3467,10 +2577,6 @@ var init_Document = __esm({
           this.contents.set(key, value);
         }
       }
-      /**
-       * Sets a value in this document. For `!!set`, `value` needs to be a
-       * boolean to add/remove the item from the set.
-       */
       setIn(path, value) {
         if (isEmptyPath(path)) {
           this.contents = value;
@@ -3480,36 +2586,23 @@ var init_Document = __esm({
           this.contents.setIn(path, value);
         }
       }
-      /**
-       * Change the YAML version and schema used by the document.
-       * A `null` version disables support for directives, explicit tags, anchors, and aliases.
-       * It also requires the `schema` option to be given as a `Schema` instance value.
-       *
-       * Overrides all previously set schema options.
-       */
       setSchema(version, options = {}) {
-        if (typeof version === "number")
-          version = String(version);
+        if (typeof version === "number") version = String(version);
         let opt;
         switch (version) {
           case "1.1":
-            if (this.directives)
-              this.directives.yaml.version = "1.1";
-            else
-              this.directives = new Directives({ version: "1.1" });
+            if (this.directives) this.directives.yaml.version = "1.1";
+            else this.directives = new Directives({ version: "1.1" });
             opt = { resolveKnownTags: false, schema: "yaml-1.1" };
             break;
           case "1.2":
           case "next":
-            if (this.directives)
-              this.directives.yaml.version = version;
-            else
-              this.directives = new Directives({ version });
+            if (this.directives) this.directives.yaml.version = version;
+            else this.directives = new Directives({ version });
             opt = { resolveKnownTags: true, schema: "core" };
             break;
           case null:
-            if (this.directives)
-              delete this.directives;
+            if (this.directives) delete this.directives;
             opt = null;
             break;
           default: {
@@ -3517,42 +2610,21 @@ var init_Document = __esm({
             throw new Error(`Expected '1.1', '1.2' or null as first argument, but found: ${sv}`);
           }
         }
-        if (options.schema instanceof Object)
-          this.schema = options.schema;
-        else if (opt)
-          this.schema = new Schema(Object.assign(opt, options));
-        else
-          throw new Error(`With a null YAML version, the { schema: Schema } option is required`);
+        if (options.schema instanceof Object) this.schema = options.schema;
+        else if (opt) this.schema = new Schema(Object.assign(opt, options));
+        else throw new Error(`With a null YAML version, the { schema: Schema } option is required`);
       }
-      // json & jsonArg are only used from toJSON()
       toJS({ json, jsonArg, mapAsMap, maxAliasCount, onAnchor, reviver } = {}) {
-        const ctx = {
-          anchors: /* @__PURE__ */ new Map(),
-          doc: this,
-          keep: !json,
-          mapAsMap: mapAsMap === true,
-          mapKeyWarned: false,
-          maxAliasCount: typeof maxAliasCount === "number" ? maxAliasCount : 100
-        };
+        const ctx = { anchors: /* @__PURE__ */ new Map(), doc: this, keep: !json, mapAsMap: mapAsMap === true, mapKeyWarned: false, maxAliasCount: typeof maxAliasCount === "number" ? maxAliasCount : 100 };
         const res = toJS(this.contents, jsonArg ?? "", ctx);
-        if (typeof onAnchor === "function")
-          for (const { count, res: res2 } of ctx.anchors.values())
-            onAnchor(res2, count);
+        if (typeof onAnchor === "function") for (const { count, res: res2 } of ctx.anchors.values()) onAnchor(res2, count);
         return typeof reviver === "function" ? applyReviver(reviver, { "": res }, "", res) : res;
       }
-      /**
-       * A JSON representation of the document `contents`.
-       *
-       * @param jsonArg Used by `JSON.stringify` to indicate the array index or
-       *   property name.
-       */
       toJSON(jsonArg, onAnchor) {
         return this.toJS({ json: true, jsonArg, mapAsMap: false, onAnchor });
       }
-      /** A YAML representation of the document. */
       toString(options = {}) {
-        if (this.errors.length > 0)
-          throw new Error("Document with errors cannot be stringified");
+        if (this.errors.length > 0) throw new Error("Document with errors cannot be stringified");
         if ("indent" in options && (!Number.isInteger(options.indent) || Number(options.indent) <= 0)) {
           const s = JSON.stringify(options.indent);
           throw new Error(`"indent" option must be a positive integer, not ${s}`);
@@ -3587,8 +2659,7 @@ var init_errors = __esm({
       }
     };
     prettifyError = (src, lc) => (error) => {
-      if (error.pos[0] === -1)
-        return;
+      if (error.pos[0] === -1) return;
       error.linePos = error.pos.map((pos) => lc.linePos(pos));
       const { line, col } = error.linePos[0];
       error.message += ` at line ${line}, column ${col}`;
@@ -3599,12 +2670,10 @@ var init_errors = __esm({
         lineStr = "\u2026" + lineStr.substring(trimStart);
         ci -= trimStart - 1;
       }
-      if (lineStr.length > 80)
-        lineStr = lineStr.substring(0, 79) + "\u2026";
+      if (lineStr.length > 80) lineStr = lineStr.substring(0, 79) + "\u2026";
       if (line > 1 && /^ *$/.test(lineStr.substring(0, ci))) {
         let prev = src.substring(lc.lineStarts[line - 2], lc.lineStarts[line - 1]);
-        if (prev.length > 80)
-          prev = prev.substring(0, 79) + "\u2026\n";
+        if (prev.length > 80) prev = prev.substring(0, 79) + "\u2026\n";
         lineStr = prev + lineStr;
       }
       if (/[^ ]/.test(lineStr)) {
@@ -3642,8 +2711,7 @@ function resolveProps(tokens, { flow, indicator, next, offset, onError, parentIn
   let start = null;
   for (const token of tokens) {
     if (reqSpace) {
-      if (token.type !== "space" && token.type !== "newline" && token.type !== "comma")
-        onError(token.offset, "MISSING_CHAR", "Tags and anchors must be separated from the next token by white space");
+      if (token.type !== "space" && token.type !== "newline" && token.type !== "comma") onError(token.offset, "MISSING_CHAR", "Tags and anchors must be separated from the next token by white space");
       reqSpace = false;
     }
     if (tab) {
@@ -3660,36 +2728,27 @@ function resolveProps(tokens, { flow, indicator, next, offset, onError, parentIn
         hasSpace = true;
         break;
       case "comment": {
-        if (!hasSpace)
-          onError(token, "MISSING_CHAR", "Comments must be separated from other tokens by white space characters");
+        if (!hasSpace) onError(token, "MISSING_CHAR", "Comments must be separated from other tokens by white space characters");
         const cb = token.source.substring(1) || " ";
-        if (!comment)
-          comment = cb;
-        else
-          comment += commentSep + cb;
+        if (!comment) comment = cb;
+        else comment += commentSep + cb;
         commentSep = "";
         atNewline = false;
         break;
       }
       case "newline":
         if (atNewline) {
-          if (comment)
-            comment += token.source;
-          else if (!found || indicator !== "seq-item-ind")
-            spaceBefore = true;
-        } else
-          commentSep += token.source;
+          if (comment) comment += token.source;
+          else if (!found || indicator !== "seq-item-ind") spaceBefore = true;
+        } else commentSep += token.source;
         atNewline = true;
         hasNewline = true;
-        if (anchor || tag)
-          newlineAfterProp = token;
+        if (anchor || tag) newlineAfterProp = token;
         hasSpace = true;
         break;
       case "anchor":
-        if (anchor)
-          onError(token, "MULTIPLE_ANCHORS", "A node can have at most one anchor");
-        if (token.source.endsWith(":"))
-          onError(token.offset + token.source.length - 1, "BAD_ALIAS", "Anchor ending in : is ambiguous", true);
+        if (anchor) onError(token, "MULTIPLE_ANCHORS", "A node can have at most one anchor");
+        if (token.source.endsWith(":")) onError(token.offset + token.source.length - 1, "BAD_ALIAS", "Anchor ending in : is ambiguous", true);
         anchor = token;
         start ?? (start = token.offset);
         atNewline = false;
@@ -3697,8 +2756,7 @@ function resolveProps(tokens, { flow, indicator, next, offset, onError, parentIn
         reqSpace = true;
         break;
       case "tag": {
-        if (tag)
-          onError(token, "MULTIPLE_TAGS", "A node can have at most one tag");
+        if (tag) onError(token, "MULTIPLE_TAGS", "A node can have at most one tag");
         tag = token;
         start ?? (start = token.offset);
         atNewline = false;
@@ -3707,24 +2765,20 @@ function resolveProps(tokens, { flow, indicator, next, offset, onError, parentIn
         break;
       }
       case indicator:
-        if (anchor || tag)
-          onError(token, "BAD_PROP_ORDER", `Anchors and tags must be after the ${token.source} indicator`);
-        if (found)
-          onError(token, "UNEXPECTED_TOKEN", `Unexpected ${token.source} in ${flow ?? "collection"}`);
+        if (anchor || tag) onError(token, "BAD_PROP_ORDER", `Anchors and tags must be after the ${token.source} indicator`);
+        if (found) onError(token, "UNEXPECTED_TOKEN", `Unexpected ${token.source} in ${flow ?? "collection"}`);
         found = token;
         atNewline = indicator === "seq-item-ind" || indicator === "explicit-key-ind";
         hasSpace = false;
         break;
       case "comma":
         if (flow) {
-          if (comma)
-            onError(token, "UNEXPECTED_TOKEN", `Unexpected , in ${flow}`);
+          if (comma) onError(token, "UNEXPECTED_TOKEN", `Unexpected , in ${flow}`);
           comma = token;
           atNewline = false;
           hasSpace = false;
           break;
         }
-      // else fallthrough
       default:
         onError(token, "UNEXPECTED_TOKEN", `Unexpected ${token.type} token`);
         atNewline = false;
@@ -3736,20 +2790,8 @@ function resolveProps(tokens, { flow, indicator, next, offset, onError, parentIn
   if (reqSpace && next && next.type !== "space" && next.type !== "newline" && next.type !== "comma" && (next.type !== "scalar" || next.source !== "")) {
     onError(next.offset, "MISSING_CHAR", "Tags and anchors must be separated from the next token by white space");
   }
-  if (tab && (atNewline && tab.indent <= parentIndent || next?.type === "block-map" || next?.type === "block-seq"))
-    onError(tab, "TAB_AS_INDENT", "Tabs are not allowed as indentation");
-  return {
-    comma,
-    found,
-    spaceBefore,
-    comment,
-    hasNewline,
-    anchor,
-    tag,
-    newlineAfterProp,
-    end,
-    start: start ?? end
-  };
+  if (tab && (atNewline && tab.indent <= parentIndent || next?.type === "block-map" || next?.type === "block-seq")) onError(tab, "TAB_AS_INDENT", "Tabs are not allowed as indentation");
+  return { comma, found, spaceBefore, comment, hasNewline, anchor, tag, newlineAfterProp, end, start: start ?? end };
 }
 var init_resolve_props = __esm({
   "node_modules/yaml/browser/dist/compose/resolve-props.js"() {
@@ -3758,33 +2800,24 @@ var init_resolve_props = __esm({
 
 // node_modules/yaml/browser/dist/compose/util-contains-newline.js
 function containsNewline(key) {
-  if (!key)
-    return null;
+  if (!key) return null;
   switch (key.type) {
     case "alias":
     case "scalar":
     case "double-quoted-scalar":
     case "single-quoted-scalar":
-      if (key.source.includes("\n"))
-        return true;
+      if (key.source.includes("\n")) return true;
       if (key.end) {
-        for (const st2 of key.end)
-          if (st2.type === "newline")
-            return true;
+        for (const st2 of key.end) if (st2.type === "newline") return true;
       }
       return false;
     case "flow-collection":
       for (const it2 of key.items) {
-        for (const st2 of it2.start)
-          if (st2.type === "newline")
-            return true;
+        for (const st2 of it2.start) if (st2.type === "newline") return true;
         if (it2.sep) {
-          for (const st2 of it2.sep)
-            if (st2.type === "newline")
-              return true;
+          for (const st2 of it2.sep) if (st2.type === "newline") return true;
         }
-        if (containsNewline(it2.key) || containsNewline(it2.value))
-          return true;
+        if (containsNewline(it2.key) || containsNewline(it2.value)) return true;
       }
       return false;
     default:
@@ -3815,8 +2848,7 @@ var init_util_flow_indent_check = __esm({
 // node_modules/yaml/browser/dist/compose/util-map-includes.js
 function mapIncludes(ctx, items, search) {
   const { uniqueKeys } = ctx.options;
-  if (uniqueKeys === false)
-    return false;
+  if (uniqueKeys === false) return false;
   const isEqual = typeof uniqueKeys === "function" ? uniqueKeys : (a, b) => a === b || isScalar(a) && isScalar(b) && a.value === b.value;
   return items.some((pair) => isEqual(pair.key, search));
 }
@@ -3830,35 +2862,23 @@ var init_util_map_includes = __esm({
 function resolveBlockMap({ composeNode: composeNode2, composeEmptyNode: composeEmptyNode2 }, ctx, bm, onError, tag) {
   const NodeClass = tag?.nodeClass ?? YAMLMap;
   const map2 = new NodeClass(ctx.schema);
-  if (ctx.atRoot)
-    ctx.atRoot = false;
+  if (ctx.atRoot) ctx.atRoot = false;
   let offset = bm.offset;
   let commentEnd = null;
   for (const collItem of bm.items) {
     const { start, key, sep: sep4, value } = collItem;
-    const keyProps = resolveProps(start, {
-      indicator: "explicit-key-ind",
-      next: key ?? sep4?.[0],
-      offset,
-      onError,
-      parentIndent: bm.indent,
-      startOnNewline: true
-    });
+    const keyProps = resolveProps(start, { indicator: "explicit-key-ind", next: key ?? sep4?.[0], offset, onError, parentIndent: bm.indent, startOnNewline: true });
     const implicitKey = !keyProps.found;
     if (implicitKey) {
       if (key) {
-        if (key.type === "block-seq")
-          onError(offset, "BLOCK_AS_IMPLICIT_KEY", "A block sequence may not be used as an implicit map key");
-        else if ("indent" in key && key.indent !== bm.indent)
-          onError(offset, "BAD_INDENT", startColMsg);
+        if (key.type === "block-seq") onError(offset, "BLOCK_AS_IMPLICIT_KEY", "A block sequence may not be used as an implicit map key");
+        else if ("indent" in key && key.indent !== bm.indent) onError(offset, "BAD_INDENT", startColMsg);
       }
       if (!keyProps.anchor && !keyProps.tag && !sep4) {
         commentEnd = keyProps.end;
         if (keyProps.comment) {
-          if (map2.comment)
-            map2.comment += "\n" + keyProps.comment;
-          else
-            map2.comment = keyProps.comment;
+          if (map2.comment) map2.comment += "\n" + keyProps.comment;
+          else map2.comment = keyProps.comment;
         }
         continue;
       }
@@ -3871,52 +2891,34 @@ function resolveBlockMap({ composeNode: composeNode2, composeEmptyNode: composeE
     ctx.atKey = true;
     const keyStart = keyProps.end;
     const keyNode = key ? composeNode2(ctx, key, keyProps, onError) : composeEmptyNode2(ctx, keyStart, start, null, keyProps, onError);
-    if (ctx.schema.compat)
-      flowIndentCheck(bm.indent, key, onError);
+    if (ctx.schema.compat) flowIndentCheck(bm.indent, key, onError);
     ctx.atKey = false;
-    if (mapIncludes(ctx, map2.items, keyNode))
-      onError(keyStart, "DUPLICATE_KEY", "Map keys must be unique");
-    const valueProps = resolveProps(sep4 ?? [], {
-      indicator: "map-value-ind",
-      next: value,
-      offset: keyNode.range[2],
-      onError,
-      parentIndent: bm.indent,
-      startOnNewline: !key || key.type === "block-scalar"
-    });
+    if (mapIncludes(ctx, map2.items, keyNode)) onError(keyStart, "DUPLICATE_KEY", "Map keys must be unique");
+    const valueProps = resolveProps(sep4 ?? [], { indicator: "map-value-ind", next: value, offset: keyNode.range[2], onError, parentIndent: bm.indent, startOnNewline: !key || key.type === "block-scalar" });
     offset = valueProps.end;
     if (valueProps.found) {
       if (implicitKey) {
-        if (value?.type === "block-map" && !valueProps.hasNewline)
-          onError(offset, "BLOCK_AS_IMPLICIT_KEY", "Nested mappings are not allowed in compact mappings");
-        if (ctx.options.strict && keyProps.start < valueProps.found.offset - 1024)
-          onError(keyNode.range, "KEY_OVER_1024_CHARS", "The : indicator must be at most 1024 chars after the start of an implicit block mapping key");
+        if (value?.type === "block-map" && !valueProps.hasNewline) onError(offset, "BLOCK_AS_IMPLICIT_KEY", "Nested mappings are not allowed in compact mappings");
+        if (ctx.options.strict && keyProps.start < valueProps.found.offset - 1024) onError(keyNode.range, "KEY_OVER_1024_CHARS", "The : indicator must be at most 1024 chars after the start of an implicit block mapping key");
       }
       const valueNode = value ? composeNode2(ctx, value, valueProps, onError) : composeEmptyNode2(ctx, offset, sep4, null, valueProps, onError);
-      if (ctx.schema.compat)
-        flowIndentCheck(bm.indent, value, onError);
+      if (ctx.schema.compat) flowIndentCheck(bm.indent, value, onError);
       offset = valueNode.range[2];
       const pair = new Pair(keyNode, valueNode);
-      if (ctx.options.keepSourceTokens)
-        pair.srcToken = collItem;
+      if (ctx.options.keepSourceTokens) pair.srcToken = collItem;
       map2.items.push(pair);
     } else {
-      if (implicitKey)
-        onError(keyNode.range, "MISSING_CHAR", "Implicit map keys need to be followed by map values");
+      if (implicitKey) onError(keyNode.range, "MISSING_CHAR", "Implicit map keys need to be followed by map values");
       if (valueProps.comment) {
-        if (keyNode.comment)
-          keyNode.comment += "\n" + valueProps.comment;
-        else
-          keyNode.comment = valueProps.comment;
+        if (keyNode.comment) keyNode.comment += "\n" + valueProps.comment;
+        else keyNode.comment = valueProps.comment;
       }
       const pair = new Pair(keyNode);
-      if (ctx.options.keepSourceTokens)
-        pair.srcToken = collItem;
+      if (ctx.options.keepSourceTokens) pair.srcToken = collItem;
       map2.items.push(pair);
     }
   }
-  if (commentEnd && commentEnd < offset)
-    onError(commentEnd, "IMPOSSIBLE", "Map comment with trailing content");
+  if (commentEnd && commentEnd < offset) onError(commentEnd, "IMPOSSIBLE", "Map comment with trailing content");
   map2.range = [bm.offset, offset, commentEnd ?? offset];
   return map2;
 }
@@ -3937,37 +2939,24 @@ var init_resolve_block_map = __esm({
 function resolveBlockSeq({ composeNode: composeNode2, composeEmptyNode: composeEmptyNode2 }, ctx, bs, onError, tag) {
   const NodeClass = tag?.nodeClass ?? YAMLSeq;
   const seq2 = new NodeClass(ctx.schema);
-  if (ctx.atRoot)
-    ctx.atRoot = false;
-  if (ctx.atKey)
-    ctx.atKey = false;
+  if (ctx.atRoot) ctx.atRoot = false;
+  if (ctx.atKey) ctx.atKey = false;
   let offset = bs.offset;
   let commentEnd = null;
   for (const { start, value } of bs.items) {
-    const props = resolveProps(start, {
-      indicator: "seq-item-ind",
-      next: value,
-      offset,
-      onError,
-      parentIndent: bs.indent,
-      startOnNewline: true
-    });
+    const props = resolveProps(start, { indicator: "seq-item-ind", next: value, offset, onError, parentIndent: bs.indent, startOnNewline: true });
     if (!props.found) {
       if (props.anchor || props.tag || value) {
-        if (value?.type === "block-seq")
-          onError(props.end, "BAD_INDENT", "All sequence items must start at the same column");
-        else
-          onError(offset, "MISSING_CHAR", "Sequence item without - indicator");
+        if (value?.type === "block-seq") onError(props.end, "BAD_INDENT", "All sequence items must start at the same column");
+        else onError(offset, "MISSING_CHAR", "Sequence item without - indicator");
       } else {
         commentEnd = props.end;
-        if (props.comment)
-          seq2.comment = props.comment;
+        if (props.comment) seq2.comment = props.comment;
         continue;
       }
     }
     const node = value ? composeNode2(ctx, value, props, onError) : composeEmptyNode2(ctx, props.end, start, null, props, onError);
-    if (ctx.schema.compat)
-      flowIndentCheck(bs.indent, value, onError);
+    if (ctx.schema.compat) flowIndentCheck(bs.indent, value, onError);
     offset = node.range[2];
     seq2.items.push(node);
   }
@@ -3995,19 +2984,15 @@ function resolveEnd(end, offset, reqSpace, onError) {
           hasSpace = true;
           break;
         case "comment": {
-          if (reqSpace && !hasSpace)
-            onError(token, "MISSING_CHAR", "Comments must be separated from other tokens by white space characters");
+          if (reqSpace && !hasSpace) onError(token, "MISSING_CHAR", "Comments must be separated from other tokens by white space characters");
           const cb = source.substring(1) || " ";
-          if (!comment)
-            comment = cb;
-          else
-            comment += sep4 + cb;
+          if (!comment) comment = cb;
+          else comment += sep4 + cb;
           sep4 = "";
           break;
         }
         case "newline":
-          if (comment)
-            sep4 += source;
+          if (comment) sep4 += source;
           hasSpace = true;
           break;
         default:
@@ -4031,52 +3016,30 @@ function resolveFlowCollection({ composeNode: composeNode2, composeEmptyNode: co
   const coll = new NodeClass(ctx.schema);
   coll.flow = true;
   const atRoot = ctx.atRoot;
-  if (atRoot)
-    ctx.atRoot = false;
-  if (ctx.atKey)
-    ctx.atKey = false;
+  if (atRoot) ctx.atRoot = false;
+  if (ctx.atKey) ctx.atKey = false;
   let offset = fc.offset + fc.start.source.length;
   for (let i = 0; i < fc.items.length; ++i) {
     const collItem = fc.items[i];
     const { start, key, sep: sep4, value } = collItem;
-    const props = resolveProps(start, {
-      flow: fcName,
-      indicator: "explicit-key-ind",
-      next: key ?? sep4?.[0],
-      offset,
-      onError,
-      parentIndent: fc.indent,
-      startOnNewline: false
-    });
+    const props = resolveProps(start, { flow: fcName, indicator: "explicit-key-ind", next: key ?? sep4?.[0], offset, onError, parentIndent: fc.indent, startOnNewline: false });
     if (!props.found) {
       if (!props.anchor && !props.tag && !sep4 && !value) {
-        if (i === 0 && props.comma)
-          onError(props.comma, "UNEXPECTED_TOKEN", `Unexpected , in ${fcName}`);
-        else if (i < fc.items.length - 1)
-          onError(props.start, "UNEXPECTED_TOKEN", `Unexpected empty item in ${fcName}`);
+        if (i === 0 && props.comma) onError(props.comma, "UNEXPECTED_TOKEN", `Unexpected , in ${fcName}`);
+        else if (i < fc.items.length - 1) onError(props.start, "UNEXPECTED_TOKEN", `Unexpected empty item in ${fcName}`);
         if (props.comment) {
-          if (coll.comment)
-            coll.comment += "\n" + props.comment;
-          else
-            coll.comment = props.comment;
+          if (coll.comment) coll.comment += "\n" + props.comment;
+          else coll.comment = props.comment;
         }
         offset = props.end;
         continue;
       }
-      if (!isMap2 && ctx.options.strict && containsNewline(key))
-        onError(
-          key,
-          // checked by containsNewline()
-          "MULTILINE_IMPLICIT_KEY",
-          "Implicit keys of flow sequence pairs need to be on a single line"
-        );
+      if (!isMap2 && ctx.options.strict && containsNewline(key)) onError(key, "MULTILINE_IMPLICIT_KEY", "Implicit keys of flow sequence pairs need to be on a single line");
     }
     if (i === 0) {
-      if (props.comma)
-        onError(props.comma, "UNEXPECTED_TOKEN", `Unexpected , in ${fcName}`);
+      if (props.comma) onError(props.comma, "UNEXPECTED_TOKEN", `Unexpected , in ${fcName}`);
     } else {
-      if (!props.comma)
-        onError(props.start, "MISSING_CHAR", `Missing , between ${fcName} items`);
+      if (!props.comma) onError(props.start, "MISSING_CHAR", `Missing , between ${fcName} items`);
       if (props.comment) {
         let prevItemComment = "";
         loop: for (const st2 of start) {
@@ -4093,12 +3056,9 @@ function resolveFlowCollection({ composeNode: composeNode2, composeEmptyNode: co
         }
         if (prevItemComment) {
           let prev = coll.items[coll.items.length - 1];
-          if (isPair(prev))
-            prev = prev.value ?? prev.key;
-          if (prev.comment)
-            prev.comment += "\n" + prevItemComment;
-          else
-            prev.comment = prevItemComment;
+          if (isPair(prev)) prev = prev.value ?? prev.key;
+          if (prev.comment) prev.comment += "\n" + prevItemComment;
+          else prev.comment = prevItemComment;
           props.comment = props.comment.substring(prevItemComment.length + 1);
         }
       }
@@ -4107,61 +3067,41 @@ function resolveFlowCollection({ composeNode: composeNode2, composeEmptyNode: co
       const valueNode = value ? composeNode2(ctx, value, props, onError) : composeEmptyNode2(ctx, props.end, sep4, null, props, onError);
       coll.items.push(valueNode);
       offset = valueNode.range[2];
-      if (isBlock(value))
-        onError(valueNode.range, "BLOCK_IN_FLOW", blockMsg);
+      if (isBlock(value)) onError(valueNode.range, "BLOCK_IN_FLOW", blockMsg);
     } else {
       ctx.atKey = true;
       const keyStart = props.end;
       const keyNode = key ? composeNode2(ctx, key, props, onError) : composeEmptyNode2(ctx, keyStart, start, null, props, onError);
-      if (isBlock(key))
-        onError(keyNode.range, "BLOCK_IN_FLOW", blockMsg);
+      if (isBlock(key)) onError(keyNode.range, "BLOCK_IN_FLOW", blockMsg);
       ctx.atKey = false;
-      const valueProps = resolveProps(sep4 ?? [], {
-        flow: fcName,
-        indicator: "map-value-ind",
-        next: value,
-        offset: keyNode.range[2],
-        onError,
-        parentIndent: fc.indent,
-        startOnNewline: false
-      });
+      const valueProps = resolveProps(sep4 ?? [], { flow: fcName, indicator: "map-value-ind", next: value, offset: keyNode.range[2], onError, parentIndent: fc.indent, startOnNewline: false });
       if (valueProps.found) {
         if (!isMap2 && !props.found && ctx.options.strict) {
-          if (sep4)
-            for (const st2 of sep4) {
-              if (st2 === valueProps.found)
-                break;
-              if (st2.type === "newline") {
-                onError(st2, "MULTILINE_IMPLICIT_KEY", "Implicit keys of flow sequence pairs need to be on a single line");
-                break;
-              }
+          if (sep4) for (const st2 of sep4) {
+            if (st2 === valueProps.found) break;
+            if (st2.type === "newline") {
+              onError(st2, "MULTILINE_IMPLICIT_KEY", "Implicit keys of flow sequence pairs need to be on a single line");
+              break;
             }
-          if (props.start < valueProps.found.offset - 1024)
-            onError(valueProps.found, "KEY_OVER_1024_CHARS", "The : indicator must be at most 1024 chars after the start of an implicit flow sequence key");
+          }
+          if (props.start < valueProps.found.offset - 1024) onError(valueProps.found, "KEY_OVER_1024_CHARS", "The : indicator must be at most 1024 chars after the start of an implicit flow sequence key");
         }
       } else if (value) {
-        if ("source" in value && value.source?.[0] === ":")
-          onError(value, "MISSING_CHAR", `Missing space after : in ${fcName}`);
-        else
-          onError(valueProps.start, "MISSING_CHAR", `Missing , or : between ${fcName} items`);
+        if ("source" in value && value.source?.[0] === ":") onError(value, "MISSING_CHAR", `Missing space after : in ${fcName}`);
+        else onError(valueProps.start, "MISSING_CHAR", `Missing , or : between ${fcName} items`);
       }
       const valueNode = value ? composeNode2(ctx, value, valueProps, onError) : valueProps.found ? composeEmptyNode2(ctx, valueProps.end, sep4, null, valueProps, onError) : null;
       if (valueNode) {
-        if (isBlock(value))
-          onError(valueNode.range, "BLOCK_IN_FLOW", blockMsg);
+        if (isBlock(value)) onError(valueNode.range, "BLOCK_IN_FLOW", blockMsg);
       } else if (valueProps.comment) {
-        if (keyNode.comment)
-          keyNode.comment += "\n" + valueProps.comment;
-        else
-          keyNode.comment = valueProps.comment;
+        if (keyNode.comment) keyNode.comment += "\n" + valueProps.comment;
+        else keyNode.comment = valueProps.comment;
       }
       const pair = new Pair(keyNode, valueNode);
-      if (ctx.options.keepSourceTokens)
-        pair.srcToken = collItem;
+      if (ctx.options.keepSourceTokens) pair.srcToken = collItem;
       if (isMap2) {
         const map2 = coll;
-        if (mapIncludes(ctx, map2.items, keyNode))
-          onError(keyStart, "DUPLICATE_KEY", "Map keys must be unique");
+        if (mapIncludes(ctx, map2.items, keyNode)) onError(keyStart, "DUPLICATE_KEY", "Map keys must be unique");
         map2.items.push(pair);
       } else {
         const map2 = new YAMLMap(ctx.schema);
@@ -4177,22 +3117,18 @@ function resolveFlowCollection({ composeNode: composeNode2, composeEmptyNode: co
   const expectedEnd = isMap2 ? "}" : "]";
   const [ce2, ...ee2] = fc.end;
   let cePos = offset;
-  if (ce2?.source === expectedEnd)
-    cePos = ce2.offset + ce2.source.length;
+  if (ce2?.source === expectedEnd) cePos = ce2.offset + ce2.source.length;
   else {
     const name = fcName[0].toUpperCase() + fcName.substring(1);
     const msg = atRoot ? `${name} must end with a ${expectedEnd}` : `${name} in block collection must be sufficiently indented and end with a ${expectedEnd}`;
     onError(offset, atRoot ? "MISSING_CHAR" : "BAD_INDENT", msg);
-    if (ce2 && ce2.source.length !== 1)
-      ee2.unshift(ce2);
+    if (ce2 && ce2.source.length !== 1) ee2.unshift(ce2);
   }
   if (ee2.length > 0) {
     const end = resolveEnd(ee2, cePos, ctx.options.strict, onError);
     if (end.comment) {
-      if (coll.comment)
-        coll.comment += "\n" + end.comment;
-      else
-        coll.comment = end.comment;
+      if (coll.comment) coll.comment += "\n" + end.comment;
+      else coll.comment = end.comment;
     }
     coll.range = [fc.offset, cePos, end.offset];
   } else {
@@ -4224,8 +3160,7 @@ function resolveCollection(CN2, ctx, token, onError, tagName, tag) {
     coll.tag = Coll.tagName;
     return coll;
   }
-  if (tagName)
-    coll.tag = tagName;
+  if (tagName) coll.tag = tagName;
   return coll;
 }
 function composeCollection(CN2, ctx, token, props, onError) {
@@ -4263,8 +3198,7 @@ function composeCollection(CN2, ctx, token, props, onError) {
   const node = isNode(res) ? res : new Scalar(res);
   node.range = coll.range;
   node.tag = tagName;
-  if (tag?.format)
-    node.format = tag.format;
+  if (tag?.format) node.format = tag.format;
   return node;
 }
 var init_compose_collection = __esm({
@@ -4283,23 +3217,19 @@ var init_compose_collection = __esm({
 function resolveBlockScalar(ctx, scalar, onError) {
   const start = scalar.offset;
   const header = parseBlockScalarHeader(scalar, ctx.options.strict, onError);
-  if (!header)
-    return { value: "", type: null, comment: "", range: [start, start, start] };
+  if (!header) return { value: "", type: null, comment: "", range: [start, start, start] };
   const type = header.mode === ">" ? Scalar.BLOCK_FOLDED : Scalar.BLOCK_LITERAL;
   const lines = scalar.source ? splitLines(scalar.source) : [];
   let chompStart = lines.length;
   for (let i = lines.length - 1; i >= 0; --i) {
     const content = lines[i][1];
-    if (content === "" || content === "\r")
-      chompStart = i;
-    else
-      break;
+    if (content === "" || content === "\r") chompStart = i;
+    else break;
   }
   if (chompStart === 0) {
     const value2 = header.chomp === "+" && lines.length > 0 ? "\n".repeat(Math.max(1, lines.length - 1)) : "";
     let end2 = start + header.length;
-    if (scalar.source)
-      end2 += scalar.source.length;
+    if (scalar.source) end2 += scalar.source.length;
     return { value: value2, type, comment: header.comment, range: [start, end2, end2] };
   }
   let trimIndent = scalar.indent + header.indent;
@@ -4308,15 +3238,13 @@ function resolveBlockScalar(ctx, scalar, onError) {
   for (let i = 0; i < chompStart; ++i) {
     const [indent, content] = lines[i];
     if (content === "" || content === "\r") {
-      if (header.indent === 0 && indent.length > trimIndent)
-        trimIndent = indent.length;
+      if (header.indent === 0 && indent.length > trimIndent) trimIndent = indent.length;
     } else {
       if (indent.length < trimIndent) {
         const message = "Block scalars with more-indented leading empty lines must use an explicit indentation indicator";
         onError(offset + indent.length, "MISSING_CHAR", message);
       }
-      if (header.indent === 0)
-        trimIndent = indent.length;
+      if (header.indent === 0) trimIndent = indent.length;
       contentStart = i;
       if (trimIndent === 0 && !ctx.atRoot) {
         const message = "Block scalar values in collections must be indented";
@@ -4327,20 +3255,17 @@ function resolveBlockScalar(ctx, scalar, onError) {
     offset += indent.length + content.length + 1;
   }
   for (let i = lines.length - 1; i >= chompStart; --i) {
-    if (lines[i][0].length > trimIndent)
-      chompStart = i + 1;
+    if (lines[i][0].length > trimIndent) chompStart = i + 1;
   }
   let value = "";
   let sep4 = "";
   let prevMoreIndented = false;
-  for (let i = 0; i < contentStart; ++i)
-    value += lines[i][0].slice(trimIndent) + "\n";
+  for (let i = 0; i < contentStart; ++i) value += lines[i][0].slice(trimIndent) + "\n";
   for (let i = contentStart; i < chompStart; ++i) {
     let [indent, content] = lines[i];
     offset += indent.length + content.length + 1;
     const crlf = content[content.length - 1] === "\r";
-    if (crlf)
-      content = content.slice(0, -1);
+    if (crlf) content = content.slice(0, -1);
     if (content && indent.length < trimIndent) {
       const src = header.indent ? "explicit indentation indicator" : "first line";
       const message = `Block scalar lines must not be less indented than their ${src}`;
@@ -4351,18 +3276,14 @@ function resolveBlockScalar(ctx, scalar, onError) {
       value += sep4 + indent.slice(trimIndent) + content;
       sep4 = "\n";
     } else if (indent.length > trimIndent || content[0] === "	") {
-      if (sep4 === " ")
-        sep4 = "\n";
-      else if (!prevMoreIndented && sep4 === "\n")
-        sep4 = "\n\n";
+      if (sep4 === " ") sep4 = "\n";
+      else if (!prevMoreIndented && sep4 === "\n") sep4 = "\n\n";
       value += sep4 + indent.slice(trimIndent) + content;
       sep4 = "\n";
       prevMoreIndented = true;
     } else if (content === "") {
-      if (sep4 === "\n")
-        value += "\n";
-      else
-        sep4 = "\n";
+      if (sep4 === "\n") value += "\n";
+      else sep4 = "\n";
     } else {
       value += sep4 + content;
       sep4 = " ";
@@ -4373,10 +3294,8 @@ function resolveBlockScalar(ctx, scalar, onError) {
     case "-":
       break;
     case "+":
-      for (let i = chompStart; i < lines.length; ++i)
-        value += "\n" + lines[i][0].slice(trimIndent);
-      if (value[value.length - 1] !== "\n")
-        value += "\n";
+      for (let i = chompStart; i < lines.length; ++i) value += "\n" + lines[i][0].slice(trimIndent);
+      if (value[value.length - 1] !== "\n") value += "\n";
       break;
     default:
       value += "\n";
@@ -4396,18 +3315,14 @@ function parseBlockScalarHeader({ offset, props }, strict, onError) {
   let error = -1;
   for (let i = 1; i < source.length; ++i) {
     const ch = source[i];
-    if (!chomp && (ch === "-" || ch === "+"))
-      chomp = ch;
+    if (!chomp && (ch === "-" || ch === "+")) chomp = ch;
     else {
       const n = Number(ch);
-      if (!indent && n)
-        indent = n;
-      else if (error === -1)
-        error = offset + i;
+      if (!indent && n) indent = n;
+      else if (error === -1) error = offset + i;
     }
   }
-  if (error !== -1)
-    onError(error, "UNEXPECTED_TOKEN", `Block scalar header includes extra characters: ${source}`);
+  if (error !== -1) onError(error, "UNEXPECTED_TOKEN", `Block scalar header includes extra characters: ${source}`);
   let hasSpace = false;
   let comment = "";
   let length = source.length;
@@ -4416,7 +3331,6 @@ function parseBlockScalarHeader({ offset, props }, strict, onError) {
     switch (token.type) {
       case "space":
         hasSpace = true;
-      // fallthrough
       case "newline":
         length += token.source.length;
         break;
@@ -4432,13 +3346,11 @@ function parseBlockScalarHeader({ offset, props }, strict, onError) {
         onError(token, "UNEXPECTED_TOKEN", token.message);
         length += token.source.length;
         break;
-      /* istanbul ignore next should not happen */
       default: {
         const message = `Unexpected token in block scalar header: ${token.type}`;
         onError(token, "UNEXPECTED_TOKEN", message);
         const ts = token.source;
-        if (ts && typeof ts === "string")
-          length += ts.length;
+        if (ts && typeof ts === "string") length += ts.length;
       }
     }
   }
@@ -4450,8 +3362,7 @@ function splitLines(source) {
   const m = first.match(/^( *)/);
   const line0 = m?.[1] ? [m[1], first.slice(m[1].length)] : ["", first];
   const lines = [line0];
-  for (let i = 1; i < split.length; i += 2)
-    lines.push([split[i], split[i + 1]]);
+  for (let i = 1; i < split.length; i += 2) lines.push([split[i], split[i + 1]]);
   return lines;
 }
 var init_resolve_block_scalar = __esm({
@@ -4479,29 +3390,17 @@ function resolveFlowScalar(scalar, strict, onError) {
       _type = Scalar.QUOTE_DOUBLE;
       value = doubleQuotedValue(source, _onError);
       break;
-    /* istanbul ignore next should not happen */
     default:
       onError(scalar, "UNEXPECTED_TOKEN", `Expected a flow scalar value, but found: ${type}`);
-      return {
-        value: "",
-        type: null,
-        comment: "",
-        range: [offset, offset + source.length, offset + source.length]
-      };
+      return { value: "", type: null, comment: "", range: [offset, offset + source.length, offset + source.length] };
   }
   const valueEnd = offset + source.length;
   const re2 = resolveEnd(end, valueEnd, strict, onError);
-  return {
-    value,
-    type: _type,
-    comment: re2.comment,
-    range: [offset, valueEnd, re2.offset]
-  };
+  return { value, type: _type, comment: re2.comment, range: [offset, valueEnd, re2.offset] };
 }
 function plainValue(source, onError) {
   let badChar = "";
   switch (source[0]) {
-    /* istanbul ignore next should not happen */
     case "	":
       badChar = "a tab character";
       break;
@@ -4522,20 +3421,17 @@ function plainValue(source, onError) {
       break;
     }
   }
-  if (badChar)
-    onError(0, "BAD_SCALAR_START", `Plain value cannot start with ${badChar}`);
+  if (badChar) onError(0, "BAD_SCALAR_START", `Plain value cannot start with ${badChar}`);
   return unfoldLines(source);
 }
 function singleQuotedValue(source, onError) {
-  if (source[source.length - 1] !== "'" || source.length === 1)
-    onError(source.length, "MISSING_CHAR", "Missing closing 'quote");
+  if (source[source.length - 1] !== "'" || source.length === 1) onError(source.length, "MISSING_CHAR", "Missing closing 'quote");
   return unfoldLines(source.slice(1, -1)).replace(/''/g, "'");
 }
 function unfoldLines(source) {
   const line = /(.*?)\r?\n/sy;
   let match = line.exec(source);
-  if (!match)
-    return source;
+  if (!match) return source;
   let trimEnd, trimBoth;
   try {
     trimEnd = new RegExp("(?<![ 	])[ 	]+$");
@@ -4550,10 +3446,8 @@ function unfoldLines(source) {
   while (match = line.exec(source)) {
     const lm = match[1].replace(trimBoth, "");
     if (lm === "") {
-      if (sep4 === "\n")
-        res += sep4;
-      else
-        sep4 = "\n";
+      if (sep4 === "\n") res += sep4;
+      else sep4 = "\n";
     } else {
       res += sep4 + lm;
       sep4 = " ";
@@ -4569,8 +3463,7 @@ function doubleQuotedValue(source, onError) {
   let res = "";
   for (let i = 1; i < source.length - 1; ++i) {
     const ch = source[i];
-    if (ch === "\r" && source[i + 1] === "\n")
-      continue;
+    if (ch === "\r" && source[i + 1] === "\n") continue;
     if (ch === "\n") {
       const { fold, offset } = foldNewline(source, i);
       res += fold;
@@ -4578,16 +3471,13 @@ function doubleQuotedValue(source, onError) {
     } else if (ch === "\\") {
       let next = source[++i];
       const cc = escapeCodes[next];
-      if (cc)
-        res += cc;
+      if (cc) res += cc;
       else if (next === "\n") {
         next = source[i + 1];
-        while (next === " " || next === "	")
-          next = source[++i + 1];
+        while (next === " " || next === "	") next = source[++i + 1];
       } else if (next === "\r" && source[i + 1] === "\n") {
         next = source[++i + 1];
-        while (next === " " || next === "	")
-          next = source[++i + 1];
+        while (next === " " || next === "	") next = source[++i + 1];
       } else if (next === "x" || next === "u" || next === "U") {
         const length = next === "x" ? 2 : next === "u" ? 4 : 8;
         res += parseCharCode(source, i + 1, length, onError);
@@ -4600,31 +3490,25 @@ function doubleQuotedValue(source, onError) {
     } else if (ch === " " || ch === "	") {
       const wsStart = i;
       let next = source[i + 1];
-      while (next === " " || next === "	")
-        next = source[++i + 1];
-      if (next !== "\n" && !(next === "\r" && source[i + 2] === "\n"))
-        res += i > wsStart ? source.slice(wsStart, i + 1) : ch;
+      while (next === " " || next === "	") next = source[++i + 1];
+      if (next !== "\n" && !(next === "\r" && source[i + 2] === "\n")) res += i > wsStart ? source.slice(wsStart, i + 1) : ch;
     } else {
       res += ch;
     }
   }
-  if (source[source.length - 1] !== '"' || source.length === 1)
-    onError(source.length, "MISSING_CHAR", 'Missing closing "quote');
+  if (source[source.length - 1] !== '"' || source.length === 1) onError(source.length, "MISSING_CHAR", 'Missing closing "quote');
   return res;
 }
 function foldNewline(source, offset) {
   let fold = "";
   let ch = source[offset + 1];
   while (ch === " " || ch === "	" || ch === "\n" || ch === "\r") {
-    if (ch === "\r" && source[offset + 2] !== "\n")
-      break;
-    if (ch === "\n")
-      fold += "\n";
+    if (ch === "\r" && source[offset + 2] !== "\n") break;
+    if (ch === "\n") fold += "\n";
     offset += 1;
     ch = source[offset + 1];
   }
-  if (!fold)
-    fold = " ";
+  if (!fold) fold = " ";
   return { fold, offset };
 }
 function parseCharCode(source, offset, length, onError) {
@@ -4644,39 +3528,7 @@ var init_resolve_flow_scalar = __esm({
   "node_modules/yaml/browser/dist/compose/resolve-flow-scalar.js"() {
     init_Scalar();
     init_resolve_end();
-    escapeCodes = {
-      "0": "\0",
-      // null character
-      a: "\x07",
-      // bell character
-      b: "\b",
-      // backspace
-      e: "\x1B",
-      // escape character
-      f: "\f",
-      // form feed
-      n: "\n",
-      // line feed
-      r: "\r",
-      // carriage return
-      t: "	",
-      // horizontal tab
-      v: "\v",
-      // vertical tab
-      N: "\x85",
-      // Unicode next line
-      _: "\xA0",
-      // Unicode non-breaking space
-      L: "\u2028",
-      // Unicode line separator
-      P: "\u2029",
-      // Unicode paragraph separator
-      " ": " ",
-      '"': '"',
-      "/": "/",
-      "\\": "\\",
-      "	": "	"
-    };
+    escapeCodes = { "0": "\0", a: "\x07", b: "\b", e: "\x1B", f: "\f", n: "\n", r: "\r", t: "	", v: "\v", N: "\x85", _: "\xA0", L: "\u2028", P: "\u2029", " ": " ", '"': '"', "/": "/", "\\": "\\", "	": "	" };
   }
 });
 
@@ -4687,12 +3539,9 @@ function composeScalar(ctx, token, tagToken, onError) {
   let tag;
   if (ctx.options.stringKeys && ctx.atKey) {
     tag = ctx.schema[SCALAR];
-  } else if (tagName)
-    tag = findScalarTagByName(ctx.schema, value, tagName, tagToken, onError);
-  else if (token.type === "scalar")
-    tag = findScalarTagByTest(ctx, value, token, onError);
-  else
-    tag = ctx.schema[SCALAR];
+  } else if (tagName) tag = findScalarTagByName(ctx.schema, value, tagName, tagToken, onError);
+  else if (token.type === "scalar") tag = findScalarTagByTest(ctx, value, token, onError);
+  else tag = ctx.schema[SCALAR];
   let scalar;
   try {
     const res = tag.resolve(value, (msg) => onError(tagToken ?? token, "TAG_RESOLVE_FAILED", msg), ctx.options);
@@ -4704,31 +3553,22 @@ function composeScalar(ctx, token, tagToken, onError) {
   }
   scalar.range = range;
   scalar.source = value;
-  if (type)
-    scalar.type = type;
-  if (tagName)
-    scalar.tag = tagName;
-  if (tag.format)
-    scalar.format = tag.format;
-  if (comment)
-    scalar.comment = comment;
+  if (type) scalar.type = type;
+  if (tagName) scalar.tag = tagName;
+  if (tag.format) scalar.format = tag.format;
+  if (comment) scalar.comment = comment;
   return scalar;
 }
 function findScalarTagByName(schema4, value, tagName, tagToken, onError) {
-  if (tagName === "!")
-    return schema4[SCALAR];
+  if (tagName === "!") return schema4[SCALAR];
   const matchWithTest = [];
   for (const tag of schema4.tags) {
     if (!tag.collection && tag.tag === tagName) {
-      if (tag.default && tag.test)
-        matchWithTest.push(tag);
-      else
-        return tag;
+      if (tag.default && tag.test) matchWithTest.push(tag);
+      else return tag;
     }
   }
-  for (const tag of matchWithTest)
-    if (tag.test?.test(value))
-      return tag;
+  for (const tag of matchWithTest) if (tag.test?.test(value)) return tag;
   const kt2 = schema4.knownTags[tagName];
   if (kt2 && !kt2.collection) {
     schema4.tags.push(Object.assign({}, kt2, { default: false, test: void 0 }));
@@ -4796,24 +3636,21 @@ function composeNode(ctx, token, props, onError) {
   switch (token.type) {
     case "alias":
       node = composeAlias(ctx, token, onError);
-      if (anchor || tag)
-        onError(token, "ALIAS_PROPS", "An alias node must not specify any properties");
+      if (anchor || tag) onError(token, "ALIAS_PROPS", "An alias node must not specify any properties");
       break;
     case "scalar":
     case "single-quoted-scalar":
     case "double-quoted-scalar":
     case "block-scalar":
       node = composeScalar(ctx, token, tag, onError);
-      if (anchor)
-        node.anchor = anchor.source.substring(1);
+      if (anchor) node.anchor = anchor.source.substring(1);
       break;
     case "block-map":
     case "block-seq":
     case "flow-collection":
       try {
         node = composeCollection(CN, ctx, token, props, onError);
-        if (anchor)
-          node.anchor = anchor.source.substring(1);
+        if (anchor) node.anchor = anchor.source.substring(1);
       } catch (error) {
         const message = error instanceof Error ? error.message : String(error);
         onError(token, "RESOURCE_EXHAUSTION", message);
@@ -4826,39 +3663,27 @@ function composeNode(ctx, token, props, onError) {
     }
   }
   node ?? (node = composeEmptyNode(ctx, token.offset, void 0, null, props, onError));
-  if (anchor && node.anchor === "")
-    onError(anchor, "BAD_ALIAS", "Anchor cannot be an empty string");
+  if (anchor && node.anchor === "") onError(anchor, "BAD_ALIAS", "Anchor cannot be an empty string");
   if (atKey && ctx.options.stringKeys && (!isScalar(node) || typeof node.value !== "string" || node.tag && node.tag !== "tag:yaml.org,2002:str")) {
     const msg = "With stringKeys, all keys must be strings";
     onError(tag ?? token, "NON_STRING_KEY", msg);
   }
-  if (spaceBefore)
-    node.spaceBefore = true;
+  if (spaceBefore) node.spaceBefore = true;
   if (comment) {
-    if (token.type === "scalar" && token.source === "")
-      node.comment = comment;
-    else
-      node.commentBefore = comment;
+    if (token.type === "scalar" && token.source === "") node.comment = comment;
+    else node.commentBefore = comment;
   }
-  if (ctx.options.keepSourceTokens && isSrcToken)
-    node.srcToken = token;
+  if (ctx.options.keepSourceTokens && isSrcToken) node.srcToken = token;
   return node;
 }
 function composeEmptyNode(ctx, offset, before, pos, { spaceBefore, comment, anchor, tag, end }, onError) {
-  const token = {
-    type: "scalar",
-    offset: emptyScalarPosition(offset, before, pos),
-    indent: -1,
-    source: ""
-  };
+  const token = { type: "scalar", offset: emptyScalarPosition(offset, before, pos), indent: -1, source: "" };
   const node = composeScalar(ctx, token, tag, onError);
   if (anchor) {
     node.anchor = anchor.source.substring(1);
-    if (node.anchor === "")
-      onError(anchor, "BAD_ALIAS", "Anchor cannot be an empty string");
+    if (node.anchor === "") onError(anchor, "BAD_ALIAS", "Anchor cannot be an empty string");
   }
-  if (spaceBefore)
-    node.spaceBefore = true;
+  if (spaceBefore) node.spaceBefore = true;
   if (comment) {
     node.comment = comment;
     node.range[2] = end;
@@ -4867,15 +3692,12 @@ function composeEmptyNode(ctx, offset, before, pos, { spaceBefore, comment, anch
 }
 function composeAlias({ options }, { offset, source, end }, onError) {
   const alias = new Alias(source.substring(1));
-  if (alias.source === "")
-    onError(offset, "BAD_ALIAS", "Alias cannot be an empty string");
-  if (alias.source.endsWith(":"))
-    onError(offset + source.length - 1, "BAD_ALIAS", "Alias ending in : is ambiguous", true);
+  if (alias.source === "") onError(offset, "BAD_ALIAS", "Alias cannot be an empty string");
+  if (alias.source.endsWith(":")) onError(offset + source.length - 1, "BAD_ALIAS", "Alias ending in : is ambiguous", true);
   const valueEnd = offset + source.length;
   const re2 = resolveEnd(end, valueEnd, options.strict, onError);
   alias.range = [offset, valueEnd, re2.offset];
-  if (re2.comment)
-    alias.comment = re2.comment;
+  if (re2.comment) alias.comment = re2.comment;
   return alias;
 }
 var CN;
@@ -4895,31 +3717,16 @@ var init_compose_node = __esm({
 function composeDoc(options, directives, { offset, start, value, end }, onError) {
   const opts = Object.assign({ _directives: directives }, options);
   const doc = new Document(void 0, opts);
-  const ctx = {
-    atKey: false,
-    atRoot: true,
-    directives: doc.directives,
-    options: doc.options,
-    schema: doc.schema
-  };
-  const props = resolveProps(start, {
-    indicator: "doc-start",
-    next: value ?? end?.[0],
-    offset,
-    onError,
-    parentIndent: 0,
-    startOnNewline: true
-  });
+  const ctx = { atKey: false, atRoot: true, directives: doc.directives, options: doc.options, schema: doc.schema };
+  const props = resolveProps(start, { indicator: "doc-start", next: value ?? end?.[0], offset, onError, parentIndent: 0, startOnNewline: true });
   if (props.found) {
     doc.directives.docStart = true;
-    if (value && (value.type === "block-map" || value.type === "block-seq") && !props.hasNewline)
-      onError(props.end, "MISSING_CHAR", "Block collection cannot start on same line with directives-end marker");
+    if (value && (value.type === "block-map" || value.type === "block-seq") && !props.hasNewline) onError(props.end, "MISSING_CHAR", "Block collection cannot start on same line with directives-end marker");
   }
   doc.contents = value ? composeNode(ctx, value, props, onError) : composeEmptyNode(ctx, props.end, start, null, props, onError);
   const contentEnd = doc.contents.range[2];
   const re2 = resolveEnd(end, contentEnd, false, onError);
-  if (re2.comment)
-    doc.comment = re2.comment;
+  if (re2.comment) doc.comment = re2.comment;
   doc.range = [offset, contentEnd, re2.offset];
   return doc;
 }
@@ -4934,10 +3741,8 @@ var init_compose_doc = __esm({
 
 // node_modules/yaml/browser/dist/compose/composer.js
 function getErrorPos(src) {
-  if (typeof src === "number")
-    return [src, src + 1];
-  if (Array.isArray(src))
-    return src.length === 2 ? src : [src[0], src[1]];
+  if (typeof src === "number") return [src, src + 1];
+  if (Array.isArray(src)) return src.length === 2 ? src : [src[0], src[1]];
   const { offset, source } = src;
   return [offset, offset + (typeof source === "string" ? source.length : 1)];
 }
@@ -4954,13 +3759,11 @@ function parsePrelude(prelude) {
         afterEmptyLine = false;
         break;
       case "%":
-        if (prelude[i + 1]?.[0] !== "#")
-          i += 1;
+        if (prelude[i + 1]?.[0] !== "#") i += 1;
         atComment = false;
         break;
       default:
-        if (!atComment)
-          afterEmptyLine = true;
+        if (!atComment) afterEmptyLine = true;
         atComment = false;
     }
   }
@@ -4984,10 +3787,8 @@ var init_composer = __esm({
         this.warnings = [];
         this.onError = (source, code, message, warning) => {
           const pos = getErrorPos(source);
-          if (warning)
-            this.warnings.push(new YAMLWarning(pos, code, message));
-          else
-            this.errors.push(new YAMLParseError(pos, code, message));
+          if (warning) this.warnings.push(new YAMLWarning(pos, code, message));
+          else this.errors.push(new YAMLParseError(pos, code, message));
         };
         this.directives = new Directives({ version: options.version || "1.2" });
         this.options = options;
@@ -5003,8 +3804,7 @@ ${comment}` : comment;
             doc.commentBefore = comment;
           } else if (isCollection(dc) && !dc.flow && dc.items.length > 0) {
             let it2 = dc.items[0];
-            if (isPair(it2))
-              it2 = it2.key;
+            if (isPair(it2)) it2 = it2.key;
             const cb = it2.commentBefore;
             it2.commentBefore = cb ? `${comment}
 ${cb}` : comment;
@@ -5015,10 +3815,8 @@ ${cb}` : comment;
           }
         }
         if (afterDoc) {
-          for (let i = 0; i < this.errors.length; ++i)
-            doc.errors.push(this.errors[i]);
-          for (let i = 0; i < this.warnings.length; ++i)
-            doc.warnings.push(this.warnings[i]);
+          for (let i = 0; i < this.errors.length; ++i) doc.errors.push(this.errors[i]);
+          for (let i = 0; i < this.warnings.length; ++i) doc.warnings.push(this.warnings[i]);
         } else {
           doc.errors = this.errors;
           doc.warnings = this.warnings;
@@ -5027,31 +3825,13 @@ ${cb}` : comment;
         this.errors = [];
         this.warnings = [];
       }
-      /**
-       * Current stream status information.
-       *
-       * Mostly useful at the end of input for an empty stream.
-       */
       streamInfo() {
-        return {
-          comment: parsePrelude(this.prelude).comment,
-          directives: this.directives,
-          errors: this.errors,
-          warnings: this.warnings
-        };
+        return { comment: parsePrelude(this.prelude).comment, directives: this.directives, errors: this.errors, warnings: this.warnings };
       }
-      /**
-       * Compose tokens into documents.
-       *
-       * @param forceDoc - If the stream contains no document, still emit a final document including any comments and directives that would be applied to a subsequent document.
-       * @param endOffset - Should be set if `forceDoc` is also set, to set the document range end and to indicate errors correctly.
-       */
       *compose(tokens, forceDoc = false, endOffset = -1) {
-        for (const token of tokens)
-          yield* this.next(token);
+        for (const token of tokens) yield* this.next(token);
         yield* this.end(forceDoc, endOffset);
       }
-      /** Advance the composer by one CST token. */
       *next(token) {
         switch (token.type) {
           case "directive":
@@ -5065,11 +3845,9 @@ ${cb}` : comment;
             break;
           case "document": {
             const doc = composeDoc(this.options, this.directives, token, this.onError);
-            if (this.atDirectives && !doc.directives.docStart)
-              this.onError(token, "MISSING_CHAR", "Missing directives-end/doc-start indicator line");
+            if (this.atDirectives && !doc.directives.docStart) this.onError(token, "MISSING_CHAR", "Missing directives-end/doc-start indicator line");
             this.decorate(doc, false);
-            if (this.doc)
-              yield this.doc;
+            if (this.doc) yield this.doc;
             this.doc = doc;
             this.atDirectives = false;
             break;
@@ -5084,10 +3862,8 @@ ${cb}` : comment;
           case "error": {
             const msg = token.source ? `${token.message}: ${JSON.stringify(token.source)}` : token.message;
             const error = new YAMLParseError(getErrorPos(token), "UNEXPECTED_TOKEN", msg);
-            if (this.atDirectives || !this.doc)
-              this.errors.push(error);
-            else
-              this.doc.errors.push(error);
+            if (this.atDirectives || !this.doc) this.errors.push(error);
+            else this.doc.errors.push(error);
             break;
           }
           case "doc-end": {
@@ -5111,12 +3887,6 @@ ${end.comment}` : end.comment;
             this.errors.push(new YAMLParseError(getErrorPos(token), "UNEXPECTED_TOKEN", `Unsupported token ${token.type}`));
         }
       }
-      /**
-       * Call at end of input to yield any remaining document.
-       *
-       * @param forceDoc - If the stream contains no document, still emit a final document including any comments and directives that would be applied to a subsequent document.
-       * @param endOffset - Should be set if `forceDoc` is also set, to set the document range end and to indicate errors correctly.
-       */
       *end(forceDoc = false, endOffset = -1) {
         if (this.doc) {
           this.decorate(this.doc, true);
@@ -5125,8 +3895,7 @@ ${end.comment}` : end.comment;
         } else if (forceDoc) {
           const opts = Object.assign({ _directives: this.directives }, this.options);
           const doc = new Document(void 0, opts);
-          if (this.atDirectives)
-            this.onError(endOffset, "MISSING_CHAR", "Missing directives-end indicator line");
+          if (this.atDirectives) this.onError(endOffset, "MISSING_CHAR", "Missing directives-end indicator line");
           doc.range = [0, endOffset, endOffset];
           this.decorate(doc, false);
           yield doc;
@@ -5141,10 +3910,8 @@ function resolveAsScalar(token, strict = true, onError) {
   if (token) {
     const _onError = (pos, code, message) => {
       const offset = typeof pos === "number" ? pos : Array.isArray(pos) ? pos[0] : pos.offset;
-      if (onError)
-        onError(offset, code, message);
-      else
-        throw new YAMLParseError([offset, offset + 1], code, message);
+      if (onError) onError(offset, code, message);
+      else throw new YAMLParseError([offset, offset + 1], code, message);
     };
     switch (token.type) {
       case "scalar":
@@ -5159,26 +3926,16 @@ function resolveAsScalar(token, strict = true, onError) {
 }
 function createScalarToken(value, context) {
   const { implicitKey = false, indent, inFlow = false, offset = -1, type = "PLAIN" } = context;
-  const source = stringifyString({ type, value }, {
-    implicitKey,
-    indent: indent > 0 ? " ".repeat(indent) : "",
-    inFlow,
-    options: { blockQuote: true, lineWidth: -1 }
-  });
-  const end = context.end ?? [
-    { type: "newline", offset: -1, indent, source: "\n" }
-  ];
+  const source = stringifyString({ type, value }, { implicitKey, indent: indent > 0 ? " ".repeat(indent) : "", inFlow, options: { blockQuote: true, lineWidth: -1 } });
+  const end = context.end ?? [{ type: "newline", offset: -1, indent, source: "\n" }];
   switch (source[0]) {
     case "|":
     case ">": {
       const he2 = source.indexOf("\n");
       const head = source.substring(0, he2);
       const body = source.substring(he2 + 1) + "\n";
-      const props = [
-        { type: "block-scalar-header", offset, indent, source: head }
-      ];
-      if (!addEndtoBlockProps(props, end))
-        props.push({ type: "newline", offset: -1, indent, source: "\n" });
+      const props = [{ type: "block-scalar-header", offset, indent, source: head }];
+      if (!addEndtoBlockProps(props, end)) props.push({ type: "newline", offset: -1, indent, source: "\n" });
       return { type: "block-scalar", offset, indent, props, source: body };
     }
     case '"':
@@ -5192,32 +3949,24 @@ function createScalarToken(value, context) {
 function setScalarValue(token, value, context = {}) {
   let { afterKey = false, implicitKey = false, inFlow = false, type } = context;
   let indent = "indent" in token ? token.indent : null;
-  if (afterKey && typeof indent === "number")
-    indent += 2;
-  if (!type)
-    switch (token.type) {
-      case "single-quoted-scalar":
-        type = "QUOTE_SINGLE";
-        break;
-      case "double-quoted-scalar":
-        type = "QUOTE_DOUBLE";
-        break;
-      case "block-scalar": {
-        const header = token.props[0];
-        if (header.type !== "block-scalar-header")
-          throw new Error("Invalid block scalar header");
-        type = header.source[0] === ">" ? "BLOCK_FOLDED" : "BLOCK_LITERAL";
-        break;
-      }
-      default:
-        type = "PLAIN";
+  if (afterKey && typeof indent === "number") indent += 2;
+  if (!type) switch (token.type) {
+    case "single-quoted-scalar":
+      type = "QUOTE_SINGLE";
+      break;
+    case "double-quoted-scalar":
+      type = "QUOTE_DOUBLE";
+      break;
+    case "block-scalar": {
+      const header = token.props[0];
+      if (header.type !== "block-scalar-header") throw new Error("Invalid block scalar header");
+      type = header.source[0] === ">" ? "BLOCK_FOLDED" : "BLOCK_LITERAL";
+      break;
     }
-  const source = stringifyString({ type, value }, {
-    implicitKey: implicitKey || indent === null,
-    indent: indent !== null && indent > 0 ? " ".repeat(indent) : "",
-    inFlow,
-    options: { blockQuote: true, lineWidth: -1 }
-  });
+    default:
+      type = "PLAIN";
+  }
+  const source = stringifyString({ type, value }, { implicitKey: implicitKey || indent === null, indent: indent !== null && indent > 0 ? " ".repeat(indent) : "", inFlow, options: { blockQuote: true, lineWidth: -1 } });
   switch (source[0]) {
     case "|":
     case ">":
@@ -5239,36 +3988,28 @@ function setBlockScalarValue(token, source) {
   const body = source.substring(he2 + 1) + "\n";
   if (token.type === "block-scalar") {
     const header = token.props[0];
-    if (header.type !== "block-scalar-header")
-      throw new Error("Invalid block scalar header");
+    if (header.type !== "block-scalar-header") throw new Error("Invalid block scalar header");
     header.source = head;
     token.source = body;
   } else {
     const { offset } = token;
     const indent = "indent" in token ? token.indent : -1;
-    const props = [
-      { type: "block-scalar-header", offset, indent, source: head }
-    ];
-    if (!addEndtoBlockProps(props, "end" in token ? token.end : void 0))
-      props.push({ type: "newline", offset: -1, indent, source: "\n" });
-    for (const key of Object.keys(token))
-      if (key !== "type" && key !== "offset")
-        delete token[key];
+    const props = [{ type: "block-scalar-header", offset, indent, source: head }];
+    if (!addEndtoBlockProps(props, "end" in token ? token.end : void 0)) props.push({ type: "newline", offset: -1, indent, source: "\n" });
+    for (const key of Object.keys(token)) if (key !== "type" && key !== "offset") delete token[key];
     Object.assign(token, { type: "block-scalar", indent, props, source: body });
   }
 }
 function addEndtoBlockProps(props, end) {
-  if (end)
-    for (const st2 of end)
-      switch (st2.type) {
-        case "space":
-        case "comment":
-          props.push(st2);
-          break;
-        case "newline":
-          props.push(st2);
-          return true;
-      }
+  if (end) for (const st2 of end) switch (st2.type) {
+    case "space":
+    case "comment":
+      props.push(st2);
+      break;
+    case "newline":
+      props.push(st2);
+      return true;
+  }
   return false;
 }
 function setFlowScalarValue(token, source, type) {
@@ -5282,10 +4023,8 @@ function setFlowScalarValue(token, source, type) {
     case "block-scalar": {
       const end = token.props.slice(1);
       let oa = source.length;
-      if (token.props[0].type === "block-scalar-header")
-        oa -= token.props[0].source.length;
-      for (const tok of end)
-        tok.offset += oa;
+      if (token.props[0].type === "block-scalar-header") oa -= token.props[0].source.length;
+      for (const tok of end) tok.offset += oa;
       delete token.props;
       Object.assign(token, { type, source, end });
       break;
@@ -5301,9 +4040,7 @@ function setFlowScalarValue(token, source, type) {
     default: {
       const indent = "indent" in token ? token.indent : -1;
       const end = "end" in token && Array.isArray(token.end) ? token.end.filter((st2) => st2.type === "space" || st2.type === "comment" || st2.type === "newline") : [];
-      for (const key of Object.keys(token))
-        if (key !== "type" && key !== "offset")
-          delete token[key];
+      for (const key of Object.keys(token)) if (key !== "type" && key !== "offset") delete token[key];
       Object.assign(token, { type, indent, source, end });
     }
   }
@@ -5322,52 +4059,39 @@ function stringifyToken(token) {
   switch (token.type) {
     case "block-scalar": {
       let res = "";
-      for (const tok of token.props)
-        res += stringifyToken(tok);
+      for (const tok of token.props) res += stringifyToken(tok);
       return res + token.source;
     }
     case "block-map":
     case "block-seq": {
       let res = "";
-      for (const item of token.items)
-        res += stringifyItem(item);
+      for (const item of token.items) res += stringifyItem(item);
       return res;
     }
     case "flow-collection": {
       let res = token.start.source;
-      for (const item of token.items)
-        res += stringifyItem(item);
-      for (const st2 of token.end)
-        res += st2.source;
+      for (const item of token.items) res += stringifyItem(item);
+      for (const st2 of token.end) res += st2.source;
       return res;
     }
     case "document": {
       let res = stringifyItem(token);
-      if (token.end)
-        for (const st2 of token.end)
-          res += st2.source;
+      if (token.end) for (const st2 of token.end) res += st2.source;
       return res;
     }
     default: {
       let res = token.source;
-      if ("end" in token && token.end)
-        for (const st2 of token.end)
-          res += st2.source;
+      if ("end" in token && token.end) for (const st2 of token.end) res += st2.source;
       return res;
     }
   }
 }
 function stringifyItem({ start, key, sep: sep4, value }) {
   let res = "";
-  for (const st2 of start)
-    res += st2.source;
-  if (key)
-    res += stringifyToken(key);
-  if (sep4)
-    for (const st2 of sep4)
-      res += st2.source;
-  if (value)
-    res += stringifyToken(value);
+  for (const st2 of start) res += st2.source;
+  if (key) res += stringifyToken(key);
+  if (sep4) for (const st2 of sep4) res += st2.source;
+  if (value) res += stringifyToken(value);
   return res;
 }
 var stringify2;
@@ -5379,30 +4103,25 @@ var init_cst_stringify = __esm({
 
 // node_modules/yaml/browser/dist/parse/cst-visit.js
 function visit2(cst, visitor) {
-  if ("type" in cst && cst.type === "document")
-    cst = { start: cst.start, value: cst.value };
+  if ("type" in cst && cst.type === "document") cst = { start: cst.start, value: cst.value };
   _visit(Object.freeze([]), cst, visitor);
 }
 function _visit(path, item, visitor) {
   let ctrl = visitor(item, path);
-  if (typeof ctrl === "symbol")
-    return ctrl;
+  if (typeof ctrl === "symbol") return ctrl;
   for (const field of ["key", "value"]) {
     const token = item[field];
     if (token && "items" in token) {
       for (let i = 0; i < token.items.length; ++i) {
         const ci = _visit(Object.freeze(path.concat([[field, i]])), token.items[i], visitor);
-        if (typeof ci === "number")
-          i = ci - 1;
-        else if (ci === BREAK2)
-          return BREAK2;
+        if (typeof ci === "number") i = ci - 1;
+        else if (ci === BREAK2) return BREAK2;
         else if (ci === REMOVE2) {
           token.items.splice(i, 1);
           i -= 1;
         }
       }
-      if (typeof ctrl === "function" && field === "key")
-        ctrl = ctrl(item, path);
+      if (typeof ctrl === "function" && field === "key") ctrl = ctrl(item, path);
     }
   }
   return typeof ctrl === "function" ? ctrl(item, path) : ctrl;
@@ -5422,8 +4141,7 @@ var init_cst_visit = __esm({
         const tok = item?.[field];
         if (tok && "items" in tok) {
           item = tok.items[index];
-        } else
-          return void 0;
+        } else return void 0;
       }
       return item;
     };
@@ -5431,8 +4149,7 @@ var init_cst_visit = __esm({
       const parent = visit2.itemAtPath(cst, path.slice(0, -1));
       const field = path[path.length - 1][0];
       const coll = parent?.[field];
-      if (coll && "items" in coll)
-        return coll;
+      if (coll && "items" in coll) return coll;
       throw new Error("Parent collection not found");
     };
   }
@@ -5579,33 +4296,22 @@ var init_lexer = __esm({
         this.next = null;
         this.pos = 0;
       }
-      /**
-       * Generate YAML tokens from the `source` string. If `incomplete`,
-       * a part of the last line may be left as a buffer for the next call.
-       *
-       * @returns A generator of lexical tokens
-       */
       *lex(source, incomplete = false) {
         if (source) {
-          if (typeof source !== "string")
-            throw TypeError("source is not a string");
+          if (typeof source !== "string") throw TypeError("source is not a string");
           this.buffer = this.buffer ? this.buffer + source : source;
           this.lineEndPos = null;
         }
         this.atEnd = !incomplete;
         let next = this.next ?? "stream";
-        while (next && (incomplete || this.hasChars(1)))
-          next = yield* this.parseNext(next);
+        while (next && (incomplete || this.hasChars(1))) next = yield* this.parseNext(next);
       }
       atLineEnd() {
         let i = this.pos;
         let ch = this.buffer[i];
-        while (ch === " " || ch === "	")
-          ch = this.buffer[++i];
-        if (!ch || ch === "#" || ch === "\n")
-          return true;
-        if (ch === "\r")
-          return this.buffer[i + 1] === "\n";
+        while (ch === " " || ch === "	") ch = this.buffer[++i];
+        if (!ch || ch === "#" || ch === "\n") return true;
+        if (ch === "\r") return this.buffer[i + 1] === "\n";
         return false;
       }
       charAt(n) {
@@ -5615,19 +4321,16 @@ var init_lexer = __esm({
         let ch = this.buffer[offset];
         if (this.indentNext > 0) {
           let indent = 0;
-          while (ch === " ")
-            ch = this.buffer[++indent + offset];
+          while (ch === " ") ch = this.buffer[++indent + offset];
           if (ch === "\r") {
             const next = this.buffer[indent + offset + 1];
-            if (next === "\n" || !next && !this.atEnd)
-              return offset + indent + 1;
+            if (next === "\n" || !next && !this.atEnd) return offset + indent + 1;
           }
           return ch === "\n" || indent >= this.indentNext || !ch && !this.atEnd ? offset + indent : -1;
         }
         if (ch === "-" || ch === ".") {
           const dt2 = this.buffer.substr(offset, 3);
-          if ((dt2 === "---" || dt2 === "...") && isEmpty(this.buffer[offset + 3]))
-            return -1;
+          if ((dt2 === "---" || dt2 === "...") && isEmpty(this.buffer[offset + 3])) return -1;
         }
         return offset;
       }
@@ -5637,10 +4340,8 @@ var init_lexer = __esm({
           end = this.buffer.indexOf("\n", this.pos);
           this.lineEndPos = end;
         }
-        if (end === -1)
-          return this.atEnd ? this.buffer.substring(this.pos) : null;
-        if (this.buffer[end - 1] === "\r")
-          end -= 1;
+        if (end === -1) return this.atEnd ? this.buffer.substring(this.pos) : null;
+        if (this.buffer[end - 1] === "\r") end -= 1;
         return this.buffer.substring(this.pos, end);
       }
       hasChars(n) {
@@ -5678,8 +4379,7 @@ var init_lexer = __esm({
       }
       *parseStream() {
         let line = this.getLine();
-        if (line === null)
-          return this.setNext("stream");
+        if (line === null) return this.setNext("stream");
         if (line[0] === BOM) {
           yield* this.pushCount(1);
           line = line.substring(1);
@@ -5698,10 +4398,8 @@ var init_lexer = __esm({
           }
           while (true) {
             const ch = line[dirEnd - 1];
-            if (ch === " " || ch === "	")
-              dirEnd -= 1;
-            else
-              break;
+            if (ch === " " || ch === "	") dirEnd -= 1;
+            else break;
           }
           const n = (yield* this.pushCount(dirEnd)) + (yield* this.pushSpaces(true));
           yield* this.pushCount(line.length - n);
@@ -5719,11 +4417,9 @@ var init_lexer = __esm({
       }
       *parseLineStart() {
         const ch = this.charAt(0);
-        if (!ch && !this.atEnd)
-          return this.setNext("line-start");
+        if (!ch && !this.atEnd) return this.setNext("line-start");
         if (ch === "-" || ch === ".") {
-          if (!this.atEnd && !this.hasChars(4))
-            return this.setNext("line-start");
+          if (!this.atEnd && !this.hasChars(4)) return this.setNext("line-start");
           const s = this.peek(3);
           if ((s === "---" || s === "...") && isEmpty(this.charAt(3))) {
             yield* this.pushCount(3);
@@ -5733,14 +4429,12 @@ var init_lexer = __esm({
           }
         }
         this.indentValue = yield* this.pushSpaces(false);
-        if (this.indentNext > this.indentValue && !isEmpty(this.charAt(1)))
-          this.indentNext = this.indentValue;
+        if (this.indentNext > this.indentValue && !isEmpty(this.charAt(1))) this.indentNext = this.indentValue;
         return yield* this.parseBlockStart();
       }
       *parseBlockStart() {
         const [ch0, ch1] = this.peek(2);
-        if (!ch1 && !this.atEnd)
-          return this.setNext("block-start");
+        if (!ch1 && !this.atEnd) return this.setNext("block-start");
         if ((ch0 === "-" || ch0 === "?" || ch0 === ":") && isEmpty(ch1)) {
           const n = (yield* this.pushCount(1)) + (yield* this.pushSpaces(true));
           this.indentNext = this.indentValue + 1;
@@ -5752,13 +4446,11 @@ var init_lexer = __esm({
       *parseDocument() {
         yield* this.pushSpaces(true);
         const line = this.getLine();
-        if (line === null)
-          return this.setNext("doc");
+        if (line === null) return this.setNext("doc");
         let n = yield* this.pushIndicators();
         switch (line[n]) {
           case "#":
             yield* this.pushCount(line.length - n);
-          // fallthrough
           case void 0:
             yield* this.pushNewline();
             return yield* this.parseLineStart();
@@ -5803,8 +4495,7 @@ var init_lexer = __esm({
           sp += yield* this.pushSpaces(true);
         } while (nl + sp > 0);
         const line = this.getLine();
-        if (line === null)
-          return this.setNext("flow");
+        if (line === null) return this.setNext("flow");
         if (indent !== -1 && indent < this.indentNext && line[0] !== "#" || indent === 0 && (line.startsWith("---") || line.startsWith("...")) && isEmpty(line[3])) {
           const atFlowEndMarker = indent === this.indentNext - 1 && this.flowLevel === 1 && (line[0] === "]" || line[0] === "}");
           if (!atFlowEndMarker) {
@@ -5854,7 +4545,6 @@ var init_lexer = __esm({
               return "flow";
             }
           }
-          // fallthrough
           default:
             this.flowKey = false;
             return yield* this.parsePlainScalar();
@@ -5864,15 +4554,12 @@ var init_lexer = __esm({
         const quote = this.charAt(0);
         let end = this.buffer.indexOf(quote, this.pos + 1);
         if (quote === "'") {
-          while (end !== -1 && this.buffer[end + 1] === "'")
-            end = this.buffer.indexOf("'", end + 2);
+          while (end !== -1 && this.buffer[end + 1] === "'") end = this.buffer.indexOf("'", end + 2);
         } else {
           while (end !== -1) {
             let n = 0;
-            while (this.buffer[end - 1 - n] === "\\")
-              n += 1;
-            if (n % 2 === 0)
-              break;
+            while (this.buffer[end - 1 - n] === "\\") n += 1;
+            if (n % 2 === 0) break;
             end = this.buffer.indexOf('"', end + 1);
           }
         }
@@ -5881,8 +4568,7 @@ var init_lexer = __esm({
         if (nl !== -1) {
           while (nl !== -1) {
             const cs = this.continueScalar(nl + 1);
-            if (cs === -1)
-              break;
+            if (cs === -1) break;
             nl = qb.indexOf("\n", cs);
           }
           if (nl !== -1) {
@@ -5890,8 +4576,7 @@ var init_lexer = __esm({
           }
         }
         if (end === -1) {
-          if (!this.atEnd)
-            return this.setNext("quoted-scalar");
+          if (!this.atEnd) return this.setNext("quoted-scalar");
           end = this.buffer.length;
         }
         yield* this.pushToIndex(end + 1, false);
@@ -5903,12 +4588,9 @@ var init_lexer = __esm({
         let i = this.pos;
         while (true) {
           const ch = this.buffer[++i];
-          if (ch === "+")
-            this.blockScalarKeep = true;
-          else if (ch > "0" && ch <= "9")
-            this.blockScalarIndent = Number(ch) - 1;
-          else if (ch !== "-")
-            break;
+          if (ch === "+") this.blockScalarKeep = true;
+          else if (ch > "0" && ch <= "9") this.blockScalarIndent = Number(ch) - 1;
+          else if (ch !== "-") break;
         }
         return yield* this.pushUntil((ch) => isEmpty(ch) || ch === "#");
       }
@@ -5927,57 +4609,44 @@ var init_lexer = __esm({
               break;
             case "\r": {
               const next = this.buffer[i2 + 1];
-              if (!next && !this.atEnd)
-                return this.setNext("block-scalar");
-              if (next === "\n")
-                break;
+              if (!next && !this.atEnd) return this.setNext("block-scalar");
+              if (next === "\n") break;
             }
-            // fallthrough
             default:
               break loop;
           }
         }
-        if (!ch && !this.atEnd)
-          return this.setNext("block-scalar");
+        if (!ch && !this.atEnd) return this.setNext("block-scalar");
         if (indent >= this.indentNext) {
-          if (this.blockScalarIndent === -1)
-            this.indentNext = indent;
+          if (this.blockScalarIndent === -1) this.indentNext = indent;
           else {
             this.indentNext = this.blockScalarIndent + (this.indentNext === 0 ? 1 : this.indentNext);
           }
           do {
             const cs = this.continueScalar(nl + 1);
-            if (cs === -1)
-              break;
+            if (cs === -1) break;
             nl = this.buffer.indexOf("\n", cs);
           } while (nl !== -1);
           if (nl === -1) {
-            if (!this.atEnd)
-              return this.setNext("block-scalar");
+            if (!this.atEnd) return this.setNext("block-scalar");
             nl = this.buffer.length;
           }
         }
         let i = nl + 1;
         ch = this.buffer[i];
-        while (ch === " ")
-          ch = this.buffer[++i];
+        while (ch === " ") ch = this.buffer[++i];
         if (ch === "	") {
-          while (ch === "	" || ch === " " || ch === "\r" || ch === "\n")
-            ch = this.buffer[++i];
+          while (ch === "	" || ch === " " || ch === "\r" || ch === "\n") ch = this.buffer[++i];
           nl = i - 1;
         } else if (!this.blockScalarKeep) {
           do {
             let i2 = nl - 1;
             let ch2 = this.buffer[i2];
-            if (ch2 === "\r")
-              ch2 = this.buffer[--i2];
+            if (ch2 === "\r") ch2 = this.buffer[--i2];
             const lastChar = i2;
-            while (ch2 === " ")
-              ch2 = this.buffer[--i2];
-            if (ch2 === "\n" && i2 >= this.pos && i2 + 1 + indent > lastChar)
-              nl = i2;
-            else
-              break;
+            while (ch2 === " ") ch2 = this.buffer[--i2];
+            if (ch2 === "\n" && i2 >= this.pos && i2 + 1 + indent > lastChar) nl = i2;
+            else break;
           } while (true);
         }
         yield SCALAR2;
@@ -5992,8 +4661,7 @@ var init_lexer = __esm({
         while (ch = this.buffer[++i]) {
           if (ch === ":") {
             const next = this.buffer[i + 1];
-            if (isEmpty(next) || inFlow && flowIndicatorChars.has(next))
-              break;
+            if (isEmpty(next) || inFlow && flowIndicatorChars.has(next)) break;
             end = i;
           } else if (isEmpty(ch)) {
             let next = this.buffer[i + 1];
@@ -6002,25 +4670,20 @@ var init_lexer = __esm({
                 i += 1;
                 ch = "\n";
                 next = this.buffer[i + 1];
-              } else
-                end = i;
+              } else end = i;
             }
-            if (next === "#" || inFlow && flowIndicatorChars.has(next))
-              break;
+            if (next === "#" || inFlow && flowIndicatorChars.has(next)) break;
             if (ch === "\n") {
               const cs = this.continueScalar(i + 1);
-              if (cs === -1)
-                break;
+              if (cs === -1) break;
               i = Math.max(i, cs - 2);
             }
           } else {
-            if (inFlow && flowIndicatorChars.has(ch))
-              break;
+            if (inFlow && flowIndicatorChars.has(ch)) break;
             end = i;
           }
         }
-        if (!ch && !this.atEnd)
-          return this.setNext("plain-scalar");
+        if (!ch && !this.atEnd) return this.setNext("plain-scalar");
         yield SCALAR2;
         yield* this.pushToIndex(end + 1, true);
         return inFlow ? "flow" : "doc";
@@ -6039,8 +4702,7 @@ var init_lexer = __esm({
           yield s;
           this.pos += s.length;
           return s.length;
-        } else if (allowEmpty)
-          yield "";
+        } else if (allowEmpty) yield "";
         return 0;
       }
       *pushIndicators() {
@@ -6056,17 +4718,13 @@ var init_lexer = __esm({
               n += yield* this.pushSpaces(true);
               continue loop;
             case "-":
-            // this is an error
             case "?":
-            // this is an error outside flow collections
             case ":": {
               const inFlow = this.flowLevel > 0;
               const ch1 = this.charAt(1);
               if (isEmpty(ch1) || inFlow && flowIndicatorChars.has(ch1)) {
-                if (!inFlow)
-                  this.indentNext = this.indentValue + 1;
-                else if (this.flowKey)
-                  this.flowKey = false;
+                if (!inFlow) this.indentNext = this.indentValue + 1;
+                else if (this.flowKey) this.flowKey = false;
                 n += yield* this.pushCount(1);
                 n += yield* this.pushSpaces(true);
                 continue loop;
@@ -6081,31 +4739,25 @@ var init_lexer = __esm({
         if (this.charAt(1) === "<") {
           let i = this.pos + 2;
           let ch = this.buffer[i];
-          while (!isEmpty(ch) && ch !== ">")
-            ch = this.buffer[++i];
+          while (!isEmpty(ch) && ch !== ">") ch = this.buffer[++i];
           return yield* this.pushToIndex(ch === ">" ? i + 1 : i, false);
         } else {
           let i = this.pos + 1;
           let ch = this.buffer[i];
           while (ch) {
-            if (tagChars.has(ch))
-              ch = this.buffer[++i];
+            if (tagChars.has(ch)) ch = this.buffer[++i];
             else if (ch === "%" && hexDigits.has(this.buffer[i + 1]) && hexDigits.has(this.buffer[i + 2])) {
               ch = this.buffer[i += 3];
-            } else
-              break;
+            } else break;
           }
           return yield* this.pushToIndex(i, false);
         }
       }
       *pushNewline() {
         const ch = this.buffer[this.pos];
-        if (ch === "\n")
-          return yield* this.pushCount(1);
-        else if (ch === "\r" && this.charAt(1) === "\n")
-          return yield* this.pushCount(2);
-        else
-          return 0;
+        if (ch === "\n") return yield* this.pushCount(1);
+        else if (ch === "\r" && this.charAt(1) === "\n") return yield* this.pushCount(2);
+        else return 0;
       }
       *pushSpaces(allowTabs) {
         let i = this.pos - 1;
@@ -6123,8 +4775,7 @@ var init_lexer = __esm({
       *pushUntil(test) {
         let i = this.pos;
         let ch = this.buffer[i];
-        while (!test(ch))
-          ch = this.buffer[++i];
+        while (!test(ch)) ch = this.buffer[++i];
         return yield* this.pushToIndex(i, false);
       }
     };
@@ -6144,15 +4795,11 @@ var init_line_counter = __esm({
           let high = this.lineStarts.length;
           while (low < high) {
             const mid = low + high >> 1;
-            if (this.lineStarts[mid] < offset)
-              low = mid + 1;
-            else
-              high = mid;
+            if (this.lineStarts[mid] < offset) low = mid + 1;
+            else high = mid;
           }
-          if (this.lineStarts[low] === offset)
-            return { line: low + 1, col: 1 };
-          if (low === 0)
-            return { line: 0, col: offset };
+          if (this.lineStarts[low] === offset) return { line: low + 1, col: 1 };
+          if (low === 0) return { line: 0, col: offset };
           const start = this.lineStarts[low - 1];
           return { line: low, col: offset - start + 1 };
         };
@@ -6163,9 +4810,7 @@ var init_line_counter = __esm({
 
 // node_modules/yaml/browser/dist/parse/parser.js
 function includesToken(list, type) {
-  for (let i = 0; i < list.length; ++i)
-    if (list[i].type === type)
-      return true;
+  for (let i = 0; i < list.length; ++i) if (list[i].type === type) return true;
   return false;
 }
 function findNonEmptyIndex(list) {
@@ -6203,14 +4848,12 @@ function getPrevProps(parent) {
     }
     case "block-seq":
       return parent.items[parent.items.length - 1].start;
-    /* istanbul ignore next should not happen */
     default:
       return [];
   }
 }
 function getFirstKeyStartProps(prev) {
-  if (prev.length === 0)
-    return [];
+  if (prev.length === 0) return [];
   let i = prev.length;
   loop: while (--i >= 0) {
     switch (prev[i].type) {
@@ -6227,26 +4870,19 @@ function getFirstKeyStartProps(prev) {
   return prev.splice(i, prev.length);
 }
 function arrayPushArray(target, source) {
-  if (source.length < 1e5)
-    Array.prototype.push.apply(target, source);
-  else
-    for (let i = 0; i < source.length; ++i)
-      target.push(source[i]);
+  if (source.length < 1e5) Array.prototype.push.apply(target, source);
+  else for (let i = 0; i < source.length; ++i) target.push(source[i]);
 }
 function fixFlowSeqItems(fc) {
   if (fc.start.type === "flow-seq-start") {
     for (const it2 of fc.items) {
       if (it2.sep && !it2.value && !includesToken(it2.start, "explicit-key-ind") && !includesToken(it2.sep, "map-value-ind")) {
-        if (it2.key)
-          it2.value = it2.key;
+        if (it2.key) it2.value = it2.key;
         delete it2.key;
         if (isFlowToken(it2.value)) {
-          if (it2.value.end)
-            arrayPushArray(it2.value.end, it2.sep);
-          else
-            it2.value.end = it2.sep;
-        } else
-          arrayPushArray(it2.start, it2.sep);
+          if (it2.value.end) arrayPushArray(it2.value.end, it2.sep);
+          else it2.value.end = it2.sep;
+        } else arrayPushArray(it2.start, it2.sep);
         delete it2.sep;
       }
     }
@@ -6258,10 +4894,6 @@ var init_parser = __esm({
     init_cst();
     init_lexer();
     Parser = class {
-      /**
-       * @param onNewLine - If defined, called separately with the start position of
-       *   each new line (in `parse()`, including the start of input).
-       */
       constructor(onNewLine) {
         this.atNewLine = true;
         this.atScalar = false;
@@ -6274,25 +4906,11 @@ var init_parser = __esm({
         this.lexer = new Lexer();
         this.onNewLine = onNewLine;
       }
-      /**
-       * Parse `source` as a YAML stream.
-       * If `incomplete`, a part of the last line may be left as a buffer for the next call.
-       *
-       * Errors are not thrown, but yielded as `{ type: 'error', message }` tokens.
-       *
-       * @returns A generator of tokens representing each directive, document, and other structure.
-       */
       *parse(source, incomplete = false) {
-        if (this.onNewLine && this.offset === 0)
-          this.onNewLine(0);
-        for (const lexeme of this.lexer.lex(source, incomplete))
-          yield* this.next(lexeme);
-        if (!incomplete)
-          yield* this.end();
+        if (this.onNewLine && this.offset === 0) this.onNewLine(0);
+        for (const lexeme of this.lexer.lex(source, incomplete)) yield* this.next(lexeme);
+        if (!incomplete) yield* this.end();
       }
-      /**
-       * Advance the parser by the `source` of one lexical token.
-       */
       *next(source) {
         this.source = source;
         if (this.atScalar) {
@@ -6317,18 +4935,15 @@ var init_parser = __esm({
             case "newline":
               this.atNewLine = true;
               this.indent = 0;
-              if (this.onNewLine)
-                this.onNewLine(this.offset + source.length);
+              if (this.onNewLine) this.onNewLine(this.offset + source.length);
               break;
             case "space":
-              if (this.atNewLine && source[0] === " ")
-                this.indent += source.length;
+              if (this.atNewLine && source[0] === " ") this.indent += source.length;
               break;
             case "explicit-key-ind":
             case "map-value-ind":
             case "seq-item-ind":
-              if (this.atNewLine)
-                this.indent += source.length;
+              if (this.atNewLine) this.indent += source.length;
               break;
             case "doc-mode":
             case "flow-error-end":
@@ -6339,34 +4954,21 @@ var init_parser = __esm({
           this.offset += source.length;
         }
       }
-      /** Call at end of input to push out any remaining constructions */
       *end() {
-        while (this.stack.length > 0)
-          yield* this.pop();
+        while (this.stack.length > 0) yield* this.pop();
       }
       get sourceToken() {
-        const st2 = {
-          type: this.type,
-          offset: this.offset,
-          indent: this.indent,
-          source: this.source
-        };
+        const st2 = { type: this.type, offset: this.offset, indent: this.indent, source: this.source };
         return st2;
       }
       *step() {
         const top = this.peek(1);
         if (this.type === "doc-end" && top?.type !== "doc-end") {
-          while (this.stack.length > 0)
-            yield* this.pop();
-          this.stack.push({
-            type: "doc-end",
-            offset: this.offset,
-            source: this.source
-          });
+          while (this.stack.length > 0) yield* this.pop();
+          this.stack.push({ type: "doc-end", offset: this.offset, source: this.source });
           return;
         }
-        if (!top)
-          return yield* this.stream();
+        if (!top) return yield* this.stream();
         switch (top.type) {
           case "document":
             return yield* this.document(top);
@@ -6405,8 +5007,7 @@ var init_parser = __esm({
           } else if (token.type === "flow-collection" && top.type === "document") {
             token.indent = 0;
           }
-          if (token.type === "flow-collection")
-            fixFlowSeqItems(token);
+          if (token.type === "flow-collection") fixFlowSeqItems(token);
           switch (top.type) {
             case "document":
               top.value = token;
@@ -6431,23 +5032,17 @@ var init_parser = __esm({
             }
             case "block-seq": {
               const it2 = top.items[top.items.length - 1];
-              if (it2.value)
-                top.items.push({ start: [], value: token });
-              else
-                it2.value = token;
+              if (it2.value) top.items.push({ start: [], value: token });
+              else it2.value = token;
               break;
             }
             case "flow-collection": {
               const it2 = top.items[top.items.length - 1];
-              if (!it2 || it2.value)
-                top.items.push({ start: [], key: token, sep: [] });
-              else if (it2.sep)
-                it2.value = token;
-              else
-                Object.assign(it2, { key: token, sep: [] });
+              if (!it2 || it2.value) top.items.push({ start: [], key: token, sep: [] });
+              else if (it2.sep) it2.value = token;
+              else Object.assign(it2, { key: token, sep: [] });
               return;
             }
-            /* istanbul ignore next should not happen */
             default:
               yield* this.pop();
               yield* this.pop(token);
@@ -6455,10 +5050,8 @@ var init_parser = __esm({
           if ((top.type === "document" || top.type === "block-map" || top.type === "block-seq") && (token.type === "block-map" || token.type === "block-seq")) {
             const last = token.items[token.items.length - 1];
             if (last && !last.sep && !last.value && last.start.length > 0 && findNonEmptyIndex(last.start) === -1 && (token.indent === 0 || last.start.every((st2) => st2.type !== "comment" || st2.indent < token.indent))) {
-              if (top.type === "document")
-                top.end = last.start;
-              else
-                top.items.push({ start: last.start });
+              if (top.type === "document") top.end = last.start;
+              else top.items.push({ start: last.start });
               token.items.splice(-1, 1);
             }
           }
@@ -6477,34 +5070,22 @@ var init_parser = __esm({
             return;
           case "doc-mode":
           case "doc-start": {
-            const doc = {
-              type: "document",
-              offset: this.offset,
-              start: []
-            };
-            if (this.type === "doc-start")
-              doc.start.push(this.sourceToken);
+            const doc = { type: "document", offset: this.offset, start: [] };
+            if (this.type === "doc-start") doc.start.push(this.sourceToken);
             this.stack.push(doc);
             return;
           }
         }
-        yield {
-          type: "error",
-          offset: this.offset,
-          message: `Unexpected ${this.type} token in YAML stream`,
-          source: this.source
-        };
+        yield { type: "error", offset: this.offset, message: `Unexpected ${this.type} token in YAML stream`, source: this.source };
       }
       *document(doc) {
-        if (doc.value)
-          return yield* this.lineEnd(doc);
+        if (doc.value) return yield* this.lineEnd(doc);
         switch (this.type) {
           case "doc-start": {
             if (findNonEmptyIndex(doc.start) !== -1) {
               yield* this.pop();
               yield* this.step();
-            } else
-              doc.start.push(this.sourceToken);
+            } else doc.start.push(this.sourceToken);
             return;
           }
           case "anchor":
@@ -6516,15 +5097,9 @@ var init_parser = __esm({
             return;
         }
         const bv = this.startBlockValue(doc);
-        if (bv)
-          this.stack.push(bv);
+        if (bv) this.stack.push(bv);
         else {
-          yield {
-            type: "error",
-            offset: this.offset,
-            message: `Unexpected ${this.type} token in YAML document`,
-            source: this.source
-          };
+          yield { type: "error", offset: this.offset, message: `Unexpected ${this.type} token in YAML document`, source: this.source };
         }
       }
       *scalar(scalar) {
@@ -6536,18 +5111,11 @@ var init_parser = __esm({
             sep4 = scalar.end;
             sep4.push(this.sourceToken);
             delete scalar.end;
-          } else
-            sep4 = [this.sourceToken];
-          const map2 = {
-            type: "block-map",
-            offset: scalar.offset,
-            indent: scalar.indent,
-            items: [{ start, key: scalar, sep: sep4 }]
-          };
+          } else sep4 = [this.sourceToken];
+          const map2 = { type: "block-map", offset: scalar.offset, indent: scalar.indent, items: [{ start, key: scalar, sep: sep4 }] };
           this.onKeyLine = true;
           this.stack[this.stack.length - 1] = map2;
-        } else
-          yield* this.lineEnd(scalar);
+        } else yield* this.lineEnd(scalar);
       }
       *blockScalar(scalar) {
         switch (this.type) {
@@ -6569,7 +5137,6 @@ var init_parser = __esm({
             }
             yield* this.pop();
             break;
-          /* istanbul ignore next should not happen */
           default:
             yield* this.pop();
             yield* this.step();
@@ -6583,10 +5150,8 @@ var init_parser = __esm({
             if (it2.value) {
               const end = "end" in it2.value ? it2.value.end : void 0;
               const last = Array.isArray(end) ? end[end.length - 1] : void 0;
-              if (last?.type === "comment")
-                end?.push(this.sourceToken);
-              else
-                map2.items.push({ start: [this.sourceToken] });
+              if (last?.type === "comment") end?.push(this.sourceToken);
+              else map2.items.push({ start: [this.sourceToken] });
             } else if (it2.sep) {
               it2.sep.push(this.sourceToken);
             } else {
@@ -6629,15 +5194,13 @@ var init_parser = __esm({
                 case "space":
                   break;
                 case "comment":
-                  if (st2.indent > map2.indent)
-                    nl.length = 0;
+                  if (st2.indent > map2.indent) nl.length = 0;
                   break;
                 default:
                   nl.length = 0;
               }
             }
-            if (nl.length >= 2)
-              start = it2.sep.splice(nl[1]);
+            if (nl.length >= 2) start = it2.sep.splice(nl[1]);
           }
           switch (this.type) {
             case "anchor":
@@ -6660,12 +5223,7 @@ var init_parser = __esm({
                 start.push(this.sourceToken);
                 map2.items.push({ start, explicitKey: true });
               } else {
-                this.stack.push({
-                  type: "block-map",
-                  offset: this.offset,
-                  indent: this.indent,
-                  items: [{ start: [this.sourceToken], explicitKey: true }]
-                });
+                this.stack.push({ type: "block-map", offset: this.offset, indent: this.indent, items: [{ start: [this.sourceToken], explicitKey: true }] });
               }
               this.onKeyLine = true;
               return;
@@ -6676,22 +5234,12 @@ var init_parser = __esm({
                     Object.assign(it2, { key: null, sep: [this.sourceToken] });
                   } else {
                     const start2 = getFirstKeyStartProps(it2.start);
-                    this.stack.push({
-                      type: "block-map",
-                      offset: this.offset,
-                      indent: this.indent,
-                      items: [{ start: start2, key: null, sep: [this.sourceToken] }]
-                    });
+                    this.stack.push({ type: "block-map", offset: this.offset, indent: this.indent, items: [{ start: start2, key: null, sep: [this.sourceToken] }] });
                   }
                 } else if (it2.value) {
                   map2.items.push({ start: [], key: null, sep: [this.sourceToken] });
                 } else if (includesToken(it2.sep, "map-value-ind")) {
-                  this.stack.push({
-                    type: "block-map",
-                    offset: this.offset,
-                    indent: this.indent,
-                    items: [{ start, key: null, sep: [this.sourceToken] }]
-                  });
+                  this.stack.push({ type: "block-map", offset: this.offset, indent: this.indent, items: [{ start, key: null, sep: [this.sourceToken] }] });
                 } else if (isFlowToken(it2.key) && !includesToken(it2.sep, "newline")) {
                   const start2 = getFirstKeyStartProps(it2.start);
                   const key = it2.key;
@@ -6699,12 +5247,7 @@ var init_parser = __esm({
                   sep4.push(this.sourceToken);
                   delete it2.key;
                   delete it2.sep;
-                  this.stack.push({
-                    type: "block-map",
-                    offset: this.offset,
-                    indent: this.indent,
-                    items: [{ start: start2, key, sep: sep4 }]
-                  });
+                  this.stack.push({ type: "block-map", offset: this.offset, indent: this.indent, items: [{ start: start2, key, sep: sep4 }] });
                 } else if (start.length > 0) {
                   it2.sep = it2.sep.concat(start, this.sourceToken);
                 } else {
@@ -6716,12 +5259,7 @@ var init_parser = __esm({
                 } else if (it2.value || atNextItem) {
                   map2.items.push({ start, key: null, sep: [this.sourceToken] });
                 } else if (includesToken(it2.sep, "map-value-ind")) {
-                  this.stack.push({
-                    type: "block-map",
-                    offset: this.offset,
-                    indent: this.indent,
-                    items: [{ start: [], key: null, sep: [this.sourceToken] }]
-                  });
+                  this.stack.push({ type: "block-map", offset: this.offset, indent: this.indent, items: [{ start: [], key: null, sep: [this.sourceToken] }] });
                 } else {
                   it2.sep.push(this.sourceToken);
                 }
@@ -6749,12 +5287,7 @@ var init_parser = __esm({
               if (bv) {
                 if (bv.type === "block-seq") {
                   if (!it2.explicitKey && it2.sep && !includesToken(it2.sep, "newline")) {
-                    yield* this.pop({
-                      type: "error",
-                      offset: this.offset,
-                      message: "Unexpected block-seq-ind on same line with key",
-                      source: this.source
-                    });
+                    yield* this.pop({ type: "error", offset: this.offset, message: "Unexpected block-seq-ind on same line with key", source: this.source });
                     return;
                   }
                 } else if (atMapIndent) {
@@ -6776,17 +5309,13 @@ var init_parser = __esm({
             if (it2.value) {
               const end = "end" in it2.value ? it2.value.end : void 0;
               const last = Array.isArray(end) ? end[end.length - 1] : void 0;
-              if (last?.type === "comment")
-                end?.push(this.sourceToken);
-              else
-                seq2.items.push({ start: [this.sourceToken] });
-            } else
-              it2.start.push(this.sourceToken);
+              if (last?.type === "comment") end?.push(this.sourceToken);
+              else seq2.items.push({ start: [this.sourceToken] });
+            } else it2.start.push(this.sourceToken);
             return;
           case "space":
           case "comment":
-            if (it2.value)
-              seq2.items.push({ start: [this.sourceToken] });
+            if (it2.value) seq2.items.push({ start: [this.sourceToken] });
             else {
               if (this.atIndentedComment(it2.start, seq2.indent)) {
                 const prev = seq2.items[seq2.items.length - 2];
@@ -6803,17 +5332,13 @@ var init_parser = __esm({
             return;
           case "anchor":
           case "tag":
-            if (it2.value || this.indent <= seq2.indent)
-              break;
+            if (it2.value || this.indent <= seq2.indent) break;
             it2.start.push(this.sourceToken);
             return;
           case "seq-item-ind":
-            if (this.indent !== seq2.indent)
-              break;
-            if (it2.value || includesToken(it2.start, "seq-item-ind"))
-              seq2.items.push({ start: [this.sourceToken] });
-            else
-              it2.start.push(this.sourceToken);
+            if (this.indent !== seq2.indent) break;
+            if (it2.value || includesToken(it2.start, "seq-item-ind")) seq2.items.push({ start: [this.sourceToken] });
+            else it2.start.push(this.sourceToken);
             return;
         }
         if (this.indent > seq2.indent) {
@@ -6838,42 +5363,31 @@ var init_parser = __esm({
           switch (this.type) {
             case "comma":
             case "explicit-key-ind":
-              if (!it2 || it2.sep)
-                fc.items.push({ start: [this.sourceToken] });
-              else
-                it2.start.push(this.sourceToken);
+              if (!it2 || it2.sep) fc.items.push({ start: [this.sourceToken] });
+              else it2.start.push(this.sourceToken);
               return;
             case "map-value-ind":
-              if (!it2 || it2.value)
-                fc.items.push({ start: [], key: null, sep: [this.sourceToken] });
-              else if (it2.sep)
-                it2.sep.push(this.sourceToken);
-              else
-                Object.assign(it2, { key: null, sep: [this.sourceToken] });
+              if (!it2 || it2.value) fc.items.push({ start: [], key: null, sep: [this.sourceToken] });
+              else if (it2.sep) it2.sep.push(this.sourceToken);
+              else Object.assign(it2, { key: null, sep: [this.sourceToken] });
               return;
             case "space":
             case "comment":
             case "newline":
             case "anchor":
             case "tag":
-              if (!it2 || it2.value)
-                fc.items.push({ start: [this.sourceToken] });
-              else if (it2.sep)
-                it2.sep.push(this.sourceToken);
-              else
-                it2.start.push(this.sourceToken);
+              if (!it2 || it2.value) fc.items.push({ start: [this.sourceToken] });
+              else if (it2.sep) it2.sep.push(this.sourceToken);
+              else it2.start.push(this.sourceToken);
               return;
             case "alias":
             case "scalar":
             case "single-quoted-scalar":
             case "double-quoted-scalar": {
               const fs = this.flowScalar(this.type);
-              if (!it2 || it2.value)
-                fc.items.push({ start: [], key: fs, sep: [] });
-              else if (it2.sep)
-                this.stack.push(fs);
-              else
-                Object.assign(it2, { key: fs, sep: [] });
+              if (!it2 || it2.value) fc.items.push({ start: [], key: fs, sep: [] });
+              else if (it2.sep) this.stack.push(fs);
+              else Object.assign(it2, { key: fs, sep: [] });
               return;
             }
             case "flow-map-end":
@@ -6882,8 +5396,7 @@ var init_parser = __esm({
               return;
           }
           const bv = this.startBlockValue(fc);
-          if (bv)
-            this.stack.push(bv);
+          if (bv) this.stack.push(bv);
           else {
             yield* this.pop();
             yield* this.step();
@@ -6899,12 +5412,7 @@ var init_parser = __esm({
             fixFlowSeqItems(fc);
             const sep4 = fc.end.splice(1, fc.end.length);
             sep4.push(this.sourceToken);
-            const map2 = {
-              type: "block-map",
-              offset: fc.offset,
-              indent: fc.indent,
-              items: [{ start, key: fc, sep: sep4 }]
-            };
+            const map2 = { type: "block-map", offset: fc.offset, indent: fc.indent, items: [{ start, key: fc, sep: sep4 }] };
             this.onKeyLine = true;
             this.stack[this.stack.length - 1] = map2;
           } else {
@@ -6920,12 +5428,7 @@ var init_parser = __esm({
             nl = this.source.indexOf("\n", nl) + 1;
           }
         }
-        return {
-          type,
-          offset: this.offset,
-          indent: this.indent,
-          source: this.source
-        };
+        return { type, offset: this.offset, indent: this.indent, source: this.source };
       }
       startBlockValue(parent) {
         switch (this.type) {
@@ -6935,71 +5438,38 @@ var init_parser = __esm({
           case "double-quoted-scalar":
             return this.flowScalar(this.type);
           case "block-scalar-header":
-            return {
-              type: "block-scalar",
-              offset: this.offset,
-              indent: this.indent,
-              props: [this.sourceToken],
-              source: ""
-            };
+            return { type: "block-scalar", offset: this.offset, indent: this.indent, props: [this.sourceToken], source: "" };
           case "flow-map-start":
           case "flow-seq-start":
-            return {
-              type: "flow-collection",
-              offset: this.offset,
-              indent: this.indent,
-              start: this.sourceToken,
-              items: [],
-              end: []
-            };
+            return { type: "flow-collection", offset: this.offset, indent: this.indent, start: this.sourceToken, items: [], end: [] };
           case "seq-item-ind":
-            return {
-              type: "block-seq",
-              offset: this.offset,
-              indent: this.indent,
-              items: [{ start: [this.sourceToken] }]
-            };
+            return { type: "block-seq", offset: this.offset, indent: this.indent, items: [{ start: [this.sourceToken] }] };
           case "explicit-key-ind": {
             this.onKeyLine = true;
             const prev = getPrevProps(parent);
             const start = getFirstKeyStartProps(prev);
             start.push(this.sourceToken);
-            return {
-              type: "block-map",
-              offset: this.offset,
-              indent: this.indent,
-              items: [{ start, explicitKey: true }]
-            };
+            return { type: "block-map", offset: this.offset, indent: this.indent, items: [{ start, explicitKey: true }] };
           }
           case "map-value-ind": {
             this.onKeyLine = true;
             const prev = getPrevProps(parent);
             const start = getFirstKeyStartProps(prev);
-            return {
-              type: "block-map",
-              offset: this.offset,
-              indent: this.indent,
-              items: [{ start, key: null, sep: [this.sourceToken] }]
-            };
+            return { type: "block-map", offset: this.offset, indent: this.indent, items: [{ start, key: null, sep: [this.sourceToken] }] };
           }
         }
         return null;
       }
       atIndentedComment(start, indent) {
-        if (this.type !== "comment")
-          return false;
-        if (this.indent <= indent)
-          return false;
+        if (this.type !== "comment") return false;
+        if (this.indent <= indent) return false;
         return start.every((st2) => st2.type === "newline" || st2.type === "space");
       }
       *documentEnd(docEnd) {
         if (this.type !== "doc-mode") {
-          if (docEnd.end)
-            docEnd.end.push(this.sourceToken);
-          else
-            docEnd.end = [this.sourceToken];
-          if (this.type === "newline")
-            yield* this.pop();
+          if (docEnd.end) docEnd.end.push(this.sourceToken);
+          else docEnd.end = [this.sourceToken];
+          if (this.type === "newline") yield* this.pop();
         }
       }
       *lineEnd(token) {
@@ -7015,16 +5485,12 @@ var init_parser = __esm({
             break;
           case "newline":
             this.onKeyLine = false;
-          // fallthrough
           case "space":
           case "comment":
           default:
-            if (token.end)
-              token.end.push(this.sourceToken);
-            else
-              token.end = [this.sourceToken];
-            if (this.type === "newline")
-              yield* this.pop();
+            if (token.end) token.end.push(this.sourceToken);
+            else token.end = [this.sourceToken];
+            if (this.type === "newline") yield* this.pop();
         }
       }
     };
@@ -7042,13 +5508,11 @@ function parseAllDocuments(source, options = {}) {
   const parser = new Parser(lineCounter?.addNewLine);
   const composer = new Composer(options);
   const docs = Array.from(composer.compose(parser.parse(source)));
-  if (prettyErrors && lineCounter)
-    for (const doc of docs) {
-      doc.errors.forEach(prettifyError(source, lineCounter));
-      doc.warnings.forEach(prettifyError(source, lineCounter));
-    }
-  if (docs.length > 0)
-    return docs;
+  if (prettyErrors && lineCounter) for (const doc of docs) {
+    doc.errors.forEach(prettifyError(source, lineCounter));
+    doc.warnings.forEach(prettifyError(source, lineCounter));
+  }
+  if (docs.length > 0) return docs;
   return Object.assign([], { empty: true }, composer.streamInfo());
 }
 function parseDocument(source, options = {}) {
@@ -7057,8 +5521,7 @@ function parseDocument(source, options = {}) {
   const composer = new Composer(options);
   let doc = null;
   for (const _doc of composer.compose(parser.parse(source), true, source.length)) {
-    if (!doc)
-      doc = _doc;
+    if (!doc) doc = _doc;
     else if (doc.options.logLevel !== "silent") {
       doc.errors.push(new YAMLParseError(_doc.range.slice(0, 2), "MULTIPLE_DOCS", "Source contains multiple documents; please use YAML.parseAllDocuments()"));
       break;
@@ -7078,14 +5541,11 @@ function parse(src, reviver, options) {
     options = reviver;
   }
   const doc = parseDocument(src, options);
-  if (!doc)
-    return null;
+  if (!doc) return null;
   doc.warnings.forEach((warning) => warn(doc.options.logLevel, warning));
   if (doc.errors.length > 0) {
-    if (doc.options.logLevel !== "silent")
-      throw doc.errors[0];
-    else
-      doc.errors = [];
+    if (doc.options.logLevel !== "silent") throw doc.errors[0];
+    else doc.errors = [];
   }
   return doc.toJS(Object.assign({ reviver: _reviver }, options));
 }
@@ -7096,19 +5556,16 @@ function stringify3(value, replacer, options) {
   } else if (options === void 0 && replacer) {
     options = replacer;
   }
-  if (typeof options === "string")
-    options = options.length;
+  if (typeof options === "string") options = options.length;
   if (typeof options === "number") {
     const indent = Math.round(options);
     options = indent < 1 ? void 0 : indent > 8 ? { indent: 8 } : { indent };
   }
   if (value === void 0) {
     const { keepUndefined } = options ?? replacer ?? {};
-    if (!keepUndefined)
-      return void 0;
+    if (!keepUndefined) return void 0;
   }
-  if (isDocument(value) && !_replacer)
-    return value.toString(options);
+  if (isDocument(value) && !_replacer) return value.toString(options);
   return new Document(value, _replacer, options).toString(options);
 }
 var init_public_api = __esm({
