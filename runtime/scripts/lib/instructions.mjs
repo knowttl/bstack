@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises'
 import { join, posix } from 'node:path'
 import { Lexer, Tokenizer } from 'marked'
 import { markdownTokens } from './document-references.mjs'
-import { repoFiles } from './discovery.mjs'
+import { readGit, repoFiles } from './discovery.mjs'
 import { matchesPath, pathGlob } from './glob.mjs'
 import { resolveFilePath } from './paths.mjs'
 import { validateData } from './schema.mjs'
@@ -14,18 +14,18 @@ const importDepth = 5
 const skillDescription = /^\.(?:claude|agents)\/skills\/[^/]+\/SKILL\.md$/
 const instructionFile = /(?:^|\/)(?:AGENTS\.md|CLAUDE\.md)$/
 
-export async function loadInstructionSettings(root) {
+export async function loadInstructionSettings(root, file = contractPath) {
   let text
-  try { text = await readFile(await resolveFilePath(root, contractPath), 'utf8') } catch (error) {
-    if (error.code === 'ENOENT') return { exclude: [] }
+  try { text = await readFile(await resolveFilePath(root, file), 'utf8') } catch (error) {
+    if (error.code === 'ENOENT') return { exclude: [], baseline: null }
     throw error
   }
   let contract
   try { contract = JSON.parse(text) } catch {
-    throw new CommandError('blocked', [{ code: 'contract-unavailable', path: contractPath, message: 'The project contract must be readable JSON.', fix: 'Repair .bstack/project.json or remove it.' }])
+    throw new CommandError('blocked', [{ code: 'contract-unavailable', path: file, message: 'The project contract must be readable JSON.', fix: `Repair ${file} or remove it.` }])
   }
   validateData(schema, contract)
-  return { exclude: contract.instructions?.exclude ?? [] }
+  return { exclude: contract.instructions?.exclude ?? [], baseline: contract.instructions?.baseline ?? null }
 }
 
 export async function includedFiles(root, exclude) {
@@ -99,4 +99,58 @@ export async function measureInstructions(root, files) {
   }
   const list = [...sources.values()]
   return { sources: list, total: Object.fromEntries(['bytes', 'lines', 'tokens'].map(key => [key, list.reduce((sum, source) => sum + source[key], 0)])) }
+}
+
+export async function checkInstructionGrowth(root, file) {
+  file ??= contractPath
+  const { exclude, baseline } = await loadInstructionSettings(root, file)
+  let path = file
+  let priorFile
+  const visited = new Set()
+  for (;;) {
+    const parts = path.split('/')
+    let linked = false
+    for (let i = 1; i <= parts.length; i++) {
+      const prefix = parts.slice(0, i).join('/')
+      const entry = readGit(root, ['ls-tree', 'origin/main', '--', prefix])
+      if (!entry.stdout.startsWith('120000 ')) continue
+      const target = readGit(root, ['show', `origin/main:${prefix}`])
+      path = posix.normalize(posix.join(posix.dirname(prefix), target.stdout, ...parts.slice(i)))
+      if (visited.has(path) || path === '..' || path.startsWith('../') || posix.isAbsolute(target.stdout)) {
+        throw new CommandError('blocked', [{ code: 'prior-contract-invalid', path: file, message: 'The origin/main project contract must be readable JSON.', fix: 'Repair the prior contract before comparing instruction baselines.' }])
+      }
+      visited.add(path)
+      linked = true
+      break
+    }
+    if (!linked) {
+      priorFile = readGit(root, ['show', `origin/main:${path}`])
+      break
+    }
+  }
+  let prior
+  if (priorFile.status === 0) {
+    try { prior = JSON.parse(priorFile.stdout) } catch {
+      throw new CommandError('blocked', [{ code: 'prior-contract-invalid', path: file, message: 'The origin/main project contract must be readable JSON.', fix: 'Repair the prior contract before comparing instruction baselines.' }])
+    }
+    validateData(schema, prior)
+  }
+  const previous = prior?.instructions?.baseline
+  if (priorFile.status !== 0) {
+    const { total } = await measureInstructions(root, await includedFiles(root, exclude))
+    if (baseline || total.bytes > 0) return [{ code: 'prior-unavailable-fetch-the-ref', path: file,
+      message: 'The prior instruction baseline cannot be verified.', fix: 'Fetch origin/main and restore the prior contract path before checking instruction growth.' }]
+    return []
+  }
+  if (!baseline) return previous ? [{ code: 'instructions-baseline-removed', path: file, message: 'The recorded instruction baseline was removed.',
+    fix: 'Restore instructions.baseline to keep the instruction growth gate active.' }] : []
+  const problems = []
+  if (previous && baseline.bytes > previous.bytes && (baseline.reason.trim() === previous.reason.trim() || baseline.reason.trim() === 'Measured when registered')) {
+    problems.push({ code: 'instructions-baseline-reason', path: file, message: 'The instruction baseline increased without a new growth reason.',
+      fix: 'Replace instructions.baseline.reason with a reason for the growth.' })
+  }
+  const { total } = await measureInstructions(root, await includedFiles(root, exclude))
+  if (total.bytes > baseline.bytes) problems.push({ code: 'instructions-grew', path: file, message: `Loaded instructions measure ${total.bytes} bytes, above the recorded baseline of ${baseline.bytes} bytes (${baseline.reason}).`,
+    fix: 'Shrink the instructions, or raise instructions.baseline.bytes to the new measure in the same change with a reason for the growth.' })
+  return problems
 }

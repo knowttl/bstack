@@ -107,9 +107,16 @@ After rebasing or changing the agreed base, recollect, review, bind and commit t
 node .bstack/bin/bstack-check.mjs --repo <path> --docs-only [--contract <repo-relative-file>] [--json]
 ```
 
-`--docs-only` runs `docs check` and the `docs generate --check` comparison on the current tree and nothing else, so it takes no base or assessment and starts no leaf command.
+`--docs-only` runs `docs check`, the `docs generate --check` comparison and the instruction growth check on the current tree and nothing else, so it takes no base or assessment and starts no leaf command.
 Supplying `--base`, `--assessment` or `--workspace` with it is a usage error (exit 3, problem code `docs-only-input`).
-Results use the shared exit codes: 0 when links, supported glossary structures and generated sections are current, 1 for a broken link, invalid or duplicate glossary entry or stale generated section, and 2 when the contract or a registered source cannot be read.
+When the contract records `instructions.baseline`, the check measures the loaded instructions as `instructions measure` does, applying `instructions.exclude`, and fails with `instructions-grew` when the total bytes exceed `baseline.bytes`.
+A change that needs more instructions raises `baseline.bytes` and replaces `baseline.reason` in the same change, and a baseline without a nonblank reason is a schema violation.
+The checker compares the selected contract with the same path at `origin/main` and reports `instructions-baseline-reason` when bytes increase without a changed reason or with `Measured when registered` as the new reason.
+If `origin/main` or the selected prior contract cannot be read, a current baseline or any loaded instruction bytes fail with `prior-unavailable-fetch-the-ref`, regardless of reason, because the prior baseline cannot be verified.
+If a readable prior contract has no baseline, first registration may use the initial reason.
+If the prior contract has a baseline, removing it fails with `instructions-baseline-removed`; a readable prior contract without a baseline permits a contract without a baseline.
+The full checker does not run the instruction check.
+Results use the shared exit codes: 0 when links, supported glossary structures and generated sections are current and instructions are within the baseline, 1 for a broken link, invalid or duplicate glossary entry, stale generated section, grown instructions, a removed baseline or an increased baseline without a new reason, and 2 when the contract or a registered source cannot be read.
 It is the command of the no-mistakes docs gate that the [maintenance skill](../skills/maintenance/SKILL.md) wires.
 
 ### Previous-policy execution

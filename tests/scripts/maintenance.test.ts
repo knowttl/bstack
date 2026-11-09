@@ -25,7 +25,7 @@ function canonical(value: unknown): string {
 
 function maintenance(directory: string, args: readonly string[]) {
   const env = { ...process.env, HOME: directory, USERPROFILE: directory, XDG_CACHE_HOME: join(directory, 'cache'), LOCALAPPDATA: join(directory, 'cache') }
-  const result = spawnSync(process.execPath, [entry, ...args, '--json'], { encoding: 'utf8', env })
+  const result = spawnSync(process.execPath, [entry, ...args, '--json'], { encoding: 'utf8', env, maxBuffer: Infinity })
   assert.equal(result.stderr, '')
   return { exit: result.status, ...JSON.parse(result.stdout) }
 }
@@ -159,6 +159,130 @@ test('the docs-only checker needs no base or assessment and rejects them', async
   const rejected = call(['--base', 'HEAD'])
   assert.equal(rejected.status, 3)
   assert.equal(JSON.parse(rejected.stdout).problems[0].code, 'docs-only-input')
+})
+
+test('the docs-only checker fails on instruction growth until the baseline is raised with a reason', async t => {
+  const f = await documentedRepo(t)
+  await writeFile(join(f.repo, 'AGENTS.md'), '# Agent instructions\n')
+  await writeFile(join(f.repo, 'CLAUDE.md'), '@AGENTS.md\n')
+  await mkdir(join(f.repo, 'tests/fixtures/shop'), { recursive: true })
+  await writeFile(join(f.repo, 'tests/fixtures/shop/AGENTS.md'), 'Fixture rules that are far larger than the baseline allows.\n'.repeat(20))
+  await mkdir(join(f.repo, '.bstack'))
+  const record = (instructions: object) => writeFile(join(f.repo, '.bstack/project.json'), JSON.stringify({ ...contract, instructions }))
+  const check = () => {
+    const result = spawnSync(process.execPath, [checker, '--repo', f.repo, '--docs-only', '--json'], { encoding: 'utf8' })
+    return { exit: result.status, ...JSON.parse(result.stdout) }
+  }
+  await record({ exclude: ['tests/fixtures/**'] })
+  const measured = maintenance(f.directory, ['instructions', 'measure', '--repo', f.repo])
+  assert.equal(measured.exit, 0, JSON.stringify(measured))
+  assert.equal(measured.data.total.bytes, 21 + 11)
+
+  await record({ exclude: ['tests/fixtures/**'], baseline: { bytes: measured.data.total.bytes, reason: 'Initial project guidance' } })
+  f.commit('initial baseline')
+  git(f.repo, 'update-ref', 'refs/remotes/origin/main', 'HEAD')
+  assert.equal(check().exit, 0)
+
+  await writeFile(join(f.repo, 'AGENTS.md'), '# Agent instructions\n\nNever commit secrets.\n')
+  const grown = check()
+  assert.equal(grown.exit, 1, JSON.stringify(grown))
+  assert.deepEqual(grown.problems.map((problem: NonNullable<typeof grown.problems>[number]) => problem.code), ['instructions-grew'])
+  assert.match(grown.problems[0].message, /above the recorded baseline of 32 bytes \(Initial project guidance\)/)
+
+  await record({ exclude: ['tests/fixtures/**'], baseline: { bytes: 55, reason: 'Secrets rule' } })
+  assert.equal(check().exit, 0)
+  await record({ exclude: ['tests/fixtures/**'], baseline: { bytes: 55 } })
+  const reasonless = check()
+  assert.equal(reasonless.exit, 1)
+  assert.equal(reasonless.problems[0].path, '$/instructions/baseline/reason')
+})
+
+for (const { name, previous, current, ref, path, expected } of [
+  { name: 'rejects an increase with the same reason', previous: { bytes: 100, reason: 'Measured when registered' }, current: { bytes: 200, reason: 'Measured when registered' }, expected: 'instructions-baseline-reason' },
+  { name: 'accepts an increase with a new reason', previous: { bytes: 100, reason: 'Measured when registered' }, current: { bytes: 200, reason: 'New guidance' }, expected: null },
+  { name: 'accepts a decrease with the same reason', previous: { bytes: 100, reason: 'Existing guidance' }, current: { bytes: 50, reason: 'Existing guidance' }, expected: null },
+  { name: 'accepts first registration without a prior baseline', previous: null, current: { bytes: 200, reason: 'Measured when registered' }, expected: null },
+  { name: 'rejects the initial reason without a prior contract', previous: undefined, current: { bytes: 200, reason: 'Measured when registered' }, expected: 'prior-unavailable-fetch-the-ref' },
+  { name: 'rejects the initial reason without origin main', previous: { bytes: 100, reason: 'Measured when registered' }, current: { bytes: 200, reason: 'Measured when registered' }, ref: false, expected: 'prior-unavailable-fetch-the-ref' },
+  { name: 'rejects a specific reason without a prior contract', previous: undefined, current: { bytes: 200, reason: 'Project guidance' }, path: 'policy.json', expected: 'prior-unavailable-fetch-the-ref' },
+  { name: 'rejects a retained reason without origin main', previous: { bytes: 100, reason: 'Project guidance' }, current: { bytes: 200, reason: 'Project guidance' }, ref: false, expected: 'prior-unavailable-fetch-the-ref' },
+  { name: 'rejects a fresh reason without origin main', previous: { bytes: 100, reason: 'Project guidance' }, current: { bytes: 200, reason: 'New guidance' }, ref: false, expected: 'prior-unavailable-fetch-the-ref' },
+  { name: 'checks a custom contract path', previous: { bytes: 100, reason: 'Existing guidance' }, current: { bytes: 200, reason: 'Existing guidance' }, path: 'policy.json', expected: 'instructions-baseline-reason' },
+  { name: 'rejects the registration reason on a later increase', previous: { bytes: 100, reason: 'Existing guidance' }, current: { bytes: 200, reason: 'Measured when registered' }, expected: 'instructions-baseline-reason' }
+]) {
+  test(`docs-only ${name}`, async t => {
+    const f = await documentedRepo(t)
+    await mkdir(join(f.repo, '.bstack'))
+    const contractFile = path ?? '.bstack/project.json'
+    if (previous !== undefined) await writeFile(join(f.repo, contractFile), JSON.stringify({ ...contract, instructions: previous ? { baseline: previous } : {} }))
+    f.commit('prior contract')
+    if (ref !== false) git(f.repo, 'update-ref', 'refs/remotes/origin/main', 'HEAD')
+    await writeFile(join(f.repo, contractFile), JSON.stringify({ ...contract, instructions: { baseline: current } }))
+    const result = spawnSync(process.execPath, [checker, '--repo', f.repo, '--docs-only', '--contract', contractFile, '--json'], { encoding: 'utf8' })
+    const output = JSON.parse(result.stdout)
+    assert.equal(result.status, expected ? 1 : 0, result.stdout + result.stderr)
+    assert.deepEqual(output.problems.map((problem: { code: string }) => problem.code), expected ? [expected] : [])
+  })
+}
+
+for (const ref of [true, false]) {
+  test(`docs-only rejects baseline removal when ${ref ? 'the prior path' : 'origin main'} is unavailable`, async t => {
+    const f = await documentedRepo(t)
+    await mkdir(join(f.repo, '.bstack'))
+    await writeFile(join(f.repo, '.bstack/project.json'), JSON.stringify({ ...contract, instructions: { baseline: { bytes: 10, reason: 'Project guidance' } } }))
+    f.commit('prior baseline')
+    if (ref) git(f.repo, 'update-ref', 'refs/remotes/origin/main', 'HEAD')
+    const contractFile = ref ? 'policy.json' : '.bstack/project.json'
+    await writeFile(join(f.repo, contractFile), JSON.stringify(contract))
+    await writeFile(join(f.repo, 'AGENTS.md'), 'New instructions.\n')
+    const result = spawnSync(process.execPath, [checker, '--repo', f.repo, '--docs-only', '--contract', contractFile, '--json'], { encoding: 'utf8' })
+    assert.equal(result.status, 1, result.stdout + result.stderr)
+    assert.deepEqual(JSON.parse(result.stdout).problems.map((problem: { code: string }) => problem.code), ['prior-unavailable-fetch-the-ref'])
+  })
+}
+
+test('docs-only compares the prior baseline through committed contract symlinks', async t => {
+  const f = await documentedRepo(t)
+  await mkdir(join(f.repo, '.bstack'))
+  await mkdir(join(f.repo, 'policy'))
+  await writeFile(join(f.repo, 'policy/contract.json'), JSON.stringify({ ...contract, instructions: { baseline: { bytes: 100, reason: 'Existing guidance' } } }))
+  await symlink('../policy/link.json', join(f.repo, '.bstack/project.json'))
+  await symlink('contract.json', join(f.repo, 'policy/link.json'))
+  f.commit('linked prior contract')
+  git(f.repo, 'update-ref', 'refs/remotes/origin/main', 'HEAD')
+  const check = () => spawnSync(process.execPath, [checker, '--repo', f.repo, '--docs-only', '--json'], { encoding: 'utf8' })
+  assert.equal(check().status, 0)
+  await writeFile(join(f.repo, 'policy/contract.json'), JSON.stringify({ ...contract, instructions: { baseline: { bytes: 200, reason: 'Existing guidance' } } }))
+  const result = check()
+  assert.equal(result.status, 1, result.stdout + result.stderr)
+  assert.deepEqual(JSON.parse(result.stdout).problems.map((problem: { code: string }) => problem.code), ['instructions-baseline-reason'])
+})
+
+for (const instructions of [undefined, {}]) {
+  test(`docs-only rejects removal of ${instructions ? 'the baseline' : 'instruction settings'}`, async t => {
+    const f = await documentedRepo(t)
+    await mkdir(join(f.repo, '.bstack'))
+    const contractFile = join(f.repo, '.bstack/project.json')
+    await writeFile(contractFile, JSON.stringify({ ...contract, instructions: { baseline: { bytes: 100, reason: 'Existing guidance' } } }))
+    f.commit('prior baseline')
+    git(f.repo, 'update-ref', 'refs/remotes/origin/main', 'HEAD')
+    await writeFile(contractFile, JSON.stringify({ ...contract, instructions }))
+    await writeFile(join(f.repo, 'AGENTS.md'), 'New instructions.\n'.repeat(20))
+    const result = spawnSync(process.execPath, [checker, '--repo', f.repo, '--docs-only', '--json'], { encoding: 'utf8' })
+    assert.equal(result.status, 1, result.stdout + result.stderr)
+    assert.deepEqual(JSON.parse(result.stdout).problems.map((problem: { code: string }) => problem.code), ['instructions-baseline-removed'])
+  })
+}
+
+test('docs-only permits a contract without a first baseline', async t => {
+  const f = await documentedRepo(t)
+  await mkdir(join(f.repo, '.bstack'))
+  await writeFile(join(f.repo, '.bstack/project.json'), JSON.stringify(contract))
+  f.commit('contract without baseline')
+  git(f.repo, 'update-ref', 'refs/remotes/origin/main', 'HEAD')
+  const result = spawnSync(process.execPath, [checker, '--repo', f.repo, '--docs-only', '--json'], { encoding: 'utf8' })
+  assert.equal(result.status, 0, result.stdout + result.stderr)
+  assert.deepEqual(JSON.parse(result.stdout).problems, [])
 })
 
 test('sweep names the mode that fixes each seeded drift, and writes nothing', async t => {

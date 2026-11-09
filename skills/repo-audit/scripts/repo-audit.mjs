@@ -1964,7 +1964,16 @@ var project_schema_default = {
       type: "object",
       additionalProperties: false,
       properties: {
-        exclude: { type: "array", uniqueItems: true, items: { type: "string", minLength: 1 } }
+        exclude: { type: "array", uniqueItems: true, items: { type: "string", minLength: 1 } },
+        baseline: {
+          type: "object",
+          additionalProperties: false,
+          required: ["bytes", "reason"],
+          properties: {
+            bytes: { type: "integer" },
+            reason: { type: "string", minLength: 1, pattern: "\\S" }
+          }
+        }
       }
     },
     acceptanceSources: {
@@ -1985,22 +1994,22 @@ var project_schema_default = {
 
 // runtime/scripts/lib/instructions.mjs
 var contractPath = ".bstack/project.json";
-async function loadInstructionSettings(root) {
+async function loadInstructionSettings(root, file = contractPath) {
   let text;
   try {
-    text = await readFile2(await resolveFilePath(root, contractPath), "utf8");
+    text = await readFile2(await resolveFilePath(root, file), "utf8");
   } catch (error) {
-    if (error.code === "ENOENT") return { exclude: [] };
+    if (error.code === "ENOENT") return { exclude: [], baseline: null };
     throw error;
   }
   let contract;
   try {
     contract = JSON.parse(text);
   } catch {
-    throw new CommandError("blocked", [{ code: "contract-unavailable", path: contractPath, message: "The project contract must be readable JSON.", fix: "Repair .bstack/project.json or remove it." }]);
+    throw new CommandError("blocked", [{ code: "contract-unavailable", path: file, message: "The project contract must be readable JSON.", fix: `Repair ${file} or remove it.` }]);
   }
   validateData(project_schema_default, contract);
-  return { exclude: contract.instructions?.exclude ?? [] };
+  return { exclude: contract.instructions?.exclude ?? [], baseline: contract.instructions?.baseline ?? null };
 }
 async function includedFiles(root, exclude) {
   const globs = exclude.map(pathGlob);

@@ -2106,7 +2106,16 @@ var project_schema_default = {
       type: "object",
       additionalProperties: false,
       properties: {
-        exclude: { type: "array", uniqueItems: true, items: { type: "string", minLength: 1 } }
+        exclude: { type: "array", uniqueItems: true, items: { type: "string", minLength: 1 } },
+        baseline: {
+          type: "object",
+          additionalProperties: false,
+          required: ["bytes", "reason"],
+          properties: {
+            bytes: { type: "integer" },
+            reason: { type: "string", minLength: 1, pattern: "\\S" }
+          }
+        }
       }
     },
     acceptanceSources: {

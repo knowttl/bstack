@@ -60,9 +60,9 @@ Done when: Every document the project keeps is classified as owning terms, bound
 Draft the complete `.bstack/project.json` in scratch following `schemas/project.schema.json`, keeping every entry an existing contract already holds.
 Register documents under the IDs the guide names, scopes that map code paths to the documents they govern, the rules whose literal text a check or reviewer can find, and the project's own maintained check commands.
 Leave out documents the project does not keep, and never invent an owner to fill a gap.
-Validate it in a scratch clone of the target with the draft placed at `.bstack/project.json`, running `contract validate` and `docs check` there with the same flags.
+List fixture trees in `instructions.exclude` as the guide describes; record the baseline after drafting the wiring in Step 3.
 
-Done when: The draft is in scratch, every entry points at an existing source, and the validation results from the scratch clone are recorded.
+Done when: The draft is in scratch and every entry points at an existing source.
 
 ### Step 3: Draft the wiring
 
@@ -72,14 +72,21 @@ Draft `.bstack/bin/bstack-check.mjs` as the exact bytes of this skill's `scripts
 Draft one pointer line for the root `AGENTS.md` following the [pointer guide](references/agents-pointer.md): `Before finishing a change, review the documents it affects against the contract in .bstack/project.json.` with the contract path as the link.
 Load the [create guide](references/create.md) for the map wording and the gate command.
 State that the wiring takes effect only after it reaches the default branch, because no-mistakes honours it only from there.
+Prepare a scratch clone reflecting the target's current filesystem state, including staged, unstaged, untracked and ignored files, then place the draft contract and all proposed wiring edits in it.
+Measure that clone with `node scripts/maintenance.mjs instructions measure --repo <scratch-clone> --json`, and record its total bytes with a reason as `instructions.baseline` in the draft contract.
+When this raises an existing baseline, replace its reason with a new reason for the growth; `Measured when registered` is only for first registration when the prior contract is readable and has no baseline.
+If the prior contract or `origin/main` cannot be read, restore access before checking instruction growth.
+Place the updated contract in the clone and run `contract validate` and `docs check` there with the same flags.
 
-Done when: The three drafts are in scratch, the ownership map names only documents the contract registers, and the gate command matches the installed checker's documented usage.
+Done when: The drafts are in scratch, the ownership map names only documents the contract registers, the gate command matches the installed checker's documented usage, and the baseline equals the measured total of the proposed tree with validation results recorded.
 
 ### Step 4: Review and apply
 
 Record one finding in scratch following `schemas/findings.schema.json` with stage `audit`, the target and the paths below as its reviewed scope, and a change set following `schemas/change-set.schema.json` with the exact approved UTF-8 bytes and their hashes.
 The change set holds one edit each for `.bstack/project.json`, `.bstack/bin/bstack-check.mjs`, `.no-mistakes.yaml` and the `AGENTS.md` pointer, and the user may deselect any of them.
 The pointer edit follows the pointer guide's table, which includes no edit when a root `CLAUDE.md` would hide a new `AGENTS.md`.
+If a selection or revision changes the proposed instruction tree or exclusions while the contract edit remains selected, refresh the scratch clone from the target's current filesystem state, apply the selected edits, remeasure and update the baseline, validate again, and present the revised exact bytes for approval.
+If the contract edit is deselected, leave the existing contract unchanged, validate the selected tree in scratch, and report any resulting failure.
 Include `starting-checks` in the findings' `requiredOutcomes`, as required by stage `audit`, with mode `repo` and the current revision.
 Run `node scripts/maintenance.mjs apply --repo <target> --plan <file> --dry-run --json`, present the exact diff, then run the unchanged plan without `--dry-run` only after the user approves those bytes.
 Use `state show` with the returned run ID to inspect an interrupted apply, and repeat the unchanged plan to resume.
@@ -89,12 +96,13 @@ Done when: Only the approved files have been written with unchanged hash precond
 ### Step 5: Prove the wiring and report
 
 Run `node .bstack/bin/bstack-check.mjs --repo <target> --docs-only --json` and confirm it passes on the written tree.
-Prove the gate fails when it should: in a scratch clone of the target, break one local link in a registered document, run the same command there and confirm a nonzero exit, then discard the clone.
+Prove the gate fails when it should: prepare a scratch clone reflecting the written target's current filesystem state, including staged, unstaged, untracked and ignored files, break one local link in a registered document, run the same command there and confirm a nonzero exit, then discard the clone.
+When a baseline is recorded, repeat the proof in a fresh scratch clone of that same current state by adding enough bytes to the measured content of an included source to exceed the baseline and confirming the `instructions-grew` failure.
 Run `docs generate --repo <target> --check --json` when the contract registers generators.
 State the written paths, that the ownership map and gate act only once merged to the default branch, which documents each skill owns, and every step left blocked with its missing prerequisite.
 Name `sweep` as the later pass that finds drift, and start no other skill.
 
-Done when: The docs-only checker passes on the written tree and fails on the scratch clone with the broken link, or the report names why either was not run.
+Done when: The docs-only checker passes on the written tree and fails on the scratch clone with the broken link and, when a baseline is recorded, with the grown instructions, or the report names why either was not run.
 
 ## Sweep checklist
 

@@ -6,6 +6,7 @@ It never writes a document's content: terms, boundaries and purpose stay with th
 ## Contents
 
 - Register the documents
+- Record the instruction baseline
 - Offer the no-comments rule
 - Write the ownership map
 - Add the docs gate
@@ -30,6 +31,27 @@ Map code to documents with `scopes`: each scope lists the code paths a document 
 A rule names a literal sentence in an authoritative document as its `pointer`, and the checks that prove it.
 Use the project's own check command as a leaf check and never invoke the checker from a leaf.
 Add a `generators` entry only for a section that a command renders into a document between markers.
+
+## Record the instruction baseline
+
+The instructions an agent loads grow by accretion, so the contract records how large they are and the docs gate fails when they grow past it.
+Put test inputs and fixture trees in the draft contract's `instructions.exclude`, because their `AGENTS.md` and `CLAUDE.md` files are data and not loaded instructions.
+Prepare a scratch clone reflecting the target's current filesystem state, including staged, unstaged, untracked and ignored files.
+Place the draft contract and final proposed wiring edits, including any instruction-file pointer, in that clone.
+Run `instructions measure --repo <scratch-clone> --json` and record `data.total.bytes` as `bytes` in `instructions.baseline`, with a specific `reason` saying why that size is right now:
+
+```json
+"instructions": { "exclude": ["tests/fixtures/**"], "baseline": { "bytes": 6457, "reason": "Initial project guidance" } }
+```
+
+If a selection or revision changes the proposed instruction tree or exclusions while the contract edit remains selected, refresh the clone from the target's current filesystem state, apply the selected edits, remeasure and update the baseline, then validate and present the revised bytes for approval.
+If the contract edit is deselected, leave the existing contract unchanged, validate the selected tree in scratch, and report any resulting failure.
+The gate measures the same sources as `instructions measure` and passes while the total is at or below `bytes`.
+A change that needs more, including re-recording an existing baseline during create, must raise `bytes` to the new measure in the same change and replace `reason` with a new reason why the growth is worth its cost, so the increase shows in the diff for review.
+Use `Measured when registered` only for first registration when the prior contract is readable and has no baseline.
+If the prior contract or `origin/main` cannot be read, restore access before checking instruction growth.
+After pruning, lower `bytes` to the new measure so the saved room cannot be spent again unreviewed.
+A contract without `instructions.baseline` is accepted only when the readable prior contract also has no baseline, or when no prior contract is available and no instructions are loaded.
 
 ## Offer the no-comments rule
 
@@ -67,7 +89,7 @@ No-mistakes applies a correction-only rule to `AGENTS.md`, so the map never asks
 ## Add the docs gate
 
 A gate is a command that runs after a core step and passes on exit code 0.
-This one runs the installed checker in docs-only mode after the Document step, so a broken link, an invalid or duplicate glossary entry or a stale generated section stops the run for the author's decision:
+This one runs the installed checker in docs-only mode after the Document step, so a broken link, an invalid or duplicate glossary entry, a stale generated section or instructions larger than `instructions.baseline` stops the run for the author's decision:
 
 ```yaml
 gates:

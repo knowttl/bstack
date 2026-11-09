@@ -55,7 +55,7 @@
   },
   "maintenance": {
     "commands": [
-      "contract validate", "evidence collect", "evidence validate", "docs check", "docs generate", "run-checks", "probe record",
+      "contract validate", "evidence collect", "evidence validate", "docs check", "docs generate", "instructions measure", "run-checks", "probe record",
       "probe compare", "apply", "state show", "sweep"
     ],
     "schemas": [

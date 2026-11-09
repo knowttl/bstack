@@ -124,7 +124,7 @@ node .bstack/bin/bstack-check.mjs --repo <target> --base <ancestor-commit> --ass
 ```
 
 The installed dependency-free checker needs Node and Git, with no skill or agent session.
-Its `--docs-only` mode skips the base, assessment and leaf execution and checks only the current tree's document links, glossary structure and generated sections, which is what the no-mistakes docs gate runs.
+Its `--docs-only` mode skips the base, assessment and leaf execution and checks the current tree's document links, glossary structure, generated sections and instruction growth against `instructions.baseline`, reporting `instructions-grew` and prior-baseline problems as described in the create guide.
 Run it in the working checkout and a different-root clean clone with isolated home and cache, the same explicit base and the unchanged committed assessment.
 It validates structure, executes each distinct required leaf once with fresh results, then validates the results and review inputs again without editing the assessment.
 Earlier saved successes cannot replace that invocation's checks.
