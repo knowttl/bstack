@@ -1,5 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { join, posix } from 'node:path'
+import { Lexer, Tokenizer } from 'marked'
+import { markdownTokens } from './document-references.mjs'
 import { repoFiles } from './discovery.mjs'
 import { matchesPath, pathGlob } from './glob.mjs'
 import { resolveFilePath } from './paths.mjs'
@@ -44,63 +46,30 @@ async function description(text, path) {
   return metadata?.['disable-model-invocation'] === true || typeof metadata?.description !== 'string' ? null : metadata.description
 }
 
+function instructionProse(tokens) {
+  return tokens.map(token => {
+    if (token.type === 'code' || token.type === 'codespan') return '\n\n'
+    if (token.type === 'list') return '\n' + token.items.map(item => instructionProse(item.tokens)).join('\n') + '\n'
+    if (token.type === 'blockquote') return '\n' + instructionProse(token.tokens) + '\n'
+    if (token.type === 'table') return '\n' + [...token.header, ...token.rows.flat()].map(cell => instructionProse(cell.tokens)).join('\n') + '\n'
+    if (token.type === 'html' && token.block) {
+      const tokenizer = Object.assign(new Tokenizer(), { html: () => undefined })
+      return instructionProse(new Lexer({ gfm: true, tokenizer }).lex(token.raw))
+    }
+    if (!token.tokens) return token.raw
+    let cursor = 0
+    let prose = ''
+    for (const child of token.tokens) {
+      const start = token.raw.indexOf(child.raw, cursor)
+      prose += token.raw.slice(cursor, start) + instructionProse([child])
+      cursor = start + child.raw.length
+    }
+    return prose + token.raw.slice(cursor)
+  }).join('')
+}
+
 function importsIn(text) {
-  let fence = null
-  let containers = []
-  const lines = []
-  for (const line of text.split(/\r?\n/)) {
-    let content = line
-    let depth = 0
-    for (const container of containers) {
-      if (!content.trim()) {
-        depth = containers.length
-        break
-      }
-      const prefix = container === 'quote' ? /^ {0,3}>[ \t]?/.exec(content)?.[0] : /^[ \t]+/.exec(content)?.[0]
-      if (prefix === undefined) break
-      const width = container === 'quote' ? prefix.length : Math.min(container, prefix.length)
-      if (container !== 'quote' && width < container && !(container === 2 && width === 1)) break
-      content = content.slice(width)
-      depth++
-    }
-    if (depth < containers.length) {
-      containers = containers.slice(0, depth)
-      fence = null
-    }
-    if (fence) {
-      const closing = /^ {0,3}(`+|~+)[ \t]*$/.exec(content)?.[1]
-      if (closing && closing[0] === fence[0] && closing.length >= fence.length) fence = null
-      lines.push('')
-      continue
-    }
-    let prefix
-    while ((prefix = /^ {0,3}(>[ \t]?|(?:[-+*]|\d{1,9}[.)])(?:[ \t]{1,4}|$))/.exec(content))) {
-      containers.push(prefix[1].startsWith('>') ? 'quote' : prefix[0].length)
-      content = content.slice(prefix[0].length)
-    }
-    const opening = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(content)
-    if (opening && (opening[1][0] === '~' || !opening[2].includes('`'))) {
-      fence = opening[1]
-      lines.push('')
-    } else lines.push(content)
-  }
-  const prose = lines.join('\n')
-  const delimiters = /\\[\s\S]|`+/g
-  let cursor = 0
-  let outsideCode = ''
-  let delimiter
-  while ((delimiter = delimiters.exec(prose))) {
-    if (delimiter[0][0] !== '`') continue
-    const closing = new RegExp('(?<!`)`{' + delimiter[0].length + '}(?!`)', 'g')
-    closing.lastIndex = delimiters.lastIndex
-    const end = closing.exec(prose)
-    if (!end || /\n[ \t]*\n/.test(prose.slice(delimiters.lastIndex, end.index))) continue
-    outsideCode += prose.slice(cursor, delimiter.index) + ' '
-    cursor = closing.lastIndex
-    delimiters.lastIndex = cursor
-  }
-  outsideCode += prose.slice(cursor)
-  return [...outsideCode.matchAll(/(?:^|\s)@(\S+)/g)].map(match => match[1].replace(/[.,;:!?)]+$/, ''))
+  return [...instructionProse(markdownTokens(text)).matchAll(/(?:^|\s)@(\S+)/g)].map(match => match[1].replace(/[.,;:!?)]+$/, ''))
 }
 
 function size(text) {

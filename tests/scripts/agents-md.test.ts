@@ -259,7 +259,7 @@ for (const { name, content, imported } of [
 }
 
 for (const content of [
-  '- ~~~\n @hidden.md\n ~~~\n\n@visible.md\n',
+  '- ~~~\n  @hidden.md\n  ~~~\n\n@visible.md\n',
   '- ```\n  @hidden.md\n  ```\n\n@visible.md\n',
   '+ ~~~\n  @hidden.md\n  ~~~~\n\n@visible.md\n',
   '* ```\n  @hidden.md\n  ````\n\n@visible.md\n',
@@ -284,9 +284,17 @@ for (const content of [
   '- ~~~\n  @hidden.md\n\n@visible.md\n',
   '1. ```\n   @hidden.md\n\n@visible.md\n',
   '> > ~~~\n> > @hidden.md\n>\n> @visible.md\n',
-  '- Outer:\n  - ```\n    @hidden.md\n  @visible.md\n',
+  '- Outer:\n  - ```\n    @hidden.md\n\n  @visible.md\n',
   '> - ~~~\n>   @hidden.md\n>\n> @visible.md\n',
   '- > ```\n  > @hidden.md\n\n  @visible.md\n',
+  '- Example\ncontinued\n\n    ~~~\n    @hidden.md\n    ~~~\n\n@visible.md\n',
+  '- Example\ncontinued\n\n    ```\n    @hidden.md\n    ```\n\n@visible.md\n',
+  '1. Example\n\n\t~~~\n\t@hidden.md\n\t~~~\n\n@visible.md\n',
+  '1. Example\n\n\t```\n\t@hidden.md\n\t```\n\n@visible.md\n',
+  '> 1. Example\n> continued\n>\n>\t~~~\n>\t@hidden.md\n>\t~~~\n\n@visible.md\n',
+  '    @hidden.md\n\n@visible.md\n',
+  '\t@hidden.md\n\n@visible.md\n',
+  '- Example\n\n      @hidden.md\n\n@visible.md\n',
   '~~~\n- ~~~\n@hidden.md\n~~~\n@visible.md\n',
   '~~~\n> ~~~\n@hidden.md\n~~~\n@visible.md\n'
 ]) {
@@ -331,6 +339,10 @@ for (const content of [
   '<!--\n@visible.md\n-->\n',
   '<instructions>\n`` @hidden.md ``\n@visible.md\n</instructions>\n',
   '<instructions>\n   ```md\n@hidden.md\n   ```\n@visible.md\n</instructions>\n',
+  '<instructions>\n- Example\ncontinued\n\n    ~~~\n    @hidden.md\n    ~~~\n\n@visible.md\n</instructions>\n',
+  '<instructions>\n1. Example\n\n\t~~~\n\t@hidden.md\n\t~~~\n\n@visible.md\n</instructions>\n',
+  'See [rules]( @visible.md ) and **`` @hidden.md ``**.\n',
+  '| Rules | Example |\n| --- | --- |\n| @visible.md | `` @hidden.md `` |\n',
   'Example: ` unmatched\n\n@visible.md\n`\n',
   'Example: \\` @visible.md \\`\n'
 ]) {
