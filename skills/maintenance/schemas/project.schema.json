@@ -81,6 +81,12 @@
         }
       }
     },
+    "instructions": {
+      "type": "object", "additionalProperties": false,
+      "properties": {
+        "exclude": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1 } }
+      }
+    },
     "acceptanceSources": {
       "type": "array", "items": {
         "type": "object", "additionalProperties": false, "required": ["id", "path", "pointer"],

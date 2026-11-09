@@ -784,10 +784,13 @@ The `/maintenance sweep` mode, not repo-audit, reports later drift.
 
 - Creates and maintains one root `AGENTS.md` of pointers to the project's rules, evidence requirements and check commands.
 - Each other skill adds its own one-line pointer; `agents-md` owns the file, its structure, the `CLAUDE.md` merge and the pointer audit.
-- Boundary: keeps distinct nested instructions, reports `CLAUDE.local.md` as shadowing without editing it, touches nothing outside the repo, and rechecks the host's loading docs before removing a `CLAUDE.md`.
+- Boundary: keeps distinct nested instructions and edits one of their lines only when the user selects it, reports `CLAUDE.local.md` as shadowing without editing it, touches nothing outside the repo, and rechecks the host's loading docs before removing a `CLAUDE.md`.
 - The shared [pointer contract](../runtime/references/agents-pointer.md) owns the file's shape and the rules for adding a line, with a checked copy in each skill that adds or audits pointers.
 - The pointer audit is read-based: the skill opens each pointer's target and reports broken links, lines that copy a rule instead of pointing to it, and sources with no pointer. `inventory` supplies the instruction files, merge candidates and shadowing reports, and no new command checks links, since `/maintenance sweep` is where the design places the repo-wide pointer check.
 - Classify kept non-pointer rules by rung and route enforceable ones to `/verification correct`, preserving judgment as prose (inverted-pyramid D3 and P7).
+- `instructions measure` reports the bytes, lines and approximate tokens of the instructions an agent loads: instruction files, the files a `CLAUDE.md` imports and the descriptions of model-invocable skills.
+- The audit gives each line of the root file, and of a scoped file the author asks for, one line-value class (resolving pointer, copy, enforced by a proven check, dead, restates an agent default, project-specific rule), removes nothing automatically and lists default-restating lines only when no no-mistakes history finding cites them.
+- `instructions.exclude` in `.bstack/project.json` configures fixture trees out of `inventory` and `measure`.
 
 ### plan
 

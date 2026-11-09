@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { basename, dirname, join, relative, sep } from 'node:path'
 import { resolveTarget } from '../lib/repo.mjs'
-import { repoFiles } from '../lib/discovery.mjs'
+import { includedFiles, loadInstructionSettings } from '../lib/instructions.mjs'
 import { hashBytes } from '../lib/fingerprint.mjs'
 
 // Name families discover equivalent sources without claiming their content is authoritative.
@@ -33,7 +33,8 @@ export async function run(options) {
   const files = []
   const candidates = []
   const shadowing = []
-  const paths = new Set(await repoFiles(target.root))
+  const { exclude } = await loadInstructionSettings(target.root)
+  const paths = new Set(await includedFiles(target.root, exclude))
   async function add(path) {
     const absolute = join(target.root, path)
     const kind = kindFor(path)

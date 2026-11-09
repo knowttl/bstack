@@ -494,7 +494,8 @@ The check also runs in `npm test` and `npm test -- --task T0.3`.
 
 Authored commands, shared libraries, schemas, assets and shared references have one source in [runtime/](../runtime/), and [runtime/skills.json](../runtime/skills.json) lists the resources each skill ships, including vendored trees copied unchanged from `upstream/`.
 Markdown parsing uses `marked` at the exact version pinned in `package.json` and `package-lock.json`.
-The generator bundles its ESM entry into each consuming skill and the standalone checker, so installed scripts need no separate parser installation.
+Skill frontmatter parsing uses the pinned `yaml` package.
+The parsers are bundled into their consuming scripts, so installed scripts need no separate parser installation.
 An installed skill cannot import outside its own folder, so the generator bundles only a skill's commands into one entry file, `skills/<skill>/scripts/<skill>.mjs`, and copies its listed schemas, assets and shared references beside it.
 Each skill commits its generated files.
 See the shared [writing reference](../runtime/references/writing.md) for drafting guidance and the [runtime manifest](../runtime/skills.json) for the skills that ship it.
@@ -509,7 +510,7 @@ node scripts/generate-skills.ts --check
 
 `--check` exits 1 for a missing or modified listed output or an unlisted file under a registered skill's `schemas/`, `assets/` or declared vendored destinations; generation removes those unlisted files.
 A skill's `references/` also holds its own authored files, so only the listed shared copies are checked.
-Both commands exit 1 when a skill lists a command, schema, asset or reference that `runtime/` lacks or when a bundle would include a file outside `runtime/` other than the pinned `marked` ESM entry.
+Both commands exit 1 when a skill lists a command, schema, asset or reference that `runtime/` lacks or when a bundle would include a file outside `runtime/` other than the pinned `marked` ESM entry and `yaml` package.
 To add a skill, create its folder with `SKILL.md` and add an entry to `runtime/skills.json`; a new command needs a registry entry in `runtime/scripts/commands.mjs` and a listing in each skill that ships it.
 `npm run check` runs the verification, and `npm test` repeats it for the committed tree.
 
@@ -663,7 +664,10 @@ It never adopts a non-empty directory, and it writes the scaffold's `README.md` 
 ### agents-md
 
 The [agents-md skill](../skills/agents-md/SKILL.md) is started by the user and creates or maintains one root `AGENTS.md` of one-line pointers to the project's rules, evidence requirements and check commands.
-It audits each pointer against the repo, merges equivalent `CLAUDE.md` content (including an import-only stub) into `AGENTS.md` and removes the `CLAUDE.md` only after the author approves and the host's current loading documentation has been rechecked, keeps distinct nested instruction files, reports `CLAUDE.local.md` as possible shadowing without editing it, and reads nothing outside the repo.
+It audits root and author-requested scoped lines under the skill's [line audit](../skills/agents-md/SKILL.md#step-2-audit-the-lines), keeps distinct nested files scoped, and edits only selected lines there.
+It merges equivalent `CLAUDE.md` content (including an import-only stub) into `AGENTS.md` and removes the `CLAUDE.md` only after the author approves and the host's current loading documentation has been rechecked.
+Instruction-file inspection stays inside the repo, and `CLAUDE.local.md` is reported as possible shadowing without editing it.
+The read-only [`instructions measure` command](command-contract.md#instructions-measure) supplies the before-and-after size report; the [discovery contract](command-contract.md#inspect-and-inventory) defines fixture exclusions shared with `inventory`.
 The glossary, vision, architecture, foundation, maintenance and plan skills each propose their own pointer line, following the shared [pointer contract](../runtime/references/agents-pointer.md), and the verification kit scaffold already appends its own.
 
 ### readme

@@ -133,7 +133,7 @@ test('editing one command makes only the skills that ship it stale', async t => 
 for (const [name, files, message] of [
   ['a command the registry lacks', { 'skills.json': JSON.stringify({ one: { ...skills.one, commands: ['gamma'] } }) }, /one lists commands missing from runtime\/scripts\/commands\.mjs: gamma/],
   ['a schema runtime lacks', { 'skills.json': JSON.stringify({ one: { ...skills.one, schemas: ['gone.json'] } }) }, /one lists schemas\/gone\.json, which is missing from runtime\/schemas/],
-  ['an import outside runtime', { 'scripts/commands/beta.mjs': "import * as yaml from 'yaml'\nexport async function run() { return { data: { exports: Object.keys(yaml).length } } }\n" }, /two bundles files outside runtime\/: .*yaml/],
+  ['an import outside runtime', { '../outside.mjs': 'export const value = 1\n', 'scripts/commands/beta.mjs': "import { value } from '../../../outside.mjs'\nexport async function run() { return { data: { value } } }\n" }, /two bundles files outside runtime\/: outside\.mjs/],
   ['a resource URL in another shape', { 'scripts/commands/beta.mjs': "export async function run() { return { data: { here: import.meta.url } } }\n" }, /runtime\/scripts\/commands\/beta\.mjs must use import\.meta only as new URL/]
 ] satisfies [unknown, unknown, unknown][]) {
   for (const args of [[], ['--check']]) {
@@ -150,4 +150,22 @@ for (const [name, files, message] of [
 test('committed skill files match the shared runtime source', () => {
   const result = spawnSync(process.execPath, [join(root, 'scripts', 'generate-skills.ts'), '--check'], { encoding: 'utf8', cwd: tmpdir() })
   assert.equal(result.status, 0, result.stderr)
+})
+
+test('bundled YAML passes package policy and preserves alias serialization', async t => {
+  const directory = await sandbox(t, {
+    'scripts/commands/alpha.mjs': "import { stringify } from 'yaml'\nexport async function run() { const shared = { value: 1 }; return { data: { yaml: stringify({ first: shared, second: shared }) } } }\n"
+  })
+  await rm(join(directory, 'node_modules'))
+  await mkdir(join(directory, 'node_modules'))
+  await symlink(join(root, 'node_modules/esbuild'), join(directory, 'node_modules/esbuild'), 'junction')
+  await cp(join(root, 'node_modules/yaml'), join(directory, 'node_modules/yaml'), { recursive: true })
+  const generated = generate(directory)
+  assert.equal(generated.status, 0, generated.stdout + generated.stderr)
+  await cp(join(root, 'tests/package-check/valid'), join(directory, 'skills/one'), { recursive: true })
+  const checked = spawnSync(process.execPath, [join(root, 'scripts/check-package.mjs'), '--skill', join(directory, 'skills/one')], { encoding: 'utf8' })
+  assert.equal(checked.status, 0, checked.stdout + checked.stderr)
+  const result = entry(directory, 'one', 'alpha', '--repo', directory, '--json')
+  assert.equal(result.status, 0, result.stdout + result.stderr)
+  assert.equal(JSON.parse(result.stdout).data.yaml, 'first: &a1\n  value: 1\nsecond: *a1\n')
 })

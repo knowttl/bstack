@@ -228,7 +228,7 @@ Bundled scripts enforce the controls below; `baseline check --refresh` can write
   Motivation research also reads pull request discussions and host-exposed connectors, following the [why-evidence reference](runtime/references/why-evidence.md).
   `/recall` and `/verification correct` use host session launch metadata to select this project's Claude Code and Codex transcripts for read-only digestion through the [recall command](docs/command-contract.md#recall-skill-command).
   Correct mode's use of past corrections follows [its evidence collection contract](skills/verification/SKILL.md#step-c1-collect-mistake-evidence).
-  `/repo-audit`, `/no-mistakes-tuning`, `/verification correct` and `/verification maintain` also read the target repo's no-mistakes history, including its external state store when needed, following the shared [history reference](runtime/references/no-mistakes-history.md).
+  `/repo-audit`, `/no-mistakes-tuning`, `/agents-md`, `/verification correct` and `/verification maintain` also read the target repo's no-mistakes history, including its external state store when needed, following the shared [history reference](runtime/references/no-mistakes-history.md).
 - **Scratch**: drafts, evidence and previews stay in scratch outside the target until you approve.
 - **Recovery**: `apply` keeps backups of original bytes and a journal, so an interrupted run resumes from verified hashes.
 - **Credentials and network**: skills need no credentials or account, and bstack operates no service.
@@ -292,6 +292,15 @@ node "$BSTACK_SKILLS/repo-audit/scripts/repo-audit.mjs" --help
 ```
 
 Repo-audit's [`history` command](docs/command-contract.md#no-mistakes-history) summarises the repo's no-mistakes runs read-only.
+
+Measure instruction size without writes:
+
+```sh
+node "$BSTACK_SKILLS/agents-md/scripts/agents-md.mjs" instructions measure --repo . --json
+```
+
+The [measurement contract](docs/command-contract.md#instructions-measure) defines the sources counted and configuration for excluding fixture trees.
+Invoke `/agents-md` for the reviewed [line audit](skills/agents-md/SKILL.md#step-2-audit-the-lines), including scoped files you ask it to audit.
 
 The full command list, with a runnable example per command group, is in [docs/development.md](docs/development.md#command-reference) and the exact syntax and results are in the [command contract](docs/command-contract.md).
 
