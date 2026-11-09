@@ -88,7 +88,8 @@ Load the [testing reference](references/testing.md) for the principles and the e
 Prefer extending an existing policy to creating a new document.
 Propose the high-damage operations from Step 1 as a short safety section in the existing contributor or design document, with one separately selected `AGENTS.md` pointer to it following the [pointer guide](references/agents-pointer.md), using the [safety section guide](references/create.md#record-high-damage-operations).
 
-Done when: Each selected testing change names its destination, the principle it states and why the destination is authoritative, or the user has declined it, and the safety section and its pointer are selected edits with their destination or declined, or no high-damage operation was found.
+Done when: Each selected testing change names its destination, the principle it states and why the destination is authoritative, or the user has declined it.
+The safety section and its pointer are selected edits with their destination or declined, or no high-damage operation was found.
 
 ### Step 6: Propose constraints
 
