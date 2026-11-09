@@ -8004,7 +8004,7 @@ async function checkInstructionGrowth(root, file) {
     fix: "Restore instructions.baseline to keep the instruction growth gate active."
   }] : [];
   const problems = [];
-  if (previous && baseline.bytes > previous.bytes && (baseline.reason.trim() === previous.reason.trim() || baseline.reason.trim() === "Measured when registered")) {
+  if (previous && baseline.bytes > previous.bytes && (baseline.reason.trim() === previous.reason.trim() || baseline.reason.trim() === "Measured when registered") || priorFile.status !== 0 && baseline.reason.trim() === "Measured when registered") {
     problems.push({
       code: "instructions-baseline-reason",
       path: file,
@@ -9918,4 +9918,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"8ece069a44cee09d2e405a703672a75afbd7ac7bc02fa5bd638cd55749ebc943"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"d887f38d009dd13d1765573691f82fd7b8d961ac950def583edc0f7fa65e481e"}

@@ -38,17 +38,18 @@ The instructions an agent loads grow by accretion, so the contract records how l
 Put test inputs and fixture trees in the draft contract's `instructions.exclude`, because their `AGENTS.md` and `CLAUDE.md` files are data and not loaded instructions.
 Prepare a scratch clone reflecting the target's current filesystem state, including staged, unstaged, untracked and ignored files.
 Place the draft contract and final proposed wiring edits, including any instruction-file pointer, in that clone.
-Run `instructions measure --repo <scratch-clone> --json` and record `data.total.bytes` as `bytes` in `instructions.baseline`, with a `reason` saying why that size is right now, such as `Measured when registered`:
+Run `instructions measure --repo <scratch-clone> --json` and record `data.total.bytes` as `bytes` in `instructions.baseline`, with a specific `reason` saying why that size is right now:
 
 ```json
-"instructions": { "exclude": ["tests/fixtures/**"], "baseline": { "bytes": 6457, "reason": "Measured when registered" } }
+"instructions": { "exclude": ["tests/fixtures/**"], "baseline": { "bytes": 6457, "reason": "Initial project guidance" } }
 ```
 
 If a selection or revision changes the proposed instruction tree or exclusions while the contract edit remains selected, refresh the clone from the target's current filesystem state, apply the selected edits, remeasure and update the baseline, then validate and present the revised bytes for approval.
 If the contract edit is deselected, leave the existing contract unchanged, validate the selected tree in scratch, and report any resulting failure.
 The gate measures the same sources as `instructions measure` and passes while the total is at or below `bytes`.
 A change that needs more, including re-recording an existing baseline during create, must raise `bytes` to the new measure in the same change and replace `reason` with a new reason why the growth is worth its cost, so the increase shows in the diff for review.
-Use `Measured when registered` only for first registration.
+Use `Measured when registered` only for first registration when the prior contract is readable and has no baseline.
+If the prior contract or `origin/main` cannot be read, use a specific non-initial reason.
 After pruning, lower `bytes` to the new measure so the saved room cannot be spent again unreviewed.
 A contract without `instructions.baseline` has no instruction gate.
 

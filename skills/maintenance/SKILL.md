@@ -74,7 +74,8 @@ Load the [create guide](references/create.md) for the map wording and the gate c
 State that the wiring takes effect only after it reaches the default branch, because no-mistakes honours it only from there.
 Prepare a scratch clone reflecting the target's current filesystem state, including staged, unstaged, untracked and ignored files, then place the draft contract and all proposed wiring edits in it.
 Measure that clone with `node scripts/maintenance.mjs instructions measure --repo <scratch-clone> --json`, and record its total bytes with a reason as `instructions.baseline` in the draft contract.
-When this raises an existing baseline, replace its reason with a new reason for the growth; `Measured when registered` is only for first registration.
+When this raises an existing baseline, replace its reason with a new reason for the growth; `Measured when registered` is only for first registration when the prior contract is readable and has no baseline.
+If the prior contract or `origin/main` cannot be read, use a specific non-initial reason.
 Place the updated contract in the clone and run `contract validate` and `docs check` there with the same flags.
 
 Done when: The drafts are in scratch, the ownership map names only documents the contract registers, the gate command matches the installed checker's documented usage, and the baseline equals the measured total of the proposed tree with validation results recorded.

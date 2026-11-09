@@ -139,7 +139,8 @@ export async function checkInstructionGrowth(root, file) {
   if (!baseline) return previous ? [{ code: 'instructions-baseline-removed', path: file, message: 'The recorded instruction baseline was removed.',
     fix: 'Restore instructions.baseline to keep the instruction growth gate active.' }] : []
   const problems = []
-  if (previous && baseline.bytes > previous.bytes && (baseline.reason.trim() === previous.reason.trim() || baseline.reason.trim() === 'Measured when registered')) {
+  if ((previous && baseline.bytes > previous.bytes && (baseline.reason.trim() === previous.reason.trim() || baseline.reason.trim() === 'Measured when registered')) ||
+      (priorFile.status !== 0 && baseline.reason.trim() === 'Measured when registered')) {
     problems.push({ code: 'instructions-baseline-reason', path: file, message: 'The instruction baseline increased without a new growth reason.',
       fix: 'Replace instructions.baseline.reason with a reason for the growth.' })
   }

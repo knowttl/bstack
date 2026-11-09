@@ -178,14 +178,14 @@ test('the docs-only checker fails on instruction growth until the baseline is ra
   assert.equal(measured.exit, 0, JSON.stringify(measured))
   assert.equal(measured.data.total.bytes, 21 + 11)
 
-  await record({ exclude: ['tests/fixtures/**'], baseline: { bytes: measured.data.total.bytes, reason: 'Measured when registered' } })
+  await record({ exclude: ['tests/fixtures/**'], baseline: { bytes: measured.data.total.bytes, reason: 'Initial project guidance' } })
   assert.equal(check().exit, 0)
 
   await writeFile(join(f.repo, 'AGENTS.md'), '# Agent instructions\n\nNever commit secrets.\n')
   const grown = check()
   assert.equal(grown.exit, 1, JSON.stringify(grown))
   assert.deepEqual(grown.problems.map((problem: NonNullable<typeof grown.problems>[number]) => problem.code), ['instructions-grew'])
-  assert.match(grown.problems[0].message, /above the recorded baseline of 32 bytes \(Measured when registered\)/)
+  assert.match(grown.problems[0].message, /above the recorded baseline of 32 bytes \(Initial project guidance\)/)
 
   await record({ exclude: ['tests/fixtures/**'], baseline: { bytes: 55, reason: 'Secrets rule' } })
   assert.equal(check().exit, 0)
@@ -200,8 +200,10 @@ for (const { name, previous, current, ref, path, expected } of [
   { name: 'accepts an increase with a new reason', previous: { bytes: 100, reason: 'Measured when registered' }, current: { bytes: 200, reason: 'New guidance' }, expected: null },
   { name: 'accepts a decrease with the same reason', previous: { bytes: 100, reason: 'Existing guidance' }, current: { bytes: 50, reason: 'Existing guidance' }, expected: null },
   { name: 'accepts first registration without a prior baseline', previous: null, current: { bytes: 200, reason: 'Measured when registered' }, expected: null },
-  { name: 'accepts first registration without a prior contract', previous: undefined, current: { bytes: 200, reason: 'Measured when registered' }, expected: null },
-  { name: 'accepts first registration without origin main', previous: { bytes: 100, reason: 'Measured when registered' }, current: { bytes: 200, reason: 'Measured when registered' }, ref: false, expected: null },
+  { name: 'rejects the initial reason without a prior contract', previous: undefined, current: { bytes: 200, reason: 'Measured when registered' }, expected: 'instructions-baseline-reason' },
+  { name: 'rejects the initial reason without origin main', previous: { bytes: 100, reason: 'Measured when registered' }, current: { bytes: 200, reason: 'Measured when registered' }, ref: false, expected: 'instructions-baseline-reason' },
+  { name: 'accepts a specific reason without a prior contract', previous: undefined, current: { bytes: 200, reason: 'Project guidance' }, expected: null },
+  { name: 'accepts a specific reason without origin main', previous: { bytes: 100, reason: 'Measured when registered' }, current: { bytes: 200, reason: 'New guidance' }, ref: false, expected: null },
   { name: 'checks a custom contract path', previous: { bytes: 100, reason: 'Existing guidance' }, current: { bytes: 200, reason: 'Existing guidance' }, path: 'policy.json', expected: 'instructions-baseline-reason' },
   { name: 'rejects the registration reason on a later increase', previous: { bytes: 100, reason: 'Existing guidance' }, current: { bytes: 200, reason: 'Measured when registered' }, expected: 'instructions-baseline-reason' }
 ]) {
