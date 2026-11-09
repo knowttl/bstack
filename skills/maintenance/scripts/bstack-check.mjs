@@ -7964,7 +7964,30 @@ async function checkInstructionGrowth(root, file) {
   file ??= contractPath;
   const { exclude, baseline } = await loadInstructionSettings(root, file);
   if (!baseline) return [];
-  const priorFile = readGit(root, ["show", `origin/main:${file}`]);
+  let path = file;
+  let priorFile;
+  const visited = /* @__PURE__ */ new Set();
+  for (; ; ) {
+    const parts = path.split("/");
+    let linked = false;
+    for (let i = 1; i <= parts.length; i++) {
+      const prefix = parts.slice(0, i).join("/");
+      const entry = readGit(root, ["ls-tree", "origin/main", "--", prefix]);
+      if (!entry.stdout.startsWith("120000 ")) continue;
+      const target = readGit(root, ["show", `origin/main:${prefix}`]);
+      path = posix2.normalize(posix2.join(posix2.dirname(prefix), target.stdout, ...parts.slice(i)));
+      if (visited.has(path) || path === ".." || path.startsWith("../") || posix2.isAbsolute(target.stdout)) {
+        throw new CommandError("blocked", [{ code: "prior-contract-invalid", path: file, message: "The origin/main project contract must be readable JSON.", fix: "Repair the prior contract before comparing instruction baselines." }]);
+      }
+      visited.add(path);
+      linked = true;
+      break;
+    }
+    if (!linked) {
+      priorFile = readGit(root, ["show", `origin/main:${path}`]);
+      break;
+    }
+  }
   let prior;
   if (priorFile.status === 0) {
     try {
@@ -9890,4 +9913,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"9fecd2ab3aa0be7699804b087e6b7bf66e2f00e4d7dd9a565748a02e6f14e703"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"ad9eb84f1b9c5c6c1be81c16fa035b8bd5e430f651028ec4117a761410ae1454"}

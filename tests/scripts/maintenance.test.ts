@@ -220,6 +220,23 @@ for (const { name, previous, current, ref, path, expected } of [
   })
 }
 
+test('docs-only compares the prior baseline through committed contract symlinks', async t => {
+  const f = await documentedRepo(t)
+  await mkdir(join(f.repo, '.bstack'))
+  await mkdir(join(f.repo, 'policy'))
+  await writeFile(join(f.repo, 'policy/contract.json'), JSON.stringify({ ...contract, instructions: { baseline: { bytes: 100, reason: 'Existing guidance' } } }))
+  await symlink('../policy/link.json', join(f.repo, '.bstack/project.json'))
+  await symlink('contract.json', join(f.repo, 'policy/link.json'))
+  f.commit('linked prior contract')
+  git(f.repo, 'update-ref', 'refs/remotes/origin/main', 'HEAD')
+  const check = () => spawnSync(process.execPath, [checker, '--repo', f.repo, '--docs-only', '--json'], { encoding: 'utf8' })
+  assert.equal(check().status, 0)
+  await writeFile(join(f.repo, 'policy/contract.json'), JSON.stringify({ ...contract, instructions: { baseline: { bytes: 200, reason: 'Existing guidance' } } }))
+  const result = check()
+  assert.equal(result.status, 1, result.stdout + result.stderr)
+  assert.deepEqual(JSON.parse(result.stdout).problems.map((problem: { code: string }) => problem.code), ['instructions-baseline-reason'])
+})
+
 test('sweep names the mode that fixes each seeded drift, and writes nothing', async t => {
   const f = await documentedRepo(t)
   await mkdir(join(f.repo, '.bstack'))

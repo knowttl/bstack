@@ -105,7 +105,30 @@ export async function checkInstructionGrowth(root, file) {
   file ??= contractPath
   const { exclude, baseline } = await loadInstructionSettings(root, file)
   if (!baseline) return []
-  const priorFile = readGit(root, ['show', `origin/main:${file}`])
+  let path = file
+  let priorFile
+  const visited = new Set()
+  for (;;) {
+    const parts = path.split('/')
+    let linked = false
+    for (let i = 1; i <= parts.length; i++) {
+      const prefix = parts.slice(0, i).join('/')
+      const entry = readGit(root, ['ls-tree', 'origin/main', '--', prefix])
+      if (!entry.stdout.startsWith('120000 ')) continue
+      const target = readGit(root, ['show', `origin/main:${prefix}`])
+      path = posix.normalize(posix.join(posix.dirname(prefix), target.stdout, ...parts.slice(i)))
+      if (visited.has(path) || path === '..' || path.startsWith('../') || posix.isAbsolute(target.stdout)) {
+        throw new CommandError('blocked', [{ code: 'prior-contract-invalid', path: file, message: 'The origin/main project contract must be readable JSON.', fix: 'Repair the prior contract before comparing instruction baselines.' }])
+      }
+      visited.add(path)
+      linked = true
+      break
+    }
+    if (!linked) {
+      priorFile = readGit(root, ['show', `origin/main:${path}`])
+      break
+    }
+  }
   let prior
   if (priorFile.status === 0) {
     try { prior = JSON.parse(priorFile.stdout) } catch {
