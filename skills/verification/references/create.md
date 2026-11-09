@@ -25,7 +25,7 @@ Answer each question from the codebase and ask the user only what the repo canno
 | Drive: how can an agent interact with it programmatically? | Existing harnesses first, such as browser specs, expect scripts, terminal helpers, HTTP endpoints or a debug port; only then a generic recipe |
 | Observe: what evidence can be captured? | Screenshots, terminal transcripts, response bodies, logs, exit codes, stored state |
 | Isolate: can two instances run side by side? | Ports, data directories, profiles; if not, say so in the kit, because refusing to double-drive a shared instance beats corrupting the user's session |
-| Damage: which operations can destroy or corrupt something that is not the run's own? | Scripts, cleanup and deploy code, signal and process handling, configuration, absolute paths and origins, file deletion, Git commands, the repo's incident or review history |
+| Damage: which operations can destroy or corrupt something that is not the run's own? | Scripts, cleanup and deploy code, signal and process handling, configuration, absolute paths and origins, file deletion, Git commands, contributor guidance, the repo's incident or review history, and user confirmation |
 
 If the checkout does not build or start as it is, report the blocker precisely.
 A kit written against a broken base teaches wrong steps.
@@ -33,8 +33,8 @@ When an irrelevant missing asset blocks startup, such as a static directory the 
 
 ## Record high-damage operations
 
-Record an operation only when the repo's code, scripts or history show it, never a generic list.
-Each entry has three parts: the operation, how it fails and the safe alternative.
+Record an operation only when the repo's code, scripts, history or contributor guidance show it, or the user confirms it, never a generic list.
+Each entry names the operation, how it fails, the safe alternative and its source, distinguishing contributor guidance or user confirmation from code evidence.
 
 | Class | Operation to look for | Safe alternative to propose |
 |---|---|---|
@@ -46,7 +46,7 @@ Each entry has three parts: the operation, how it fails and the safe alternative
 Propose the entries as a short safety section in the repo's existing contributor or design document, one line per entry.
 Propose one `AGENTS.md` pointer to that section as its own selection, following the pointer guide, and write no entry into `AGENTS.md` itself.
 If the repo has no such document, propose a new one only as a separate selection.
-Leave a class out when the repo shows no instance of it.
+Leave a class out when no instance is shown by the repo or confirmed by the user.
 
 ## Write the kit plan
 

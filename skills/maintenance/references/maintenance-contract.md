@@ -60,7 +60,7 @@ List affected authoritative rule IDs in `coverage`.
 | Entry point added, removed or changed | Design, contributor guidance and the feature map | List every way a user or caller reaches the behaviour, and confirm each one still works |
 | Client or runtime supported, added or dropped | Design, contributor guidance and compatibility statements | Name each client and runtime the change reaches and state which of them it was checked against |
 | Integration with an outside service or tool | Design, contributor guidance and the integration's documented contract | Describe the new dependency, its credentials and failure behaviour, and every other caller of the same contract |
-| Reverse operation: undo, rollback, resume or removal | Design and contributor guidance | Name how a change is undone and how an operator or agent observes that it was; a change with no reverse operation is a defect to report, not a gap to document |
+| Reverse operation: undo, rollback, resume or removal | Design and contributor guidance | Name the available reverse operation and how an operator or agent observes its result, or state that none exists |
 | Connection mode: local, remote, hosted, single or multiple environment | Design and contributor guidance | State which modes the change works in, and the behaviour in each mode it does not support |
 | Internal change preserving a contract | Relevant sources for that area | Explain specifically why the documented behaviour remains true |
 

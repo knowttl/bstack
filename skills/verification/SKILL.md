@@ -45,7 +45,7 @@ If the checkout does not build or start as it is, report the exact blocker inste
 Decide whether the third-party lens applies: it applies only when the product integrates with an outside service or API that needs authentication or secrets or can hit rate limits.
 Use the [kit guide](references/create.md) for the interview questions and the [third-party lens](references/third-party.md) when it applies.
 
-Done when: The surface, launch command, drive harness, evidence, isolation limits, high-damage operations and third-party applicability are established from repo evidence, and each unanswerable question is asked or named as a blocker.
+Done when: The surface, launch command, drive harness, evidence, isolation limits and third-party applicability are established from repo evidence, high-damage operations are established from repo evidence or user confirmation, and each unanswerable question is asked or named as a blocker.
 
 ### Step 2: Plan the kit
 
