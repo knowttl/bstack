@@ -6,6 +6,7 @@ The kit is written for the next agent, which reads it cold, mid-task, without ha
 ## Contents
 
 - [Interview the repo](#interview-the-repo)
+- [Record high-damage operations](#record-high-damage-operations)
 - [Write the kit plan](#write-the-kit-plan)
 - [Feature files](#feature-files)
 - [Helpers](#helpers)
@@ -24,10 +25,28 @@ Answer each question from the codebase and ask the user only what the repo canno
 | Drive: how can an agent interact with it programmatically? | Existing harnesses first, such as browser specs, expect scripts, terminal helpers, HTTP endpoints or a debug port; only then a generic recipe |
 | Observe: what evidence can be captured? | Screenshots, terminal transcripts, response bodies, logs, exit codes, stored state |
 | Isolate: can two instances run side by side? | Ports, data directories, profiles; if not, say so in the kit, because refusing to double-drive a shared instance beats corrupting the user's session |
+| Damage: which operations can destroy or corrupt something that is not the run's own? | Scripts, cleanup and deploy code, signal and process handling, configuration, absolute paths and origins, file deletion, Git commands, contributor guidance, the repo's incident or review history, and user confirmation |
 
 If the checkout does not build or start as it is, report the blocker precisely.
 A kit written against a broken base teaches wrong steps.
 When an irrelevant missing asset blocks startup, such as a static directory the service never serves, the kit may create it as clearly marked verification scaffolding and remove it in cleanup.
+
+## Record high-damage operations
+
+Record an operation only when the repo's code, scripts, history or contributor guidance show it, or the user confirms it, never a generic list.
+Each entry names the operation, how it fails, the safe alternative and its source, distinguishing contributor guidance or user confirmation from code evidence.
+
+| Class | Operation to look for | Safe alternative to propose |
+|---|---|---|
+| Process kills | Killing by name, pattern or port, or stopping a process the run did not start | Stop only what the run started, by the identifier it recorded |
+| Live-state writes | Writing to a user, shared, production or developer-home location, or a service the run does not own | Write into a disposable directory or instance the run created; use a read-only or dry-run mode and observe what it actually skips |
+| Hardcoded environments | Absolute paths, hostnames, origins, ports or account names | Take the value from configuration, the working directory or the run's own parameters |
+| Destructive file or Git operations | Recursive delete, overwrite, force push, hard reset, branch or stash changes on a shared checkout | Delete only paths the run created, work in a disposable copy or worktree, and never rewrite shared history |
+
+Propose the entries as a short safety section in the repo's existing contributor or design document, one line per entry.
+Propose one `AGENTS.md` pointer to that section as its own selection, following the pointer guide, and write no entry into `AGENTS.md` itself.
+If the repo has no such document, propose a new one only as a separate selection.
+Leave a class out when no instance is shown by the repo or confirmed by the user.
 
 ## Write the kit plan
 
