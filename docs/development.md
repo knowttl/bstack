@@ -664,7 +664,10 @@ It never adopts a non-empty directory, and it writes the scaffold's `README.md` 
 ### agents-md
 
 The [agents-md skill](../skills/agents-md/SKILL.md) is started by the user and creates or maintains one root `AGENTS.md` of one-line pointers to the project's rules, evidence requirements and check commands.
-It audits each pointer against the repo, merges equivalent `CLAUDE.md` content (including an import-only stub) into `AGENTS.md` and removes the `CLAUDE.md` only after the author approves and the host's current loading documentation has been rechecked, keeps distinct nested instruction files, reports `CLAUDE.local.md` as possible shadowing without editing it, and reads nothing outside the repo.
+It audits root and author-requested scoped lines under the skill's [line audit](../skills/agents-md/SKILL.md#step-2-audit-the-lines), keeps distinct nested files scoped, and edits only selected lines there.
+It merges equivalent `CLAUDE.md` content (including an import-only stub) into `AGENTS.md` and removes the `CLAUDE.md` only after the author approves and the host's current loading documentation has been rechecked.
+Instruction-file inspection stays inside the repo, and `CLAUDE.local.md` is reported as possible shadowing without editing it.
+The read-only [`instructions measure` command](command-contract.md#instructions-measure) supplies the before-and-after size report; the [discovery contract](command-contract.md#inspect-and-inventory) defines fixture exclusions shared with `inventory`.
 The glossary, vision, architecture, foundation, maintenance and plan skills each propose their own pointer line, following the shared [pointer contract](../runtime/references/agents-pointer.md), and the verification kit scaffold already appends its own.
 
 ### readme
