@@ -15,7 +15,7 @@
       "kit-plan.json", "probe-record.json", "probe-spec.json", "project.schema.json", "resume-state.schema.json"
     ],
     "assets": ["map-coverage.mjs"],
-    "references": ["writing.md", "no-mistakes-history.md"]
+    "references": ["agents-pointer.md", "writing.md", "no-mistakes-history.md"]
   },
   "vision": {
     "commands": ["vision-board build", "vision-board launch", "vision-board verdicts", "apply", "state show", "cite-check"],

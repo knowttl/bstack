@@ -30,7 +30,7 @@ Copy this checklist and tick a step only when its Done when criterion is met.
 - [ ] Step 2: Plan the kit
 - [ ] Step 3: Review and apply the kit
 - [ ] Step 4: Prove the kit
-- [ ] Step 5: Propose testing guidance
+- [ ] Step 5: Propose testing guidance and safety rules
 - [ ] Step 6: Propose constraints
 - [ ] Step 7: Audit the existing suite
 - [ ] Step 8: Propose no-mistakes wiring
@@ -39,12 +39,13 @@ Copy this checklist and tick a step only when its Done when criterion is met.
 ### Step 1: Interview the repo
 
 Answer from the codebase and ask the user only what the repo cannot show: the surface a user touches, how the product starts locally, how an agent can drive it, what evidence is observable and whether two instances can run side by side.
+Also collect the repo's high-damage operations: process kills, writes to live or shared state, hardcoded environments and destructive file or Git operations, each with its failure mode and safe alternative.
 Prefer the repo's own documented commands and existing drive harnesses before a generic recipe.
 If the checkout does not build or start as it is, report the exact blocker instead of editing product code or generating a kit against a broken base.
 Decide whether the third-party lens applies: it applies only when the product integrates with an outside service or API that needs authentication or secrets or can hit rate limits.
 Use the [kit guide](references/create.md) for the interview questions and the [third-party lens](references/third-party.md) when it applies.
 
-Done when: The surface, launch command, drive harness, evidence, isolation limits and third-party applicability are established from repo evidence, and each unanswerable question is asked or named as a blocker.
+Done when: The surface, launch command, drive harness, evidence, isolation limits, high-damage operations and third-party applicability are established from repo evidence, and each unanswerable question is asked or named as a blocker.
 
 ### Step 2: Plan the kit
 
@@ -80,13 +81,14 @@ If the proof ran in a stand-in for the real target, list every setup step the st
 
 Done when: A proof run passed on the applied kit with its evidence present at the named location, or the kit is reported as a draft with the failing check named.
 
-### Step 5: Propose testing guidance
+### Step 5: Propose testing guidance and safety rules
 
 Propose the testing principles, the four-question gate and the offline default test command as selected changes in the target's existing authoritative documents and agent instructions, with pointers instead of copies.
 Load the [testing reference](references/testing.md) for the principles and the exact text to adapt, and use the [writing reference](references/writing.md) to draft the guidance.
 Prefer extending an existing policy to creating a new document.
+Propose the high-damage operations from Step 1 as a short safety section in the existing contributor or design document, with one separately selected `AGENTS.md` pointer to it following the [pointer guide](references/agents-pointer.md), using the [safety section guide](references/create.md#record-high-damage-operations).
 
-Done when: Each selected testing change names its destination, the principle it states and why the destination is authoritative, or the user has declined it.
+Done when: Each selected testing change names its destination, the principle it states and why the destination is authoritative, or the user has declined it, and the safety section and its pointer are selected edits with their destination or declined, or no high-damage operation was found.
 
 ### Step 6: Propose constraints
 
@@ -301,6 +303,7 @@ Run scripts without loading their source, and pass schemas to scripts without re
 | Interviewing the repo, writing the kit plan or proving the kit | `references/create.md` |
 | Writing the kit plan's prose or the testing guidance | `references/writing.md` |
 | Proposing testing guidance or auditing the suite | `references/testing.md` |
+| Adding the safety section's `AGENTS.md` pointer | `references/agents-pointer.md` |
 | Planning feedback layers, proposing affected/full commands or auditing suite speed | `references/fast-feedback.md` |
 | Proposing hard constraints, rule proofs or a baseline, or running a correct pass | `references/constraints.md` |
 | Selecting slop rules for a language or banning prose comments | `references/slop-baseline.md` |
