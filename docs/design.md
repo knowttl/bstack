@@ -791,6 +791,7 @@ The `/maintenance sweep` mode, not repo-audit, reports later drift.
 - `instructions measure` reports the bytes, lines and approximate tokens of the instructions an agent loads: instruction files, the files a `CLAUDE.md` imports and the descriptions of model-invocable skills.
 - The audit gives each line of the root file, and of a scoped file the author asks for, one line-value class (resolving pointer, copy, enforced by a proven check, dead, restates an agent default, project-specific rule), removes nothing automatically and lists default-restating lines only when no no-mistakes history finding cites them.
 - `instructions.exclude` in `.bstack/project.json` configures fixture trees out of `inventory` and `measure`.
+- `/maintenance` records the measured instruction bytes and a reason as `instructions.baseline`, and `bstack-check --docs-only` fails when the instructions grow past it unless the same change raises the baseline with a new reason. The limit is the repo's own measured size, not a fixed number.
 
 ### plan
 

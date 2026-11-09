@@ -25,7 +25,7 @@ function canonical(value: unknown): string {
 
 function maintenance(directory: string, args: readonly string[]) {
   const env = { ...process.env, HOME: directory, USERPROFILE: directory, XDG_CACHE_HOME: join(directory, 'cache'), LOCALAPPDATA: join(directory, 'cache') }
-  const result = spawnSync(process.execPath, [entry, ...args, '--json'], { encoding: 'utf8', env })
+  const result = spawnSync(process.execPath, [entry, ...args, '--json'], { encoding: 'utf8', env, maxBuffer: Infinity })
   assert.equal(result.stderr, '')
   return { exit: result.status, ...JSON.parse(result.stdout) }
 }
@@ -159,6 +159,40 @@ test('the docs-only checker needs no base or assessment and rejects them', async
   const rejected = call(['--base', 'HEAD'])
   assert.equal(rejected.status, 3)
   assert.equal(JSON.parse(rejected.stdout).problems[0].code, 'docs-only-input')
+})
+
+test('the docs-only checker fails on instruction growth until the baseline is raised with a reason', async t => {
+  const f = await documentedRepo(t)
+  await writeFile(join(f.repo, 'AGENTS.md'), '# Agent instructions\n')
+  await writeFile(join(f.repo, 'CLAUDE.md'), '@AGENTS.md\n')
+  await mkdir(join(f.repo, 'tests/fixtures/shop'), { recursive: true })
+  await writeFile(join(f.repo, 'tests/fixtures/shop/AGENTS.md'), 'Fixture rules that are far larger than the baseline allows.\n'.repeat(20))
+  await mkdir(join(f.repo, '.bstack'))
+  const record = (instructions: object) => writeFile(join(f.repo, '.bstack/project.json'), JSON.stringify({ ...contract, instructions }))
+  const check = () => {
+    const result = spawnSync(process.execPath, [checker, '--repo', f.repo, '--docs-only', '--json'], { encoding: 'utf8' })
+    return { exit: result.status, ...JSON.parse(result.stdout) }
+  }
+  await record({ exclude: ['tests/fixtures/**'] })
+  const measured = maintenance(f.directory, ['instructions', 'measure', '--repo', f.repo])
+  assert.equal(measured.exit, 0, JSON.stringify(measured))
+  assert.equal(measured.data.total.bytes, 21 + 11)
+
+  await record({ exclude: ['tests/fixtures/**'], baseline: { bytes: measured.data.total.bytes, reason: 'Measured when registered' } })
+  assert.equal(check().exit, 0)
+
+  await writeFile(join(f.repo, 'AGENTS.md'), '# Agent instructions\n\nNever commit secrets.\n')
+  const grown = check()
+  assert.equal(grown.exit, 1, JSON.stringify(grown))
+  assert.deepEqual(grown.problems.map((problem: NonNullable<typeof grown.problems>[number]) => problem.code), ['instructions-grew'])
+  assert.match(grown.problems[0].message, /above the recorded baseline of 32 bytes \(Measured when registered\)/)
+
+  await record({ exclude: ['tests/fixtures/**'], baseline: { bytes: 55, reason: 'Secrets rule' } })
+  assert.equal(check().exit, 0)
+  await record({ exclude: ['tests/fixtures/**'], baseline: { bytes: 55 } })
+  const reasonless = check()
+  assert.equal(reasonless.exit, 1)
+  assert.equal(reasonless.problems[0].path, '$/instructions/baseline/reason')
 })
 
 test('sweep names the mode that fixes each seeded drift, and writes nothing', async t => {

@@ -107,9 +107,12 @@ After rebasing or changing the agreed base, recollect, review, bind and commit t
 node .bstack/bin/bstack-check.mjs --repo <path> --docs-only [--contract <repo-relative-file>] [--json]
 ```
 
-`--docs-only` runs `docs check` and the `docs generate --check` comparison on the current tree and nothing else, so it takes no base or assessment and starts no leaf command.
+`--docs-only` runs `docs check`, the `docs generate --check` comparison and the instruction growth check on the current tree and nothing else, so it takes no base or assessment and starts no leaf command.
 Supplying `--base`, `--assessment` or `--workspace` with it is a usage error (exit 3, problem code `docs-only-input`).
-Results use the shared exit codes: 0 when links, supported glossary structures and generated sections are current, 1 for a broken link, invalid or duplicate glossary entry or stale generated section, and 2 when the contract or a registered source cannot be read.
+When the contract records `instructions.baseline`, the check measures the loaded instructions as `instructions measure` does, applying `instructions.exclude`, and fails with `instructions-grew` when the total bytes exceed `baseline.bytes`.
+A change that needs more instructions raises `baseline.bytes` and replaces `baseline.reason` in the same change, and a baseline without a nonblank reason is a schema violation.
+A contract without a baseline has no instruction check, and the full checker does not run it.
+Results use the shared exit codes: 0 when links, supported glossary structures and generated sections are current and instructions are within the baseline, 1 for a broken link, invalid or duplicate glossary entry, stale generated section or grown instructions, and 2 when the contract or a registered source cannot be read.
 It is the command of the no-mistakes docs gate that the [maintenance skill](../skills/maintenance/SKILL.md) wires.
 
 ### Previous-policy execution

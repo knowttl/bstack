@@ -14,18 +14,18 @@ const importDepth = 5
 const skillDescription = /^\.(?:claude|agents)\/skills\/[^/]+\/SKILL\.md$/
 const instructionFile = /(?:^|\/)(?:AGENTS\.md|CLAUDE\.md)$/
 
-export async function loadInstructionSettings(root) {
+export async function loadInstructionSettings(root, file = contractPath) {
   let text
-  try { text = await readFile(await resolveFilePath(root, contractPath), 'utf8') } catch (error) {
-    if (error.code === 'ENOENT') return { exclude: [] }
+  try { text = await readFile(await resolveFilePath(root, file), 'utf8') } catch (error) {
+    if (error.code === 'ENOENT') return { exclude: [], baseline: null }
     throw error
   }
   let contract
   try { contract = JSON.parse(text) } catch {
-    throw new CommandError('blocked', [{ code: 'contract-unavailable', path: contractPath, message: 'The project contract must be readable JSON.', fix: 'Repair .bstack/project.json or remove it.' }])
+    throw new CommandError('blocked', [{ code: 'contract-unavailable', path: file, message: 'The project contract must be readable JSON.', fix: `Repair ${file} or remove it.` }])
   }
   validateData(schema, contract)
-  return { exclude: contract.instructions?.exclude ?? [] }
+  return { exclude: contract.instructions?.exclude ?? [], baseline: contract.instructions?.baseline ?? null }
 }
 
 export async function includedFiles(root, exclude) {
@@ -99,4 +99,13 @@ export async function measureInstructions(root, files) {
   }
   const list = [...sources.values()]
   return { sources: list, total: Object.fromEntries(['bytes', 'lines', 'tokens'].map(key => [key, list.reduce((sum, source) => sum + source[key], 0)])) }
+}
+
+export async function checkInstructionGrowth(root, file) {
+  const { exclude, baseline } = await loadInstructionSettings(root, file)
+  if (!baseline) return []
+  const { total } = await measureInstructions(root, await includedFiles(root, exclude))
+  if (total.bytes <= baseline.bytes) return []
+  return [{ code: 'instructions-grew', path: file, message: `Loaded instructions measure ${total.bytes} bytes, above the recorded baseline of ${baseline.bytes} bytes (${baseline.reason}).`,
+    fix: 'Shrink the instructions, or raise instructions.baseline.bytes to the new measure in the same change with a reason for the growth.' }]
 }

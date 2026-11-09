@@ -6,6 +6,7 @@ It never writes a document's content: terms, boundaries and purpose stay with th
 ## Contents
 
 - Register the documents
+- Record the instruction baseline
 - Offer the no-comments rule
 - Write the ownership map
 - Add the docs gate
@@ -30,6 +31,21 @@ Map code to documents with `scopes`: each scope lists the code paths a document 
 A rule names a literal sentence in an authoritative document as its `pointer`, and the checks that prove it.
 Use the project's own check command as a leaf check and never invoke the checker from a leaf.
 Add a `generators` entry only for a section that a command renders into a document between markers.
+
+## Record the instruction baseline
+
+The instructions an agent loads grow by accretion, so the contract records how large they are and the docs gate fails when they grow past it.
+Run `instructions measure --repo <target> --json` and record `data.total.bytes` as `bytes` in `instructions.baseline`, with a `reason` saying why that size is right now, such as `Measured when registered`:
+
+```json
+"instructions": { "exclude": ["tests/fixtures/**"], "baseline": { "bytes": 6457, "reason": "Measured when registered" } }
+```
+
+Put test inputs and fixture trees in `instructions.exclude` first, because their `AGENTS.md` and `CLAUDE.md` files are data and not loaded instructions.
+The gate measures the same sources as `instructions measure` and passes while the total is at or below `bytes`.
+A change that needs more must raise `bytes` to the new measure in the same change and replace `reason` with why the growth is worth its cost, so the increase shows in the diff for review.
+After pruning, lower `bytes` to the new measure so the saved room cannot be spent again unreviewed.
+A contract without `instructions.baseline` has no instruction gate.
 
 ## Offer the no-comments rule
 
@@ -67,7 +83,7 @@ No-mistakes applies a correction-only rule to `AGENTS.md`, so the map never asks
 ## Add the docs gate
 
 A gate is a command that runs after a core step and passes on exit code 0.
-This one runs the installed checker in docs-only mode after the Document step, so a broken link, an invalid or duplicate glossary entry or a stale generated section stops the run for the author's decision:
+This one runs the installed checker in docs-only mode after the Document step, so a broken link, an invalid or duplicate glossary entry, a stale generated section or instructions larger than `instructions.baseline` stops the run for the author's decision:
 
 ```yaml
 gates:

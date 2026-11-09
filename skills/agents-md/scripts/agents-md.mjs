@@ -8736,7 +8736,16 @@ var project_schema_default = {
       type: "object",
       additionalProperties: false,
       properties: {
-        exclude: { type: "array", uniqueItems: true, items: { type: "string", minLength: 1 } }
+        exclude: { type: "array", uniqueItems: true, items: { type: "string", minLength: 1 } },
+        baseline: {
+          type: "object",
+          additionalProperties: false,
+          required: ["bytes", "reason"],
+          properties: {
+            bytes: { type: "integer" },
+            reason: { type: "string", minLength: 1, pattern: "\\S" }
+          }
+        }
       }
     },
     acceptanceSources: {
@@ -8760,22 +8769,22 @@ var contractPath = ".bstack/project.json";
 var importDepth = 5;
 var skillDescription = /^\.(?:claude|agents)\/skills\/[^/]+\/SKILL\.md$/;
 var instructionFile = /(?:^|\/)(?:AGENTS\.md|CLAUDE\.md)$/;
-async function loadInstructionSettings(root) {
+async function loadInstructionSettings(root, file = contractPath) {
   let text;
   try {
-    text = await readFile4(await resolveFilePath(root, contractPath), "utf8");
+    text = await readFile4(await resolveFilePath(root, file), "utf8");
   } catch (error) {
-    if (error.code === "ENOENT") return { exclude: [] };
+    if (error.code === "ENOENT") return { exclude: [], baseline: null };
     throw error;
   }
   let contract;
   try {
     contract = JSON.parse(text);
   } catch {
-    throw new CommandError("blocked", [{ code: "contract-unavailable", path: contractPath, message: "The project contract must be readable JSON.", fix: "Repair .bstack/project.json or remove it." }]);
+    throw new CommandError("blocked", [{ code: "contract-unavailable", path: file, message: "The project contract must be readable JSON.", fix: `Repair ${file} or remove it.` }]);
   }
   validateData(project_schema_default, contract);
-  return { exclude: contract.instructions?.exclude ?? [] };
+  return { exclude: contract.instructions?.exclude ?? [], baseline: contract.instructions?.baseline ?? null };
 }
 async function includedFiles(root, exclude) {
   const globs = exclude.map(pathGlob);
@@ -8932,5 +8941,5 @@ await dispatch(process.argv.slice(2), "agents-md", {
   "apply": { options: ["plan", "dry-run", "approved-fingerprint"], help: "Apply or resume a reviewed change set with recoverable originals.\nUsage: agents-md.mjs apply --repo <path>|--workspace <path> --plan <file> [--dry-run] [--approved-fingerprint <planDigest>] [--json]\nPlan follows schemas/change-set.schema.json. --dry-run previews exact bytes without writes. Assessment writes require --approved-fingerprint matching the preview planDigest; that value must come from the owner's approval reply for the exact preview, never from the agent's own approval. Repeating a plan resumes its digest-bound run and still requires the approved fingerprint for assessment writes.\nDigests use SHA-256 of UTF-8 JSON: recursively sort object keys, preserve array order, encode keys and primitive values with JSON.stringify and omit whitespace between tokens. Hash the complete findings object for findingsDigest; omit only the top-level planDigest when hashing each plan. Creation changeSetDigest equals the referenced change set's planDigest.", run },
   "state show": { options: ["run"], help: "Inspect actual pending, applied and conflicting edits without writes.\nUsage: agents-md.mjs state show --repo <path>|--workspace <path> --run <id> [--json]", run: run2 },
   "inventory": { options: [], help: "Discover document sources and scoped instructions without writes.\nUsage: agents-md.mjs inventory --repo <path>|--workspace <path> [--json]\nAbsent document kinds are reported without failure. Instruction consolidation is a candidate requiring review.", run: run3 },
-  "instructions measure": { options: [], help: "Measure the size of the instructions an agent loads in this repo without writes.\nUsage: agents-md.mjs instructions measure --repo <path>|--workspace <path> [--json]\nReports bytes, lines and approximate tokens (bytes divided by four, rounded up) for each AGENTS.md and CLAUDE.md file, each file a CLAUDE.md imports with @path (up to five hops, inside the repo only, skipping fenced and inline code) and the description of each model-invocable skill under .claude/skills and .agents/skills, with a total that counts every file once. CLAUDE.local.md and skills with disable-model-invocation: true are not measured. Paths matching instructions.exclude in .bstack/project.json, such as fixture trees, are left out of this command and of inventory.", run: run4 }
+  "instructions measure": { options: [], help: "Measure the size of the instructions an agent loads in this repo without writes.\nUsage: agents-md.mjs instructions measure --repo <path>|--workspace <path> [--json]\nReports bytes, lines and approximate tokens (bytes divided by four, rounded up) for each AGENTS.md and CLAUDE.md file, each file a CLAUDE.md imports with @path (up to five hops, inside the repo only, skipping fenced and inline code) and the description of each model-invocable skill under .claude/skills and .agents/skills, with a total that counts every file once. CLAUDE.local.md and skills with disable-model-invocation: true are not measured. Paths matching instructions.exclude in .bstack/project.json, such as fixture trees, are left out of this command and of inventory. The total bytes are the value instructions.baseline.bytes records for the bstack-check --docs-only growth gate.", run: run4 }
 });
