@@ -46,22 +46,43 @@ async function description(text, path) {
 
 function importsIn(text) {
   let fence = null
+  let containers = []
   const lines = []
   for (const line of text.split(/\r?\n/)) {
+    let content = line
+    let depth = 0
+    for (const container of containers) {
+      if (!content.trim()) {
+        depth = containers.length
+        break
+      }
+      const prefix = container === 'quote' ? /^ {0,3}>[ \t]?/.exec(content)?.[0] : /^[ \t]+/.exec(content)?.[0]
+      if (prefix === undefined) break
+      const width = container === 'quote' ? prefix.length : Math.min(container, prefix.length)
+      if (container !== 'quote' && width < container && !(container === 2 && width === 1)) break
+      content = content.slice(width)
+      depth++
+    }
+    if (depth < containers.length) {
+      containers = containers.slice(0, depth)
+      fence = null
+    }
     if (fence) {
-      const closing = fence.closing.exec(line)?.[1]
-      if (closing && closing[0] === fence.marker[0] && closing.length >= fence.marker.length) fence = null
+      const closing = /^ {0,3}(`+|~+)[ \t]*$/.exec(content)?.[1]
+      if (closing && closing[0] === fence[0] && closing.length >= fence.length) fence = null
       lines.push('')
       continue
     }
-    const containers = /^(?:[ \t]*(?:>[ \t]?|(?:[-+*]|\d{1,9}[.)])[ \t]+))+/.exec(line)?.[0] ?? ''
-    const opening = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line.slice(containers.length))
+    let prefix
+    while ((prefix = /^ {0,3}(>[ \t]?|(?:[-+*]|\d{1,9}[.)])(?:[ \t]{1,4}|$))/.exec(content))) {
+      containers.push(prefix[1].startsWith('>') ? 'quote' : prefix[0].length)
+      content = content.slice(prefix[0].length)
+    }
+    const opening = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(content)
     if (opening && (opening[1][0] === '~' || !opening[2].includes('`'))) {
-      const quotes = (containers.match(/>/g) ?? []).length
-      const indentation = /(?:[-+*]|\d{1,9}[.)])[ \t]/.test(containers) ? '[ \\t]*' : ' {0,3}'
-      fence = { marker: opening[1], closing: new RegExp('^(?:' + indentation + '>[ \\t]?){' + quotes + '}' + indentation + '(`+|~+)[ \\t]*$') }
+      fence = opening[1]
       lines.push('')
-    } else lines.push(line)
+    } else lines.push(content)
   }
   const prose = lines.join('\n')
   const delimiters = /\\[\s\S]|`+/g
