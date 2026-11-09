@@ -1023,6 +1023,7 @@ Research the project's language and native tools; rule names alone never prove e
 | SL-6 | Suppressions are narrow |
 | SL-7 | Names describe the domain |
 | SL-8 | Layout belongs to the formatter |
+| SL-9 | Tests wait on a condition, not on the clock: no sleep-based waits, polling loops or unreasoned skips (unproven until a project proves it) |
 
 TypeScript uses the applicable [anti-slop rules](https://github.com/dmmulroy/anti-slop/tree/c44ef22ca116d0ba62a3ff663a0bd13a3f3fa40b).
 TypeScript-specific rules are not generalised to other languages; Effect rules apply only where Effect is a direct dependency.

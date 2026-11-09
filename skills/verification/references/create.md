@@ -56,7 +56,8 @@ In any command, `{port}` is replaced by a free port, `{runDir}` by a disposable 
 
 | Field | What it holds |
 |---|---|
-| `launch` | The command that reaches a usable state from an empty data directory, including migrations and seed data. Ready means usable, not merely that a process answers; declare exactly one of `ready.url` or `ready.output`. A short-lived command-line tool has no server: launch builds or installs once and each drive starts its own isolated session |
+| `launch` | The command that reaches a usable state from an empty data directory, including migrations and seed data, or from a pruned snapshot copied into `{runDir}`. Ready means usable, not merely that a process answers; declare exactly one of `ready.url` or `ready.output`. A short-lived command-line tool has no server: launch builds or installs once and each drive starts its own isolated session |
+| `isolation` | How two instances run side by side and what each run keeps to itself; also each side effect the kit stubs, such as jobs, webhooks and email, with how it is stubbed |
 | `doctor` | One read-only command that answers whether this instance is worth driving: process up, right build, port owned by this run, authentication valid. Exit 0 means yes |
 | `drive` | The harness name and the conventions that apply to every feature, such as preferring stable handles over coordinates |
 | `evidence` | The directory outside the kit where proof lands, and the proof standards |
@@ -64,6 +65,9 @@ In any command, `{port}` is replaced by a free port, `{runDir}` by a disposable 
 | `helpers` | Scripts the kit ships, with the invocation shown |
 | `coverageGate` | Optional `true` renders the feature-map coverage gate into the kit's scripts; omit it when the repo does not use no-mistakes |
 | `features` | One entry per user-facing feature |
+
+A snapshot seed is optional.
+Copy a pruned subset into `{runDir}`, never a symlink or the live data.
 
 Evidence standards to state: exercise the real user path, not internal setters or test-only endpoints; capture the action and the resulting state, not only the final screen; verify side effects such as files written, rows inserted or messages sent; use mocks only where a production boundary already isolates the external system.
 When the safe path is a dry run or test mode, observe what it actually skips instead of trusting its name.
