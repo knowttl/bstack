@@ -104,7 +104,6 @@ export async function measureInstructions(root, files) {
 export async function checkInstructionGrowth(root, file) {
   file ??= contractPath
   const { exclude, baseline } = await loadInstructionSettings(root, file)
-  if (!baseline) return []
   let path = file
   let priorFile
   const visited = new Set()
@@ -137,6 +136,8 @@ export async function checkInstructionGrowth(root, file) {
     validateData(schema, prior)
   }
   const previous = prior?.instructions?.baseline
+  if (!baseline) return previous ? [{ code: 'instructions-baseline-removed', path: file, message: 'The recorded instruction baseline was removed.',
+    fix: 'Restore instructions.baseline to keep the instruction growth gate active.' }] : []
   const problems = []
   if (previous && baseline.bytes > previous.bytes && (baseline.reason.trim() === previous.reason.trim() || baseline.reason.trim() === 'Measured when registered')) {
     problems.push({ code: 'instructions-baseline-reason', path: file, message: 'The instruction baseline increased without a new growth reason.',

@@ -237,6 +237,33 @@ test('docs-only compares the prior baseline through committed contract symlinks'
   assert.deepEqual(JSON.parse(result.stdout).problems.map((problem: { code: string }) => problem.code), ['instructions-baseline-reason'])
 })
 
+for (const instructions of [undefined, {}]) {
+  test(`docs-only rejects removal of ${instructions ? 'the baseline' : 'instruction settings'}`, async t => {
+    const f = await documentedRepo(t)
+    await mkdir(join(f.repo, '.bstack'))
+    const contractFile = join(f.repo, '.bstack/project.json')
+    await writeFile(contractFile, JSON.stringify({ ...contract, instructions: { baseline: { bytes: 100, reason: 'Existing guidance' } } }))
+    f.commit('prior baseline')
+    git(f.repo, 'update-ref', 'refs/remotes/origin/main', 'HEAD')
+    await writeFile(contractFile, JSON.stringify({ ...contract, instructions }))
+    await writeFile(join(f.repo, 'AGENTS.md'), 'New instructions.\n'.repeat(20))
+    const result = spawnSync(process.execPath, [checker, '--repo', f.repo, '--docs-only', '--json'], { encoding: 'utf8' })
+    assert.equal(result.status, 1, result.stdout + result.stderr)
+    assert.deepEqual(JSON.parse(result.stdout).problems.map((problem: { code: string }) => problem.code), ['instructions-baseline-removed'])
+  })
+}
+
+test('docs-only permits a contract without a first baseline', async t => {
+  const f = await documentedRepo(t)
+  await mkdir(join(f.repo, '.bstack'))
+  await writeFile(join(f.repo, '.bstack/project.json'), JSON.stringify(contract))
+  f.commit('contract without baseline')
+  git(f.repo, 'update-ref', 'refs/remotes/origin/main', 'HEAD')
+  const result = spawnSync(process.execPath, [checker, '--repo', f.repo, '--docs-only', '--json'], { encoding: 'utf8' })
+  assert.equal(result.status, 0, result.stdout + result.stderr)
+  assert.deepEqual(JSON.parse(result.stdout).problems, [])
+})
+
 test('sweep names the mode that fixes each seeded drift, and writes nothing', async t => {
   const f = await documentedRepo(t)
   await mkdir(join(f.repo, '.bstack'))

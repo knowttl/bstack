@@ -7963,7 +7963,6 @@ async function measureInstructions(root, files) {
 async function checkInstructionGrowth(root, file) {
   file ??= contractPath;
   const { exclude, baseline } = await loadInstructionSettings(root, file);
-  if (!baseline) return [];
   let path = file;
   let priorFile;
   const visited = /* @__PURE__ */ new Set();
@@ -7998,6 +7997,12 @@ async function checkInstructionGrowth(root, file) {
     validateData(project_schema_default, prior);
   }
   const previous = prior?.instructions?.baseline;
+  if (!baseline) return previous ? [{
+    code: "instructions-baseline-removed",
+    path: file,
+    message: "The recorded instruction baseline was removed.",
+    fix: "Restore instructions.baseline to keep the instruction growth gate active."
+  }] : [];
   const problems = [];
   if (previous && baseline.bytes > previous.bytes && (baseline.reason.trim() === previous.reason.trim() || baseline.reason.trim() === "Measured when registered")) {
     problems.push({
@@ -9913,4 +9918,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"ad9eb84f1b9c5c6c1be81c16fa035b8bd5e430f651028ec4117a761410ae1454"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"8ece069a44cee09d2e405a703672a75afbd7ac7bc02fa5bd638cd55749ebc943"}

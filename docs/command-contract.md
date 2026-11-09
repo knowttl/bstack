@@ -113,8 +113,9 @@ When the contract records `instructions.baseline`, the check measures the loaded
 A change that needs more instructions raises `baseline.bytes` and replaces `baseline.reason` in the same change, and a baseline without a nonblank reason is a schema violation.
 The checker compares the selected contract with the same path at `origin/main` and reports `instructions-baseline-reason` when bytes increase without a changed reason or with `Measured when registered` as the new reason.
 If `origin/main`, the prior contract or its baseline is absent, it skips this comparison for first registration.
-A contract without a baseline has no instruction check, and the full checker does not run it.
-Results use the shared exit codes: 0 when links, supported glossary structures and generated sections are current and instructions are within the baseline, 1 for a broken link, invalid or duplicate glossary entry, stale generated section, grown instructions or an increased baseline without a new reason, and 2 when the contract or a registered source cannot be read.
+If the prior contract has a baseline, removing it fails with `instructions-baseline-removed`; otherwise a contract without a baseline has no instruction check.
+The full checker does not run the instruction check.
+Results use the shared exit codes: 0 when links, supported glossary structures and generated sections are current and instructions are within the baseline, 1 for a broken link, invalid or duplicate glossary entry, stale generated section, grown instructions, a removed baseline or an increased baseline without a new reason, and 2 when the contract or a registered source cannot be read.
 It is the command of the no-mistakes docs gate that the [maintenance skill](../skills/maintenance/SKILL.md) wires.
 
 ### Previous-policy execution
