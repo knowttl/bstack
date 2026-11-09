@@ -35,13 +35,16 @@ Add a `generators` entry only for a section that a command renders into a docume
 ## Record the instruction baseline
 
 The instructions an agent loads grow by accretion, so the contract records how large they are and the docs gate fails when they grow past it.
-Run `instructions measure --repo <target> --json` and record `data.total.bytes` as `bytes` in `instructions.baseline`, with a `reason` saying why that size is right now, such as `Measured when registered`:
+Put test inputs and fixture trees in the draft contract's `instructions.exclude`, because their `AGENTS.md` and `CLAUDE.md` files are data and not loaded instructions.
+Place the draft contract and final proposed wiring edits, including any instruction-file pointer, in a scratch clone of the target.
+Run `instructions measure --repo <scratch-clone> --json` and record `data.total.bytes` as `bytes` in `instructions.baseline`, with a `reason` saying why that size is right now, such as `Measured when registered`:
 
 ```json
 "instructions": { "exclude": ["tests/fixtures/**"], "baseline": { "bytes": 6457, "reason": "Measured when registered" } }
 ```
 
-Put test inputs and fixture trees in `instructions.exclude` first, because their `AGENTS.md` and `CLAUDE.md` files are data and not loaded instructions.
+If a selection or revision changes the proposed instruction tree or exclusions while the contract edit remains selected, update the clone, remeasure and update the baseline, then validate and present the revised bytes for approval.
+If the contract edit is deselected, leave the existing contract unchanged, validate the selected tree in scratch, and report any resulting failure.
 The gate measures the same sources as `instructions measure` and passes while the total is at or below `bytes`.
 A change that needs more must raise `bytes` to the new measure in the same change and replace `reason` with why the growth is worth its cost, so the increase shows in the diff for review.
 After pruning, lower `bytes` to the new measure so the saved room cannot be spent again unreviewed.
