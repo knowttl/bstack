@@ -259,6 +259,39 @@ for (const { name, content, imported } of [
 }
 
 for (const content of [
+  '- ~~~\n @hidden.md\n ~~~\n\n@visible.md\n',
+  '- ```\n  @hidden.md\n  ```\n\n@visible.md\n',
+  '+ ~~~\n  @hidden.md\n  ~~~~\n\n@visible.md\n',
+  '* ```\n  @hidden.md\n  ````\n\n@visible.md\n',
+  '1. ~~~\n   @hidden.md\n   ~~~\n\n@visible.md\n',
+  '2) ```\n   @hidden.md\n   ```\n\n@visible.md\n',
+  '> ~~~\n> @hidden.md\n> ~~~\n\n@visible.md\n',
+  '> ```\n> @hidden.md\n> ```\n\n@visible.md\n',
+  '> > ~~~~\n> > ~~~\n> > @hidden.md\n> > ~~~~\n\n@visible.md\n',
+  '- - ```\n    @hidden.md\n    ```\n\n@visible.md\n',
+  '> - ~~~\n>   @hidden.md\n>   ~~~\n\n@visible.md\n',
+  '- > ```\n  > @hidden.md\n  > ```\n\n@visible.md\n',
+  '- - > ~~~\n    > @hidden.md\n    > ~~~\n\n@visible.md\n',
+  '> - - ```\n>     @hidden.md\n>     ```\n\n@visible.md\n',
+  '~~~\n- ~~~\n@hidden.md\n~~~\n@visible.md\n',
+  '~~~\n> ~~~\n@hidden.md\n~~~\n@visible.md\n'
+]) {
+  for (const { path, sources } of [
+    { path: 'CLAUDE.md', sources: ['CLAUDE.md', 'visible.md'] },
+    { path: 'container.md', sources: ['CLAUDE.md', 'container.md', 'visible.md'] }
+  ]) {
+    test(`instructions measure skips nested fences in ${path}: ${JSON.stringify(content)}`, async t => {
+      const { directory, repo } = await emptyRepo(t)
+      await writeFiles(repo, { 'CLAUDE.md': '@container.md\n', [path]: content, 'visible.md': 'Visible\n', 'hidden.md': 'Hidden\n' })
+      const result = agentsMd(directory, ['instructions', 'measure', '--repo', repo])
+      assert.equal(result.exit, 0, JSON.stringify(result))
+      assert.deepEqual(result.data.sources.map((source: { path: string }) => source.path), sources)
+      assert.deepEqual(result.data.sources.find((source: { path: string }) => source.path === path).imports, ['visible.md'])
+    })
+  }
+}
+
+for (const content of [
   'Example: ` @hidden.md `\n@visible.md\n',
   'Example: `` @hidden.md ``\n@visible.md\n',
   'Example: ``` @hidden.md ```\n@visible.md\n',

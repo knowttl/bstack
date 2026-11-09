@@ -49,14 +49,17 @@ function importsIn(text) {
   const lines = []
   for (const line of text.split(/\r?\n/)) {
     if (fence) {
-      const closing = /^ {0,3}(`+|~+)[ \t]*$/.exec(line)?.[1]
-      if (closing && closing[0] === fence[0] && closing.length >= fence.length) fence = null
+      const closing = fence.closing.exec(line)?.[1]
+      if (closing && closing[0] === fence.marker[0] && closing.length >= fence.marker.length) fence = null
       lines.push('')
       continue
     }
-    const opening = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line)
+    const containers = /^(?:[ \t]*(?:>[ \t]?|(?:[-+*]|\d{1,9}[.)])[ \t]+))+/.exec(line)?.[0] ?? ''
+    const opening = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line.slice(containers.length))
     if (opening && (opening[1][0] === '~' || !opening[2].includes('`'))) {
-      fence = opening[1]
+      const quotes = (containers.match(/>/g) ?? []).length
+      const indentation = /(?:[-+*]|\d{1,9}[.)])[ \t]/.test(containers) ? '[ \\t]*' : ' {0,3}'
+      fence = { marker: opening[1], closing: new RegExp('^(?:' + indentation + '>[ \\t]?){' + quotes + '}' + indentation + '(`+|~+)[ \\t]*$') }
       lines.push('')
     } else lines.push(line)
   }
