@@ -46,7 +46,7 @@ These are research candidates, not proven equivalents.
 | SL-6 | not in anti-slop | ruff `PGH003`, `PGH004` | custom check on bare `//nolint` |
 | SL-7 | `no-shape-in-symbol-names` | custom check | custom check |
 | SL-8 | `require-readable-spacing` | `ruff format` | `gofmt` |
-| SL-9 | not in anti-slop; ESLint `no-restricted-properties` on timer calls and custom check for skips | ruff `TID251` banned-api on `time.sleep`; custom check for skips | `forbidigo` on `time.Sleep`; custom check for skips |
+| SL-9 | not in anti-slop; ESLint `no-restricted-properties` on timer calls and custom checks for polling loops and skips | ruff `TID251` banned-api on `time.sleep`; custom checks for polling loops and skips | `forbidigo` on `time.Sleep`; custom checks for polling loops and skips |
 
 ## TypeScript
 
@@ -59,7 +59,7 @@ Dropped: `require-safety-comment-for-type-assertion`, which conflicts with the c
 - Python SL-1, SL-2, SL-4, SL-5, SL-6 and SL-8 were proven on this skill's disposable fixture with ruff 0.15.20, through one maintained command that rejected a seeded violation of each with its diagnostic. In the bstack source checkout, the configuration lives in `tests/fixtures/py-greeter/pyproject.toml`. Prove it again on every project, since versions, rule sets and existing code differ.
 - Python SL-3 and SL-7, and Go SL-2, SL-6 and SL-7, have no native rule in this mapping and need a custom check if enabled.
 - Go SL-1, SL-3, SL-4 and SL-5 are verified by rule name in the golangci-lint reference only; golangci-lint itself was not run, so each Go mapping needs a project-specific configuration and proof. `gofmt` for SL-8 ships with the Go toolchain.
-- SL-9 has no proof in any language: every mapping in its row is a candidate by name only, and the skip half needs a custom check in each mapping.
+- SL-9 has no proof in any language: every mapping in its row is a candidate by name only, and polling loops and skips need custom checks in each mapping. Prove each part before treating SL-9 as proven.
 - No Go or TypeScript slop rule was proven by this skill's tests. The comment-ban checkers were tested for Python, Go and TypeScript.
 
 ## The comment ban
