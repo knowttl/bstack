@@ -64,7 +64,7 @@ Propose each resulting rung as a selected change with its problem, consequence, 
 Pruning reads the same history in the other direction.
 For each adopted constraint rule, obtain the maintained check's output for the runs read and search it alongside the findings for the rule's diagnostic.
 Report a rule as fired if its diagnostic appeared in any available evidence.
-For a rule with no observed diagnostic, report it as never fired and a pruning candidate only when the relevant findings and check output are available for all runs read; otherwise report its firing history as unknown and identify the unavailable evidence.
+For a rule with no observed diagnostic, report it as never fired and a pruning candidate only when at least one run exists, all runs are read and their relevant findings and check output are available; otherwise report its firing history as unknown and identify the unavailable evidence.
 A pruning candidate is not a deletion, because a quiet rule may be what keeps the mistake out.
 Propose removal as a selected change only after the user chooses it, and report rules without proof or without history as such.
 

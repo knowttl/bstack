@@ -67,8 +67,7 @@ In any command, `{port}` is replaced by a free port, `{runDir}` by a disposable 
 | `features` | One entry per user-facing feature |
 
 A snapshot seed is optional.
-Copy a pruned subset into `{runDir}`, never a symlink or the live data, and remove personal and credential data from the copy.
-Launch must be unable to reach the services behind the copied data.
+Copy a pruned subset into `{runDir}`, never a symlink or the live data.
 
 Evidence standards to state: exercise the real user path, not internal setters or test-only endpoints; capture the action and the resulting state, not only the final screen; verify side effects such as files written, rows inserted or messages sent; use mocks only where a production boundary already isolates the external system.
 When the safe path is a dry run or test mode, observe what it actually skips instead of trusting its name.
