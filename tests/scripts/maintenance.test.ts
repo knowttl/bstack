@@ -179,6 +179,8 @@ test('the docs-only checker fails on instruction growth until the baseline is ra
   assert.equal(measured.data.total.bytes, 21 + 11)
 
   await record({ exclude: ['tests/fixtures/**'], baseline: { bytes: measured.data.total.bytes, reason: 'Initial project guidance' } })
+  f.commit('initial baseline')
+  git(f.repo, 'update-ref', 'refs/remotes/origin/main', 'HEAD')
   assert.equal(check().exit, 0)
 
   await writeFile(join(f.repo, 'AGENTS.md'), '# Agent instructions\n\nNever commit secrets.\n')
@@ -200,10 +202,11 @@ for (const { name, previous, current, ref, path, expected } of [
   { name: 'accepts an increase with a new reason', previous: { bytes: 100, reason: 'Measured when registered' }, current: { bytes: 200, reason: 'New guidance' }, expected: null },
   { name: 'accepts a decrease with the same reason', previous: { bytes: 100, reason: 'Existing guidance' }, current: { bytes: 50, reason: 'Existing guidance' }, expected: null },
   { name: 'accepts first registration without a prior baseline', previous: null, current: { bytes: 200, reason: 'Measured when registered' }, expected: null },
-  { name: 'rejects the initial reason without a prior contract', previous: undefined, current: { bytes: 200, reason: 'Measured when registered' }, expected: 'instructions-baseline-reason' },
-  { name: 'rejects the initial reason without origin main', previous: { bytes: 100, reason: 'Measured when registered' }, current: { bytes: 200, reason: 'Measured when registered' }, ref: false, expected: 'instructions-baseline-reason' },
-  { name: 'accepts a specific reason without a prior contract', previous: undefined, current: { bytes: 200, reason: 'Project guidance' }, expected: null },
-  { name: 'accepts a specific reason without origin main', previous: { bytes: 100, reason: 'Measured when registered' }, current: { bytes: 200, reason: 'New guidance' }, ref: false, expected: null },
+  { name: 'rejects the initial reason without a prior contract', previous: undefined, current: { bytes: 200, reason: 'Measured when registered' }, expected: 'prior-unavailable-fetch-the-ref' },
+  { name: 'rejects the initial reason without origin main', previous: { bytes: 100, reason: 'Measured when registered' }, current: { bytes: 200, reason: 'Measured when registered' }, ref: false, expected: 'prior-unavailable-fetch-the-ref' },
+  { name: 'rejects a specific reason without a prior contract', previous: undefined, current: { bytes: 200, reason: 'Project guidance' }, path: 'policy.json', expected: 'prior-unavailable-fetch-the-ref' },
+  { name: 'rejects a retained reason without origin main', previous: { bytes: 100, reason: 'Project guidance' }, current: { bytes: 200, reason: 'Project guidance' }, ref: false, expected: 'prior-unavailable-fetch-the-ref' },
+  { name: 'rejects a fresh reason without origin main', previous: { bytes: 100, reason: 'Project guidance' }, current: { bytes: 200, reason: 'New guidance' }, ref: false, expected: 'prior-unavailable-fetch-the-ref' },
   { name: 'checks a custom contract path', previous: { bytes: 100, reason: 'Existing guidance' }, current: { bytes: 200, reason: 'Existing guidance' }, path: 'policy.json', expected: 'instructions-baseline-reason' },
   { name: 'rejects the registration reason on a later increase', previous: { bytes: 100, reason: 'Existing guidance' }, current: { bytes: 200, reason: 'Measured when registered' }, expected: 'instructions-baseline-reason' }
 ]) {
@@ -219,6 +222,22 @@ for (const { name, previous, current, ref, path, expected } of [
     const output = JSON.parse(result.stdout)
     assert.equal(result.status, expected ? 1 : 0, result.stdout + result.stderr)
     assert.deepEqual(output.problems.map((problem: { code: string }) => problem.code), expected ? [expected] : [])
+  })
+}
+
+for (const ref of [true, false]) {
+  test(`docs-only rejects baseline removal when ${ref ? 'the prior path' : 'origin main'} is unavailable`, async t => {
+    const f = await documentedRepo(t)
+    await mkdir(join(f.repo, '.bstack'))
+    await writeFile(join(f.repo, '.bstack/project.json'), JSON.stringify({ ...contract, instructions: { baseline: { bytes: 10, reason: 'Project guidance' } } }))
+    f.commit('prior baseline')
+    if (ref) git(f.repo, 'update-ref', 'refs/remotes/origin/main', 'HEAD')
+    const contractFile = ref ? 'policy.json' : '.bstack/project.json'
+    await writeFile(join(f.repo, contractFile), JSON.stringify(contract))
+    await writeFile(join(f.repo, 'AGENTS.md'), 'New instructions.\n')
+    const result = spawnSync(process.execPath, [checker, '--repo', f.repo, '--docs-only', '--contract', contractFile, '--json'], { encoding: 'utf8' })
+    assert.equal(result.status, 1, result.stdout + result.stderr)
+    assert.deepEqual(JSON.parse(result.stdout).problems.map((problem: { code: string }) => problem.code), ['prior-unavailable-fetch-the-ref'])
   })
 }
 

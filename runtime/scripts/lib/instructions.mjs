@@ -136,11 +136,16 @@ export async function checkInstructionGrowth(root, file) {
     validateData(schema, prior)
   }
   const previous = prior?.instructions?.baseline
+  if (priorFile.status !== 0) {
+    const { total } = await measureInstructions(root, await includedFiles(root, exclude))
+    if (baseline || total.bytes > 0) return [{ code: 'prior-unavailable-fetch-the-ref', path: file,
+      message: 'The prior instruction baseline cannot be verified.', fix: 'Fetch origin/main and restore the prior contract path before checking instruction growth.' }]
+    return []
+  }
   if (!baseline) return previous ? [{ code: 'instructions-baseline-removed', path: file, message: 'The recorded instruction baseline was removed.',
     fix: 'Restore instructions.baseline to keep the instruction growth gate active.' }] : []
   const problems = []
-  if ((previous && baseline.bytes > previous.bytes && (baseline.reason.trim() === previous.reason.trim() || baseline.reason.trim() === 'Measured when registered')) ||
-      (priorFile.status !== 0 && baseline.reason.trim() === 'Measured when registered')) {
+  if (previous && baseline.bytes > previous.bytes && (baseline.reason.trim() === previous.reason.trim() || baseline.reason.trim() === 'Measured when registered')) {
     problems.push({ code: 'instructions-baseline-reason', path: file, message: 'The instruction baseline increased without a new growth reason.',
       fix: 'Replace instructions.baseline.reason with a reason for the growth.' })
   }

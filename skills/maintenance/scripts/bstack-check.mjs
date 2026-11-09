@@ -7997,6 +7997,16 @@ async function checkInstructionGrowth(root, file) {
     validateData(project_schema_default, prior);
   }
   const previous = prior?.instructions?.baseline;
+  if (priorFile.status !== 0) {
+    const { total: total2 } = await measureInstructions(root, await includedFiles(root, exclude));
+    if (baseline || total2.bytes > 0) return [{
+      code: "prior-unavailable-fetch-the-ref",
+      path: file,
+      message: "The prior instruction baseline cannot be verified.",
+      fix: "Fetch origin/main and restore the prior contract path before checking instruction growth."
+    }];
+    return [];
+  }
   if (!baseline) return previous ? [{
     code: "instructions-baseline-removed",
     path: file,
@@ -8004,7 +8014,7 @@ async function checkInstructionGrowth(root, file) {
     fix: "Restore instructions.baseline to keep the instruction growth gate active."
   }] : [];
   const problems = [];
-  if (previous && baseline.bytes > previous.bytes && (baseline.reason.trim() === previous.reason.trim() || baseline.reason.trim() === "Measured when registered") || priorFile.status !== 0 && baseline.reason.trim() === "Measured when registered") {
+  if (previous && baseline.bytes > previous.bytes && (baseline.reason.trim() === previous.reason.trim() || baseline.reason.trim() === "Measured when registered")) {
     problems.push({
       code: "instructions-baseline-reason",
       path: file,
@@ -9918,4 +9928,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"d887f38d009dd13d1765573691f82fd7b8d961ac950def583edc0f7fa65e481e"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"ad3480b418f49a02148f9b9c04d644ddfe7751dc0562048c7565a8cb158b49bf"}

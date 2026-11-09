@@ -792,7 +792,9 @@ The `/maintenance sweep` mode, not repo-audit, reports later drift.
 - The audit gives each line of the root file, and of a scoped file the author asks for, one line-value class (resolving pointer, copy, enforced by a proven check, dead, restates an agent default, project-specific rule), removes nothing automatically and lists default-restating lines only when no no-mistakes history finding cites them.
 - `instructions.exclude` in `.bstack/project.json` configures fixture trees out of `inventory` and `measure`.
 - `/maintenance` records the measured instruction bytes and a reason as `instructions.baseline`, and `bstack-check --docs-only` fails when the instructions grow past it unless the same change raises the baseline with a new reason. The limit is the repo's own measured size, not a fixed number.
-  The checker compares the selected contract against `origin/main` and rejects an increased baseline with an unchanged reason or the initial registration reason; a missing prior ref, contract or baseline skips that comparison.
+  The checker compares the selected contract against `origin/main` and rejects an increased baseline with an unchanged reason or the initial registration reason.
+  When the prior ref or contract is unavailable, it fails if a current baseline or loaded instruction bytes exist, because growth cannot be verified.
+  A readable prior contract without a baseline permits first registration.
 
 ### plan
 

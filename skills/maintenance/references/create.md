@@ -49,9 +49,9 @@ If the contract edit is deselected, leave the existing contract unchanged, valid
 The gate measures the same sources as `instructions measure` and passes while the total is at or below `bytes`.
 A change that needs more, including re-recording an existing baseline during create, must raise `bytes` to the new measure in the same change and replace `reason` with a new reason why the growth is worth its cost, so the increase shows in the diff for review.
 Use `Measured when registered` only for first registration when the prior contract is readable and has no baseline.
-If the prior contract or `origin/main` cannot be read, use a specific non-initial reason.
+If the prior contract or `origin/main` cannot be read, restore access before checking instruction growth.
 After pruning, lower `bytes` to the new measure so the saved room cannot be spent again unreviewed.
-A contract without `instructions.baseline` has no instruction gate.
+A contract without `instructions.baseline` is accepted only when the readable prior contract also has no baseline, or when no prior contract is available and no instructions are loaded.
 
 ## Offer the no-comments rule
 
