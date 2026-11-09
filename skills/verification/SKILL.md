@@ -188,7 +188,11 @@ Done when: Only the approved change set has been applied, `kit check` passes and
 
 Run Steps C1 and C2 of the [Correct checklist](#correct-checklist) over the findings of every no-mistakes run, read as the [history reference](references/no-mistakes-history.md) describes, and the project's review comments, and propose each repeated mistake's rung without applying it.
 
-Done when: Each repeated mistake has a proposed rung and evidence, or the evidence read contains no repeated mistake and its limits are stated, including the runs read versus the total.
+Then list the project's adopted constraint rules from its maintained check configuration and baseline, and search the same findings and the maintained check's output in those runs for each rule's diagnostic.
+Report every rule whose diagnostic never appeared in the runs read, with the runs read versus the total, as a pruning candidate; a rule that never fired may be preventing the mistake, so remove nothing without the user's selection and propose it through the reviewed boundary.
+Report an unproven rule as such rather than as a candidate, and record the absence of history as a limitation.
+
+Done when: Each repeated mistake has a proposed rung and evidence, or the evidence read contains no repeated mistake and its limits are stated, including the runs read versus the total; and each adopted rule is reported as fired, never fired or unproven, or the missing history is named.
 
 ### Step M7: Audit and speed up the suite
 

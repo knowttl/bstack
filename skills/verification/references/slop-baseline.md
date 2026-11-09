@@ -26,6 +26,10 @@ Default on, adopted with each rule proven by `rule-proof` and existing violation
 | SL-6 | Suppressions are narrow |
 | SL-7 | Names describe the domain |
 | SL-8 | Layout belongs to the formatter |
+| SL-9 | Tests wait on a condition, not on the clock: no sleep-based waits, polling loops or unreasoned skips |
+
+SL-9 is unproven: it ships as a default candidate that stays off until a project proves it with `rule-proof`.
+Treat a reasoned skip as one whose reason is recorded where the checker can read it, such as the skip call's reason argument.
 
 ## Per-language mapping
 
@@ -42,6 +46,7 @@ These are research candidates, not proven equivalents.
 | SL-6 | not in anti-slop | ruff `PGH003`, `PGH004` | custom check on bare `//nolint` |
 | SL-7 | `no-shape-in-symbol-names` | custom check | custom check |
 | SL-8 | `require-readable-spacing` | `ruff format` | `gofmt` |
+| SL-9 | not in anti-slop; custom check, or ESLint `no-restricted-properties` on timer calls and `jest/no-disabled-tests` where those plugins are already in use | ruff `TID251` banned-api on `time.sleep`; custom check for skips | `forbidigo` on `time.Sleep`; custom check for skips |
 
 ## TypeScript
 
@@ -54,6 +59,7 @@ Dropped: `require-safety-comment-for-type-assertion`, which conflicts with the c
 - Python SL-1, SL-2, SL-4, SL-5, SL-6 and SL-8 were proven on this skill's disposable fixture with ruff 0.15.20, through one maintained command that rejected a seeded violation of each with its diagnostic. In the bstack source checkout, the configuration lives in `tests/fixtures/py-greeter/pyproject.toml`. Prove it again on every project, since versions, rule sets and existing code differ.
 - Python SL-3 and SL-7, and Go SL-2, SL-6 and SL-7, have no native rule in this mapping and need a custom check if enabled.
 - Go SL-1, SL-3, SL-4 and SL-5 are verified by rule name in the golangci-lint reference only; golangci-lint itself was not run, so each Go mapping needs a project-specific configuration and proof. `gofmt` for SL-8 ships with the Go toolchain.
+- SL-9 has no proof in any language: every mapping in its row is a candidate by name only, and the skip half has no native rule in the Python or Go mappings.
 - No Go or TypeScript slop rule was proven by this skill's tests. The comment-ban checkers were tested for Python, Go and TypeScript.
 
 ## The comment ban
