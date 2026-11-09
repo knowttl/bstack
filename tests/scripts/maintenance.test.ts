@@ -195,6 +195,31 @@ test('the docs-only checker fails on instruction growth until the baseline is ra
   assert.equal(reasonless.problems[0].path, '$/instructions/baseline/reason')
 })
 
+for (const { name, previous, current, ref, path, expected } of [
+  { name: 'rejects an increase with the same reason', previous: { bytes: 100, reason: 'Measured when registered' }, current: { bytes: 200, reason: 'Measured when registered' }, expected: 'instructions-baseline-reason' },
+  { name: 'accepts an increase with a new reason', previous: { bytes: 100, reason: 'Measured when registered' }, current: { bytes: 200, reason: 'New guidance' }, expected: null },
+  { name: 'accepts a decrease with the same reason', previous: { bytes: 100, reason: 'Existing guidance' }, current: { bytes: 50, reason: 'Existing guidance' }, expected: null },
+  { name: 'accepts first registration without a prior baseline', previous: null, current: { bytes: 200, reason: 'Measured when registered' }, expected: null },
+  { name: 'accepts first registration without a prior contract', previous: undefined, current: { bytes: 200, reason: 'Measured when registered' }, expected: null },
+  { name: 'accepts first registration without origin main', previous: { bytes: 100, reason: 'Measured when registered' }, current: { bytes: 200, reason: 'Measured when registered' }, ref: false, expected: null },
+  { name: 'checks a custom contract path', previous: { bytes: 100, reason: 'Existing guidance' }, current: { bytes: 200, reason: 'Existing guidance' }, path: 'policy.json', expected: 'instructions-baseline-reason' },
+  { name: 'rejects the registration reason on a later increase', previous: { bytes: 100, reason: 'Existing guidance' }, current: { bytes: 200, reason: 'Measured when registered' }, expected: 'instructions-baseline-reason' }
+]) {
+  test(`docs-only ${name}`, async t => {
+    const f = await documentedRepo(t)
+    await mkdir(join(f.repo, '.bstack'))
+    const contractFile = path ?? '.bstack/project.json'
+    if (previous !== undefined) await writeFile(join(f.repo, contractFile), JSON.stringify({ ...contract, instructions: previous ? { baseline: previous } : {} }))
+    f.commit('prior contract')
+    if (ref !== false) git(f.repo, 'update-ref', 'refs/remotes/origin/main', 'HEAD')
+    await writeFile(join(f.repo, contractFile), JSON.stringify({ ...contract, instructions: { baseline: current } }))
+    const result = spawnSync(process.execPath, [checker, '--repo', f.repo, '--docs-only', '--contract', contractFile, '--json'], { encoding: 'utf8' })
+    const output = JSON.parse(result.stdout)
+    assert.equal(result.status, expected ? 1 : 0, result.stdout + result.stderr)
+    assert.deepEqual(output.problems.map((problem: { code: string }) => problem.code), expected ? [expected] : [])
+  })
+}
+
 test('sweep names the mode that fixes each seeded drift, and writes nothing', async t => {
   const f = await documentedRepo(t)
   await mkdir(join(f.repo, '.bstack'))

@@ -74,6 +74,7 @@ Load the [create guide](references/create.md) for the map wording and the gate c
 State that the wiring takes effect only after it reaches the default branch, because no-mistakes honours it only from there.
 Prepare a scratch clone reflecting the target's current filesystem state, including staged, unstaged, untracked and ignored files, then place the draft contract and all proposed wiring edits in it.
 Measure that clone with `node scripts/maintenance.mjs instructions measure --repo <scratch-clone> --json`, and record its total bytes with a reason as `instructions.baseline` in the draft contract.
+When this raises an existing baseline, replace its reason with a new reason for the growth; `Measured when registered` is only for first registration.
 Place the updated contract in the clone and run `contract validate` and `docs check` there with the same flags.
 
 Done when: The drafts are in scratch, the ownership map names only documents the contract registers, the gate command matches the installed checker's documented usage, and the baseline equals the measured total of the proposed tree with validation results recorded.
@@ -95,7 +96,7 @@ Done when: Only the approved files have been written with unchanged hash precond
 
 Run `node .bstack/bin/bstack-check.mjs --repo <target> --docs-only --json` and confirm it passes on the written tree.
 Prove the gate fails when it should: prepare a scratch clone reflecting the written target's current filesystem state, including staged, unstaged, untracked and ignored files, break one local link in a registered document, run the same command there and confirm a nonzero exit, then discard the clone.
-When a baseline is recorded, repeat the proof in a fresh scratch clone of that same current state by appending a line to an instruction file and confirming the `instructions-grew` failure.
+When a baseline is recorded, repeat the proof in a fresh scratch clone of that same current state by adding enough bytes to the measured content of an included source to exceed the baseline and confirming the `instructions-grew` failure.
 Run `docs generate --repo <target> --check --json` when the contract registers generators.
 State the written paths, that the ownership map and gate act only once merged to the default branch, which documents each skill owns, and every step left blocked with its missing prerequisite.
 Name `sweep` as the later pass that finds drift, and start no other skill.

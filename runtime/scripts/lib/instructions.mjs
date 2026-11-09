@@ -2,7 +2,7 @@ import { readFile } from 'node:fs/promises'
 import { join, posix } from 'node:path'
 import { Lexer, Tokenizer } from 'marked'
 import { markdownTokens } from './document-references.mjs'
-import { repoFiles } from './discovery.mjs'
+import { readGit, repoFiles } from './discovery.mjs'
 import { matchesPath, pathGlob } from './glob.mjs'
 import { resolveFilePath } from './paths.mjs'
 import { validateData } from './schema.mjs'
@@ -102,10 +102,25 @@ export async function measureInstructions(root, files) {
 }
 
 export async function checkInstructionGrowth(root, file) {
+  file ??= contractPath
   const { exclude, baseline } = await loadInstructionSettings(root, file)
   if (!baseline) return []
+  const priorFile = readGit(root, ['show', `origin/main:${file}`])
+  let prior
+  if (priorFile.status === 0) {
+    try { prior = JSON.parse(priorFile.stdout) } catch {
+      throw new CommandError('blocked', [{ code: 'prior-contract-invalid', path: file, message: 'The origin/main project contract must be readable JSON.', fix: 'Repair the prior contract before comparing instruction baselines.' }])
+    }
+    validateData(schema, prior)
+  }
+  const previous = prior?.instructions?.baseline
+  const problems = []
+  if (previous && baseline.bytes > previous.bytes && (baseline.reason.trim() === previous.reason.trim() || baseline.reason.trim() === 'Measured when registered')) {
+    problems.push({ code: 'instructions-baseline-reason', path: file, message: 'The instruction baseline increased without a new growth reason.',
+      fix: 'Replace instructions.baseline.reason with a reason for the growth.' })
+  }
   const { total } = await measureInstructions(root, await includedFiles(root, exclude))
-  if (total.bytes <= baseline.bytes) return []
-  return [{ code: 'instructions-grew', path: file, message: `Loaded instructions measure ${total.bytes} bytes, above the recorded baseline of ${baseline.bytes} bytes (${baseline.reason}).`,
-    fix: 'Shrink the instructions, or raise instructions.baseline.bytes to the new measure in the same change with a reason for the growth.' }]
+  if (total.bytes > baseline.bytes) problems.push({ code: 'instructions-grew', path: file, message: `Loaded instructions measure ${total.bytes} bytes, above the recorded baseline of ${baseline.bytes} bytes (${baseline.reason}).`,
+    fix: 'Shrink the instructions, or raise instructions.baseline.bytes to the new measure in the same change with a reason for the growth.' })
+  return problems
 }

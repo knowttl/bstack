@@ -111,8 +111,10 @@ node .bstack/bin/bstack-check.mjs --repo <path> --docs-only [--contract <repo-re
 Supplying `--base`, `--assessment` or `--workspace` with it is a usage error (exit 3, problem code `docs-only-input`).
 When the contract records `instructions.baseline`, the check measures the loaded instructions as `instructions measure` does, applying `instructions.exclude`, and fails with `instructions-grew` when the total bytes exceed `baseline.bytes`.
 A change that needs more instructions raises `baseline.bytes` and replaces `baseline.reason` in the same change, and a baseline without a nonblank reason is a schema violation.
+The checker compares the selected contract with the same path at `origin/main` and reports `instructions-baseline-reason` when bytes increase without a changed reason or with `Measured when registered` as the new reason.
+If `origin/main`, the prior contract or its baseline is absent, it skips this comparison for first registration.
 A contract without a baseline has no instruction check, and the full checker does not run it.
-Results use the shared exit codes: 0 when links, supported glossary structures and generated sections are current and instructions are within the baseline, 1 for a broken link, invalid or duplicate glossary entry, stale generated section or grown instructions, and 2 when the contract or a registered source cannot be read.
+Results use the shared exit codes: 0 when links, supported glossary structures and generated sections are current and instructions are within the baseline, 1 for a broken link, invalid or duplicate glossary entry, stale generated section, grown instructions or an increased baseline without a new reason, and 2 when the contract or a registered source cannot be read.
 It is the command of the no-mistakes docs gate that the [maintenance skill](../skills/maintenance/SKILL.md) wires.
 
 ### Previous-policy execution

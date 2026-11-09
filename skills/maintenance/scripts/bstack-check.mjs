@@ -7961,16 +7961,37 @@ async function measureInstructions(root, files) {
   return { sources: list, total: Object.fromEntries(["bytes", "lines", "tokens"].map((key) => [key, list.reduce((sum, source) => sum + source[key], 0)])) };
 }
 async function checkInstructionGrowth(root, file) {
+  file ??= contractPath;
   const { exclude, baseline } = await loadInstructionSettings(root, file);
   if (!baseline) return [];
+  const priorFile = readGit(root, ["show", `origin/main:${file}`]);
+  let prior;
+  if (priorFile.status === 0) {
+    try {
+      prior = JSON.parse(priorFile.stdout);
+    } catch {
+      throw new CommandError("blocked", [{ code: "prior-contract-invalid", path: file, message: "The origin/main project contract must be readable JSON.", fix: "Repair the prior contract before comparing instruction baselines." }]);
+    }
+    validateData(project_schema_default, prior);
+  }
+  const previous = prior?.instructions?.baseline;
+  const problems = [];
+  if (previous && baseline.bytes > previous.bytes && (baseline.reason.trim() === previous.reason.trim() || baseline.reason.trim() === "Measured when registered")) {
+    problems.push({
+      code: "instructions-baseline-reason",
+      path: file,
+      message: "The instruction baseline increased without a new growth reason.",
+      fix: "Replace instructions.baseline.reason with a reason for the growth."
+    });
+  }
   const { total } = await measureInstructions(root, await includedFiles(root, exclude));
-  if (total.bytes <= baseline.bytes) return [];
-  return [{
+  if (total.bytes > baseline.bytes) problems.push({
     code: "instructions-grew",
     path: file,
     message: `Loaded instructions measure ${total.bytes} bytes, above the recorded baseline of ${baseline.bytes} bytes (${baseline.reason}).`,
     fix: "Shrink the instructions, or raise instructions.baseline.bytes to the new measure in the same change with a reason for the growth."
-  }];
+  });
+  return problems;
 }
 
 // runtime/scripts/commands/contract.mjs
@@ -9869,4 +9890,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"eec32136da2b369954cebd974bb20e8395a981871b06f7d39cf0136e37b592dd"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"9fecd2ab3aa0be7699804b087e6b7bf66e2f00e4d7dd9a565748a02e6f14e703"}
