@@ -62,7 +62,9 @@ Run Steps C1 and C2 of the Correct checklist in `SKILL.md` over the findings of 
 Propose each resulting rung as a selected change with its problem, consequence, fix, scope and verification; do not widen scope silently.
 
 Pruning reads the same history in the other direction.
-For each adopted constraint rule, report whether its diagnostic appeared in the findings or the maintained check's output of the runs read; a rule that never fired is a pruning candidate, not a deletion, because a quiet rule may be what keeps the mistake out.
+For each adopted constraint rule, obtain the maintained check's output for the runs read and search it alongside the findings for the rule's diagnostic.
+Report a rule as never fired and a pruning candidate only when the relevant findings and check output are available for all runs read; otherwise report its firing history as unknown and identify the unavailable evidence.
+A pruning candidate is not a deletion, because a quiet rule may be what keeps the mistake out.
 Propose removal as a selected change only after the user chooses it, and report rules without proof or without history as such.
 
 ## Outcomes
