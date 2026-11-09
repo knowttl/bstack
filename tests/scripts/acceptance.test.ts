@@ -29,7 +29,7 @@ async function plannedRegistry() {
 
 test('registry validates all 124 owned cases without scoring procedures', async () => {
   const result = run('--check-registry')
-  assert.equal(result.status, 0)
+  assert.equal(result.status, 0, result.stdout + result.stderr)
   assert.equal(result.data.data.registered, 124)
   assert.equal(result.data.data.passed, 0)
   const registry = JSON.parse(await readFile(join(root, 'tests', 'acceptance', 'cases.json'), 'utf8'))
