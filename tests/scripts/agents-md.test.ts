@@ -135,10 +135,44 @@ test('instructions measure counts descriptions of model-invocable skills only', 
   const result = agentsMd(directory, ['instructions', 'measure', '--repo', repo])
   assert.equal(result.exit, 0, JSON.stringify(result))
   assert.deepEqual(result.data.sources.map(({ path, kind, bytes }: NonNullable<typeof result.data.sources>[number]) => ({ path, kind, bytes })), [
-    { path: '.agents/skills/beta/SKILL.md', kind: 'skill-description', bytes: 22 },
+    { path: '.agents/skills/beta/SKILL.md', kind: 'skill-description', bytes: 23 },
     { path: '.claude/skills/alpha/SKILL.md', kind: 'skill-description', bytes: 18 }
   ])
-  assert.equal(result.data.total.bytes, 40)
+  assert.equal(result.data.total.bytes, 41)
+})
+
+for (const { name, content, total } of [
+  { name: 'plain descriptions with comments', content: 'description: Useful. # note', total: { bytes: 7, lines: 1, tokens: 2 } },
+  { name: 'single-quoted escapes', content: "description: 'It''s useful.' # note", total: { bytes: 12, lines: 1, tokens: 3 } },
+  { name: 'double-quoted escapes', content: 'description: "Line\\nnext" # note', total: { bytes: 9, lines: 2, tokens: 3 } },
+  { name: 'quoted comment characters', content: 'description: "Use # tags"', total: { bytes: 10, lines: 1, tokens: 3 } },
+  { name: 'plain comment characters without whitespace', content: 'description: Use#tags', total: { bytes: 8, lines: 1, tokens: 2 } },
+  { name: 'folded scalars with comments', content: 'description: > # note\n  First part\n  second part', total: { bytes: 23, lines: 1, tokens: 6 } },
+  { name: 'stripped folded scalars', content: 'description: >-\n  First part\n  second part', total: { bytes: 22, lines: 1, tokens: 6 } },
+  { name: 'literal scalars', content: 'description: |\n  First\n  second', total: { bytes: 13, lines: 2, tokens: 4 } },
+  { name: 'literal scalars retaining blank lines', content: 'description: |+\n  First\n  second\n', total: { bytes: 14, lines: 3, tokens: 4 } },
+  { name: 'commented invocation flags', content: 'description: Useful.\ndisable-model-invocation: true # user only', total: { bytes: 0, lines: 0, tokens: 0 } },
+  { name: 'quoted invocation keys', content: 'description: Useful.\n"disable-model-invocation": true', total: { bytes: 0, lines: 0, tokens: 0 } },
+  { name: 'explicit model invocation', content: 'description: Useful.\ndisable-model-invocation: false # callable', total: { bytes: 7, lines: 1, tokens: 2 } }
+]) {
+  for (const host of ['.agents', '.claude']) {
+    test(`instructions measure decodes ${name} in ${host}`, async t => {
+      const { directory, repo } = await emptyRepo(t)
+      await writeFiles(repo, { [`${host}/skills/example/SKILL.md`]: `---\n${content}\n---\nBody\n` })
+      const result = agentsMd(directory, ['instructions', 'measure', '--repo', repo])
+      assert.equal(result.exit, 0, JSON.stringify(result))
+      assert.deepEqual(result.data.total, total)
+    })
+  }
+}
+
+test('instructions measure reports invalid skill frontmatter instead of returning a misleading total', async t => {
+  const { directory, repo } = await emptyRepo(t)
+  const path = '.agents/skills/example/SKILL.md'
+  await writeFiles(repo, { [path]: '---\ndescription: "unterminated\n---\n' })
+  const result = agentsMd(directory, ['instructions', 'measure', '--repo', repo])
+  assert.equal(result.status, 'failed')
+  assert.deepEqual(result.problems.map(({ code, path }: { code: string; path: string }) => ({ code, path })), [{ code: 'invalid-skill-frontmatter', path }])
 })
 
 test('instructions measure expands imports from an AGENTS.md already counted as a root', async t => {
@@ -195,6 +229,26 @@ for (const { name, content, imported } of [
     assert.equal(result.exit, 0, JSON.stringify(result))
     assert.deepEqual(result.data.sources.map((source: { path: string }) => source.path), ['CLAUDE.md', ...imported])
     assert.deepEqual(result.data.sources[0].imports, imported)
+  })
+}
+
+for (const content of [
+  'Example: ` @hidden.md `\n@visible.md\n',
+  'Example: `` @hidden.md ``\n@visible.md\n',
+  'Example: ``` @hidden.md ```\n@visible.md\n',
+  'Example: `` first\n@hidden.md\nlast ``\n@visible.md\n',
+  'Example: `` ` @hidden.md ` ``\n@visible.md\n',
+  'Example: **`` @hidden.md ``**\n@visible.md\n',
+  'Example: `` @hidden.md ` still code ``\n@visible.md\n',
+  'Example: `` @hidden.md ``` still code ``\n@visible.md\n'
+]) {
+  test(`instructions measure skips inline code in ${JSON.stringify(content)}`, async t => {
+    const { directory, repo } = await emptyRepo(t)
+    await writeFiles(repo, { 'CLAUDE.md': content, 'hidden.md': 'Hidden\n', 'visible.md': 'Visible\n' })
+    const result = agentsMd(directory, ['instructions', 'measure', '--repo', repo])
+    assert.equal(result.exit, 0, JSON.stringify(result))
+    assert.deepEqual(result.data.sources.map((source: { path: string }) => source.path), ['CLAUDE.md', 'visible.md'])
+    assert.deepEqual(result.data.sources[0].imports, ['visible.md'])
   })
 }
 

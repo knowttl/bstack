@@ -133,7 +133,7 @@ test('editing one command makes only the skills that ship it stale', async t => 
 for (const [name, files, message] of [
   ['a command the registry lacks', { 'skills.json': JSON.stringify({ one: { ...skills.one, commands: ['gamma'] } }) }, /one lists commands missing from runtime\/scripts\/commands\.mjs: gamma/],
   ['a schema runtime lacks', { 'skills.json': JSON.stringify({ one: { ...skills.one, schemas: ['gone.json'] } }) }, /one lists schemas\/gone\.json, which is missing from runtime\/schemas/],
-  ['an import outside runtime', { 'scripts/commands/beta.mjs': "import * as yaml from 'yaml'\nexport async function run() { return { data: { exports: Object.keys(yaml).length } } }\n" }, /two bundles files outside runtime\/: .*yaml/],
+  ['an import outside runtime', { '../outside.mjs': 'export const value = 1\n', 'scripts/commands/beta.mjs': "import { value } from '../../../outside.mjs'\nexport async function run() { return { data: { value } } }\n" }, /two bundles files outside runtime\/: outside\.mjs/],
   ['a resource URL in another shape', { 'scripts/commands/beta.mjs': "export async function run() { return { data: { here: import.meta.url } } }\n" }, /runtime\/scripts\/commands\/beta\.mjs must use import\.meta only as new URL/]
 ] satisfies [unknown, unknown, unknown][]) {
   for (const args of [[], ['--check']]) {

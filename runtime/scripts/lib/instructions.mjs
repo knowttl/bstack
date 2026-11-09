@@ -1,5 +1,7 @@
 import { readFile } from 'node:fs/promises'
 import { join, posix } from 'node:path'
+import { walkTokens } from 'marked'
+import { markdownTokens } from './document-references.mjs'
 import { repoFiles } from './discovery.mjs'
 import { matchesPath, pathGlob } from './glob.mjs'
 import { resolveFilePath } from './paths.mjs'
@@ -31,37 +33,27 @@ export async function includedFiles(root, exclude) {
   return (await repoFiles(root)).filter(path => !globs.some(glob => matchesPath(glob, path)))
 }
 
-function description(text) {
-  const frontmatter = /^---\r?\n([\s\S]*?)\r?\n---/.exec(text)?.[1]
-  if (!frontmatter || /^disable-model-invocation:[ \t]*true[ \t]*$/m.test(frontmatter)) return null
-  const lines = frontmatter.split(/\r?\n/)
-  const start = lines.findIndex(line => line.startsWith('description:'))
-  if (start === -1) return null
-  const value = lines[start].slice('description:'.length).trim()
-  if (!/^[>|][+-]?$/.test(value)) return value.replace(/^(["'])([\s\S]*)\1$/, '$2')
-  const block = []
-  for (const line of lines.slice(start + 1)) {
-    if (line.trim() && !/^\s/.test(line)) break
-    block.push(line.trim())
+async function description(text, path) {
+  const frontmatter = /^\uFEFF?---\r?\n([\s\S]*?\r?\n)---(?:\r?\n|$)/.exec(text)?.[1]
+  if (!frontmatter) return null
+  let metadata
+  try {
+    const { parse } = await import('yaml')
+    metadata = parse(frontmatter, { logLevel: 'error' })
+  } catch {
+    throw new CommandError('failed', [{ code: 'invalid-skill-frontmatter', path, message: 'Skill frontmatter must be valid YAML.', fix: 'Repair the SKILL.md frontmatter before measuring instructions.' }])
   }
-  return block.join(value.startsWith('>') ? ' ' : '\n').trim()
+  return metadata?.['disable-model-invocation'] === true || typeof metadata?.description !== 'string' ? null : metadata.description
 }
 
 function importsIn(text) {
-  let fence = null
-  const lines = []
-  for (const line of text.split(/\r?\n/)) {
-    if (fence) {
-      const closing = /^ {0,3}(`+|~+)[ \t]*$/.exec(line)?.[1]
-      if (closing && closing[0] === fence[0] && closing.length >= fence.length) fence = null
-      continue
+  const imports = []
+  walkTokens(markdownTokens(text), token => {
+    if (token.type === 'text' && !token.tokens) {
+      imports.push(...[...token.raw.matchAll(/(?:^|\s)@(\S+)/g)].map(match => match[1].replace(/[.,;:!?)]+$/, '')))
     }
-    const opening = /^ {0,3}(`{3,}|~{3,})(.*)$/.exec(line)
-    if (opening && (opening[1][0] === '~' || !opening[2].includes('`'))) fence = opening[1]
-    else lines.push(line)
-  }
-  const prose = lines.join('\n').replace(/`[^`\n]*`/g, '')
-  return [...prose.matchAll(/(?:^|\s)@(\S+)/g)].map(match => match[1].replace(/[.,;:!?)]+$/, ''))
+  })
+  return imports
 }
 
 function size(text) {
@@ -85,7 +77,7 @@ export async function measureInstructions(root, files) {
   }
   for (const path of files.filter(path => instructionFile.test(path))) await load(path, 0)
   for (const path of files.filter(path => skillDescription.test(path))) {
-    const text = description(await readFile(join(root, path), 'utf8'))
+    const text = await description(await readFile(join(root, path), 'utf8'), path)
     if (text !== null) sources.set(path, { path, kind: 'skill-description', ...size(text) })
   }
   const list = [...sources.values()]

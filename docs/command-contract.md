@@ -600,6 +600,7 @@ Each source has `path`, `kind`, `bytes`, `lines` and `tokens`, where `tokens` is
 An imported file is an `import` source unless it is itself an instruction file.
 Imports resolve relative to the importing file, follow at most five hops, stay inside the repo and skip fenced and inline code; a missing, outside or symlinked target is not counted.
 `skill-description` sources are the `description` of each `.claude/skills/*/SKILL.md` and `.agents/skills/*/SKILL.md` that lacks `disable-model-invocation: true`, read from plain, quoted or `>`/`|` block frontmatter values.
+Frontmatter is decoded as YAML before filtering and measurement, including escapes, comments and block-scalar trailing newlines; invalid YAML fails the command.
 `CLAUDE.local.md` is per machine and is not measured.
 
 ## No-mistakes history

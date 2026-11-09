@@ -68,7 +68,7 @@
   "agents-md": {
     "commands": ["inventory", "instructions measure", "apply", "state show"],
     "schemas": ["change-set.schema.json", "evidence.schema.json", "findings.schema.json", "project.schema.json", "resume-state.schema.json"],
-    "assets": [],
+    "assets": ["yaml-LICENSE.txt"],
     "references": ["agents-pointer.md", "writing.md", "no-mistakes-history.md"]
   },
   "readme": {
