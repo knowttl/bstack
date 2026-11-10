@@ -100,6 +100,12 @@ for (const [name, frontmatter, expected] of [
 for (const [name, ending, expected] of [
   ['a suggestion that names a bstack skill', '## Next step\n\nSuggest `/repo-audit` next.\n', 0],
   ['several real suggestions', '## Next step\n\nSuggest `/how` or `/why`.\n', 0],
+  ['a suggestion across a soft break', '## Next step\n\nSuggest\n/how next.\n', 0],
+  ['a negation across a soft break', '## Next step\n\nDo not\nsuggest /how.\n', 1],
+  ['a list suggestion across a soft break', '## Next step\n\n- Suggest\n  `/how` next.\n', 0],
+  ['a URL beside a suggestion', '## Next step\n\nSuggest /how using https://example.com/guide.\n', 0],
+  ['a URL is not a suggestion target', '## Next step\n\nSuggest https://example.com/how.\n', 1],
+  ['a URL before a suggestion', '## Next step\n\nSee https://example.com/guide. Suggest `/how` next.\n', 0],
   ['a suggestion that names a missing skill', '## Next step\n\nSuggest `/no-such-skill` next.\n', 1],
   ['one missing skill among real ones', '## Next step\n\nSuggest `/how` or `/no-such-skill`.\n', 1],
   ['a section that names no skill', '## Next step\n\nContinue with the next task.\n', 1],

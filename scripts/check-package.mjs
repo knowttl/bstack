@@ -182,7 +182,8 @@ export async function checkPackage(skill, { sourcePreflight = false } = {}) {
       if (part.type === 'text' && !part.tokens) prose += part.text
       if (part.type === 'codespan' && /^\/[a-zA-Z][a-zA-Z0-9_-]*$/.test(part.text)) prose += part.text
     })
-    for (const line of prose.split(/[\n.!?;]/)) {
+    prose = prose.replace(/\b[a-z][a-z0-9+.-]*:\/\/[^\s<>()]+/gi, url => url.match(/[.!?;]+$/)?.[0] ?? '').replace(/\r?\n/g, ' ')
+    for (const line of prose.split(/[.!?;]/)) {
       if (!/\bsuggest\b/i.test(line) || /\b(?:example|e\.g)\b/i.test(line)) continue
       for (const match of line.matchAll(/\/(?<name>[a-zA-Z][a-zA-Z0-9_-]*)/g)) {
         const before = line.slice(0, match.index)
