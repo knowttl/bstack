@@ -74,20 +74,21 @@ test('bounded audit instructions and product boundary statements pass routing ch
 })
 
 for (const [name, frontmatter, expected] of [
-  ['trigger-quality description without invocation flags', 'description: Check a fixture. Use when the user says "check the fixture".', 0],
+  ['trigger-quality description without invocation flags', 'description: Check a fixture. Use when the user asks to check a fixture.', 0],
   ['invocation flags no longer substitute for a description', 'description: Package check fixture.\ndisable-model-invocation: true', 1],
   ['folded block description', 'description: >-\n  Check a fixture.\n  Use when the user says "check the fixture".', 0],
   ['missing description', 'name: fixture', 1],
   ['description that opens with the trigger', 'description: Use when the user says "check the fixture".', 1],
   ['description without a Use when clause', 'description: Check a fixture for package problems.', 1],
-  ['Use when clause without a quoted request', 'description: Check a fixture. Use when checking a fixture.', 1],
+  ['Use when clause with too few words', 'description: Check a fixture. Use when checking fixtures.', 1],
+  ['unrelated capability opening', 'description: Miscellaneous information. Use when checking the fixture package.', 1],
   ['description at the length limit', `description: Check a fixture. Use when the user says "${'a'.repeat(1024 - 'Check a fixture. Use when the user says "".'.length)}".`, 0],
   ['description over the length limit', `description: Check a fixture. Use when the user says "${'a'.repeat(1025 - 'Check a fixture. Use when the user says "".'.length)}".`, 1]
 ] satisfies [string, string, number][]) {
   test(`host-metadata: ${name}`, async t => {
     const directory = await sandbox(t)
     const skill = await readFile(join(directory, 'SKILL.md'), 'utf8')
-    await writeFile(join(directory, 'SKILL.md'), skill.replace(/^---\n[\s\S]*?\n---/, `---\n${frontmatter}\n---`))
+    await writeFile(join(directory, 'SKILL.md'), skill.replace(/^---\n[\s\S]*?\n---/, `---\n${frontmatter.startsWith('name:') ? '' : 'name: fixture\n'}${frontmatter}\n---`))
     const result = run('--skill', directory)
     assert.equal(result.status, expected, result.stdout + result.stderr)
     if (expected) assert.match(result.stdout, /^host-metadata: SKILL\.md:/m)
@@ -103,8 +104,13 @@ for (const [name, ending, expected] of [
   ['a name only in a fenced example', '## Next step\n\n```text\nSuggest `/how` next.\n```\n', 1],
   ['an unknown name in a fenced example', '## Next step\n\nSuggest `/how` next.\n\n```text\nSuggest `/no-such-skill` next.\n```\n', 0],
   ['a name nested in an inline code example', '## Next step\n\n``Suggest `/how` next.``\n', 1],
+  ['a negated suggestion', '## Next step\n\nDo not suggest `/how`.\n', 1],
+  ['an excluded skill alongside a suggestion', '## Next step\n\nDo not suggest /why. Suggest /how next.\n', 0],
+  ['a negated unregistered skill', '## Next step\n\nNever suggest /no-such-skill. Suggest /how next.\n', 0],
+  ['plain unregistered suggestion', '## Next step\n\nSuggest /no-such-skill next.\n', 1],
+  ['a final list item', '## Actions\n\n- Suggest /how next.\n', 0],
   ['a skill name without the slash form', '## Next step\n\nSuggest how next.\n', 1],
-  ['no Next step section', '## Notes\n\nSuggest `/how` next.\n', 1],
+  ['another final heading', '## Notes\n\nSuggest `/how` next.\n', 0],
   ['a Next step section that is not last', '## Next step\n\nSuggest `/how` next.\n\n## Notes\n\nDone.\n', 1]
 ] satisfies [string, string, number][]) {
   test(`next-step: ${name}`, async t => {

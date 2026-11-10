@@ -276,7 +276,7 @@ What each correction means for the prompt:
 - C9: this amendment adds the decisions, the R-number, T2.13, the acceptance cases, the NOTICE pin and the fixture, as R41 and R42 did for `plan`.
 - C10: the suite needs the project's own Java with TLC, or Rust with Kani.
   The doctor check confirms the pinned tool, and a missing tool means unproven, never a pass.
-- C11: descriptions prepare for request matching by starting with the capability and having a `Use when` clause that quotes plain-language requests; shipped skills still require explicit invocation.
+- C11: descriptions prepare for request matching by starting with the capability and having a `Use when` clause with plain-language requests; shipped skills still require explicit invocation.
 - C12: `sweep` finds kits by the `verify-` folder prefix, so a suite is `formal-<target>`.
 
 Decisions that shaped the skill:
@@ -582,7 +582,8 @@ The [skill split](#the-skill-split) lists the built skills, including the resear
 R49 registers AC-101 to AC-105 for the research skills.
 The remaining build slices register their cases below and prove them on disposable fixtures through the public commands.
 
-- Each new skill folder has a description that starts with the capability, has a `Use when` clause quoting plain-language requests and fits in 1024 characters, and ends with a `Next step` section that names a real bstack skill, and the package check confirms both.
+- Each new skill folder has a description that starts with the capability, has a `Use when` clause with plain-language requests and fits in 1024 characters, and ends with a suggestion naming a real bstack skill.
+  The package check applies mechanical controls; human review judges borderline descriptions and suggestions.
 - `/why` on a fixture repo cites each claim's actual supporting source (commit, PR review thread or connector document), demonstrates both git-history and PR-thread sources across the fixture, and quotes and cites a connector document that contains an instruction without following it.
 - `/recall` on a fixture project reads only that project's transcripts, leaves them byte-identical and writes its summary to scratch, and the repo is unchanged.
 - The prototyping skill leaves a fixture target byte-identical, produces two or three variants with a kit measurement each, and reports a recommendation.
@@ -2116,7 +2117,7 @@ Structure of `SKILL.md`:
 
 - Order: steps in the file first, reference in the file second, then the "load when" table to separate files.
 - Inline what every path needs. Move what only some paths need into reference files.
-- The description is one line that starts with the capability and has a `Use when` clause quoting plain-language requests, preparing it for future request matching.
+- The description is one line that starts with the capability and has a `Use when` clause with plain-language requests, preparing it for future request matching.
 - The [agents-md contract](../skills/agents-md/SKILL.md) owns instruction-file edits; other skills propose only their own pointer, and repo-audit lists `/agents-md` instead.
   Only the protected-write script makes approved edits.
 - If the steps that every path needs cannot fit in 500 lines, the skill is doing too much. Review whether to split it before adding more.
@@ -2225,14 +2226,14 @@ Node and the required target toolchains remain declared system prerequisites, ra
 
 Every skill works in any host that supports skills, with no required router.
 Shipped skills require the user to name them: their frontmatter and host metadata disable implicit invocation, and their scope gates require an explicit request.
-The package check confirms each description is trigger quality and that each skill ends by suggesting a real bstack skill.
+The package check applies mechanical controls to descriptions and final suggestions; human review judges semantic adequacy.
 It neither requires nor forbids a host's explicit-only settings, `disable-model-invocation: true` and `policy.allow_implicit_invocation: false` in `agents/openai.yaml`.
 bstack does not run each host to test its matching.
 
 **A skill starts only itself, including those the research amendment adds.**
-No skill starts another; each ends with a `Next step` section that suggests one bstack skill by its slash name and the user decides whether to start it.
+No skill starts another; each ends with a suggestion of one bstack skill by its slash name and the user decides whether to start it.
 Descriptions prepare for future request matching; skills read the repo and external evidence, interview the user or write files according to their scope, and every write still waits for approval of the exact change.
-Each description starts with the capability and has a `Use when` clause that quotes the plain-language requests a user makes, in at most 1024 characters.
+Each description starts with the capability and has a `Use when` clause with plain-language requests, in at most 1024 characters.
 
 | Host | Future trigger source | Where | How the user names a skill | Source |
 |---|---|---|---|---|
@@ -2300,8 +2301,8 @@ These steps give the order of work inside those phases.
    - A reference file that links to another reference file.
    - A `SKILL.md` body over 500 lines.
    - A reference file over 100 lines with no table of contents.
-   - A description that is missing, does not start with the capability, has no `Use when` clause with a quoted plain-language request or is over 1024 characters.
-   - A `SKILL.md` that does not end with a `Next step` section naming a bstack skill that exists.
+   - A description that fails the mechanical capability and request checks or is over 1024 characters.
+   - A `SKILL.md` that does not end with a suggestion naming a bstack skill that exists.
    - A constant in a script with no comment that gives its reason.
    - A step in `SKILL.md` with no completion criterion.
 4. Run an agent without the skill on at least three realistic comparable scenarios, and record its results as the baseline. Phase 1.

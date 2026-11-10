@@ -157,28 +157,41 @@ export async function checkPackage(skill, { sourcePreflight = false } = {}) {
       add('step-done', 'SKILL.md', `${token.text} has no Done when: line before the next heading.`, 'Add a paragraph line starting Done when: within this step.')
     }
   }
-  let description
-  try { description = parseYaml(frontmatter?.[1] ?? '', { logLevel: 'error' })?.description } catch {}
+  let metadata
+  try { metadata = parseYaml(frontmatter?.[1] ?? '', { logLevel: 'error' }) } catch {}
+  const description = metadata?.description
   if (typeof description !== 'string' || !description.trim()) {
     add('host-metadata', 'SKILL.md', 'Frontmatter has no description.', 'Add a description that starts with the capability and has a Use when clause.')
   } else {
     if (descriptionNonCapabilityOpeners.test(description.trim())) add('host-metadata', 'SKILL.md', 'Description does not start with the capability.', 'Start the description with a verb that states what the skill does.')
-    if (!/\bUse when\b[\s\S]*"[^"\n]+"/.test(description)) add('host-metadata', 'SKILL.md', 'Description has no Use when clause with a quoted plain-language request.', 'Add a Use when clause that quotes requests the user would make in plain words.')
+    const [opening, request] = description.split(/\bUse when\b/, 2)
+    const firstClause = opening.split(/[.!?](?:\s|$)|;/, 1)[0].toLowerCase()
+    const keywords = `${typeof metadata?.name === 'string' ? metadata.name.replaceAll('-', ' ') : ''} ${request ?? ''}`.toLowerCase().match(/[a-z0-9]{4,}/g) ?? []
+    if (!keywords.some(word => firstClause.includes(word))) add('host-metadata', 'SKILL.md', 'Description opening does not match its name or request keywords.', 'Name the capability in the opening clause.')
+    if (!request || (request.match(/[\p{L}\p{N}]+/gu) ?? []).length < 4) add('host-metadata', 'SKILL.md', 'Description has no Use when clause with at least four words.', 'Add a Use when clause describing a request in plain words.')
     if (description.length > descriptionMaxLength) add('host-metadata', 'SKILL.md', `Description is ${description.length} characters, over ${descriptionMaxLength}.`, `Shorten the description to at most ${descriptionMaxLength} characters.`)
   }
-  const lastHeading = tokens.findLast(token => token.type === 'heading')
-  if (lastHeading?.text.trim().toLowerCase() !== 'next step') {
-    add('next-step', 'SKILL.md', 'SKILL.md does not end with a Next step section.', 'End SKILL.md with a Next step heading that suggests a bstack skill.')
-  } else {
-    const suggested = []
-    marked.walkTokens(tokens.slice(tokens.indexOf(lastHeading) + 1).filter(token => token.type === 'paragraph'), token => {
-      if (token.type === 'codespan' && /^\/[a-z][a-z0-9-]*$/.test(token.text)) suggested.push(token.text.slice(1))
+  const suggested = []
+  const lastProse = tokens.findLast(token => !['space', 'code'].includes(token.type))
+  if (lastProse && ['paragraph', 'list'].includes(lastProse.type)) marked.walkTokens([lastProse], token => {
+    if (!['paragraph', 'text'].includes(token.type) || !token.tokens) return
+    let prose = ''
+    marked.walkTokens(token.tokens, part => {
+      if (part.type === 'text' && !part.tokens) prose += part.text
+      if (part.type === 'codespan' && /^\/[a-z][a-z0-9-]*$/.test(part.text)) prose += part.text
     })
-    const bstackSkills = new Set(Object.keys(JSON.parse(await readFile(new URL('../runtime/skills.json', import.meta.url), 'utf8'))))
-    if (!suggested.length) add('next-step', 'SKILL.md', 'Next step section names no skill.', 'Name the suggested skill as a backticked slash name such as `/how`.')
-    for (const name of new Set(suggested)) {
-      if (!bstackSkills.has(name)) add('next-step', 'SKILL.md', `Next step names /${name}, which is not a bstack skill.`, 'Suggest a skill registered in runtime/skills.json.')
+    for (const line of prose.split(/[\n.!?;]/)) {
+      if (!/\bsuggest\b/i.test(line) || /\b(?:example|e\.g)\b/i.test(line)) continue
+      for (const match of line.matchAll(/\/(?<name>[a-z][a-z0-9-]*)\b/g)) {
+        const before = line.slice(0, match.index)
+        if (!/\b(?:do not|never|no|without|excluding)\b/i.test(before)) suggested.push(match.groups.name)
+      }
     }
+  })
+  const bstackSkills = new Set(Object.keys(JSON.parse(await readFile(new URL('../runtime/skills.json', import.meta.url), 'utf8'))))
+  if (!suggested.length) add('next-step', 'SKILL.md', 'Final prose has no skill suggestion.', 'End with a suggestion naming a registered skill such as /how.')
+  for (const name of new Set(suggested)) {
+    if (!bstackSkills.has(name)) add('next-step', 'SKILL.md', `Next step names /${name}, which is not a bstack skill.`, 'Suggest a skill registered in runtime/skills.json.')
   }
   if (lines(body) > 500) add('skill-too-long', 'SKILL.md', 'SKILL.md body exceeds 500 lines.', 'Keep the body at most 500 lines.')
   const loadSection = body.match(/^#{1,6} Load when\s*\r?\n([\s\S]*?)(?=^#{1,6} |$(?![\s\S]))/m)?.[1] ?? ''
