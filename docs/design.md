@@ -70,7 +70,7 @@ The new-project path can implement the approved foundation, but it does not buil
 | Foundation goal | Design project-specific guidelines and protections that agents can extend, without prescribing implementation steps |
 | Research | Send read-heavy research to subagents where the host has them, otherwise run it in the main thread |
 | Context use | Install every bundled file, but read each one only when the current step needs it |
-| Invocation | Only the user can start each skill, in every supported host, including the research, recall and prototyping skills. No skill starts another. A multi-model design arena and an auto-routing mode skill are not adopted (R17, R31, R41, R44, R47) |
+| Invocation | The host starts a skill when a request matches its trigger-quality description or when the user names it, in every supported host, including the research, recall and prototyping skills. A skill starts only itself, and each ends by suggesting a real bstack skill for the user to start next. A multi-model design arena and an auto-routing mode skill are not adopted (R17, R31, R41, R44, R47) |
 | Skill authoring | Write repo-audit for the same process on every run, with checkable step criteria and tests with and without the skill |
 | Languages | General design principles in the skill, with language practice researched for each project at audit time |
 | Models and hosts | Works with any capable model and any host that supports skills. Basic tests run in whatever agent runs them, with no host or model matrix |
@@ -250,7 +250,7 @@ Elsewhere in this document they are cited as "formal verification D3" and so on.
 | C8 | accept: a TLA+ model cannot see code changes |
 | C9 | accept: a new skill needs a design amendment first |
 | C10 | accept: runnable without bstack, but not without the tool |
-| C11 | accept: explicit-only invocation also needs `agents/openai.yaml` |
+| C11 | accept: implicit invocation relies on a trigger-quality description |
 | C12 | accept: the generated suite needs its own `formal-<target>` prefix |
 
 What each correction means for the prompt:
@@ -276,7 +276,7 @@ What each correction means for the prompt:
 - C9: this amendment adds the decisions, the R-number, T2.13, the acceptance cases, the NOTICE pin and the fixture, as R41 and R42 did for `plan`.
 - C10: the suite needs the project's own Java with TLC, or Rust with Kani.
   The doctor check confirms the pinned tool, and a missing tool means unproven, never a pass.
-- C11: the skill ships `agents/openai.yaml` with `allow_implicit_invocation: false` beside `disable-model-invocation: true`.
+- C11: the host matches a request to the skill through its description, so the description starts with the capability and has a `Use when` clause that quotes plain-language requests.
 - C12: `sweep` finds kits by the `verify-` folder prefix, so a suite is `formal-<target>`.
 
 Decisions that shaped the skill:
@@ -318,7 +318,7 @@ Two limits came out of it:
 
 #### Skill specification
 
-- Frontmatter: `name: formal-verification`, a one-sentence description and `disable-model-invocation: true`, plus `agents/openai.yaml` with `allow_implicit_invocation: false` (C11).
+- Frontmatter: `name: formal-verification`, a description that starts with the capability and has a `Use when` clause (C11), and a final `Next step` section that suggests a bstack skill.
 - Scope rules: one property per `create` run; never edits product code, never weakens a property, never adds hosted CI; only `apply` writes, after the user approves the exact diff; a Kani harness in product source needs its own approval (C7); a missing tool means unproven (C10).
 - `create` checklist:
   1. Interview the repo and choose the target, with citations that `cite-check` resolves, asking only what the codebase cannot show.
@@ -518,7 +518,7 @@ A1, A2 and A3 reverse settled decisions: A1 widens R41's product boundary, A2 wi
 | A4 | `prototype-in-scratch` | The prototyping skill builds two or three throwaway variants in scratch, drives and measures each with the project's verification kit, and reports the evidence and a recommendation. It writes nothing to the target repo |
 | A5 | `shared-writing-reference` | Writing quality is in scope. One shared reference, loaded by every skill that writes a document, names and links the Diátaxis modes and sets plain-prose rules |
 | A6 | `plans-are-temporary` | A plan states the condition under which it is deleted, and `/maintenance sweep` flags a plan that is finished or orphaned |
-| A7 | `invocation-stays-explicit` | Each new skill keeps `disable-model-invocation: true` and its `agents/openai.yaml` policy, and starts no other skill. A multi-model design arena and an auto-routing mode skill are not adopted |
+| A7 | `invocation-by-description` | Each new skill has a trigger-quality description and a final next-step suggestion that names a real bstack skill, and starts no other skill. A multi-model design arena and an auto-routing mode skill are not adopted |
 
 What each decision means:
 
@@ -560,6 +560,7 @@ What each decision means:
   That change removes the plan's `AGENTS.md` pointer line with it, so the pointer never dangles.
   This replaces the lasting plan and pointer that "plan" under "The skill split" assumed.
 - A7: the article's mode skill loads playbooks on the agent's own judgement, which R12 and the invocation decisions already rule out.
+  Each skill is matched to a request only through its own description, and a skill never starts another: it ends by suggesting one real bstack skill and the user starts it.
   The multi-model arena, with its cross-judging and the implement and scrap phases, was removed from the `architecture` adaptation on purpose, and stays out.
 
 #### Not adopted
@@ -581,7 +582,7 @@ The [skill split](#the-skill-split) lists the built skills, including the resear
 R49 registers AC-101 to AC-105 for the research skills.
 The remaining build slices register their cases below and prove them on disposable fixtures through the public commands.
 
-- Each new skill folder has `disable-model-invocation: true` and an `agents/openai.yaml` that sets `allow_implicit_invocation: false`, and the package check confirms both.
+- Each new skill folder has a description that starts with the capability, has a `Use when` clause quoting plain-language requests and fits in 1024 characters, and ends with a `Next step` section that names a real bstack skill, and the package check confirms both.
 - `/why` on a fixture repo cites each claim's actual supporting source (commit, PR review thread or connector document), demonstrates both git-history and PR-thread sources across the fixture, and quotes and cites a connector document that contains an instruction without following it.
 - `/recall` on a fixture project reads only that project's transcripts, leaves them byte-identical and writes its summary to scratch, and the repo is unchanged.
 - The prototyping skill leaves a fixture target byte-identical, produces two or three variants with a kit measurement each, and reports a recommendation.
@@ -679,8 +680,8 @@ Remaining fast-feedback integration and checkers are built in later slices, and 
 
 The table below lists the built skills and their boundaries.
 Each does one job, runs on its own, and installs alone.
-Only the user starts any of them, and none starts another.
-repo-audit lists which skill to run next; the user decides whether to run it.
+Each starts only itself, and none starts another.
+Each ends by suggesting which skill to run next; the user decides whether to run it.
 The [research amendment](#research-prototyping-and-writing-amendment-2026-10-24) adds `/teach`, `/how`, `/why`, `/recall` and `/prototype` under the same rules, and this table lists them.
 
 | Skill | Modes | Job |
@@ -719,7 +720,7 @@ The `/maintenance sweep` mode, not repo-audit, reports later drift.
 
 ### repo-audit
 
-- Keeps the user-only start, the scope guard and the rule that it never starts another skill.
+- Keeps the scope guard and the rule that it never starts another skill.
 - Runs `inspect` and `inventory`, one documents research brief whose citations `cite-check` validates, then prints the checklist.
 - Writes nothing to the project.
 
@@ -2115,7 +2116,7 @@ Structure of `SKILL.md`:
 
 - Order: steps in the file first, reference in the file second, then the "load when" table to separate files.
 - Inline what every path needs. Move what only some paths need into reference files.
-- The description is one line for a human, because only the user starts the skill.
+- The description is one line that starts with the capability and has a `Use when` clause quoting plain-language requests, because the host matches requests to the skill through it.
 - The [agents-md contract](../skills/agents-md/SKILL.md) owns instruction-file edits; other skills propose only their own pointer, and repo-audit lists `/agents-md` instead.
   Only the protected-write script makes approved edits.
 - If the steps that every path needs cannot fit in 500 lines, the skill is doing too much. Review whether to split it before adding more.
@@ -2222,28 +2223,26 @@ Node and the required target toolchains remain declared system prerequisites, ra
 
 ### Installation and host contract
 
-Every skill works in any host that supports skills, with explicit invocation and no required router.
-The package includes the documented settings for Claude Code, Codex and Pi in each skill folder, so the user-only rule holds in each.
-The package check confirms those settings are present. bstack does not run each host to test them.
+Every skill works in any host that supports skills, with no required router.
+Each host starts a skill when the user names it or when a request matches the skill's `description`, which every host reads from the `SKILL.md` frontmatter.
+The package check confirms each description is trigger quality and that each skill ends by suggesting a real bstack skill.
+It neither requires nor forbids a host's explicit-only settings, `disable-model-invocation: true` and `policy.allow_implicit_invocation: false` in `agents/openai.yaml`.
+bstack does not run each host to test its matching.
 
-**Only the user can start any skill, including those the research amendment adds.**
-The agent must not start one on its own because a request looks like an audit, a glossary change, a scaffold, a question about why code exists or a design comparison.
-Skills can read the repo and external evidence, interview the user or write files according to their scope, so the user decides when each runs.
-The setting is per skill and applies to every mode.
-No skill starts another; repo-audit lists the next skill and the user starts it.
-Each host has its own setting for this, and the package sets all of them in every skill folder.
+**A skill starts only itself, including those the research amendment adds.**
+No skill starts another; each ends with a `Next step` section that suggests one bstack skill by its slash name and the user decides whether to start it.
+Matching a request to a skill never widens its scope: skills read the repo and external evidence, interview the user or write files according to their scope, and every write still waits for approval of the exact change.
+The description is the trigger, so it starts with the capability and has a `Use when` clause that quotes the plain-language requests a user makes, in at most 1024 characters.
 
-| Host | Setting | Where | How the user starts a skill | Source |
+| Host | Trigger source | Where | How the user names a skill | Source |
 |---|---|---|---|---|
-| Claude Code | `disable-model-invocation: true` | `SKILL.md` frontmatter | `/repo-audit`, `/vision` and so on | [Claude Code skills](https://code.claude.com/docs/en/skills) |
-| Codex | `policy.allow_implicit_invocation: false` | `agents/openai.yaml` in the skill folder | `$repo-audit` or `/skills` | [Codex skills](https://learn.chatgpt.com/docs/build-skills) |
-| Pi | `disable-model-invocation: true` | `SKILL.md` frontmatter | `/skill:repo-audit`, `/skill:vision` and so on | [Pi skills](https://github.com/badlogic/pi-mono/blob/main/packages/coding-agent/docs/skills.md) |
+| Claude Code | `description` | `SKILL.md` frontmatter | `/repo-audit`, `/vision` and so on | [Claude Code skills](https://code.claude.com/docs/en/skills) |
+| Codex | `description` | `SKILL.md` frontmatter | `$repo-audit` or `/skills` | [Codex skills](https://learn.chatgpt.com/docs/build-skills) |
+| Pi | `description` | `SKILL.md` frontmatter | `/skill:repo-audit`, `/skill:vision` and so on | [Pi skills](https://github.com/badlogic/pi-mono/blob/main/packages/coding-agent/docs/skills.md) |
 
-In Claude Code, the setting also keeps each skill's description out of the agent's context.
-The skills then cost no context until the user starts one.
-Claude Code also blocks the call if the agent tries to invoke a skill anyway.
-An akashic playbook or another agent cannot start any of them either.
-They use the project checks and documents that the skills established, which matches the product boundary.
+In Claude Code, each description is loaded into the agent's context so it can match requests, so the descriptions cost context in every session.
+`instructions measure` counts them as `skill-description` sources in the description budget, and a description over its length limit fails the package check.
+An akashic playbook or another agent uses the project checks and documents that the skills established, which matches the product boundary.
 
 The installer is a Node script with no bash prerequisite.
 Linux is the accepted installer platform; Windows and macOS branches remain unverified.
@@ -2301,7 +2300,8 @@ These steps give the order of work inside those phases.
    - A reference file that links to another reference file.
    - A `SKILL.md` body over 500 lines.
    - A reference file over 100 lines with no table of contents.
-   - A missing user-only setting for any supported host.
+   - A description that is missing, does not start with the capability, has no `Use when` clause with a quoted plain-language request or is over 1024 characters.
+   - A `SKILL.md` that does not end with a `Next step` section naming a bstack skill that exists.
    - A constant in a script with no comment that gives its reason.
    - A step in `SKILL.md` with no completion criterion.
 4. Run an agent without the skill on at least three realistic comparable scenarios, and record its results as the baseline. Phase 1.
@@ -2436,7 +2436,7 @@ The implementation plan cites these by number as AC-1, AC-2 and so on.
 86. `/architecture` treats a design document the user names as the user's explanation of the idea, lists the expected changes from it and asks only about gaps.
 87. `/foundation` treats a design document the user names as the user's explanation of the technical context, summarises it and asks only about gaps.
 88. Both repo-audit checklists list `/plan` last, after `/agents-md`.
-89. `/formal-verification` starts only when the user invokes it, in every host, starts no other skill, and the package check fails when its frontmatter setting or `agents/openai.yaml` is missing (formal verification C11).
+89. `/formal-verification` starts when the user names it or a request matches its description, in every host, starts no other skill, and the package check fails when its description is not trigger quality or its final section does not suggest a real bstack skill (formal verification C11).
 90. `/formal-verification create` interviews the repo first and asks only what it cannot show, chooses one target with citations that `cite-check` resolves, states one property and its harm, and chooses the tool by the kind of question (formal verification D4).
 91. `formal scaffold` renders the suite's `SKILL.md`, property files, transition table and model files from the plan into a `formal-<target>` folder, and rejects a model step that cites no atomic code step (formal verification D3, C6, C12).
 92. `formal check` fails on a property file with no `Source paths:` line, a transition table that differs from the plan and a tool file whose sha256 differs from the pin, and reports a missing tool as unproven and never as a pass (formal verification D3, D5, C10).
@@ -2448,29 +2448,29 @@ The implementation plan cites these by number as AC-1, AC-2 and so on.
 98. Each property cites the design section it guards and `cite-check` resolves it, the property check runs inside the project's maintained check command with the source-path condition for slower checks defined in formal verification D8, the coverage gate always runs, and `/repo-audit` lists the skill only with cited risk evidence (formal verification D8).
 99. `/formal-verification` edits no product code, writes only through `apply` after the user approves the exact diff, handles one property per `create` run and asks for separate approval before a Kani harness enters product source (formal verification C7).
 100. `/architecture` proposes an explicit state model only with cited evidence, as a standard and never as a universal rule, reports a refactor for the user to select, and sends its model to `/formal-verification` (formal verification D7, C5, C4).
-101. `/how`, `/why` and `/teach` each start only when the user names them, with `disable-model-invocation: true` and an `agents/openai.yaml` that sets `allow_implicit_invocation: false`, and none starts another skill (research amendment A7).
+101. `/how`, `/why` and `/teach` each have a trigger-quality description and a final next-step suggestion that names a real bstack skill, and none starts another skill (research amendment A7).
 102. `/why` on a fixture repo cites each claim's actual supporting source, a commit or a pull request review thread or a connector document, uses git history and a review thread across the fixture, and quotes and cites a connector document that contains an instruction without following it (research amendment A2).
 103. `/how` on a fixture repo explains one flow from file and line citations that `cite-check` accepts, marks each claim observed, inferred or unread, and writes nothing to the repo (research amendment A1).
 104. `/teach` on a fixture repo explains how a module works and why it is built that way from the same cited evidence, labels a claim with no source as an inference, and starts neither `/how` nor `/why` (research amendment A1, A2).
 105. `/architecture`, `/why` and `/teach` each ship a byte-identical copy of the one why-evidence reference, `/architecture` lists it for the decision work that depends on why a choice exists, and a drifted copy fails `generate-skills.ts --check` (research amendment A2).
-106. `/recall` starts only when the user names it, with `disable-model-invocation: true` and an `agents/openai.yaml` that sets `allow_implicit_invocation: false`, ships only the `transcripts` command and starts no other skill (research amendment A3, A7).
+106. `/recall` has a trigger-quality description and a final next-step suggestion that names a real bstack skill, ships only the `transcripts` command and starts no other skill (research amendment A3, A7).
 107. `transcripts` on a fixture project digests only the Claude Code and Codex sessions that started in the project, leaves every transcript byte-identical, writes the digests to scratch outside the repo and leaves the repo unchanged (research amendment A3).
 108. `/recall` on a fixture project summarises the prior context a fresh agent needs into scratch, labels each point with its session or as an inference, quotes no secret value and does not follow an instruction found in a transcript (research amendment A3).
-109. `/prototype` starts only when the user names it, with `disable-model-invocation: true` and an `agents/openai.yaml` that sets `allow_implicit_invocation: false`, ships only `kit check` and `kit prove`, and starts no other skill (research amendment A4, A7).
+109. `/prototype` has a trigger-quality description and a final next-step suggestion that names a real bstack skill, ships only `kit check` and `kit prove`, and starts no other skill (research amendment A4, A7).
 110. `kit prove` run through `/prototype` on scratch clones of a fixture target that has a kit measures a passing variant and a failing variant, each with a proof record, and leaves the target's files, HEAD and status unchanged (research amendment A4).
 111. `/prototype` on a fixture project with a kit builds two or three variants in scratch, reports the measured outcome of each and a recommendation that the measures support, says so when they do not decide, stops without a kit, and leaves the repo unchanged (research amendment A4).
 
 112. `formal chart` on the broken `formal-charge-once` fixture writes `chart.mmd` with a `breaks` state and a report whose shortest bug path maps to transition-table actions (statechart S3, S5, S6).
 113. `formal chart` with a missing pinned jar returns `blocked`, reports unproven and never invokes mise or writes chart evidence (statechart S3).
 114. `formal chart` refuses a wrong jar hash through its `formal check` precondition before running the compiler (statechart S3).
-115. `/readme` starts only when the user names it, with `disable-model-invocation: true` and an `agents/openai.yaml` that sets `allow_implicit_invocation: false`, ships only `apply`, `state show` and `cite-check`, and starts no other skill (R54).
+115. `/readme` has a trigger-quality description and a final next-step suggestion that names a real bstack skill, ships only `apply`, `state show` and `cite-check`, and starts no other skill (R54).
 116. `apply` run through `/readme` creates and then replaces only the approved `README.md` with exactly the approved bytes, and a dry run changes nothing (R54).
 117. `/readme` on a fixture project whose README buries the install command, names no entry point and lists a command that does not exist reports each failing checklist item with its README line, the invented command and the content that belongs in other files, and leaves the README unchanged until the author approves the exact bytes; on a fixture project with no README it drafts one in the structure guide's order whose every command traces to the project's source (R54).
 118. The generated TypeScript comment-ban checker reads comments through the TypeScript 6 package and reports a prose comment, with its file and line, in a project whose installed `typescript` is version 7 (fast-feedback amendment).
 119. `/verification create` on a fixture repo with no no-mistakes gate and a slow suite that repeats one setup in every test file and sets no timeout records each feedback layer with a measured time, proposes an affected command and a full command, flags the repeated setup and the missing timeout, and offers the optional pre-push hook as a selected step that is never the only enforcement (fast-feedback amendment).
 120. `/verification create` on the same repo once it has a no-mistakes gate extends the gate's own configuration with the affected and full commands, offers no pre-push hook, and leaves every other file untouched until the user approves the exact diff (fast-feedback amendment).
 121. `/verification maintain` on a slow-suite fixture with an applied verification kit audits the suite, ranks the repeated per-file setup by measured saving, proposes reusing it only with a proof that tests clean up, proposes a per-test timeout and a suite ceiling of about twice the measured time, and changes nothing until the user selects a proposal (fast-feedback amendment).
-122. `/no-mistakes-tuning` starts only when the user names it, with `disable-model-invocation: true` and an `agents/openai.yaml` that sets `allow_implicit_invocation: false`, ships only `apply` and `state show`, and starts no other skill (R55).
+122. `/no-mistakes-tuning` has a trigger-quality description and a final next-step suggestion that names a real bstack skill, ships only `apply` and `state show`, and starts no other skill (R55).
 123. `apply` run through `/no-mistakes-tuning` creates and then replaces only the approved `.no-mistakes.yaml` with exactly the approved bytes, and a dry run changes nothing (R55).
 124. `/no-mistakes-tuning` on a fixture repo whose `.no-mistakes.yaml` sets test and lint commands and a review instruction that asks for every boundary case proposes bounded fix rounds, the focus instruction and trivial-change patterns that each match a real path, explains each value with its trade-off, keeps every other key unchanged, flags the boundary-case instruction for removal, asks before ignoring prose documentation, and writes nothing until the user approves the exact bytes (R55).
 

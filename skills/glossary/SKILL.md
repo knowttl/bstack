@@ -1,6 +1,6 @@
 ---
 name: glossary
-description: Find, resolve and write a project's domain terms in GLOSSARY.md or a glossary map, and keep them true as the project's language changes.
+description: Find, resolve and write a project's domain terms in GLOSSARY.md or a glossary map, and keep them true as the project's language changes. Use when the user says "write a glossary", "define our domain terms" or "we use the same word for two things".
 disable-model-invocation: true
 ---
 
@@ -183,3 +183,7 @@ Never recursively search bundled reference or schema directories to discover gui
 | Writing approved changes | `schemas/findings.schema.json`, `schemas/change-set.schema.json` |
 | Registering a glossary in an existing contract | `schemas/project.schema.json` |
 | Adding the glossary's `AGENTS.md` pointer | `references/agents-pointer.md` |
+
+## Next step
+
+Suggest `/architecture` to record the boundaries the terms imply. Name it only and do not start it.

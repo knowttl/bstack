@@ -1,6 +1,6 @@
 ---
 name: vision
-description: Draft or revise a project's VISION.md, stress-test it on a review board, and write it only after the author approves the exact draft.
+description: Draft or revise a project's VISION.md, stress-test it on a review board, and write it only after the author approves the exact draft. Use when the user says "write a VISION.md", "stress-test our vision" or "what is this project for".
 disable-model-invocation: true
 ---
 
@@ -137,3 +137,7 @@ Never recursively search bundled reference or schema directories to discover gui
 | Preparing the board's proposals | `schemas/vision-proposals.json` |
 | Writing the approved vision | `schemas/findings.schema.json`, `schemas/change-set.schema.json` |
 | Adding the vision's `AGENTS.md` pointer | `references/agents-pointer.md` |
+
+## Next step
+
+Suggest `/glossary` to define the terms the vision uses. Name it only and do not start it.

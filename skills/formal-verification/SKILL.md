@@ -1,6 +1,6 @@
 ---
 name: formal-verification
-description: Prove one stated property of a high-stakes spot by model checking, and leave a project-local suite that the project reruns and keeps true as the code changes.
+description: Prove one stated property of a high-stakes spot by model checking, and leave a project-local suite that the project reruns and keeps true as the code changes. Use when the user says "model check this protocol", "prove this property can never break" or "add a formal proof for the locking logic".
 disable-model-invocation: true
 ---
 
@@ -236,3 +236,7 @@ Run scripts without loading their source, and pass schemas to scripts without re
 | Writing the suite plan | `schemas/formal-plan.json` |
 | Preparing check plans for rule proofs | `schemas/check-plan.json` |
 | Writing approved changes | `schemas/findings.schema.json`, `schemas/change-set.schema.json` |
+
+## Next step
+
+Suggest `/maintenance` to register the suite so it stays true as the code changes. Name it only and do not start it.

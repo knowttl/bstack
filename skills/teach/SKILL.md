@@ -1,6 +1,6 @@
 ---
 name: teach
-description: Build a cited mental model of part of a codebase by explaining how it works and why it is built that way.
+description: Build a cited mental model of part of a codebase by explaining how it works and why it is built that way. Use when the user says "teach me this codebase", "help me understand how and why this is built this way" or "give me a mental model of this area".
 disable-model-invocation: true
 ---
 
@@ -86,3 +86,7 @@ Never recursively search bundled reference or schema directories to discover gui
 | Reading history, review threads and connectors | `references/why-evidence.md` |
 | Writing the explanation | `references/writing.md` |
 | Recording citations for evidence | `schemas/research-report.json` |
+
+## Next step
+
+Suggest `/glossary` to record the terms the explanation introduced. Name it only and do not start it.

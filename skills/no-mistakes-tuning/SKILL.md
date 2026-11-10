@@ -1,6 +1,6 @@
 ---
 name: no-mistakes-tuning
-description: Tune a repo's no-mistakes gate so review stays on likely, practical defects, fix loops stay bounded, and trivial or config-only changes skip agent review, writing only the approved .no-mistakes.yaml.
+description: Tune a repo's no-mistakes gate so review stays on likely, practical defects, fix loops stay bounded, and trivial or config-only changes skip agent review, writing only the approved .no-mistakes.yaml. Use when the user says "tune no-mistakes", "the review gate is too noisy" or "skip review for config-only changes".
 disable-model-invocation: true
 ---
 
@@ -129,3 +129,7 @@ Never recursively search bundled reference or schema directories to discover gui
 | Choosing values, classifying findings or listing trivial changes | `references/profile.md` |
 | Enumerating and reading the target's no-mistakes runs | `references/no-mistakes-history.md` |
 | Writing approved changes | `schemas/findings.schema.json`, `schemas/change-set.schema.json` |
+
+## Next step
+
+Suggest `/maintenance` to wire the tuned gate to the project's document checks. Name it only and do not start it.

@@ -5,6 +5,7 @@ import { isBuiltin } from 'node:module'
 import { createHash } from 'node:crypto'
 import { parse } from 'acorn'
 import { lexer } from 'marked'
+import { parse as parseYaml } from 'yaml'
 import { emitResult } from '../runtime/scripts/lib/result.mjs'
 
 // Keep the default independent of the caller's working directory.
@@ -22,6 +23,12 @@ const lintFiles = /^(?:\.eslintrc(?:\.(?:json|ya?ml|[cm]?js))?|eslint\.config\.[
 const lintTools = /\b(?:eslint|prettier|ruff|pylint|mypy|flake8|biome)\b|\beslint-config-[\w-]+\b/gi
 // Detect direct implementation routing without banning bounded audit instructions.
 const implementationRouting = /\b(?:follow|use|run|load|invoke|start|select)\s+(?:(?:the|a|an|bstack(?:['’]s)?)\s+)*(?:(?:general|development|implementation|tdd)\s+)+(?:playbook|workflow|dispatcher)\b/i
+// A description that opens with one of these words states a trigger or filler, not the capability.
+const descriptionNonCapabilityOpeners = /^(?:use|when|this|a|an|the)\b/i
+// The longest description the host skill formats accept, in characters.
+const descriptionMaxLength = 1024
+// A next-step suggestion names a skill as a backticked slash name.
+const skillSuggestion = /`\/([a-z][a-z0-9-]*)`/g
 
 function scriptProblems(file, text, dependencies, add) {
   const comments = []
@@ -152,11 +159,25 @@ export async function checkPackage(skill, { sourcePreflight = false } = {}) {
       add('step-done', 'SKILL.md', `${token.text} has no Done when: line before the next heading.`, 'Add a paragraph line starting Done when: within this step.')
     }
   }
-  if (!/^disable-model-invocation: true\s*$/m.test(frontmatter?.[1] ?? '')) {
-    add('host-metadata', 'SKILL.md', 'Missing disable-model-invocation: true in frontmatter.', 'Add the literal user-only setting to SKILL.md frontmatter.')
+  let description
+  try { description = parseYaml(frontmatter?.[1] ?? '', { logLevel: 'error' })?.description } catch {}
+  if (typeof description !== 'string' || !description.trim()) {
+    add('host-metadata', 'SKILL.md', 'Frontmatter has no description.', 'Add a description that starts with the capability and has a Use when clause.')
+  } else {
+    if (descriptionNonCapabilityOpeners.test(description.trim())) add('host-metadata', 'SKILL.md', 'Description does not start with the capability.', 'Start the description with a verb that states what the skill does.')
+    if (!/\bUse when\b[\s\S]*"[^"\n]+"/.test(description)) add('host-metadata', 'SKILL.md', 'Description has no Use when clause with a quoted plain-language request.', 'Add a Use when clause that quotes requests the user would make in plain words.')
+    if (description.length > descriptionMaxLength) add('host-metadata', 'SKILL.md', `Description is ${description.length} characters, over ${descriptionMaxLength}.`, `Shorten the description to at most ${descriptionMaxLength} characters.`)
   }
-  if (!/^policy:\s*\r?\n(?:[ \t]+[^\r\n]*\r?\n)*?  allow_implicit_invocation: false\s*$/m.test(files.get('agents/openai.yaml') ?? '')) {
-    add('host-metadata', 'agents/openai.yaml', 'Missing policy.allow_implicit_invocation: false.', 'Add the literal indented user-only policy in agents/openai.yaml.')
+  const lastHeading = tokens.findLast(token => token.type === 'heading')
+  if (lastHeading?.text.trim().toLowerCase() !== 'next step') {
+    add('next-step', 'SKILL.md', 'SKILL.md does not end with a Next step section.', 'End SKILL.md with a Next step heading that suggests a bstack skill.')
+  } else {
+    const suggested = [...tokens.slice(tokens.indexOf(lastHeading) + 1).map(token => token.raw).join('').matchAll(skillSuggestion)].map(match => match[1])
+    const bstackSkills = new Set(Object.keys(JSON.parse(await readFile(new URL('../runtime/skills.json', import.meta.url), 'utf8'))))
+    if (!suggested.length) add('next-step', 'SKILL.md', 'Next step section names no skill.', 'Name the suggested skill as a backticked slash name such as `/how`.')
+    for (const name of new Set(suggested)) {
+      if (!bstackSkills.has(name)) add('next-step', 'SKILL.md', `Next step names /${name}, which is not a bstack skill.`, 'Suggest a skill registered in runtime/skills.json.')
+    }
   }
   if (lines(body) > 500) add('skill-too-long', 'SKILL.md', 'SKILL.md body exceeds 500 lines.', 'Keep the body at most 500 lines.')
   const loadSection = body.match(/^#{1,6} Load when\s*\r?\n([\s\S]*?)(?=^#{1,6} |$(?![\s\S]))/m)?.[1] ?? ''

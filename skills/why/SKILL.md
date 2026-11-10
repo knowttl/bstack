@@ -1,6 +1,6 @@
 ---
 name: why
-description: Explain why code, a rule or a decision exists from git history, pull request review threads and any ticket, document or chat connector the host exposes, with every claim cited to its source.
+description: Explain why code, a rule or a decision exists from git history, pull request review threads and any ticket, document or chat connector the host exposes, with every claim cited to its source. Use when the user says "why does this code exist", "why was this rule added" or "what is the history behind this decision".
 disable-model-invocation: true
 ---
 
@@ -79,3 +79,7 @@ Never recursively search bundled reference or schema directories to discover gui
 | Reading history, review threads and connectors | `references/why-evidence.md` |
 | Writing the explanation | `references/writing.md` |
 | Recording citations for evidence | `schemas/research-report.json` |
+
+## Next step
+
+Suggest `/teach` to build a fuller mental model of the area. Name it only and do not start it.

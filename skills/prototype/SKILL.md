@@ -1,6 +1,6 @@
 ---
 name: prototype
-description: Build two or three throwaway variants of a design in scratch, drive and measure each with the project's verification kit, and report the evidence and a recommendation without writing to the repo.
+description: Build two or three throwaway variants of a design in scratch, drive and measure each with the project's verification kit, and report the evidence and a recommendation without writing to the repo. Use when the user says "prototype two approaches", "try a throwaway experiment" or "compare these designs with real measurements".
 disable-model-invocation: true
 ---
 
@@ -110,3 +110,7 @@ Never recursively search bundled reference directories to discover guidance; use
 | When | Open |
 |---|---|
 | Writing the report | `references/writing.md` |
+
+## Next step
+
+Suggest `/plan` to turn the recommended variant into an implementation plan. Name it only and do not start it.

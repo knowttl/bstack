@@ -1,6 +1,6 @@
 ---
 name: foundation
-description: Turn an approved new idea into the smallest working project by choosing the stack, scaffold, setup commands and first user journey, then create it only after the owner approves the exact files and commands.
+description: Turn an approved new idea into the smallest working project by choosing the stack, scaffold, setup commands and first user journey, then create it only after the owner approves the exact files and commands. Use when the user says "scaffold a new project", "pick a stack for this idea" or "set up the first working version".
 disable-model-invocation: true
 ---
 
@@ -131,3 +131,7 @@ Never recursively search bundled reference or schema directories to discover gui
 | Adding the foundation's `AGENTS.md` pointer | `references/agents-pointer.md` |
 | Recording the proposal and writing the scaffold | `schemas/findings.schema.json`, `schemas/change-set.schema.json`, `schemas/project-create.json` |
 | Proving a rule or capturing checks | `schemas/check-plan.json` |
+
+## Next step
+
+Suggest `/verification` to create the kit that launches and drives the new project. Name it only and do not start it.

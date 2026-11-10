@@ -1,6 +1,6 @@
 ---
 name: how
-description: Explain how a part of a codebase works from its code, tests and documents, with every claim cited to a file and line.
+description: Explain how a part of a codebase works from its code, tests and documents, with every claim cited to a file and line. Use when the user says "how does this module work", "walk me through this code" or "explain what this function does".
 disable-model-invocation: true
 ---
 
@@ -74,3 +74,7 @@ Never recursively search bundled reference or schema directories to discover gui
 | Tracing the mechanics | `references/mechanics.md` |
 | Writing the explanation | `references/writing.md` |
 | Recording citations for evidence | `schemas/research-report.json` |
+
+## Next step
+
+Suggest `/why` to explain why that code is built the way it is. Name it only and do not start it.

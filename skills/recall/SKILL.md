@@ -1,6 +1,6 @@
 ---
 name: recall
-description: Read this project's local Claude Code and Codex transcripts, read-only, and summarise the prior context a fresh agent needs, with the summary kept in scratch and never written into the repo.
+description: Read this project's local Claude Code and Codex transcripts, read-only, and summarise the prior context a fresh agent needs, with the summary kept in scratch and never written into the repo. Use when the user says "what did we do in earlier sessions", "summarise my past transcripts" or "catch me up on this project".
 disable-model-invocation: true
 ---
 
@@ -90,3 +90,7 @@ Never recursively search bundled reference directories to discover guidance; use
 | When | Open |
 |---|---|
 | Writing the summary | `references/writing.md` |
+
+## Next step
+
+Suggest `/how` to explain the part of the code the summary points at. Name it only and do not start it.

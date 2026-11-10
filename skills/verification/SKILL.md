@@ -1,6 +1,6 @@
 ---
 name: verification
-description: Create a project-local verification kit that launches and drives the real product, keep it true as the product changes, adopt testing and constraint guidance for it, and turn a repeated correction into a proven check.
+description: Create a project-local verification kit that launches and drives the real product, keep it true as the product changes, adopt testing and constraint guidance for it, and turn a repeated correction into a proven check. Use when the user says "set up a way to run and test the real product", "create a verification kit" or "turn this repeated mistake into a check".
 disable-model-invocation: true
 ---
 
@@ -321,3 +321,7 @@ Run scripts without loading their source, and pass schemas to scripts without re
 | Measuring feedback time, or proposing layers, timeouts, workers, tool swaps or suite sections to speed it up | `references/fast-feedback.md` |
 | Writing the kit plan | `schemas/kit-plan.json` |
 | Preparing check plans for rule proofs | `schemas/check-plan.json` |
+
+## Next step
+
+Suggest `/maintenance` to keep the kit and its documents true as the product changes. Name it only and do not start it.

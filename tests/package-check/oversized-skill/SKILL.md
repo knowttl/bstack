@@ -1,7 +1,6 @@
 ---
 name: fixture
-description: Package check fixture.
-disable-model-invocation: true
+description: Check a fixture package against the package rules. Use when the user says "check the fixture package" or "run the package check on this skill".
 ---
 
 ## Load when
@@ -9,6 +8,10 @@ disable-model-invocation: true
 | When | Open |
 |---|---|
 | Needed | `references/guide.md` |
+
+## Next step
+
+Suggest `/how` to explain the result. Do not start it.
 Text.
 Text.
 Text.

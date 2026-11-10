@@ -1,6 +1,6 @@
 ---
 name: architecture
-description: Propose or audit a project's module boundaries, dependency direction and shared edit targets, record real decisions and design standards, and keep them true as the project grows.
+description: Propose or audit a project's module boundaries, dependency direction and shared edit targets, record real decisions and design standards, and keep them true as the project grows. Use when the user says "design the module boundaries", "audit our architecture" or "record why we chose this structure".
 disable-model-invocation: true
 ---
 
@@ -214,3 +214,7 @@ Never recursively search bundled reference or schema directories to discover gui
 | Proving rules and recording debt | `schemas/check-plan.json`, `schemas/baseline.schema.json` |
 | Writing approved changes | `schemas/findings.schema.json`, `schemas/change-set.schema.json` |
 | Registering the design in an existing contract | `schemas/project.schema.json` |
+
+## Next step
+
+Suggest `/plan` to turn the approved design into an implementation plan. Name it only and do not start it.

@@ -748,7 +748,8 @@ Use the explicit-file runner above rather than passing a directory as a test fil
    - A reference file that links to another reference file.
    - A `SKILL.md` body over 500 lines.
    - A reference file over 100 lines without a table of contents in its first 20 lines.
-   - A missing `disable-model-invocation: true` or a missing `agents/openai.yaml` with `policy.allow_implicit_invocation: false`.
+   - A description that is missing, does not start with the capability, has no `Use when` clause with a quoted plain-language request or is over 1024 characters.
+   - A `SKILL.md` that does not end with a `Next step` section naming a bstack skill that exists.
    - A top-level constant in a script with no comment on the line above.
    - A `### Step` heading in `SKILL.md` with no `Done when:` line before the next heading.
    - A lint config file, lint preset or list of language tools in the skill folder (design "Language-agnostic by design").

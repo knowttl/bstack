@@ -1,6 +1,6 @@
 ---
 name: fixture
-description: Package check fixture.
+description: Use this fixture whenever the package check needs a skill with an untriggered description.
 ---
 
 ## Load when
@@ -8,3 +8,7 @@ description: Package check fixture.
 | When | Open |
 |---|---|
 | Needed | `references/guide.md` |
+
+## Next step
+
+Suggest `/how` to explain the result. Do not start it.

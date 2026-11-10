@@ -1,6 +1,6 @@
 ---
 name: readme
-description: Create or audit a project's README.md so people find it, understand it in thirty seconds and can install it, and so an agent can set it up and run it without asking.
+description: Create or audit a project's README.md so people find it, understand it in thirty seconds and can install it, and so an agent can set it up and run it without asking. Use when the user says "write a README", "audit our README" or "make the README setup steps work for an agent".
 disable-model-invocation: true
 ---
 
@@ -124,3 +124,7 @@ Never recursively search bundled reference or schema directories to discover gui
 | Writing the sentences of the README | `references/writing.md` |
 | Recording citations for evidence | `schemas/research-report.json` |
 | Writing approved changes | `schemas/findings.schema.json`, `schemas/change-set.schema.json` |
+
+## Next step
+
+Suggest `/repo-audit` to find the gaps that remain. Name it only and do not start it.
