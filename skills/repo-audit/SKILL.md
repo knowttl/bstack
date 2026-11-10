@@ -117,4 +117,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest the first skill on the printed checklist, such as `/vision`. Name it only and do not start it.
+Suggest the first applicable skill marked `to do` on the printed checklist, excluding `/repo-audit` itself. Name it only and do not start it.
