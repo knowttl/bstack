@@ -4,7 +4,7 @@ import { fileURLToPath } from 'node:url'
 import { isBuiltin } from 'node:module'
 import { createHash } from 'node:crypto'
 import { parse } from 'acorn'
-import { lexer } from 'marked'
+import { lexer, marked } from 'marked'
 import { parse as parseYaml } from 'yaml'
 import { emitResult } from '../runtime/scripts/lib/result.mjs'
 
@@ -27,8 +27,6 @@ const implementationRouting = /\b(?:follow|use|run|load|invoke|start|select)\s+(
 const descriptionNonCapabilityOpeners = /^(?:use|when|this|a|an|the)\b/i
 // The longest description the host skill formats accept, in characters.
 const descriptionMaxLength = 1024
-// A next-step suggestion names a skill as a backticked slash name.
-const skillSuggestion = /`\/([a-z][a-z0-9-]*)`/g
 
 function scriptProblems(file, text, dependencies, add) {
   const comments = []
@@ -172,7 +170,10 @@ export async function checkPackage(skill, { sourcePreflight = false } = {}) {
   if (lastHeading?.text.trim().toLowerCase() !== 'next step') {
     add('next-step', 'SKILL.md', 'SKILL.md does not end with a Next step section.', 'End SKILL.md with a Next step heading that suggests a bstack skill.')
   } else {
-    const suggested = [...tokens.slice(tokens.indexOf(lastHeading) + 1).map(token => token.raw).join('').matchAll(skillSuggestion)].map(match => match[1])
+    const suggested = []
+    marked.walkTokens(tokens.slice(tokens.indexOf(lastHeading) + 1).filter(token => token.type === 'paragraph'), token => {
+      if (token.type === 'codespan' && /^\/[a-z][a-z0-9-]*$/.test(token.text)) suggested.push(token.text.slice(1))
+    })
     const bstackSkills = new Set(Object.keys(JSON.parse(await readFile(new URL('../runtime/skills.json', import.meta.url), 'utf8'))))
     if (!suggested.length) add('next-step', 'SKILL.md', 'Next step section names no skill.', 'Name the suggested skill as a backticked slash name such as `/how`.')
     for (const name of new Set(suggested)) {

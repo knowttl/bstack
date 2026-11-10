@@ -58,7 +58,7 @@ Plain prompts and hand-written `AGENTS.md` files leave the rules unchecked; bsta
 
 ### Features
 
-- **Trigger-quality descriptions** - every skill description starts with what it does and has a `Use when` clause quoting plain requests, so your agent can pick it from a request or you can name it, and each skill ends by suggesting one real next skill without starting it.
+- **Trigger-quality descriptions** - every skill description starts with what it does and has a `Use when` clause quoting plain requests. Skills currently require explicit invocation, and each ends by suggesting one real next skill without starting it.
 - **Cited findings** - `repo-audit` and the research reports tie each claim to `path:line` and `cite-check` rejects stale or out-of-range citations.
 - **Reviewed writes** - skills that edit the target render a change set, show the exact diff, and `apply` writes it only after approval, with hash checks, backups of originals and a resumable journal.
 - **Proven checks** - `rule-proof` runs a proposed rule against a clean fixture and a seeded violation before it is trusted.

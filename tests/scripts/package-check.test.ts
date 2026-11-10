@@ -100,6 +100,9 @@ for (const [name, ending, expected] of [
   ['a suggestion that names a missing skill', '## Next step\n\nSuggest `/no-such-skill` next.\n', 1],
   ['one missing skill among real ones', '## Next step\n\nSuggest `/how` or `/no-such-skill`.\n', 1],
   ['a section that names no skill', '## Next step\n\nContinue with the next task.\n', 1],
+  ['a name only in a fenced example', '## Next step\n\n```text\nSuggest `/how` next.\n```\n', 1],
+  ['an unknown name in a fenced example', '## Next step\n\nSuggest `/how` next.\n\n```text\nSuggest `/no-such-skill` next.\n```\n', 0],
+  ['a name nested in an inline code example', '## Next step\n\n``Suggest `/how` next.``\n', 1],
   ['a skill name without the slash form', '## Next step\n\nSuggest how next.\n', 1],
   ['no Next step section', '## Notes\n\nSuggest `/how` next.\n', 1],
   ['a Next step section that is not last', '## Next step\n\nSuggest `/how` next.\n\n## Notes\n\nDone.\n', 1]

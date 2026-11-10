@@ -70,7 +70,7 @@ The new-project path can implement the approved foundation, but it does not buil
 | Foundation goal | Design project-specific guidelines and protections that agents can extend, without prescribing implementation steps |
 | Research | Send read-heavy research to subagents where the host has them, otherwise run it in the main thread |
 | Context use | Install every bundled file, but read each one only when the current step needs it |
-| Invocation | The host starts a skill when a request matches its trigger-quality description or when the user names it, in every supported host, including the research, recall and prototyping skills. A skill starts only itself, and each ends by suggesting a real bstack skill for the user to start next. A multi-model design arena and an auto-routing mode skill are not adopted (R17, R31, R41, R44, R47) |
+| Invocation | Shipped skills require the user to name them, including the research, recall and prototyping skills. Their trigger-quality descriptions prepare for implicit invocation. A skill starts only itself, and each ends by suggesting a real bstack skill for the user to start next. A multi-model design arena and an auto-routing mode skill are not adopted (R17, R31, R41, R44, R47) |
 | Skill authoring | Write repo-audit for the same process on every run, with checkable step criteria and tests with and without the skill |
 | Languages | General design principles in the skill, with language practice researched for each project at audit time |
 | Models and hosts | Works with any capable model and any host that supports skills. Basic tests run in whatever agent runs them, with no host or model matrix |
@@ -276,7 +276,7 @@ What each correction means for the prompt:
 - C9: this amendment adds the decisions, the R-number, T2.13, the acceptance cases, the NOTICE pin and the fixture, as R41 and R42 did for `plan`.
 - C10: the suite needs the project's own Java with TLC, or Rust with Kani.
   The doctor check confirms the pinned tool, and a missing tool means unproven, never a pass.
-- C11: the host matches a request to the skill through its description, so the description starts with the capability and has a `Use when` clause that quotes plain-language requests.
+- C11: descriptions prepare for request matching by starting with the capability and having a `Use when` clause that quotes plain-language requests; shipped skills still require explicit invocation.
 - C12: `sweep` finds kits by the `verify-` folder prefix, so a suite is `formal-<target>`.
 
 Decisions that shaped the skill:
@@ -560,7 +560,7 @@ What each decision means:
   That change removes the plan's `AGENTS.md` pointer line with it, so the pointer never dangles.
   This replaces the lasting plan and pointer that "plan" under "The skill split" assumed.
 - A7: the article's mode skill loads playbooks on the agent's own judgement, which R12 and the invocation decisions already rule out.
-  Each skill is matched to a request only through its own description, and a skill never starts another: it ends by suggesting one real bstack skill and the user starts it.
+  Descriptions prepare each skill for request matching, but shipped skills require explicit invocation; a skill never starts another and ends by suggesting one real bstack skill for the user to start.
   The multi-model arena, with its cross-judging and the implement and scrap phases, was removed from the `architecture` adaptation on purpose, and stays out.
 
 #### Not adopted
@@ -2116,7 +2116,7 @@ Structure of `SKILL.md`:
 
 - Order: steps in the file first, reference in the file second, then the "load when" table to separate files.
 - Inline what every path needs. Move what only some paths need into reference files.
-- The description is one line that starts with the capability and has a `Use when` clause quoting plain-language requests, because the host matches requests to the skill through it.
+- The description is one line that starts with the capability and has a `Use when` clause quoting plain-language requests, preparing it for future request matching.
 - The [agents-md contract](../skills/agents-md/SKILL.md) owns instruction-file edits; other skills propose only their own pointer, and repo-audit lists `/agents-md` instead.
   Only the protected-write script makes approved edits.
 - If the steps that every path needs cannot fit in 500 lines, the skill is doing too much. Review whether to split it before adding more.
@@ -2224,24 +2224,24 @@ Node and the required target toolchains remain declared system prerequisites, ra
 ### Installation and host contract
 
 Every skill works in any host that supports skills, with no required router.
-Each host starts a skill when the user names it or when a request matches the skill's `description`, which every host reads from the `SKILL.md` frontmatter.
+Shipped skills require the user to name them: their frontmatter and host metadata disable implicit invocation, and their scope gates require an explicit request.
 The package check confirms each description is trigger quality and that each skill ends by suggesting a real bstack skill.
 It neither requires nor forbids a host's explicit-only settings, `disable-model-invocation: true` and `policy.allow_implicit_invocation: false` in `agents/openai.yaml`.
 bstack does not run each host to test its matching.
 
 **A skill starts only itself, including those the research amendment adds.**
 No skill starts another; each ends with a `Next step` section that suggests one bstack skill by its slash name and the user decides whether to start it.
-Matching a request to a skill never widens its scope: skills read the repo and external evidence, interview the user or write files according to their scope, and every write still waits for approval of the exact change.
-The description is the trigger, so it starts with the capability and has a `Use when` clause that quotes the plain-language requests a user makes, in at most 1024 characters.
+Descriptions prepare for future request matching; skills read the repo and external evidence, interview the user or write files according to their scope, and every write still waits for approval of the exact change.
+Each description starts with the capability and has a `Use when` clause that quotes the plain-language requests a user makes, in at most 1024 characters.
 
-| Host | Trigger source | Where | How the user names a skill | Source |
+| Host | Future trigger source | Where | How the user names a skill | Source |
 |---|---|---|---|---|
 | Claude Code | `description` | `SKILL.md` frontmatter | `/repo-audit`, `/vision` and so on | [Claude Code skills](https://code.claude.com/docs/en/skills) |
 | Codex | `description` | `SKILL.md` frontmatter | `$repo-audit` or `/skills` | [Codex skills](https://learn.chatgpt.com/docs/build-skills) |
 | Pi | `description` | `SKILL.md` frontmatter | `/skill:repo-audit`, `/skill:vision` and so on | [Pi skills](https://github.com/badlogic/pi-mono/blob/main/packages/coding-agent/docs/skills.md) |
 
-In Claude Code, each description is loaded into the agent's context so it can match requests, so the descriptions cost context in every session.
-`instructions measure` counts them as `skill-description` sources in the description budget, and a description over its length limit fails the package check.
+`instructions measure` excludes descriptions with `disable-model-invocation: true`, as shipped, and counts eligible descriptions as `skill-description` sources in bytes.
+The package check limits each description to 1024 UTF-16 code units, which can occupy up to 3072 UTF-8 bytes.
 An akashic playbook or another agent uses the project checks and documents that the skills established, which matches the product boundary.
 
 The installer is a Node script with no bash prerequisite.
@@ -2436,7 +2436,7 @@ The implementation plan cites these by number as AC-1, AC-2 and so on.
 86. `/architecture` treats a design document the user names as the user's explanation of the idea, lists the expected changes from it and asks only about gaps.
 87. `/foundation` treats a design document the user names as the user's explanation of the technical context, summarises it and asks only about gaps.
 88. Both repo-audit checklists list `/plan` last, after `/agents-md`.
-89. `/formal-verification` starts when the user names it or a request matches its description, in every host, starts no other skill, and the package check fails when its description is not trigger quality or its final section does not suggest a real bstack skill (formal verification C11).
+89. `/formal-verification` requires the user to name it, starts no other skill, and the package check fails when its description is not trigger quality or its final section does not suggest a real bstack skill (formal verification C11).
 90. `/formal-verification create` interviews the repo first and asks only what it cannot show, chooses one target with citations that `cite-check` resolves, states one property and its harm, and chooses the tool by the kind of question (formal verification D4).
 91. `formal scaffold` renders the suite's `SKILL.md`, property files, transition table and model files from the plan into a `formal-<target>` folder, and rejects a model step that cites no atomic code step (formal verification D3, C6, C12).
 92. `formal check` fails on a property file with no `Source paths:` line, a transition table that differs from the plan and a tool file whose sha256 differs from the pin, and reports a missing tool as unproven and never as a pass (formal verification D3, D5, C10).
