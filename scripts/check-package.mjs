@@ -164,7 +164,8 @@ export async function checkPackage(skill, { sourcePreflight = false } = {}) {
     add('host-metadata', 'SKILL.md', 'Frontmatter has no description.', 'Add a description that starts with the capability and has a Use when clause.')
   } else {
     if (descriptionNonCapabilityOpeners.test(description.trim())) add('host-metadata', 'SKILL.md', 'Description does not start with the capability.', 'Start the description with a verb that states what the skill does.')
-    const [opening, request] = description.split(/\bUse when\b/, 2)
+    const [opening, requestText] = description.split(/\bUse when\b/, 2)
+    const request = requestText?.split(/[.!?](?:\s|$)|;/, 1)[0]
     const firstClause = opening.split(/[.!?](?:\s|$)|;/, 1)[0].toLowerCase()
     const keywords = `${typeof metadata?.name === 'string' ? metadata.name.replaceAll('-', ' ') : ''} ${request ?? ''}`.toLowerCase().match(/[a-z0-9]{4,}/g) ?? []
     if (!keywords.some(word => firstClause.includes(word))) add('host-metadata', 'SKILL.md', 'Description opening does not match its name or request keywords.', 'Name the capability in the opening clause.')
@@ -172,17 +173,18 @@ export async function checkPackage(skill, { sourcePreflight = false } = {}) {
     if (description.length > descriptionMaxLength) add('host-metadata', 'SKILL.md', `Description is ${description.length} characters, over ${descriptionMaxLength}.`, `Shorten the description to at most ${descriptionMaxLength} characters.`)
   }
   const suggested = []
-  const lastProse = tokens.findLast(token => !['space', 'code'].includes(token.type))
-  if (lastProse && ['paragraph', 'list'].includes(lastProse.type)) marked.walkTokens([lastProse], token => {
+  let lastProse = tokens.findLast(token => !['space', 'code'].includes(token.type))
+  while (lastProse?.type === 'list') lastProse = lastProse.items.at(-1)?.tokens.findLast(token => !['space', 'code'].includes(token.type))
+  if (lastProse && ['paragraph', 'text'].includes(lastProse.type)) marked.walkTokens([lastProse], token => {
     if (!['paragraph', 'text'].includes(token.type) || !token.tokens) return
     let prose = ''
     marked.walkTokens(token.tokens, part => {
       if (part.type === 'text' && !part.tokens) prose += part.text
-      if (part.type === 'codespan' && /^\/[a-z][a-z0-9-]*$/.test(part.text)) prose += part.text
+      if (part.type === 'codespan' && /^\/[a-zA-Z][a-zA-Z0-9_-]*$/.test(part.text)) prose += part.text
     })
     for (const line of prose.split(/[\n.!?;]/)) {
       if (!/\bsuggest\b/i.test(line) || /\b(?:example|e\.g)\b/i.test(line)) continue
-      for (const match of line.matchAll(/\/(?<name>[a-z][a-z0-9-]*)\b/g)) {
+      for (const match of line.matchAll(/\/(?<name>[a-zA-Z][a-zA-Z0-9_-]*)/g)) {
         const before = line.slice(0, match.index)
         if (!/\b(?:do not|never|no|without|excluding)\b/i.test(before)) suggested.push(match.groups.name)
       }

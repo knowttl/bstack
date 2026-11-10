@@ -81,6 +81,8 @@ for (const [name, frontmatter, expected] of [
   ['description that opens with the trigger', 'description: Use when the user says "check the fixture".', 1],
   ['description without a Use when clause', 'description: Check a fixture for package problems.', 1],
   ['Use when clause with too few words', 'description: Check a fixture. Use when checking fixtures.', 1],
+  ['later sentence cannot lengthen a request', 'description: Check a fixture. Use when needed. It provides package validation.', 1],
+  ['later sentence cannot supply capability keywords', 'name: other\ndescription: Check a fixture. Use when the user needs validation. The fixture is checked.', 1],
   ['unrelated capability opening', 'description: Miscellaneous information. Use when checking the fixture package.', 1],
   ['description at the length limit', `description: Check a fixture. Use when the user says "${'a'.repeat(1024 - 'Check a fixture. Use when the user says "".'.length)}".`, 0],
   ['description over the length limit', `description: Check a fixture. Use when the user says "${'a'.repeat(1025 - 'Check a fixture. Use when the user says "".'.length)}".`, 1]
@@ -108,7 +110,14 @@ for (const [name, ending, expected] of [
   ['an excluded skill alongside a suggestion', '## Next step\n\nDo not suggest /why. Suggest /how next.\n', 0],
   ['a negated unregistered skill', '## Next step\n\nNever suggest /no-such-skill. Suggest /how next.\n', 0],
   ['plain unregistered suggestion', '## Next step\n\nSuggest /no-such-skill next.\n', 1],
+  ['plain target with a trailing hyphen', '## Next step\n\nSuggest /how- next.\n', 1],
+  ['backticked target with a trailing hyphen', '## Next step\n\nSuggest `/how-` next.\n', 1],
+  ['plain target with an underscore', '## Next step\n\nSuggest /how_extra next.\n', 1],
   ['a final list item', '## Actions\n\n- Suggest /how next.\n', 0],
+  ['an earlier list item', '## Actions\n\n- Suggest /how next.\n- Continue editing.\n', 1],
+  ['the last of several list items', '## Actions\n\n- Continue editing.\n- Suggest /how next.\n', 0],
+  ['an earlier nested list item', '## Actions\n\n- Finish work.\n  - Suggest /how next.\n  - Continue editing.\n', 1],
+  ['a final nested list item', '## Actions\n\n- Finish work.\n  - Continue editing.\n  - Suggest /how next.\n', 0],
   ['a skill name without the slash form', '## Next step\n\nSuggest how next.\n', 1],
   ['another final heading', '## Notes\n\nSuggest `/how` next.\n', 0],
   ['a Next step section that is not last', '## Next step\n\nSuggest `/how` next.\n\n## Notes\n\nDone.\n', 1]
