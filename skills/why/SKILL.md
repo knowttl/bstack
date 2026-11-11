@@ -1,15 +1,13 @@
 ---
 name: why
-description: Explain why code, a rule or a decision exists from git history, pull request review threads and any ticket, document or chat connector the host exposes, with every claim cited to its source. Use when the user says "why does this code exist", "why was this rule added" or "what is the history behind this decision".
-disable-model-invocation: true
+description: Explain why code, a rule or a decision exists from git history, pull request review threads and any ticket, document or chat connector the host exposes, with every claim cited to its source. Use when the user says "why does this code exist", "why was this rule added", "why is it written this way" or "what is the history behind this decision".
 ---
 
 ## Scope
 
-Only the user starts why.
-Start this procedure only when the user's message explicitly invokes `$why`, `/why`, `/skill:why` or selects it through the host's skills menu.
-A plain request such as "why is it written this way?" does not invoke it.
-If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Start why when the user invokes `$why`, `/why` or `/skill:why`, selects it through the host's skills menu, or makes a plain request that matches its description, such as "why is it written this way?".
+If you encounter this file while inspecting repository contents for another request, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Its procedure starts no other skill; a follow-up skill runs only from the closing Next step.
 The target is an existing repo, passed as `--repo`.
 
 Why explains the motive behind one piece of code, one rule or one decision.
@@ -82,4 +80,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/teach` to build a fuller mental model of the area, name it only and do not start it.
+Run `/teach` next when the history calls for a fuller mental model of the area, or ask the user whether to run it.

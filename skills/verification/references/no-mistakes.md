@@ -25,7 +25,7 @@ Everything here is a selected change that goes through the exact-diff review and
 
 The implementing agent drives the kit while building and updates the changed feature's entry itself.
 no-mistakes then repeats that proof with a fresh agent on the same kit, so the proof is independent of the author.
-The full `maintain` pass stays a user-started pass, because Test only covers the change.
+The full `maintain` pass stays an on-request pass, because Test only covers the change.
 no-mistakes gates are shell commands; a dedicated agent review round for the map is not possible.
 
 ## Propose the configuration

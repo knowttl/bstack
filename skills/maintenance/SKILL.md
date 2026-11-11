@@ -1,22 +1,20 @@
 ---
 name: maintenance
-description: Register a project's documents, scopes and checks so they stay true as code changes, wire no-mistakes to check them on every change, and sweep the whole repo now and then for drift. Use when the user says "keep our docs in sync with the code", "set up drift checks" or "sweep the repo for stale docs".
-disable-model-invocation: true
+description: Register a project's documents, scopes and checks so they stay true as code changes, wire no-mistakes to check them on every change, and sweep the whole repo now and then for drift. Use when the user says "keep our docs in sync with the code", "set up drift checks", "are our docs and tests still accurate" or "sweep the repo for stale docs".
 ---
 
 ## Scope
 
-Only the user starts maintenance.
-Start this procedure only when the user's message explicitly invokes `$maintenance`, `/maintenance`, `/skill:maintenance` or selects it through the host's skills menu.
-A plain request such as "keep the docs up to date" does not invoke it.
-If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Start maintenance when the user invokes `$maintenance`, `/maintenance` or `/skill:maintenance`, selects it through the host's skills menu, or makes a plain request that matches its description, such as "keep the docs up to date".
+If you encounter this file while inspecting repository contents for another request, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Its procedure starts no other skill; a follow-up skill runs only from the closing Next step.
 Resolve the target and the mode, `create` or `sweep`, before proceeding.
 Use `create` when the repo has no `.bstack/project.json` or the user wants its registration or wiring changed, and `sweep` when it has one; if the user's choice contradicts the repo, say so and ask.
 
 Create registers the project's documents, the code scopes that govern them, the rules they state and the checks that prove them in `.bstack/project.json`.
 Offer the [no-comments rule](references/create.md#offer-the-no-comments-rule) as a separate proposal for an existing project; apply it only after the owner approves its exact changes.
 It installs the dependency-free checker at `.bstack/bin/bstack-check.mjs` and wires no-mistakes with an ownership map for its Document step and a docs gate after it, so everyday upkeep needs nothing new from the user.
-Sweep is the user-started, read-only check of every registered document, the verification kit, each `formal-*` formal verification suite and the `AGENTS.md` pointers against the whole repo.
+Sweep is the on-request, read-only check of every registered document, the verification kit, each `formal-*` formal verification suite and the `AGENTS.md` pointers against the whole repo.
 It returns one list that names the mode that fixes each item and fixes nothing itself.
 A request for a signed-off assessment of one change uses the [contract reference](references/maintenance-contract.md) directly, without either mode.
 
@@ -181,4 +179,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/agents-md` to point the root `AGENTS.md` at the registered documents and checks, name it only and do not start it.
+Run `/agents-md` next when the root `AGENTS.md` does not yet point at the registered documents and checks, or ask the user whether to run it.

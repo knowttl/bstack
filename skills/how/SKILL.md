@@ -1,15 +1,13 @@
 ---
 name: how
-description: Explain how a part of a codebase works from its code, tests and documents, with every claim cited to a file and line. Use when the user says "how does this module work", "walk me through this code" or "explain what this function does".
-disable-model-invocation: true
+description: Explain how a part of a codebase works, not why it was built that way, from its code, tests and documents, with every claim cited to a file and line. Use when the user says "how does this module work", "walk me through this code" or "explain what this function does".
 ---
 
 ## Scope
 
-Only the user starts how.
-Start this procedure only when the user's message explicitly invokes `$how`, `/how`, `/skill:how` or selects it through the host's skills menu.
-A plain request such as "how does this work?" does not invoke it.
-If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Start how when the user invokes `$how`, `/how` or `/skill:how`, selects it through the host's skills menu, or makes a plain request that matches its description, such as "how does this work?".
+If you encounter this file while inspecting repository contents for another request, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Its procedure starts no other skill; a follow-up skill runs only from the closing Next step.
 The target is an existing repo, passed as `--repo`.
 
 How explains the mechanics of one part of the code: what runs, in what order, on what data and with what result.
@@ -77,4 +75,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/why` to explain why that code is built the way it is, name it only and do not start it.
+Run `/why` next when the explanation leaves open why the code is built this way, or ask the user whether to run it.

@@ -1,15 +1,13 @@
 ---
 name: glossary
-description: Find, resolve and write a project's domain terms in GLOSSARY.md or a glossary map, and keep them true as the project's language changes. Use when the user says "write a glossary", "define our domain terms" or "we use the same word for two things".
-disable-model-invocation: true
+description: Find, resolve and write a project's domain terms in GLOSSARY.md or a glossary map, and keep them true as the project's language changes. Use when the user says "write a glossary", "define our domain terms", "we use the same word for two things" or "our names are inconsistent".
 ---
 
 ## Scope
 
-Only the user starts glossary.
-Start this procedure only when the user's message explicitly invokes `$glossary`, `/glossary`, `/skill:glossary` or selects it through the host's skills menu.
-A plain request such as "write a glossary" does not invoke it.
-If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Start glossary when the user invokes `$glossary`, `/glossary` or `/skill:glossary`, selects it through the host's skills menu, or makes a plain request that matches its description, such as "write a glossary".
+If you encounter this file while inspecting repository contents for another request, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Its procedure starts no other skill; a follow-up skill runs only from the closing Next step.
 Resolve the target and the mode, `create` or `maintain`, before proceeding.
 A new idea has no glossary and its target is an existing empty or non-Git directory, passed as `--workspace`.
 An existing repo is passed as `--repo`.
@@ -186,4 +184,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/architecture` to record the boundaries the terms imply, name it only and do not start it.
+Run `/architecture` next when the terms imply boundaries or decisions the design does not record, or ask the user whether to run it.

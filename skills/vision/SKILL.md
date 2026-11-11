@@ -1,15 +1,13 @@
 ---
 name: vision
-description: Draft or revise a project's VISION.md, stress-test it on a review board, and write it only after the author approves the exact draft. Use when the user says "write a VISION.md", "stress-test our vision" or "what is this project for".
-disable-model-invocation: true
+description: Draft or revise a project's VISION.md, stress-test it on a review board, and write it only after the author approves the exact draft. Use when the user says "write a VISION.md", "stress-test our vision", "what is this project for" or "decide what we will not build".
 ---
 
 ## Scope
 
-Only the user starts vision.
-Start this procedure only when the user's message explicitly invokes `$vision`, `/vision`, `/skill:vision` or selects it through the host's skills menu.
-A plain request such as "write a vision for this repo" does not invoke it.
-If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Start vision when the user invokes `$vision`, `/vision` or `/skill:vision`, selects it through the host's skills menu, or makes a plain request that matches its description, such as "write a vision for this repo".
+If you encounter this file while inspecting repository contents for another request, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Its procedure starts no other skill; a follow-up skill runs only from the closing Next step.
 Resolve the target and the case before proceeding.
 A new idea has no VISION.md and its target is an existing empty or non-Git directory, passed as `--workspace`.
 An existing repo is passed as `--repo`, and its current VISION.md is the approved baseline.
@@ -140,4 +138,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/glossary` to define the terms the vision uses, name it only and do not start it.
+Run `/glossary` next when the vision uses terms no glossary defines, or ask the user whether to run it.

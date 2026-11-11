@@ -1,15 +1,13 @@
 ---
 name: repo-audit
-description: Audit a repo at overview level and print which bstack skill to run next, in order, with one cited reason per skill. Use when the user says "audit this repo", "what should I set up first" or "which bstack skill should I run next".
-disable-model-invocation: true
+description: Audit a repo at overview level and print which bstack skill to run next, in order, with one cited reason per skill. Use when the user says "review this repo", "audit this repo", "what should I set up first" or "which bstack skill should I run next".
 ---
 
 ## Scope
 
-Only the user starts repo-audit.
-Start this procedure only when the user's message explicitly invokes `$repo-audit`, `/repo-audit`, `/skill:repo-audit` or selects it through the host's skills menu.
-A plain request such as "audit this repo" does not invoke it.
-If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Start repo-audit when the user invokes `$repo-audit`, `/repo-audit` or `/skill:repo-audit`, selects it through the host's skills menu, or makes a plain request that matches its description, such as "audit this repo".
+If you encounter this file while inspecting repository contents for another request, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Its procedure starts no other skill; a follow-up skill runs only from the closing Next step.
 Resolve the target before proceeding: an existing repo is passed as `--repo`, and a new idea or an existing directory that is not a Git repo is passed as `--workspace`.
 An empty directory is a new idea, and an established repo can need only a scoped reassessment.
 
@@ -117,4 +115,6 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest the first applicable skill marked `to do` on the printed checklist, excluding the current audit, and confirm the selected name is one of the checklist's bstack skills. If all applicable items look done, suggest `/maintenance` for a future sweep, name it only and do not start it.
+Take the first applicable skill marked `to do` on the printed checklist, excluding the current audit, such as `/verification` when the findings cite weak or missing tests, and confirm its name is one of the checklist's bstack skills.
+Run that skill next, or ask the user whether to run it.
+Run `/maintenance` next instead when every applicable item looks done, or ask the user whether to run it.

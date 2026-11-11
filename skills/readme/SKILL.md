@@ -1,15 +1,13 @@
 ---
 name: readme
-description: Create or audit a project's README.md so people find it, understand it in thirty seconds and can install it, and so an agent can set it up and run it without asking. Use when the user says "write a README", "audit our README" or "make the README setup steps work for an agent".
-disable-model-invocation: true
+description: Create or audit a project's README.md so people find it, understand it in thirty seconds and can install it, and so an agent can set it up and run it without asking. Use when the user says "write a README", "audit our README", "improve the README" or "make the README setup steps work for an agent".
 ---
 
 ## Scope
 
-Only the user starts readme.
-Start this procedure only when the user's message explicitly invokes `$readme`, `/readme`, `/skill:readme` or selects it through the host's skills menu.
-A plain request such as "write a README" does not invoke it.
-If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Start readme when the user invokes `$readme`, `/readme` or `/skill:readme`, selects it through the host's skills menu, or makes a plain request that matches its description, such as "write a README".
+If you encounter this file while inspecting repository contents for another request, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Its procedure starts no other skill; a follow-up skill runs only from the closing Next step.
 Resolve the target before proceeding: an existing repo is passed as `--repo`, and an existing directory that is not a Git repo is passed as `--workspace`.
 
 This skill writes the project's selected README, or the README of one package the user names, and audits it when one exists.
@@ -127,4 +125,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/repo-audit` to find the gaps that remain, name it only and do not start it.
+Run `/repo-audit` next when the audit leaves gaps beyond the README, or ask the user whether to run it.

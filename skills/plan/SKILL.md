@@ -1,15 +1,13 @@
 ---
 name: plan
-description: Write and check one implementation plan from an approved design document, with units that each cite their design, name the boundary they touch and say what proves them done. Never executes the plan. Use when the user says "write an implementation plan from this design", "break the design into units" or "check my plan".
-disable-model-invocation: true
+description: Write and check one implementation plan from an approved design document, with units that each cite their design, name the boundary they touch and say what proves them done. Never executes the plan. Use when the user says "write an implementation plan from this design", "break the design into units", "turn this design into tasks" or "check my plan".
 ---
 
 ## Scope
 
-Only the user starts plan.
-Start this procedure only when the user's message explicitly invokes `$plan`, `/plan`, `/skill:plan` or selects it through the host's skills menu.
-A plain request such as "write an implementation plan" does not invoke it.
-If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Start plan when the user invokes `$plan`, `/plan` or `/skill:plan`, selects it through the host's skills menu, or makes a plain request that matches its description, such as "write an implementation plan".
+If you encounter this file while inspecting repository contents for another request, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Its procedure starts no other skill; a follow-up skill runs only from the closing Next step.
 Resolve the target before proceeding: an existing repo is passed as `--repo`, and a new idea whose target is an existing empty or non-Git directory holding the design is passed as `--workspace`.
 
 Plan has one mode, `create`, and it writes one implementation plan for a project from an approved design document.
@@ -143,4 +141,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/prototype` to try a risky unit in scratch before it is built, name it only and do not start it.
+Run `/prototype` next when a unit rests on a risky design question that only a measurement can settle, or ask the user whether to run it.

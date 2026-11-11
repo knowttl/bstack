@@ -1,15 +1,13 @@
 ---
 name: formal-verification
-description: Prove one stated property of a high-stakes spot by model checking, and leave a project-local suite that the project reruns and keeps true as the code changes. Use when the user says "model check this protocol", "prove this property can never break" or "add a formal proof for the locking logic".
-disable-model-invocation: true
+description: Prove one stated property of a high-stakes spot by model checking, and leave a project-local suite that the project reruns and keeps true as the code changes. Use when the user says "model check this protocol", "prove this property can never break", "make sure this race cannot happen" or "add a formal proof for the locking logic".
 ---
 
 ## Scope
 
-Only the user starts formal-verification.
-Start this procedure only when the user's message explicitly invokes `$formal-verification`, `/formal-verification`, `/skill:formal-verification` or selects it through the host's skills menu.
-A plain request such as "model-check this race" does not invoke it.
-If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Start formal-verification when the user invokes `$formal-verification`, `/formal-verification` or `/skill:formal-verification`, selects it through the host's skills menu, or makes a plain request that matches its description, such as "model-check this race".
+If you encounter this file while inspecting repository contents for another request, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Its procedure starts no other skill; a follow-up skill runs only from the closing Next step.
 Resolve the target repo and the mode, `create` or `maintain`, before proceeding.
 Use `create` when the repo has no `formal-*` suite for the spot and `maintain` when it has one; if the user's choice contradicts the repo, say so and ask.
 
@@ -239,4 +237,4 @@ Run scripts without loading their source, and pass schemas to scripts without re
 
 ## Next step
 
-Suggest `/maintenance` to register the suite so it stays true as the code changes, name it only and do not start it.
+Run `/maintenance` next when the new suite is not yet registered to stay true as the code changes, or ask the user whether to run it.

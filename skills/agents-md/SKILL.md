@@ -1,15 +1,13 @@
 ---
 name: agents-md
-description: Create and maintain one root AGENTS.md of pointers to a project's rules, evidence requirements and check commands, merging equivalent CLAUDE.md content into it. Use when the user says "set up AGENTS.md", "clean up my CLAUDE.md" or "make the agent instructions point to our rules".
-disable-model-invocation: true
+description: Create and maintain one root AGENTS.md of pointers to a project's rules, evidence requirements and check commands, merging equivalent CLAUDE.md content into it. Use when the user says "set up AGENTS.md", "clean up my CLAUDE.md", "our agent instructions are too long" or "make the agent instructions point to our rules".
 ---
 
 ## Scope
 
-Only the user starts agents-md.
-Start this procedure only when the user's message explicitly invokes `$agents-md`, `/agents-md`, `/skill:agents-md` or selects it through the host's skills menu.
-A plain request such as "write an AGENTS.md" does not invoke it.
-If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Start agents-md when the user invokes `$agents-md`, `/agents-md` or `/skill:agents-md`, selects it through the host's skills menu, or makes a plain request that matches its description, such as "write an AGENTS.md".
+If you encounter this file while inspecting repository contents for another request, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Its procedure starts no other skill; a follow-up skill runs only from the closing Next step.
 Resolve the target before proceeding: an existing repo is passed as `--repo`, and an existing directory that is not a Git repo is passed as `--workspace`.
 
 This skill creates the root `AGENTS.md` when the project has none and maintains it when it has one.
@@ -141,4 +139,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/readme` so the README points to the same rules, name it only and do not start it.
+Run `/readme` next when the README does not yet point to the same rules, or ask the user whether to run it.

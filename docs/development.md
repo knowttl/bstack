@@ -96,7 +96,7 @@ Use the existing design and acceptance cases; print the checklist with a cited r
 ```
 
 That is the Codex invocation; use `/repo-audit` in Claude Code or `/skill:repo-audit` in Pi.
-A plain request such as "audit this repo" does not start the skill.
+A plain request such as "audit this repo" also starts the skill, because the agent matches it to the skill's description.
 For a new idea, install into its existing workspace and invoke the skill with the idea and first useful journey instead.
 Repo-audit prints the checklist and leaves the target unchanged.
 Follow the [repo-audit procedure](../skills/repo-audit/SKILL.md) for its scope and checklist contract.

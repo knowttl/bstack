@@ -1441,7 +1441,7 @@
       "evidenceType": "agent",
       "procedure": {
         "status": "planned",
-        "description": "Ask the formal-verification skill's task as a plain request without the explicit command and score that it does not start, run the explicit command and score that it starts and starts no other skill, and remove the frontmatter setting and the agents/openai.yaml policy in turn and score that the package check fails."
+        "description": "Ask the formal-verification skill's task as a plain request without the explicit command and score that it starts from the matching description, run the explicit command and score that it starts, and score that neither run starts another skill during its procedure."
       }
     },
     {
@@ -1581,9 +1581,9 @@
       "evidenceType": "automated",
       "procedure": {
         "status": "completed",
-        "path": "tests/scripts/research-skills.test.ts",
-        "name": "how, why and teach declare explicit-only invocation metadata",
-        "artifacts": ["tests/scripts/research-skills.test.ts"]
+        "path": "tests/scripts/skill-skeleton.test.ts",
+        "name": "every shipped skill allows the agent to start it from a matching request",
+        "artifacts": ["tests/scripts/skill-skeleton.test.ts"]
       }
     },
     {
@@ -1641,7 +1641,7 @@
       "procedure": {
         "status": "completed",
         "path": "tests/scripts/recall.test.ts",
-        "name": "recall declares explicit-only invocation metadata and ships only the transcripts command",
+        "name": "recall ships only the transcripts command",
         "artifacts": ["tests/scripts/recall.test.ts"]
       }
     },
@@ -1678,7 +1678,7 @@
       "procedure": {
         "status": "completed",
         "path": "tests/scripts/prototype.test.ts",
-        "name": "prototype declares explicit-only invocation metadata and ships only the kit check and kit prove commands",
+        "name": "prototype ships only the kit check and kit prove commands",
         "artifacts": ["tests/scripts/prototype.test.ts"]
       }
     },
@@ -1750,7 +1750,7 @@
       "procedure": {
         "status": "completed",
         "path": "tests/scripts/readme.test.ts",
-        "name": "readme declares explicit-only invocation metadata and ships only apply, state show and cite-check",
+        "name": "readme ships only apply, state show and cite-check",
         "artifacts": ["tests/scripts/readme.test.ts"]
       }
     },
@@ -1841,7 +1841,7 @@
       "procedure": {
         "status": "completed",
         "path": "tests/scripts/no-mistakes-tuning.test.ts",
-        "name": "no-mistakes-tuning declares explicit-only invocation metadata and ships only apply and state show",
+        "name": "no-mistakes-tuning ships only apply and state show",
         "artifacts": ["tests/scripts/no-mistakes-tuning.test.ts"]
       }
     },

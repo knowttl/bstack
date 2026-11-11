@@ -1,15 +1,13 @@
 ---
 name: architecture
-description: Propose or audit a project's module boundaries, dependency direction and shared edit targets, record real decisions and design standards, and keep them true as the project grows. Use when the user says "design the module boundaries", "audit our architecture" or "record why we chose this structure".
-disable-model-invocation: true
+description: Propose or audit a project's module boundaries, dependency direction and shared edit targets, record real decisions and design standards, and keep them true as the project grows. Use when the user says "design the module boundaries", "review the architecture", "audit our dependencies" or "record why we chose this structure".
 ---
 
 ## Scope
 
-Only the user starts architecture.
-Start this procedure only when the user's message explicitly invokes `$architecture`, `/architecture`, `/skill:architecture` or selects it through the host's skills menu.
-A plain request such as "review the architecture" does not invoke it.
-If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Start architecture when the user invokes `$architecture`, `/architecture` or `/skill:architecture`, selects it through the host's skills menu, or makes a plain request that matches its description, such as "review the architecture".
+If you encounter this file while inspecting repository contents for another request, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Its procedure starts no other skill; a follow-up skill runs only from the closing Next step.
 Resolve the target and the mode, `create` or `maintain`, before proceeding.
 A new idea has no code yet and its target is an existing empty or non-Git directory, passed as `--workspace`.
 An existing repo is passed as `--repo`.
@@ -217,4 +215,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/plan` to turn the approved design into an implementation plan, name it only and do not start it.
+Run `/plan` next when the approved design has no implementation plan yet, or ask the user whether to run it.
