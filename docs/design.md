@@ -2246,7 +2246,7 @@ Each request named no skill, and the first Skill tool call was recorded from str
 | what is 17 times 3? (control) | none | no tool call; answered 17 x 3 = 51 |
 
 All four requests selected the intended skill without a mis-selection, and the control started no skill.
-The transcripts and summary are retained outside the repo at `/home/brytton/fm-homes/flex-remote-c1/data/bstack-implicit-invoke-skills/e2e-out/` and `e2e-summary.md` respectively.
+The transcripts and summary are retained outside the repo.
 
 **A skill's procedure starts only itself, including those the research amendment adds.**
 No skill starts another during its procedure; each ends with a next step in one shape, ``Run `/skill` next when <finding>, or ask the user whether to run it.``
