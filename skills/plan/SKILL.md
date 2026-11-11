@@ -1,6 +1,6 @@
 ---
 name: plan
-description: Write and check one implementation plan from an approved design document, with units that each cite their design, name the boundary they touch and say what proves them done. Never executes the plan.
+description: Write and check one implementation plan from an approved design document, with units that each cite their design, name the boundary they touch and say what proves them done. Never executes the plan. Use when the user says "write an implementation plan from this design", "break the design into units" or "check my plan".
 disable-model-invocation: true
 ---
 
@@ -140,3 +140,7 @@ Never recursively search bundled reference or schema directories to discover gui
 | Recording citations for evidence | `schemas/research-report.json` |
 | Recording and checking the plan | `schemas/plan.json` |
 | Writing approved changes | `schemas/findings.schema.json`, `schemas/change-set.schema.json` |
+
+## Next step
+
+Suggest `/prototype` to try a risky unit in scratch before it is built, name it only and do not start it.

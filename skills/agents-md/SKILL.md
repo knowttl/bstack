@@ -1,6 +1,6 @@
 ---
 name: agents-md
-description: Create and maintain one root AGENTS.md of pointers to a project's rules, evidence requirements and check commands, merging equivalent CLAUDE.md content into it.
+description: Create and maintain one root AGENTS.md of pointers to a project's rules, evidence requirements and check commands, merging equivalent CLAUDE.md content into it. Use when the user says "set up AGENTS.md", "clean up my CLAUDE.md" or "make the agent instructions point to our rules".
 disable-model-invocation: true
 ---
 
@@ -138,3 +138,7 @@ Never recursively search bundled reference or schema directories to discover gui
 | Reading no-mistakes history for the default-restating class | `references/no-mistakes-history.md` |
 | Writing approved changes | `schemas/findings.schema.json`, `schemas/change-set.schema.json` |
 | Reading or writing `instructions.exclude` in `.bstack/project.json` | `schemas/project.schema.json` |
+
+## Next step
+
+Suggest `/readme` so the README points to the same rules, name it only and do not start it.

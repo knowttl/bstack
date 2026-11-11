@@ -1,6 +1,6 @@
 ---
 name: maintenance
-description: Register a project's documents, scopes and checks so they stay true as code changes, wire no-mistakes to check them on every change, and sweep the whole repo now and then for drift.
+description: Register a project's documents, scopes and checks so they stay true as code changes, wire no-mistakes to check them on every change, and sweep the whole repo now and then for drift. Use when the user says "keep our docs in sync with the code", "set up drift checks" or "sweep the repo for stale docs".
 disable-model-invocation: true
 ---
 
@@ -178,3 +178,7 @@ Never recursively search bundled reference or schema directories to discover gui
 | Recording a signed-off assessment of one change | `references/maintenance-contract.md` |
 | Writing approved changes | `schemas/findings.schema.json`, `schemas/change-set.schema.json` |
 | Preparing a contract or an assessment | `schemas/project.schema.json`, `schemas/evidence.schema.json`, `schemas/impact-assessment.json` |
+
+## Next step
+
+Suggest `/agents-md` to point the root `AGENTS.md` at the registered documents and checks, name it only and do not start it.

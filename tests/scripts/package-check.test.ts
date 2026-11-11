@@ -73,18 +73,91 @@ test('bounded audit instructions and product boundary statements pass routing ch
   assert.equal(result.status, 0, result.stdout + result.stderr)
 })
 
+for (const [name, frontmatter, expected] of [
+  ['trigger-quality description without invocation flags', 'description: Check a fixture. Use when the user asks to check a fixture.', 0],
+  ['invocation flags no longer substitute for a description', 'description: Package check fixture.\ndisable-model-invocation: true', 1],
+  ['folded block description', 'description: >-\n  Check a fixture.\n  Use when the user says "check the fixture".', 0],
+  ['missing description', 'name: fixture', 1],
+  ['description that opens with the trigger', 'description: Use when the user says "check the fixture".', 1],
+  ['description without a Use when clause', 'description: Check a fixture for package problems.', 1],
+  ['Use when clause with too few words', 'description: Check a fixture. Use when checking fixtures.', 1],
+  ['later sentence cannot lengthen a request', 'description: Check a fixture. Use when needed. It provides package validation.', 1],
+  ['capability and request without shared keywords', 'description: Explain code. Use when the user asks how a function works.', 0],
+  ['description at the length limit', `description: Check a fixture. Use when the user says "${'a'.repeat(1024 - 'Check a fixture. Use when the user says "".'.length)}".`, 0],
+  ['description over the length limit', `description: Check a fixture. Use when the user says "${'a'.repeat(1025 - 'Check a fixture. Use when the user says "".'.length)}".`, 1]
+] satisfies [string, string, number][]) {
+  test(`host-metadata: ${name}`, async t => {
+    const directory = await sandbox(t)
+    const skill = await readFile(join(directory, 'SKILL.md'), 'utf8')
+    await writeFile(join(directory, 'SKILL.md'), skill.replace(/^---\n[\s\S]*?\n---/, `---\n${frontmatter.startsWith('name:') ? '' : 'name: fixture\n'}${frontmatter}\n---`))
+    const result = run('--skill', directory)
+    assert.equal(result.status, expected, result.stdout + result.stderr)
+    if (expected) assert.match(result.stdout, /^host-metadata: SKILL\.md:/m)
+  })
+}
+
+for (const [name, ending, expected] of [
+  ['a suggestion that names a bstack skill', '## Next step\n\nSuggest `/repo-audit` next.\n', 0],
+  ['several real suggestions', '## Next step\n\nSuggest `/how` or `/why`.\n', 0],
+  ['a suggestion across a soft break', '## Next step\n\nSuggest\n/how next.\n', 0],
+  ['an earlier sentence in a paragraph', '## Next step\n\nSuggest /how next. Continue editing.\n', 1],
+  ['an earlier sentence in the final list item', '## Next step\n\n- Suggest /how next. Continue editing.\n', 1],
+  ['a filename in the final suggestion', '## Next step\n\nSuggest `/how` to explain README.md.\n', 0],
+  ['a filename in a final list suggestion', '## Next step\n\n- Suggest `/how` to explain README.md.\n', 0],
+  ['a filename in an earlier suggestion', '## Next step\n\nSuggest `/how` to explain README.md. Continue editing.\n', 1],
+  ['a negation across a soft break', '## Next step\n\nDo not\nsuggest /how.\n', 1],
+  ['a list suggestion across a soft break', '## Next step\n\n- Suggest\n  `/how` next.\n', 0],
+  ['a URL beside a suggestion', '## Next step\n\nSuggest `/how` using https://example.com/guide.\n', 0],
+  ['a URL is not a suggestion target', '## Next step\n\nSuggest https://example.com/how.\n', 1],
+  ['a URL before a suggestion', '## Next step\n\nSee https://example.com/guide. Suggest `/how` next.\n', 0],
+  ['a suggestion that names a missing skill', '## Next step\n\nSuggest `/no-such-skill` next.\n', 1],
+  ['only the first target is checked', '## Next step\n\nSuggest `/how` or `/no-such-skill`.\n', 0],
+  ['a section that names no skill', '## Next step\n\nContinue with the next task.\n', 1],
+  ['a name only in a fenced example', '## Next step\n\n```text\nSuggest `/how` next.\n```\n', 1],
+  ['an unknown name in a fenced example', '## Next step\n\nSuggest `/how` next.\n\n```text\nSuggest `/no-such-skill` next.\n```\n', 0],
+  ['a name nested in an inline code example', '## Next step\n\n``Suggest `/how` next.``\n', 1],
+  ['a negated suggestion', '## Next step\n\nDo not suggest `/how`.\n', 1],
+  ['an excluded skill alongside a suggestion', '## Next step\n\nDo not suggest /why. Suggest /how next.\n', 0],
+  ['a negated unregistered skill', '## Next step\n\nNever suggest /no-such-skill. Suggest /how next.\n', 0],
+  ['plain unregistered suggestion', '## Next step\n\nSuggest /no-such-skill next.\n', 1],
+  ['plain target with a trailing hyphen', '## Next step\n\nSuggest /how- next.\n', 1],
+  ['backticked target with a trailing hyphen', '## Next step\n\nSuggest `/how-` next.\n', 1],
+  ['plain target with an underscore', '## Next step\n\nSuggest /how_extra next.\n', 1],
+  ['a final list item', '## Actions\n\n- Suggest /how next.\n', 0],
+  ['an earlier list item', '## Actions\n\n- Suggest /how next.\n- Continue editing.\n', 1],
+  ['the last of several list items', '## Actions\n\n- Continue editing.\n- Suggest /how next.\n', 0],
+  ['an earlier nested list item', '## Actions\n\n- Finish work.\n  - Suggest /how next.\n  - Continue editing.\n', 1],
+  ['a final nested list item', '## Actions\n\n- Finish work.\n  - Continue editing.\n  - Suggest /how next.\n', 0],
+  ['a skill name without the slash form', '## Next step\n\nRecommend the how skill next.\n', 0],
+  ['an unregistered direct target before a real name', '## Next step\n\nRecommend the nonexistent skill next, using how to explain it.\n', 1],
+  ['an incidental question word is not a target', '## Next step\n\nCheck how the result works.\n', 1],
+  ['a plain target followed by next', '## Next step\n\nSuggest how next.\n', 0],
+  ['a negated directive without the slash form', '## Next step\n\nDo not recommend the how skill next.\n', 1],
+  ['another final heading', '## Notes\n\nSuggest `/how` next.\n', 0],
+  ['a Next step section that is not last', '## Next step\n\nSuggest `/how` next.\n\n## Notes\n\nDone.\n', 1]
+] satisfies [string, string, number][]) {
+  test(`next-step: ${name}`, async t => {
+    const directory = await sandbox(t)
+    const skill = await readFile(join(directory, 'SKILL.md'), 'utf8')
+    await writeFile(join(directory, 'SKILL.md'), skill.slice(0, skill.indexOf('## Next step')) + ending)
+    const result = run('--skill', directory)
+    assert.equal(result.status, expected, result.stdout + result.stderr)
+    if (expected) assert.match(result.stdout, /^next-step: SKILL\.md:/m)
+  })
+}
+
 test('every independent problem is reported together', async t => {
   const directory = await sandbox(t)
   await writeFile(join(directory, 'references', 'other.md'), '[Missing](absent.md)\n')
-  await writeFile(join(directory, 'agents', 'openai.yaml'), 'policy:\n  allow_implicit_invocation: true\n')
+  await writeFile(join(directory, 'SKILL.md'), '---\ndescription: Use this fixture.\n---\n\n## Load when\n\n| When | Open |\n|---|---|\n| Needed | `references/guide.md` |\n')
   const result = run('--skill', directory)
   assert.equal(result.status, 1)
-  for (const code of ['reference-unlisted', 'local-path-missing', 'host-metadata']) assert.match(result.stdout, new RegExp(`^${code}:`, 'm'))
+  for (const code of ['reference-unlisted', 'local-path-missing', 'host-metadata', 'next-step']) assert.match(result.stdout, new RegExp(`^${code}:`, 'm'))
 })
 
 test('line limits include their boundary and exclude frontmatter', async t => {
   const directory = await sandbox(t)
-  await writeFile(join(directory, 'SKILL.md'), '---\r\ndisable-model-invocation: true\r\n---\r\n## Load when\r\n| When | Open |\r\n|---|---|\r\n| Needed | `references/guide.md` |\r\n' + 'Text.\r\n'.repeat(496))
+  await writeFile(join(directory, 'SKILL.md'), '---\r\ndescription: Check a fixture. Use when the user says "check the fixture".\r\n---\r\n## Load when\r\n| When | Open |\r\n|---|---|\r\n| Needed | `references/guide.md` |\r\n' + 'Text.\r\n'.repeat(494) + '## Next step\r\nSuggest `/how` to explain the result.\r\n')
   await writeFile(join(directory, 'references', 'guide.md'), '# Guide\n' + 'Text.\n'.repeat(99))
   assert.equal(run('--skill', directory).status, 0)
 })
@@ -277,7 +350,7 @@ for (const [section, expected] of [
 ] satisfies [unknown, unknown][]) {
   test(`step completion boundary ${JSON.stringify(section)}`, async t => {
     const directory = await sandbox(t)
-    await writeFile(join(directory, 'SKILL.md'), await readFile(join(fixtures, 'valid', 'SKILL.md'), 'utf8') + '\n' + section)
+    await writeFile(join(directory, 'SKILL.md'), (await readFile(join(fixtures, 'valid', 'SKILL.md'), 'utf8')).replace('## Next step', section + '\n## Next step'))
     const result = run('--skill', directory)
     assert.equal(result.status, expected, result.stdout)
     if (expected) assert.match(result.stdout, /step-done:/)
@@ -304,7 +377,7 @@ test('the slop baseline tool-name exception stays scoped to verification', async
   const allowed = run('--skill', verification)
   assert.equal(allowed.status, 0, allowed.stdout + allowed.stderr)
   const directory = await sandbox(t)
-  await appendFile(join(directory, 'SKILL.md'), '| Baseline | `references/slop-baseline.md` |\n')
+  await writeFile(join(directory, 'SKILL.md'), (await readFile(join(directory, 'SKILL.md'), 'utf8')).replace('\n## Next step', '| Baseline | `references/slop-baseline.md` |\n\n## Next step'))
   await writeFile(join(directory, 'references', 'slop-baseline.md'), '- ESLint\n- Ruff\n')
   const forbidden = run('--skill', directory)
   assert.equal(forbidden.status, 1, forbidden.stdout)
@@ -323,7 +396,7 @@ for (const [file, expected] of [
   test(`foundation tool examples in ${file} exit ${expected}`, async t => {
     const directory = await sandbox(t)
     const skill = await readFile(join(directory, 'SKILL.md'), 'utf8')
-    await writeFile(join(directory, 'SKILL.md'), skill.replace('name: fixture', 'name: foundation') + '\n| Foundation | `references/foundation.md` |\n')
+    await writeFile(join(directory, 'SKILL.md'), skill.replace('name: fixture', 'name: foundation').replace('\n## Next step', '| Foundation | `references/foundation.md` |\n\n## Next step'))
     await writeFile(join(directory, 'references', 'foundation.md'), '')
     await writeFile(join(directory, file), '- ESLint\n- Ruff\n')
     const result = run('--skill', directory)

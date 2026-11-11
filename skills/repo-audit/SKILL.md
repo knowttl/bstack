@@ -1,6 +1,6 @@
 ---
 name: repo-audit
-description: Audit a repo at overview level and print which bstack skill to run next, in order, with one cited reason per skill.
+description: Audit a repo at overview level and print which bstack skill to run next, in order, with one cited reason per skill. Use when the user says "audit this repo", "what should I set up first" or "which bstack skill should I run next".
 disable-model-invocation: true
 ---
 
@@ -114,3 +114,7 @@ Never recursively search bundled reference or schema directories to discover gui
 | Running the documents or history research brief | `references/research-briefs.md` |
 | Recording citations for evidence | `schemas/research-report.json` |
 | Reading finding text from the target's no-mistakes runs | `references/no-mistakes-history.md` |
+
+## Next step
+
+Suggest the first applicable skill marked `to do` on the printed checklist, excluding the current audit, and confirm the selected name is one of the checklist's bstack skills. If all applicable items look done, suggest `/maintenance` for a future sweep, name it only and do not start it.
