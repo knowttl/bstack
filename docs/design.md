@@ -518,7 +518,7 @@ A1, A2 and A3 reverse settled decisions: A1 widens R41's product boundary, A2 wi
 | A4 | `prototype-in-scratch` | The prototyping skill builds two or three throwaway variants in scratch, drives and measures each with the project's verification kit, and reports the evidence and a recommendation. It writes nothing to the target repo |
 | A5 | `shared-writing-reference` | Writing quality is in scope. One shared reference, loaded by every skill that writes a document, names and links the Diátaxis modes and sets plain-prose rules |
 | A6 | `plans-are-temporary` | A plan states the condition under which it is deleted, and `/maintenance sweep` flags a plan that is finished or orphaned |
-| A7 | `invocation-by-description` | Each new skill has a trigger-quality description and a final next-step suggestion that names a real bstack skill, and starts no other skill. A multi-model design arena and an auto-routing mode skill are not adopted |
+| A7 | `invocation-by-description` | Each new skill has a trigger-quality description and a final next-step suggestion that names a real bstack skill, and starts no other skill during its procedure. A multi-model design arena and an auto-routing mode skill are not adopted |
 
 What each decision means:
 
@@ -526,7 +526,7 @@ What each decision means:
   A1 keeps that line for the plan.
   Explaining code and running a throwaway experiment are not executing a plan: neither orders work, assigns an agent, tracks progress or delivers a change, and nothing a variant produces becomes the project's code.
   The skills are ordinary skills, so the split and the shared scripts follow "The skill split" and each installs alone.
-  `/teach` builds a mental model from the same cited evidence as `/how`, which explains mechanics, and `/why`, which explains motivation, through shared references with a checked copy in each skill, because no skill starts another.
+  `/teach` builds a mental model from the same cited evidence as `/how`, which explains mechanics, and `/why`, which explains motivation, through shared references with a checked copy in each skill, because no skill starts another during its procedure.
   `/teach`, `/how` and `/why` are three skill folders (R49), and the prototyping skill is `/prototype` (R51).
 - A2: code shows what happens and rarely why, so the motivation lives in commits, reviews and the tools where the work was discussed.
   Git history and PR review threads are always available to the skill.
@@ -565,7 +565,7 @@ What each decision means:
 
 #### Not adopted
 
-- A mode skill that routes a request to a playbook is not adopted, because it reverses the explicit-invocation decisions and belongs to akashic if wanted.
+- A mode skill that routes a request to a playbook is not adopted and belongs to akashic if wanted.
 - A multi-model design arena, cross-judging between model families and the implement-then-scrap loop are not adopted, because they execute and deliver work and `/architecture` removed them already.
 - The builder check in `/plan` (D2) stays.
   The article warns against feeding the agent a hypothesis, and D2 does not: a fresh reader only lists where a builder would have to guess, and the agent brings back only the questions the user must answer.
@@ -573,7 +573,7 @@ What each decision means:
 #### Consistency with the formal-verification amendments
 
 Formal verification D1 to D9, C1 to C12 and U1 to U4 stand.
-`/formal-verification` stays a user-started skill, and its scratch reproduction in U2 stays evidence that is never committed to product code, which matches A4's scratch rule.
+`/formal-verification` allows explicit or matching implicit invocation, and its scratch reproduction in U2 stays evidence that is never committed to product code, which matches A4's scratch rule.
 U4 still routes a one-function-over-every-input question to `/verification`, and A4 adds no route from the formal skill to a prototype.
 The [skill split](#the-skill-split) lists the built skills, including the research skills added by R49.
 
@@ -2468,29 +2468,29 @@ The implementation plan cites these by number as AC-1, AC-2 and so on.
 98. Each property cites the design section it guards and `cite-check` resolves it, the property check runs inside the project's maintained check command with the source-path condition for slower checks defined in formal verification D8, the coverage gate always runs, and `/repo-audit` lists the skill only with cited risk evidence (formal verification D8).
 99. `/formal-verification` edits no product code, writes only through `apply` after the user approves the exact diff, handles one property per `create` run and asks for separate approval before a Kani harness enters product source (formal verification C7).
 100. `/architecture` proposes an explicit state model only with cited evidence, as a standard and never as a universal rule, reports a refactor for the user to select, and sends its model to `/formal-verification` (formal verification D7, C5, C4).
-101. `/how`, `/why` and `/teach` each have a trigger-quality description and a final next-step suggestion that names a real bstack skill, and none starts another skill (research amendment A7).
+101. `/how`, `/why` and `/teach` each have a trigger-quality description and a final next-step suggestion that names a real bstack skill, and none starts another skill during its procedure (research amendment A7).
 102. `/why` on a fixture repo cites each claim's actual supporting source, a commit or a pull request review thread or a connector document, uses git history and a review thread across the fixture, and quotes and cites a connector document that contains an instruction without following it (research amendment A2).
 103. `/how` on a fixture repo explains one flow from file and line citations that `cite-check` accepts, marks each claim observed, inferred or unread, and writes nothing to the repo (research amendment A1).
-104. `/teach` on a fixture repo explains how a module works and why it is built that way from the same cited evidence, labels a claim with no source as an inference, and starts neither `/how` nor `/why` (research amendment A1, A2).
+104. `/teach` on a fixture repo explains how a module works and why it is built that way from the same cited evidence, labels a claim with no source as an inference, and starts neither `/how` nor `/why` during its procedure (research amendment A1, A2).
 105. `/architecture`, `/why` and `/teach` each ship a byte-identical copy of the one why-evidence reference, `/architecture` lists it for the decision work that depends on why a choice exists, and a drifted copy fails `generate-skills.ts --check` (research amendment A2).
-106. `/recall` has a trigger-quality description and a final next-step suggestion that names a real bstack skill, ships only the `transcripts` command and starts no other skill (research amendment A3, A7).
+106. `/recall` has a trigger-quality description and a final next-step suggestion that names a real bstack skill, ships only the `transcripts` command and starts no other skill during its procedure (research amendment A3, A7).
 107. `transcripts` on a fixture project digests only the Claude Code and Codex sessions that started in the project, leaves every transcript byte-identical, writes the digests to scratch outside the repo and leaves the repo unchanged (research amendment A3).
 108. `/recall` on a fixture project summarises the prior context a fresh agent needs into scratch, labels each point with its session or as an inference, quotes no secret value and does not follow an instruction found in a transcript (research amendment A3).
-109. `/prototype` has a trigger-quality description and a final next-step suggestion that names a real bstack skill, ships only `kit check` and `kit prove`, and starts no other skill (research amendment A4, A7).
+109. `/prototype` has a trigger-quality description and a final next-step suggestion that names a real bstack skill, ships only `kit check` and `kit prove`, and starts no other skill during its procedure (research amendment A4, A7).
 110. `kit prove` run through `/prototype` on scratch clones of a fixture target that has a kit measures a passing variant and a failing variant, each with a proof record, and leaves the target's files, HEAD and status unchanged (research amendment A4).
 111. `/prototype` on a fixture project with a kit builds two or three variants in scratch, reports the measured outcome of each and a recommendation that the measures support, says so when they do not decide, stops without a kit, and leaves the repo unchanged (research amendment A4).
 
 112. `formal chart` on the broken `formal-charge-once` fixture writes `chart.mmd` with a `breaks` state and a report whose shortest bug path maps to transition-table actions (statechart S3, S5, S6).
 113. `formal chart` with a missing pinned jar returns `blocked`, reports unproven and never invokes mise or writes chart evidence (statechart S3).
 114. `formal chart` refuses a wrong jar hash through its `formal check` precondition before running the compiler (statechart S3).
-115. `/readme` has a trigger-quality description and a final next-step suggestion that names a real bstack skill, ships only `apply`, `state show` and `cite-check`, and starts no other skill (R54).
+115. `/readme` has a trigger-quality description and a final next-step suggestion that names a real bstack skill, ships only `apply`, `state show` and `cite-check`, and starts no other skill during its procedure (R54).
 116. `apply` run through `/readme` creates and then replaces only the approved `README.md` with exactly the approved bytes, and a dry run changes nothing (R54).
 117. `/readme` on a fixture project whose README buries the install command, names no entry point and lists a command that does not exist reports each failing checklist item with its README line, the invented command and the content that belongs in other files, and leaves the README unchanged until the author approves the exact bytes; on a fixture project with no README it drafts one in the structure guide's order whose every command traces to the project's source (R54).
 118. The generated TypeScript comment-ban checker reads comments through the TypeScript 6 package and reports a prose comment, with its file and line, in a project whose installed `typescript` is version 7 (fast-feedback amendment).
 119. `/verification create` on a fixture repo with no no-mistakes gate and a slow suite that repeats one setup in every test file and sets no timeout records each feedback layer with a measured time, proposes an affected command and a full command, flags the repeated setup and the missing timeout, and offers the optional pre-push hook as a selected step that is never the only enforcement (fast-feedback amendment).
 120. `/verification create` on the same repo once it has a no-mistakes gate extends the gate's own configuration with the affected and full commands, offers no pre-push hook, and leaves every other file untouched until the user approves the exact diff (fast-feedback amendment).
 121. `/verification maintain` on a slow-suite fixture with an applied verification kit audits the suite, ranks the repeated per-file setup by measured saving, proposes reusing it only with a proof that tests clean up, proposes a per-test timeout and a suite ceiling of about twice the measured time, and changes nothing until the user selects a proposal (fast-feedback amendment).
-122. `/no-mistakes-tuning` has a trigger-quality description and a final next-step suggestion that names a real bstack skill, ships only `apply` and `state show`, and starts no other skill (R55).
+122. `/no-mistakes-tuning` has a trigger-quality description and a final next-step suggestion that names a real bstack skill, ships only `apply` and `state show`, and starts no other skill during its procedure (R55).
 123. `apply` run through `/no-mistakes-tuning` creates and then replaces only the approved `.no-mistakes.yaml` with exactly the approved bytes, and a dry run changes nothing (R55).
 124. `/no-mistakes-tuning` on a fixture repo whose `.no-mistakes.yaml` sets test and lint commands and a review instruction that asks for every boundary case proposes bounded fix rounds, the focus instruction and trivial-change patterns that each match a real path, explains each value with its trade-off, keeps every other key unchanged, flags the boundary-case instruction for removal, asks before ignoring prose documentation, and writes nothing until the user approves the exact bytes (R55).
 

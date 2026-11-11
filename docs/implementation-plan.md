@@ -3,7 +3,7 @@
 This plan tells a build agent how to build the `repo-audit` skill in order.
 The design is [design.md](design.md), revision 29.
 Its 2026-10-13 verification amendment adds a standalone skill and transfers test auditing out of repo-audit.
-The design's [skill split](design.md#the-skill-split) then divides repo-audit into eight user-started skills and gives its own [build order](design.md#split-build-order).
+The design's [skill split](design.md#the-skill-split) then divides repo-audit into eight skills and gives its own [build order](design.md#split-build-order).
 The 2026-10-15 planning-workflow amendment adds a ninth skill, `plan`, which tasks T2.11 and T2.12 schedule.
 The 2026-10-18 formal-verification amendment adds a tenth skill, `formal-verification`, which task T2.13 schedules.
 The tasks below describe the original repo-audit build; they do not schedule the verification amendment or the split.
@@ -2109,7 +2109,7 @@ R27 changes AC-74 support and acceptance scope to Linux-only; Windows/macOS exec
 
 **Done when**
 
-- The plain request does not start the skill, and the explicit command does.
+- The plain request and the explicit command each start the skill.
 - Where the host shows which files the agent opened, every opened file matches a "load when" condition, and no script source or board asset was read.
   Where it does not, the loading cases stay blocked with that limitation recorded.
 - The results are recorded in `tests/eval/results/` with the agent and model.
@@ -2229,6 +2229,7 @@ Repeated execution artifacts with unique run IDs are legitimate history; the gat
 Fill in the "Evidence" column in T5.2.
 Registry completeness is a structural check, while final case evidence proves execution.
 Comparisons predating the targeted-question skill repair are historical and require refresh against the settled package before final selection.
+The explicit-only invocation requirements and results in the completed task records below are historical; the [design](design.md#installation-and-host-contract) owns the current invocation contract and its evaluation.
 Fixture freshness follows the [evaluation contract](evaluation.md#scenarios-and-runs); [AC-17 now passes](../tests/eval/results/release/maintenance-maintained-fixture.md) on the commissioned starting state.
 
 | Task | Acceptance cases | Required procedure | Evidence |
@@ -2266,6 +2267,6 @@ Fixture freshness follows the [evaluation contract](evaluation.md#scenarios-and-
 | T3a.6 | AC-24, AC-58 | Different-root clean clone, missing evidence, shallow base and fresh leaf execution | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
 | T3a.7 | AC-23 | Maintenance-only transcript without interview or full audit | Passing current evidence: AC-23 ([inventory](../tests/eval/results/release/approved-evidence.md)).  |
 | T4.1 | AC-73, AC-74 | Copy/link lifecycle and conflict preservation, with recorded real Linux execution under R27 | See the [case-by-case evidence inventory](../tests/eval/results/release/approved-evidence.md). |
-| T4.2 | AC-39, AC-40, AC-42, AC-43, AC-56, AC-75 | Fresh explicit/implicit invocation and observed file-loading trace | Passing current evidence: AC-39, AC-40, AC-42, AC-43, AC-56 ([inventory](../tests/eval/results/release/approved-evidence.md)). v0.1.1 known issues: AC-75 ([release notes](releases/v0.1.0.md)). |
+| T4.2 | AC-39, AC-40, AC-42, AC-43, AC-56, AC-75 | Fresh explicit/implicit invocation and observed file-loading trace | The [inventory](../tests/eval/results/release/approved-evidence.md) records the explicit-only release evidence; the [design](design.md#installation-and-host-contract) records the later implicit invocation evaluation. v0.1.1 known issues: AC-75 ([release notes](releases/v0.1.0.md)). |
 | T4.3 | AC-1, AC-3, AC-23, AC-54, AC-64, AC-69, AC-75 | Final full-path transcripts, repeated audit and independent extension | Passing current evidence: AC-23, AC-64 ([inventory](../tests/eval/results/release/approved-evidence.md)). v0.1.1 known issues: AC-1, AC-3, AC-54, AC-69, AC-75 ([release notes](releases/v0.1.0.md)). |
 | T5.2 | AC-46 | Comparable baseline/final results and all-case evidence validation | v0.1.1 known issues: AC-46 ([release notes](releases/v0.1.0.md)). |
