@@ -82,8 +82,7 @@ for (const [name, frontmatter, expected] of [
   ['description without a Use when clause', 'description: Check a fixture for package problems.', 1],
   ['Use when clause with too few words', 'description: Check a fixture. Use when checking fixtures.', 1],
   ['later sentence cannot lengthen a request', 'description: Check a fixture. Use when needed. It provides package validation.', 1],
-  ['later sentence cannot supply capability keywords', 'name: other\ndescription: Check a fixture. Use when the user needs validation. The fixture is checked.', 1],
-  ['unrelated capability opening', 'description: Miscellaneous information. Use when checking the fixture package.', 1],
+  ['capability and request without shared keywords', 'description: Explain code. Use when the user asks how a function works.', 0],
   ['description at the length limit', `description: Check a fixture. Use when the user says "${'a'.repeat(1024 - 'Check a fixture. Use when the user says "".'.length)}".`, 0],
   ['description over the length limit', `description: Check a fixture. Use when the user says "${'a'.repeat(1025 - 'Check a fixture. Use when the user says "".'.length)}".`, 1]
 ] satisfies [string, string, number][]) {
@@ -129,7 +128,8 @@ for (const [name, ending, expected] of [
   ['the last of several list items', '## Actions\n\n- Continue editing.\n- Suggest /how next.\n', 0],
   ['an earlier nested list item', '## Actions\n\n- Finish work.\n  - Suggest /how next.\n  - Continue editing.\n', 1],
   ['a final nested list item', '## Actions\n\n- Finish work.\n  - Continue editing.\n  - Suggest /how next.\n', 0],
-  ['a skill name without the slash form', '## Next step\n\nSuggest how next.\n', 1],
+  ['a skill name without the slash form', '## Next step\n\nRecommend the how skill next.\n', 0],
+  ['a negated directive without the slash form', '## Next step\n\nDo not recommend the how skill next.\n', 1],
   ['another final heading', '## Notes\n\nSuggest `/how` next.\n', 0],
   ['a Next step section that is not last', '## Next step\n\nSuggest `/how` next.\n\n## Notes\n\nDone.\n', 1]
 ] satisfies [string, string, number][]) {
