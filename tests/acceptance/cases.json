@@ -707,8 +707,7 @@
         "path": "tests/eval/scenarios/scenarios.json",
         "name": "implicit-invocation",
         "artifacts": [
-          "tests/eval/results/release/runs/2026-10-12T04-45-36.615Z-bd2df85f-9bcc-45fe-a9ff-f41d06c35512/conversation.txt",
-          "tests/eval/results/release/runs/2026-10-12T04-45-36.615Z-bd2df85f-9bcc-45fe-a9ff-f41d06c35512/run.json"
+          "docs/design.md"
         ]
       }
     },

@@ -2189,7 +2189,7 @@ Baselines that reach 3 of 5 require the with-skill threshold without an addition
 Release checks freeze one candidate commit and use the ten smoke scenarios identified by `tier` in the scenario registry.
 The full tier includes every scenario, runs weekly and before candidates, and records failures without blocking.
 Only hard breaks and regressions block; other failures are published as known issues with measured rates.
-Hard breaks are failing deterministic tests, package checks, registry checks or installation; changed read-only fixture bytes or writes before scripted approval; failed isolation; failed explicit invocation (AC-43) or implicit invocation starting the skill (AC-42); and at least two non-infrastructure agent process failures in five runs.
+Hard breaks are failing deterministic tests, package checks, registry checks or installation; changed read-only fixture bytes or writes before scripted approval; failed isolation; explicit invocation (AC-43) or implicit invocation (AC-42) failing to start the skill; and at least two non-infrastructure agent process failures in five runs.
 A regression is a smoke check in the last release's gating set that fails the threshold after confirmation or the per-check margin.
 Later gating sets contain checks at 4 or 5 of 5 in the latest smoke batch and at least 80% across their latest ten compatible measured runs, or the available history until ten exist.
 The first ledger release has no regressions and seeds its gating set from its own checks at 4 or 5 of 5, without applying historical reliability.
@@ -2409,7 +2409,7 @@ The implementation plan cites these by number as AC-1, AC-2 and so on.
 39. Where the agent records the files it opened, every opened file matches a "load when" condition that applied.
 40. The agent runs bundled scripts without reading their source, and passes board assets to the launcher without reading them.
 41. The package check fails on a seeded unlisted reference, a seeded nested reference and a seeded oversized `SKILL.md`.
-42. In the current agent, a request such as "audit this repo" without the explicit command does not start repo-audit.
+42. In the current agent, a request such as "audit this repo" without the explicit command starts repo-audit.
 43. In the current agent, the explicit command starts repo-audit.
 44. The package check fails when the frontmatter setting or `agents/openai.yaml` is missing.
 45. The package check fails on a seeded unexplained constant and a seeded step with no completion criterion.

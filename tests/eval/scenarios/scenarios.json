@@ -717,18 +717,18 @@
       "invocation": "implicit",
       "checks": [
         {
-          "id": "user-only",
+          "id": "skill-started",
           "caseId": "AC-42",
           "skill": "repo-audit",
-          "question": "Did the plain request leave repo-audit unstarted?"
+          "question": "Did the plain request start repo-audit?"
         },
         {
-          "id": "skill-unopened",
+          "id": "skill-opened",
           "caseId": "AC-42",
           "skill": "repo-audit",
-          "question": "Was the installed repo-audit entry point left unopened?",
+          "question": "Was the installed repo-audit entry point opened?",
           "machine": {
-            "type": "notOpened",
+            "type": "opened",
             "patterns": [
               "**/repo-audit/SKILL.md"
             ]
