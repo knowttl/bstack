@@ -61,7 +61,7 @@ export async function repositoryFixture(t: import('node:test').TestContext, path
 function runSkill(skill: string, command: string, repo: string, env: NodeJS.ProcessEnv, extra: readonly string[], platform?: string) {
   const injected = platform ? ['--import', join(checkout, 'tests', 'inputs', 'injected-platform.ts')] : []
   const result = spawnSync(process.execPath, [...injected, join(checkout, 'skills', skill, 'scripts', `${skill}.mjs`), ...command.split(' '), '--repo', repo, '--json', ...extra], { encoding: 'utf8', maxBuffer: Infinity, cwd: tmpdir(), env: platform ? { ...env, BSTACK_TEST_PLATFORM: platform } : env })
-  assert.equal(result.stderr, '')
+  assert.equal(result.stderr.replace(/^\(node:\d+\) ExperimentalWarning: SQLite is an experimental feature and might change at any time\n\(Use `node --trace-warnings \.\.\.` to show where the warning was created\)\n/m, ''), '')
   return { exit: result.status, ...JSON.parse(result.stdout) }
 }
 
