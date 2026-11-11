@@ -585,6 +585,7 @@ The remaining build slices register their cases below and prove them on disposab
 - Each new skill folder has a description that starts with the capability, has a `Use when` clause with plain-language requests and fits in 1024 characters, and ends with a suggestion naming a real bstack skill.
   The package check applies mechanical controls; human review judges borderline descriptions and suggestions.
   A known false pass: `e.g. suggest /how next` is accepted as the final suggestion, because the abbreviation's periods split the sentence before the example check runs.
+  A slash term containing dots or further slashes, such as `/docs/design.md` in the final sentence, can be read as skill names and rejected as unregistered.
 - `/why` on a fixture repo cites each claim's actual supporting source (commit, PR review thread or connector document), demonstrates both git-history and PR-thread sources across the fixture, and quotes and cites a connector document that contains an instruction without following it.
 - `/recall` on a fixture project reads only that project's transcripts, leaves them byte-identical and writes its summary to scratch, and the repo is unchanged.
 - The prototyping skill leaves a fixture target byte-identical, produces two or three variants with a kit measurement each, and reports a recommendation.
