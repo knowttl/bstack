@@ -115,6 +115,5 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Take the first applicable skill marked `to do` on the printed checklist, excluding the current audit, such as `/verification` when the findings cite weak or missing tests, and confirm its name is one of the checklist's bstack skills.
-Run that skill next, or ask the user whether to run it.
-Run `/maintenance` next instead when every applicable item looks done, or ask the user whether to run it.
+Take the first applicable skill marked `to do` on the printed checklist, excluding the current audit, confirm its name is one of the checklist's bstack skills, and run it next or ask the user whether to run it; leave no follow-up when every applicable item looks done.
+Run `/verification` next when the findings cite weak or missing tests, or ask the user whether to run it.

@@ -585,7 +585,7 @@ The remaining build slices register their cases below and prove them on disposab
 - Each new skill folder has a description that starts with the capability, has a `Use when` clause with plain-language requests and fits in 1024 characters, and ends with a suggestion naming a real bstack skill.
   The package check applies mechanical controls; human review judges borderline descriptions and suggestions.
   A known false pass: `e.g. suggest /how next` is accepted as the final suggestion, because the abbreviation's periods split the sentence before the example check runs.
-  A known false rejection: `Use the report to summarize the findings and suggest /how next.` fails, because the check validates the target of the first directive verb in the final sentence (`report`) even when a later directive carries the real suggestion.
+  A repeated directive can also pass with an invalid skill: ``Run `/how` next, or run `/no-such-skill` instead.`` passes because the check validates only the target of the first directive verb.
   The shipped next steps open with their own directive, ``Run `/how` next when <finding>, or ask the user whether to run it.``, so the first directive is the suggestion.
 - `/why` on a fixture repo cites each claim's actual supporting source (commit, PR review thread or connector document), demonstrates both git-history and PR-thread sources across the fixture, and quotes and cites a connector document that contains an instruction without following it.
 - `/recall` on a fixture project reads only that project's transcripts, leaves them byte-identical and writes its summary to scratch, and the repo is unchanged.
@@ -2233,7 +2233,20 @@ A file met while inspecting repository contents for another request stays reposi
 The package check applies mechanical controls to descriptions and final suggestions; human review judges semantic adequacy.
 It neither requires nor forbids a host's invocation settings.
 bstack does not run each host to test its matching.
-AC-42 and AC-44 record the explicit-only release; their retained evidence predates implicit invocation and does not describe it.
+AC-42 as originally worded for explicit-only invocation is superseded by the following implicit invocation evaluation; AC-44 retains evidence from the explicit-only release.
+Fresh `claude -p --setting-sources project --max-turns 2 --no-session-persistence` sessions ran in a scratch Git project with all 17 skills installed from commit `1fbdd8d` using `node install/install.mjs --scope project --host claude`.
+Each request named no skill, and the first Skill tool call was recorded from stream-json.
+
+| Plain request | Observed skill |
+|---|---|
+| review this repo | repo-audit |
+| can you help me improve our tests? | verification |
+| why is calc.js written the way it is? what is the history behind it | why |
+| I need a proper README for this project | readme |
+| what is 17 times 3? (control) | none |
+
+All four requests selected the intended skill without a mis-selection, and the control started no skill.
+The transcripts and summary are retained outside the repo at `/home/brytton/fm-homes/flex-remote-c1/data/bstack-implicit-invoke-skills/e2e-out/` and `e2e-summary.md` respectively.
 
 **A skill's procedure starts only itself, including those the research amendment adds.**
 No skill starts another during its procedure; each ends with a next step in one shape, ``Run `/skill` next when <finding>, or ask the user whether to run it.``
