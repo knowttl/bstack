@@ -2237,13 +2237,13 @@ AC-42 as originally worded for explicit-only invocation is superseded by the fol
 Fresh `claude -p --setting-sources project --max-turns 2 --no-session-persistence` sessions ran in a scratch Git project with all 17 skills installed from commit `1fbdd8d` using `node install/install.mjs --scope project --host claude`.
 Each request named no skill, and the first Skill tool call was recorded from stream-json.
 
-| Plain request | Observed skill |
-|---|---|
-| review this repo | repo-audit |
-| can you help me improve our tests? | verification |
-| why is calc.js written the way it is? what is the history behind it | why |
-| I need a proper README for this project | readme |
-| what is 17 times 3? (control) | none |
+| Plain request | Observed skill | First tool call, verbatim |
+|---|---|---|
+| review this repo | repo-audit | `{"name": "Skill", "input": {"skill": "repo-audit"}}` |
+| can you help me improve our tests? | verification | `{"name": "Skill", "input": {"skill": "verification", "args": "improve our tests"}}` |
+| why is calc.js written the way it is? what is the history behind it | why | `{"name": "Skill", "input": {"skill": "why", "args": "calc.js"}}` |
+| I need a proper README for this project | readme | `{"name": "Skill", "input": {"skill": "readme"}}` |
+| what is 17 times 3? (control) | none | no tool call; answered 17 x 3 = 51 |
 
 All four requests selected the intended skill without a mis-selection, and the control started no skill.
 The transcripts and summary are retained outside the repo at `/home/brytton/fm-homes/flex-remote-c1/data/bstack-implicit-invoke-skills/e2e-out/` and `e2e-summary.md` respectively.
