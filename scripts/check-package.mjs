@@ -170,7 +170,6 @@ export async function checkPackage(skill, { sourcePreflight = false } = {}) {
     if (description.length > descriptionMaxLength) add('host-metadata', 'SKILL.md', `Description is ${description.length} characters, over ${descriptionMaxLength}.`, `Shorten the description to at most ${descriptionMaxLength} characters.`)
   }
   const bstackSkills = new Set(Object.keys(JSON.parse(await readFile(new URL('../runtime/skills.json', import.meta.url), 'utf8'))))
-  const skillNames = new RegExp(`/(?<slash>[a-zA-Z][a-zA-Z0-9_-]*)|(?<![a-zA-Z0-9_/-])(?<plain>${[...bstackSkills].join('|')})(?![a-zA-Z0-9_-])`, 'g')
   const suggested = []
   let lastProse = tokens.findLast(token => !['space', 'code'].includes(token.type))
   while (lastProse?.type === 'list') lastProse = lastProse.items.at(-1)?.tokens.findLast(token => !['space', 'code'].includes(token.type))
@@ -179,15 +178,14 @@ export async function checkPackage(skill, { sourcePreflight = false } = {}) {
     let prose = ''
     marked.walkTokens(token.tokens, part => {
       if (part.type === 'text' && !part.tokens) prose += part.text
-      if (part.type === 'codespan' && (/^\/[a-zA-Z][a-zA-Z0-9_-]*$/.test(part.text) || bstackSkills.has(part.text))) prose += part.text
+      if (part.type === 'codespan' && /^\/?[a-zA-Z][a-zA-Z0-9_-]*$/.test(part.text)) prose += `\`${part.text}\``
     })
     prose = prose.replace(/\b[a-z][a-z0-9+.-]*:\/\/[^\s<>()]+/gi, url => url.match(/[.!?;]+$/)?.[0] ?? '').replace(/\r?\n/g, ' ')
     for (const line of prose.split(/[.!?](?=\s|$)|;/).filter(part => part.trim()).slice(-1)) {
-      if (!/\b(?:suggest|recommend|try|use|see|run|check)\b/i.test(line) || /\b(?:example|e\.g)\b/i.test(line)) continue
-      for (const match of line.matchAll(skillNames)) {
-        const before = line.slice(0, match.index)
-        if (!/\b(?:do not|never|no|without|excluding)\b/i.test(before)) suggested.push(match.groups.slash ?? match.groups.plain)
-      }
+      if (/\b(?:example|e\.g)\b/i.test(line)) continue
+      const directive = /\b(?:suggest|recommend|try|use|see|run|check)\b/i.exec(line)
+      const target = directive && /^\s+(?:the\s+)?`?\/?([a-zA-Z][a-zA-Z0-9_-]*)(?=\s+(?:skill|next)\b|[^\w\s-]|\s*$)/i.exec(line.slice(directive.index + directive[0].length))
+      if (target && !/\b(?:do not|never|no|without|excluding)\b/i.test(line.slice(0, directive.index))) suggested.push(target[1])
     }
   })
   if (!suggested.length) add('next-step', 'SKILL.md', 'Final prose has no skill suggestion.', 'End with a suggestion naming a registered skill such as /how.')
