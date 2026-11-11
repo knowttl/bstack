@@ -17,7 +17,7 @@ Every proposed `ignore_patterns` always includes `.no-mistakes.yaml`, so the gat
 Every other key in the file stays byte-for-byte as it is.
 Test and lint commands and gates belong to `/verification`, and the Document step's ownership map belongs to `/maintenance`; name those skills instead of editing their keys.
 Settings that live only in the machine's global no-mistakes config, such as review models and effort, are reported as recommendations and never written.
-Return the result to the project's chosen workflow instead of starting another skill.
+Return the result to the project's chosen workflow without starting another skill during the procedure.
 Never start, stop, update or reconfigure the no-mistakes daemon, never run `no-mistakes init` and never push.
 Keep notes, history summaries and drafts in scratch outside the target.
 Only `apply` writes to the target, after the user approves the exact bytes.

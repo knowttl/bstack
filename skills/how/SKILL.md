@@ -11,7 +11,7 @@ Its procedure starts no other skill; a follow-up skill runs only from the closin
 The target is an existing repo, passed as `--repo`.
 
 How explains the mechanics of one part of the code: what runs, in what order, on what data and with what result.
-The motive behind the code belongs to `/why`, and a model that joins both belongs to `/teach`; name them as next steps and start neither.
+The motive behind the code belongs to `/why`, and a model that joins both belongs to `/teach`; name them as next steps and start neither during the procedure.
 It reads the repo and writes nothing to it, executes nothing from it and opens no pull requests.
 Keep notes, the citation report and drafts in scratch outside the target.
 
@@ -50,7 +50,7 @@ Done when: `cite-check` passes and every cited line supports its claim, or a cla
 
 Write the explanation by the [writing reference](references/writing.md) and the mechanics reference's shape.
 State the subject, the answer, the cited path, the data shapes and invariants it relies on, and the limits: paths not followed, files not opened and each inference.
-List `/why` for the motive and `/teach` for both as next steps for the user to run, and start neither.
+List `/why` for the motive and `/teach` for both as next steps, and start neither during the procedure.
 
 Done when: The explanation answers the stated question, every claim cites its source or is labelled an inference, and the limits are named.
 

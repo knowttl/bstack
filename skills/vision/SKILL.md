@@ -14,7 +14,7 @@ An existing repo is passed as `--repo`, and its current VISION.md is the approve
 
 The vision is a contribution acceptance policy: purpose, users, commitments and refusals.
 A backlog, implementation plan, design, glossary, stack choice or product work is outside it.
-Return the approved vision to the project's chosen workflow instead of starting another skill or opening a pull request.
+Return the approved vision to the project's chosen workflow without starting another skill during the procedure or opening a pull request.
 A repo whose vision has no real gap gets that report and no interview or board.
 Keep the draft, evidence sheet, interview notes, board and verdicts in scratch outside the target.
 Only `apply` writes to the target, after the author approves the exact draft and its diff.
@@ -99,7 +99,7 @@ Done when: Only the approved VISION.md, and any selected pointer, has been writt
 
 State the target, the evidence checked, the board rounds and verdicts, the approved revision and the written path.
 Name the unresolved gaps and any step left blocked with its missing prerequisite.
-List the glossary, architecture and foundation work as next steps for the user to run, and start none of them.
+List the glossary, architecture and foundation work as next steps, and start none of them during the procedure.
 
 Done when: The report names what was written or why nothing was, the approval it rests on, and every open gap.
 

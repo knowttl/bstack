@@ -16,7 +16,7 @@ Every other skill adds only the one line for what it wrote; this skill owns the 
 It measures the size of the instructions an agent loads and audits the content of distinct nested instruction files for review only, editing a line there only when the user selects it, reports `CLAUDE.local.md` as possible shadowing without editing it, and inspects and reports nothing outside the selected repo, including ancestor directories and user profiles.
 It removes a `CLAUDE.md` only after rechecking the host's official loading documentation and getting the author's approval.
 It writes no document other than instruction files, and it neither edits product code nor opens pull requests.
-Return the result to the project's chosen workflow instead of starting another skill.
+Return the result to the project's chosen workflow without starting another skill during the procedure.
 Keep drafts, audit notes and transcripts in scratch outside the target.
 Only `apply` writes to the target, after the user approves the exact bytes.
 Do not substitute direct project edits or an invented approval for unavailable tooling.
@@ -101,7 +101,7 @@ State the target, the instruction files found and their classes, each pointer's 
 Name every shadowing report, every unpointed source left for its skill or the author, and any step left blocked with its missing prerequisite.
 Report each kept non-pointer rule's classification with its file and line, the highest workable rung and `/verification correct` route for enforceable candidates, and any proposed pointer to an existing proven check.
 Run `instructions measure` again and report the bytes, lines and approximate tokens before and after, with each dead or default-restating line left for the user to select.
-Name the skills that add pointers, `/glossary`, `/vision`, `/architecture`, `/foundation`, `/verification` and `/maintenance`, as the way later pointers arrive, and start none of them.
+Name the skills that add pointers, `/glossary`, `/vision`, `/architecture`, `/foundation`, `/verification` and `/maintenance`, as the way later pointers arrive, and start none of them during the procedure.
 
 Done when: The report names what was written or why nothing was, the host check behind any removal, and every open decision.
 

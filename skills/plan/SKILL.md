@@ -13,13 +13,13 @@ Resolve the target before proceeding: an existing repo is passed as `--repo`, an
 Plan has one mode, `create`, and it writes one implementation plan for a project from an approved design document.
 The design may be any document the user names and approves, such as requirements, stories and non-functional targets written by hand or in another tool.
 The plan also reads the project's `VISION.md`, glossary, design document and verification kit when they exist.
-A missing one is reported as a gap and its skill is never started.
+A missing one is reported as a gap and its skill is not started during planning.
 The plan's units are the design's stories with their acceptance cases, core stories first, and each unit cites its design section, names the boundary it touches, states its Done when and names the check or verification kit feature that proves it.
 Non-functional targets become acceptance checks of the units they constrain.
 It writes the plan document and the one pointer line for it in the root `AGENTS.md`.
-It starts no skill and no work, never executes a unit, assigns no agent, tracks no progress, prescribes no development method or tool, and edits no product code, design, vision, glossary or kit.
+During planning, it starts no skill and no work, never executes a unit, assigns no agent, tracks no progress, prescribes no development method or tool, and edits no product code, design, vision, glossary or kit.
 A conflict with one of those documents is reported with its source and left to the skill that owns it.
-Return the result to the project's chosen workflow instead of starting another skill.
+Return the result to the project's chosen workflow without starting another skill during the procedure.
 Keep drafts, reader reports, the plan record and transcripts in scratch outside the target.
 Only `apply` writes to the target, after the user approves the exact bytes.
 Do not substitute direct project edits or an invented approval for unavailable tooling.
@@ -39,7 +39,7 @@ Copy this checklist and tick a step only when its Done when criterion is met.
 
 Ask which document is the approved design when the user has not named one, and treat a document the user has not confirmed as approved as a draft the plan cannot rest on.
 Look for `VISION.md`, the glossary, the project's design document and an applied verification kit under `.agents/skills/verify-<app>/`, read each one that exists and list each one that does not as a gap with the skill that would create it.
-Name that skill as a next step for the user, and start none.
+Name that skill as a next step, and start none during the procedure.
 An existing repo also needs its real boundaries: where the host supports subagents, give each independent area one read-only reader, otherwise read the areas one at a time.
 Each reader reports findings with file and line citations, without editing or asking the user.
 Record the citations in scratch following `schemas/research-report.json`, binding each cited file to the SHA-256 of the exact bytes read with state kind `sha256`, and run `node scripts/plan.mjs cite-check --repo <target> --report <file> --json`, with `--workspace` for a new idea.
@@ -101,7 +101,7 @@ Done when: Only the approved plan and any selected pointer have been written wit
 Run `plan check` again on the unchanged record to confirm the final report still reflects the current design.
 State the target, the design and the other inputs read, the gaps with the skills that fill them, the builder check's result, the questions asked and their answers, the units in dependency order with the evidence for each, and the written paths.
 Name every question left open and any step left blocked with its missing prerequisite.
-List the skills for any gap as next steps for the user to run, say that nothing here runs the plan, and start nothing.
+List the skills for any gap as next steps, say that nothing here runs the plan, and start nothing during the procedure.
 
 Done when: The report names what was written or why nothing was, and every gap and open question.
 

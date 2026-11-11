@@ -17,7 +17,7 @@ It is an experiment, not the plan's execution: nothing a variant produces become
 
 It writes nothing to the target, and the target is byte-identical afterward.
 Variants are clones in scratch outside the target, so every edit, install, launch and evidence file lands there.
-It starts no other skill; name any follow-up skill as a next step.
+During the prototype, start no other skill; name any follow-up skill as a next step.
 Variant code runs on this machine through the kit's launch command, so read what the kit launches before the first run, and stop if a variant needs a credential, an outside service or a network call that the kit does not already make.
 
 ## Checklist

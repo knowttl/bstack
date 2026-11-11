@@ -21,7 +21,7 @@ It writes the project's design document, native check configuration, decision re
 Vision, domain terms, the verification kit and the root instruction file belong to `/vision`, `/glossary`, `/verification` and `/agents-md`, and a conflict with one is reported with its source.
 Neither mode moves or rewrites product code or opens pull requests: a refactor that a boundary implies is a separate change the user selects and runs elsewhere.
 Signals such as size, import counts and change frequency indicate where to investigate and never establish a violation by themselves.
-Return the result to the project's chosen workflow instead of starting another skill.
+Return the result to the project's chosen workflow without starting another skill during the procedure.
 Keep drafts, candidate lists, evidence sheets and transcripts in scratch outside the target.
 Only `apply` writes to the target, after the user approves the exact bytes.
 Do not substitute direct project edits or an invented approval for unavailable tooling.
@@ -113,7 +113,7 @@ Done when: Only the approved files, and any selected registration or pointer, ha
 Rerun the maintained check command and the proofs on the written tree, and report whether the design is registered in a contract, since its structure check belongs to `/maintenance`.
 State the target, the sources read, the boundaries and decisions proposed with their evidence, the rules proved or unproven with their coverage limits, the debt baseline and the written paths.
 Name the unresolved decisions and any step left blocked with its missing prerequisite.
-List `/foundation`, `/verification create`, `/formal-verification create` for an explicit state model whose steps guard money or data, `/maintenance` and `/agents-md` as next steps for the user to run when they apply, and start none of them.
+List `/foundation`, `/verification create`, `/formal-verification create` for an explicit state model whose steps guard money or data, `/maintenance` and `/agents-md` as next steps when they apply, and start none of them during the procedure.
 Name `maintain` as the later pass that keeps the design true.
 
 Done when: The report names what was written or why nothing was, which rules were proved, and every open decision.

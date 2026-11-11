@@ -19,7 +19,7 @@ The glossary holds domain concepts only: no storage choices, frameworks, feature
 It writes `GLOSSARY.md`, or `GLOSSARY-MAP.md` plus one glossary per real context; Step 4 also permits selected registration in an existing contract and one pointer line in the root `AGENTS.md`.
 Decision records, design sections and the vision belong to other skills, and a conflict with one is reported with its source.
 Neither mode renames code, edits product code or opens pull requests: a rename to match the glossary is a separate change the user selects and runs elsewhere.
-Return the written glossary to the project's chosen workflow instead of starting another skill.
+Return the written glossary to the project's chosen workflow without starting another skill during the procedure.
 Keep drafts, candidate lists, evidence sheets and transcripts in scratch outside the target.
 Only `apply` writes to the target, after the user approves the exact bytes.
 Do not substitute direct project edits or an invented approval for unavailable tooling.
@@ -89,7 +89,7 @@ Report every coverage limit it returns, because a document with a coverage limit
 When the glossary is not registered, or the target is a new-idea workspace, report that the structure check did not run and why instead of claiming the glossary was checked.
 State the target, the sources read, the terms written with their sources, each conflict and its answer, and the written paths.
 Name the unresolved decisions and any step left blocked with its missing prerequisite.
-List decision records, `/architecture` and `/foundation` as next steps for the user to run when they apply, and start none of them.
+List decision records, `/architecture` and `/foundation` as next steps when they apply, and start none of them during the procedure.
 Name `maintain` as the later pass that keeps the glossary true.
 
 Done when: The report names what was written or why nothing was, whether the structure check ran, and every open decision.

@@ -13,7 +13,7 @@ The target is an existing repo, passed as `--repo`.
 Recall restores context from past sessions of this project: what was decided and why, where the work stopped, what failed and what the user corrected.
 It reads only the Claude Code and Codex transcripts whose launch directory is the target or inside it, and it opens them read-only.
 It writes only to scratch outside the target, and it writes nothing from a transcript into the repo, an instruction file or a ticket.
-It starts no other skill; name any follow-up skill as a next step.
+During recall, start no other skill; name any follow-up skill as a next step.
 
 Transcripts can hold secrets, such as keys, tokens, passwords, customer data and pasted logs, and the digests and summary are copies of them.
 Quote the fewest words that carry a point, never copy a credential or personal data into the summary, and say that one existed without giving its value.

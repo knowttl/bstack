@@ -15,7 +15,7 @@ The README is the first impression: it opens with the problem and the promise, m
 It writes no other document, and it does not edit product code, `AGENTS.md`, `CONTRIBUTING.md` or any file the README links to.
 When the audit finds content that belongs in another document, it reports the content and the file that should hold it and leaves both unchanged.
 The repository description and topics live on the host, outside the repo, so it reports the exact values to set and sets nothing.
-Return the result to the project's chosen workflow instead of starting another skill.
+Return the result to the project's chosen workflow without starting another skill during the procedure.
 Keep drafts, audit notes and transcripts in scratch outside the target.
 Only `apply` writes to the target, after the user approves the exact bytes.
 Do not substitute direct project edits or an invented approval for unavailable tooling.

@@ -16,7 +16,7 @@ It takes the approved `VISION.md` as a required input, and the confirmed glossar
 It interviews for data, interfaces, deployment and the first journey itself.
 It never adopts a non-empty directory or changes global Git configuration, and it does not build product features beyond the first journey.
 Vision, domain terms, boundaries, the verification kit, the maintenance contract and the root instruction file belong to `/vision`, `/glossary`, `/architecture`, `/verification`, `/maintenance` and `/agents-md`, and a conflict with one is reported with its source.
-Return the result to the project's chosen workflow instead of starting another skill or opening a pull request.
+Return the result to the project's chosen workflow without starting another skill during the procedure or opening a pull request.
 Keep proposals, interview notes, the scratch scaffold and transcripts in scratch outside the idea workspace.
 Only `project create` writes the destination, after the user approves the exact files and commands.
 Do not substitute direct project edits or an invented approval for unavailable tooling.
@@ -91,7 +91,7 @@ A failed or interrupted command leaves the project unverified and available for 
 Run the maintained command and capture fresh evidence on the created project, following the [checks reference](references/checks.md#capture-the-outcome).
 Prove each selected rule, including the no-comments rule, with `rule-proof`, and add later selected changes to the created project through `apply --repo <destination>` with the same review rules.
 State the destination, the stack and its alternatives, the first journey and its evidence, the proved rules, the written paths, the unresolved decisions and every verification limit.
-List `/verification create`, `/maintenance` and `/agents-md` as next steps for the user to run, and `/architecture` when no design was supplied, and start none of them.
+List `/verification create`, `/maintenance` and `/agents-md` as next steps, and `/architecture` when no design was supplied, and start none of them during the procedure.
 
 Done when: Every required outcome has fresh evidence on the final inputs, or completion explicitly remains unverified with each missing prerequisite named.
 

@@ -25,7 +25,7 @@ No mode edits product code, weakens a property, adds hosted CI or installs a too
 A Kani harness normally lives in the crate under `#[cfg(kani)]`, which is an edit inside product source and needs its own explicit approval; a TLA+ model lives entirely inside the suite folder.
 Scripts collect facts and render reviewable change sets; this workflow writes target changes through `apply`, after the user approves the exact diff.
 Checks the suite holds must run without bstack installed, though not without the project's own tool and runtime.
-Start no other skill: name `/architecture`, `/verification` or `/maintenance` as a next step for the user to run, and run none.
+During formal verification, start no other skill: name `/architecture`, `/verification` or `/maintenance` as a next step.
 
 State these limits in every report, because the result is easy to read as stronger than it is.
 

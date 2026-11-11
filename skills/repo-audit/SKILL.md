@@ -13,7 +13,7 @@ An empty directory is a new idea, and an established repo can need only a scoped
 
 This skill reads the target at overview level and prints a checklist of the skills the user should run next.
 It writes nothing to the target and keeps no audit record: keep the research report and notes in scratch outside the target, and rerun the skill to see which steps now look done.
-It never starts another skill, interviews the user, drafts a vision, glossary, design, project, test guidance, contract or instruction file, opens a pull request or selects a delivery service.
+During the audit, it never starts another skill, interviews the user, drafts a vision, glossary, design, project, test guidance, contract or instruction file, opens a pull request or selects a delivery service.
 Each of those belongs to the skill the checklist names: `/vision`, `/glossary`, `/architecture`, `/foundation`, `/verification`, `/formal-verification`, `/no-mistakes-tuning`, `/maintenance`, `/readme`, `/agents-md` and `/plan`.
 Security hardening of created skills and licensing review are outside scope.
 Do not substitute direct project edits or an invented approval for unavailable tooling.
@@ -67,7 +67,7 @@ Print the checklist for the chosen path, one line per skill in the order shown, 
 Mark a line `looks done` when its output already exists and the cited source shows it, otherwise `to do`; this is a pointer for the user and not a verdict on quality.
 A reason that cites nothing is not a reason: drop the claim or mark the line `no evidence` and say what could not be read.
 On the existing-repo path, a reason may instead cite the history output by run ID and finding ID or by its late-round share with the runs read versus the total, as the history brief routes it.
-Do not start any listed skill, and do not write the checklist into the target.
+Do not start any listed skill during the audit, and do not write the checklist into the target.
 
 New idea:
 
@@ -97,9 +97,9 @@ Existing repo:
 - [ ] `/plan` - the cited approved design that has no implementation plan yet, or the design document found absent, last
 
 `/foundation` is for new projects only and never appears on the existing-repo checklist, because it refuses a non-empty directory.
-State the limitations and the decisions the audit could not make, then stop.
+State the limitations and the decisions the audit could not make, then proceed to the closing Next step.
 
-Done when: The checklist for the chosen path is printed with every line citing a reason, nothing has been written to the target, and no other skill has been started.
+Done when: The checklist for the chosen path is printed with every line citing a reason, nothing has been written to the target, and no other skill has been started during the audit.
 
 ## Load when
 
