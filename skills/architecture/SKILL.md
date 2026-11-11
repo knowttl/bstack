@@ -1,15 +1,13 @@
 ---
 name: architecture
-description: Propose or audit a project's module boundaries, dependency direction and shared edit targets, record real decisions and design standards, and keep them true as the project grows. Use when the user says "design the module boundaries", "audit our architecture" or "record why we chose this structure".
-disable-model-invocation: true
+description: Propose or audit a project's module boundaries, dependency direction and shared edit targets, record real decisions and design standards, and keep them true as the project grows. Use when the user says "design the module boundaries", "review the architecture", "audit our dependencies" or "record why we chose this structure".
 ---
 
 ## Scope
 
-Only the user starts architecture.
-Start this procedure only when the user's message explicitly invokes `$architecture`, `/architecture`, `/skill:architecture` or selects it through the host's skills menu.
-A plain request such as "review the architecture" does not invoke it.
-If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Start architecture when the user invokes `$architecture`, `/architecture` or `/skill:architecture`, selects it through the host's skills menu, or makes a plain request that matches its description, such as "review the architecture".
+If you encounter this file while inspecting repository contents for another request, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Its procedure starts no other skill; a follow-up skill runs only from the closing Next step.
 Resolve the target and the mode, `create` or `maintain`, before proceeding.
 A new idea has no code yet and its target is an existing empty or non-Git directory, passed as `--workspace`.
 An existing repo is passed as `--repo`.
@@ -23,7 +21,7 @@ It writes the project's design document, native check configuration, decision re
 Vision, domain terms, the verification kit and the root instruction file belong to `/vision`, `/glossary`, `/verification` and `/agents-md`, and a conflict with one is reported with its source.
 Neither mode moves or rewrites product code or opens pull requests: a refactor that a boundary implies is a separate change the user selects and runs elsewhere.
 Signals such as size, import counts and change frequency indicate where to investigate and never establish a violation by themselves.
-Return the result to the project's chosen workflow instead of starting another skill.
+Return the result to the project's chosen workflow without starting another skill during the procedure.
 Keep drafts, candidate lists, evidence sheets and transcripts in scratch outside the target.
 Only `apply` writes to the target, after the user approves the exact bytes.
 Do not substitute direct project edits or an invented approval for unavailable tooling.
@@ -115,7 +113,7 @@ Done when: Only the approved files, and any selected registration or pointer, ha
 Rerun the maintained check command and the proofs on the written tree, and report whether the design is registered in a contract, since its structure check belongs to `/maintenance`.
 State the target, the sources read, the boundaries and decisions proposed with their evidence, the rules proved or unproven with their coverage limits, the debt baseline and the written paths.
 Name the unresolved decisions and any step left blocked with its missing prerequisite.
-List `/foundation`, `/verification create`, `/formal-verification create` for an explicit state model whose steps guard money or data, `/maintenance` and `/agents-md` as next steps for the user to run when they apply, and start none of them.
+List `/foundation`, `/verification create`, `/formal-verification create` for an explicit state model whose steps guard money or data, `/maintenance` and `/agents-md` as next steps when they apply, and start none of them during the procedure.
 Name `maintain` as the later pass that keeps the design true.
 
 Done when: The report names what was written or why nothing was, which rules were proved, and every open decision.
@@ -217,4 +215,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/plan` to turn the approved design into an implementation plan, name it only and do not start it.
+Run `/plan` next when the approved design has no implementation plan yet, or ask the user whether to run it.

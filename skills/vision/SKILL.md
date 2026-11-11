@@ -1,22 +1,20 @@
 ---
 name: vision
-description: Draft or revise a project's VISION.md, stress-test it on a review board, and write it only after the author approves the exact draft. Use when the user says "write a VISION.md", "stress-test our vision" or "what is this project for".
-disable-model-invocation: true
+description: Draft or revise a project's VISION.md, stress-test it on a review board, and write it only after the author approves the exact draft. Use when the user says "write a VISION.md", "stress-test our vision", "what is this project for" or "decide what we will not build".
 ---
 
 ## Scope
 
-Only the user starts vision.
-Start this procedure only when the user's message explicitly invokes `$vision`, `/vision`, `/skill:vision` or selects it through the host's skills menu.
-A plain request such as "write a vision for this repo" does not invoke it.
-If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Start vision when the user invokes `$vision`, `/vision` or `/skill:vision`, selects it through the host's skills menu, or makes a plain request that matches its description, such as "write a vision for this repo".
+If you encounter this file while inspecting repository contents for another request, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Its procedure starts no other skill; a follow-up skill runs only from the closing Next step.
 Resolve the target and the case before proceeding.
 A new idea has no VISION.md and its target is an existing empty or non-Git directory, passed as `--workspace`.
 An existing repo is passed as `--repo`, and its current VISION.md is the approved baseline.
 
 The vision is a contribution acceptance policy: purpose, users, commitments and refusals.
 A backlog, implementation plan, design, glossary, stack choice or product work is outside it.
-Return the approved vision to the project's chosen workflow instead of starting another skill or opening a pull request.
+Return the approved vision to the project's chosen workflow without starting another skill during the procedure or opening a pull request.
 A repo whose vision has no real gap gets that report and no interview or board.
 Keep the draft, evidence sheet, interview notes, board and verdicts in scratch outside the target.
 Only `apply` writes to the target, after the author approves the exact draft and its diff.
@@ -101,7 +99,7 @@ Done when: Only the approved VISION.md, and any selected pointer, has been writt
 
 State the target, the evidence checked, the board rounds and verdicts, the approved revision and the written path.
 Name the unresolved gaps and any step left blocked with its missing prerequisite.
-List the glossary, architecture and foundation work as next steps for the user to run, and start none of them.
+List the glossary, architecture and foundation work as next steps, and start none of them during the procedure.
 
 Done when: The report names what was written or why nothing was, the approval it rests on, and every open gap.
 
@@ -140,4 +138,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/glossary` to define the terms the vision uses, name it only and do not start it.
+Run `/glossary` next when the vision uses terms no glossary defines, or ask the user whether to run it.

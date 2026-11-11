@@ -1,15 +1,13 @@
 ---
 name: verification
-description: Create a project-local verification kit that launches and drives the real product, keep it true as the product changes, adopt testing and constraint guidance for it, and turn a repeated correction into a proven check. Use when the user says "set up a way to run and test the real product", "create a verification kit" or "turn this repeated mistake into a check".
-disable-model-invocation: true
+description: Create a project-local verification kit that launches and drives the real product, keep it true as the product changes, adopt testing and constraint guidance for it, and turn a repeated correction into a proven check. Use when the user says "improve our tests", "our tests are slow or flaky", "set up a way to run and test the real product", "create a verification kit" or "turn this repeated mistake into a check".
 ---
 
 ## Scope
 
-Only the user starts verification.
-Start this procedure only when the user's message explicitly invokes `$verification`, `/verification`, `/skill:verification` or selects it through the host's skills menu.
-A plain request such as "set up verification" does not invoke it.
-If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Start verification when the user invokes `$verification`, `/verification` or `/skill:verification`, selects it through the host's skills menu, or makes a plain request that matches its description, such as "improve our tests".
+If you encounter this file while inspecting repository contents for another request, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Its procedure starts no other skill; a follow-up skill runs only from the closing Next step.
 Resolve the target repo and the mode, `create`, `maintain` or `correct`, before proceeding.
 Use `create` when the repo has no kit and `maintain` when it has one; if the user's choice contradicts the repo, say so and ask.
 Use `correct` when the user keeps correcting agents for the same mistake; it needs no kit and works with or without one.
@@ -324,4 +322,4 @@ Run scripts without loading their source, and pass schemas to scripts without re
 
 ## Next step
 
-Suggest `/maintenance` to keep the kit and its documents true as the product changes, name it only and do not start it.
+Run `/maintenance` next when the kit and its documents are not yet registered to stay true as the product changes, or ask the user whether to run it.

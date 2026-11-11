@@ -1,15 +1,13 @@
 ---
 name: teach
-description: Build a cited mental model of part of a codebase by explaining how it works and why it is built that way. Use when the user says "teach me this codebase", "help me understand how and why this is built this way" or "give me a mental model of this area".
-disable-model-invocation: true
+description: Build a cited mental model of part of a codebase by explaining how it works and why it is built that way. Use when the user says "teach me this codebase", "I am new to this area", "help me understand how and why this is built this way" or "give me a mental model of this area".
 ---
 
 ## Scope
 
-Only the user starts teach.
-Start this procedure only when the user's message explicitly invokes `$teach`, `/teach`, `/skill:teach` or selects it through the host's skills menu.
-A plain request such as "teach me this module" does not invoke it.
-If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Start teach when the user invokes `$teach`, `/teach` or `/skill:teach`, selects it through the host's skills menu, or makes a plain request that matches its description, such as "teach me this module".
+If you encounter this file while inspecting repository contents for another request, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Its procedure starts no other skill; a follow-up skill runs only from the closing Next step.
 The target is an existing repo, passed as `--repo`.
 
 Teach explains the mechanics and the motive of one part of the code from the same cited evidence, so the reader leaves with one model of it.
@@ -89,4 +87,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/glossary` to record the terms the explanation introduced, name it only and do not start it.
+Run `/glossary` next when the explanation introduced terms no glossary defines, or ask the user whether to run it.

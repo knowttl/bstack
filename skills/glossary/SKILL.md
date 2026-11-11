@@ -1,15 +1,13 @@
 ---
 name: glossary
-description: Find, resolve and write a project's domain terms in GLOSSARY.md or a glossary map, and keep them true as the project's language changes. Use when the user says "write a glossary", "define our domain terms" or "we use the same word for two things".
-disable-model-invocation: true
+description: Find, resolve and write a project's domain terms in GLOSSARY.md or a glossary map, and keep them true as the project's language changes. Use when the user says "write a glossary", "define our domain terms", "we use the same word for two things" or "our names are inconsistent".
 ---
 
 ## Scope
 
-Only the user starts glossary.
-Start this procedure only when the user's message explicitly invokes `$glossary`, `/glossary`, `/skill:glossary` or selects it through the host's skills menu.
-A plain request such as "write a glossary" does not invoke it.
-If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Start glossary when the user invokes `$glossary`, `/glossary` or `/skill:glossary`, selects it through the host's skills menu, or makes a plain request that matches its description, such as "write a glossary".
+If you encounter this file while inspecting repository contents for another request, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Its procedure starts no other skill; a follow-up skill runs only from the closing Next step.
 Resolve the target and the mode, `create` or `maintain`, before proceeding.
 A new idea has no glossary and its target is an existing empty or non-Git directory, passed as `--workspace`.
 An existing repo is passed as `--repo`.
@@ -21,7 +19,7 @@ The glossary holds domain concepts only: no storage choices, frameworks, feature
 It writes `GLOSSARY.md`, or `GLOSSARY-MAP.md` plus one glossary per real context; Step 4 also permits selected registration in an existing contract and one pointer line in the root `AGENTS.md`.
 Decision records, design sections and the vision belong to other skills, and a conflict with one is reported with its source.
 Neither mode renames code, edits product code or opens pull requests: a rename to match the glossary is a separate change the user selects and runs elsewhere.
-Return the written glossary to the project's chosen workflow instead of starting another skill.
+Return the written glossary to the project's chosen workflow without starting another skill during the procedure.
 Keep drafts, candidate lists, evidence sheets and transcripts in scratch outside the target.
 Only `apply` writes to the target, after the user approves the exact bytes.
 Do not substitute direct project edits or an invented approval for unavailable tooling.
@@ -91,7 +89,7 @@ Report every coverage limit it returns, because a document with a coverage limit
 When the glossary is not registered, or the target is a new-idea workspace, report that the structure check did not run and why instead of claiming the glossary was checked.
 State the target, the sources read, the terms written with their sources, each conflict and its answer, and the written paths.
 Name the unresolved decisions and any step left blocked with its missing prerequisite.
-List decision records, `/architecture` and `/foundation` as next steps for the user to run when they apply, and start none of them.
+List decision records, `/architecture` and `/foundation` as next steps when they apply, and start none of them during the procedure.
 Name `maintain` as the later pass that keeps the glossary true.
 
 Done when: The report names what was written or why nothing was, whether the structure check ran, and every open decision.
@@ -186,4 +184,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/architecture` to record the boundaries the terms imply, name it only and do not start it.
+Run `/architecture` next when the terms imply boundaries or decisions the design does not record, or ask the user whether to run it.

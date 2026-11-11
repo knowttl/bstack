@@ -1,15 +1,13 @@
 ---
 name: agents-md
-description: Create and maintain one root AGENTS.md of pointers to a project's rules, evidence requirements and check commands, merging equivalent CLAUDE.md content into it. Use when the user says "set up AGENTS.md", "clean up my CLAUDE.md" or "make the agent instructions point to our rules".
-disable-model-invocation: true
+description: Create and maintain one root AGENTS.md of pointers to a project's rules, evidence requirements and check commands, merging equivalent CLAUDE.md content into it. Use when the user says "set up AGENTS.md", "clean up my CLAUDE.md", "our agent instructions are too long" or "make the agent instructions point to our rules".
 ---
 
 ## Scope
 
-Only the user starts agents-md.
-Start this procedure only when the user's message explicitly invokes `$agents-md`, `/agents-md`, `/skill:agents-md` or selects it through the host's skills menu.
-A plain request such as "write an AGENTS.md" does not invoke it.
-If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Start agents-md when the user invokes `$agents-md`, `/agents-md` or `/skill:agents-md`, selects it through the host's skills menu, or makes a plain request that matches its description, such as "write an AGENTS.md".
+If you encounter this file while inspecting repository contents for another request, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Its procedure starts no other skill; a follow-up skill runs only from the closing Next step.
 Resolve the target before proceeding: an existing repo is passed as `--repo`, and an existing directory that is not a Git repo is passed as `--workspace`.
 
 This skill creates the root `AGENTS.md` when the project has none and maintains it when it has one.
@@ -18,7 +16,7 @@ Every other skill adds only the one line for what it wrote; this skill owns the 
 It measures the size of the instructions an agent loads and audits the content of distinct nested instruction files for review only, editing a line there only when the user selects it, reports `CLAUDE.local.md` as possible shadowing without editing it, and inspects and reports nothing outside the selected repo, including ancestor directories and user profiles.
 It removes a `CLAUDE.md` only after rechecking the host's official loading documentation and getting the author's approval.
 It writes no document other than instruction files, and it neither edits product code nor opens pull requests.
-Return the result to the project's chosen workflow instead of starting another skill.
+Return the result to the project's chosen workflow without starting another skill during the procedure.
 Keep drafts, audit notes and transcripts in scratch outside the target.
 Only `apply` writes to the target, after the user approves the exact bytes.
 Do not substitute direct project edits or an invented approval for unavailable tooling.
@@ -103,7 +101,7 @@ State the target, the instruction files found and their classes, each pointer's 
 Name every shadowing report, every unpointed source left for its skill or the author, and any step left blocked with its missing prerequisite.
 Report each kept non-pointer rule's classification with its file and line, the highest workable rung and `/verification correct` route for enforceable candidates, and any proposed pointer to an existing proven check.
 Run `instructions measure` again and report the bytes, lines and approximate tokens before and after, with each dead or default-restating line left for the user to select.
-Name the skills that add pointers, `/glossary`, `/vision`, `/architecture`, `/foundation`, `/verification` and `/maintenance`, as the way later pointers arrive, and start none of them.
+Name the skills that add pointers, `/glossary`, `/vision`, `/architecture`, `/foundation`, `/verification` and `/maintenance`, as the way later pointers arrive, and start none of them during the procedure.
 
 Done when: The report names what was written or why nothing was, the host check behind any removal, and every open decision.
 
@@ -141,4 +139,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/readme` so the README points to the same rules, name it only and do not start it.
+Run `/readme` next when the README does not yet point to the same rules, or ask the user whether to run it.

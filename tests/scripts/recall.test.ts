@@ -84,10 +84,7 @@ async function digests(result: ReturnType<typeof JSON.parse>) {
   return Object.fromEntries(await Promise.all(result.data.sessions.map(async (session: NonNullable<typeof result.data.sessions>[number]) => [session.digest, await readFile(session.digest, 'utf8')])))
 }
 
-test('recall declares explicit-only invocation metadata and ships only the transcripts command', async () => {
-  const document = await readFile(join(skill, 'SKILL.md'), 'utf8')
-  assert.equal(parse(document.match(/^---\r?\n([\s\S]*?)\r?\n---/)![1])['disable-model-invocation'], true)
-  assert.equal(parse(await readFile(join(skill, 'agents', 'openai.yaml'), 'utf8')).policy.allow_implicit_invocation, false)
+test('recall ships only the transcripts command', async () => {
   const help = spawnSync(process.execPath, [entry, '--help'], { encoding: 'utf8' })
   assert.equal(help.status, 0, help.stderr)
   assert.deepEqual(help.stdout.match(/^ {2}\S.*$/gm)!.map(line => line.trim()), ['transcripts'])

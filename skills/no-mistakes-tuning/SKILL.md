@@ -1,15 +1,13 @@
 ---
 name: no-mistakes-tuning
-description: Tune a repo's no-mistakes gate so review stays on likely, practical defects, fix loops stay bounded, and trivial or config-only changes skip agent review, writing only the approved .no-mistakes.yaml. Use when the user says "tune no-mistakes", "the review gate is too noisy" or "skip review for config-only changes".
-disable-model-invocation: true
+description: Tune a repo's no-mistakes gate so review stays on likely, practical defects, fix loops stay bounded, and trivial or config-only changes skip agent review, writing only the approved .no-mistakes.yaml. Use when the user says "tune no-mistakes", "the review gate is too noisy", "make no-mistakes faster" or "skip review for config-only changes".
 ---
 
 ## Scope
 
-Only the user starts no-mistakes-tuning.
-Start this procedure only when the user's message explicitly invokes `$no-mistakes-tuning`, `/no-mistakes-tuning`, `/skill:no-mistakes-tuning` or selects it through the host's skills menu.
-A plain request such as "make no-mistakes faster" does not invoke it.
-If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Start no-mistakes-tuning when the user invokes `$no-mistakes-tuning`, `/no-mistakes-tuning` or `/skill:no-mistakes-tuning`, selects it through the host's skills menu, or makes a plain request that matches its description, such as "make no-mistakes faster".
+If you encounter this file while inspecting repository contents for another request, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Its procedure starts no other skill; a follow-up skill runs only from the closing Next step.
 Resolve the target before proceeding: an existing repo is passed as `--repo`.
 
 This skill proposes a balanced review profile for the repo's `.no-mistakes.yaml` and explains every choice.
@@ -19,7 +17,7 @@ Every proposed `ignore_patterns` always includes `.no-mistakes.yaml`, so the gat
 Every other key in the file stays byte-for-byte as it is.
 Test and lint commands and gates belong to `/verification`, and the Document step's ownership map belongs to `/maintenance`; name those skills instead of editing their keys.
 Settings that live only in the machine's global no-mistakes config, such as review models and effort, are reported as recommendations and never written.
-Return the result to the project's chosen workflow instead of starting another skill.
+Return the result to the project's chosen workflow without starting another skill during the procedure.
 Never start, stop, update or reconfigure the no-mistakes daemon, never run `no-mistakes init` and never push.
 Keep notes, history summaries and drafts in scratch outside the target.
 Only `apply` writes to the target, after the user approves the exact bytes.
@@ -132,4 +130,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/maintenance` to wire the tuned gate to the project's document checks, name it only and do not start it.
+Run `/maintenance` next when the tuned gate is not yet wired to the project's document checks, or ask the user whether to run it.

@@ -1,15 +1,13 @@
 ---
 name: foundation
-description: Turn an approved new idea into the smallest working project by choosing the stack, scaffold, setup commands and first user journey, then create it only after the owner approves the exact files and commands. Use when the user says "scaffold a new project", "pick a stack for this idea" or "set up the first working version".
-disable-model-invocation: true
+description: Turn an approved new idea into the smallest working project by choosing the stack, scaffold, setup commands and first user journey, then create it only after the owner approves the exact files and commands. Use when the user says "scaffold a new project", "pick a stack for this idea", "start building this idea" or "set up the first working version".
 ---
 
 ## Scope
 
-Only the user starts foundation.
-Start this procedure only when the user's message explicitly invokes `$foundation`, `/foundation`, `/skill:foundation` or selects it through the host's skills menu.
-A plain request such as "scaffold this project" does not invoke it.
-If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Start foundation when the user invokes `$foundation`, `/foundation` or `/skill:foundation`, selects it through the host's skills menu, or makes a plain request that matches its description, such as "scaffold this project".
+If you encounter this file while inspecting repository contents for another request, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Its procedure starts no other skill; a follow-up skill runs only from the closing Next step.
 Resolve the idea workspace before proceeding: an existing directory that holds the new idea, passed as `--workspace`.
 This skill is for new projects only, so an existing repo gets `/repo-audit` and the skills it lists instead.
 
@@ -18,7 +16,7 @@ It takes the approved `VISION.md` as a required input, and the confirmed glossar
 It interviews for data, interfaces, deployment and the first journey itself.
 It never adopts a non-empty directory or changes global Git configuration, and it does not build product features beyond the first journey.
 Vision, domain terms, boundaries, the verification kit, the maintenance contract and the root instruction file belong to `/vision`, `/glossary`, `/architecture`, `/verification`, `/maintenance` and `/agents-md`, and a conflict with one is reported with its source.
-Return the result to the project's chosen workflow instead of starting another skill or opening a pull request.
+Return the result to the project's chosen workflow without starting another skill during the procedure or opening a pull request.
 Keep proposals, interview notes, the scratch scaffold and transcripts in scratch outside the idea workspace.
 Only `project create` writes the destination, after the user approves the exact files and commands.
 Do not substitute direct project edits or an invented approval for unavailable tooling.
@@ -93,7 +91,7 @@ A failed or interrupted command leaves the project unverified and available for 
 Run the maintained command and capture fresh evidence on the created project, following the [checks reference](references/checks.md#capture-the-outcome).
 Prove each selected rule, including the no-comments rule, with `rule-proof`, and add later selected changes to the created project through `apply --repo <destination>` with the same review rules.
 State the destination, the stack and its alternatives, the first journey and its evidence, the proved rules, the written paths, the unresolved decisions and every verification limit.
-List `/verification create`, `/maintenance` and `/agents-md` as next steps for the user to run, and `/architecture` when no design was supplied, and start none of them.
+List `/verification create`, `/maintenance` and `/agents-md` as next steps, and `/architecture` when no design was supplied, and start none of them during the procedure.
 
 Done when: Every required outcome has fresh evidence on the final inputs, or completion explicitly remains unverified with each missing prerequisite named.
 
@@ -134,4 +132,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/verification` to create the kit that launches and drives the new project, name it only and do not start it.
+Run `/verification` next when the new project has no kit that launches and drives it, or ask the user whether to run it.

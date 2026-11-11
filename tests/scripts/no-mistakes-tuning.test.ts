@@ -50,10 +50,7 @@ async function approvedPlan(directory: string, repo: string, original: string | 
   return file
 }
 
-test('no-mistakes-tuning declares explicit-only invocation metadata and ships only apply and state show', async () => {
-  const document = await readFile(join(skill, 'SKILL.md'), 'utf8')
-  assert.equal(parse(document.match(/^---\r?\n([\s\S]*?)\r?\n---/)![1])['disable-model-invocation'], true)
-  assert.equal(parse(await readFile(join(skill, 'agents', 'openai.yaml'), 'utf8')).policy.allow_implicit_invocation, false)
+test('no-mistakes-tuning ships only apply and state show', async () => {
   const help = spawnSync(process.execPath, [entry, '--help'], { encoding: 'utf8' })
   assert.equal(help.status, 0, help.stderr)
   assert.deepEqual(help.stdout.match(/^ {2}\S.*$/gm)!.map(line => line.trim()).sort(), ['apply', 'state show'])

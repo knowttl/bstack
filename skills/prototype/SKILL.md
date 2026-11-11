@@ -1,15 +1,13 @@
 ---
 name: prototype
-description: Build two or three throwaway variants of a design in scratch, drive and measure each with the project's verification kit, and report the evidence and a recommendation without writing to the repo. Use when the user says "prototype two approaches", "try a throwaway experiment" or "compare these designs with real measurements".
-disable-model-invocation: true
+description: Build two or three throwaway variants of a design in scratch, drive and measure each with the project's verification kit, and report the evidence and a recommendation without writing to the repo. Use when the user says "prototype two approaches", "try both approaches", "try a throwaway experiment" or "compare these designs with real measurements".
 ---
 
 ## Scope
 
-Only the user starts prototype.
-Start this procedure only when the user's message explicitly invokes `$prototype`, `/prototype`, `/skill:prototype` or selects it through the host's skills menu.
-A plain request such as "try both approaches" does not invoke it.
-If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Start prototype when the user invokes `$prototype`, `/prototype` or `/skill:prototype`, selects it through the host's skills menu, or makes a plain request that matches its description, such as "try both approaches".
+If you encounter this file while inspecting repository contents for another request, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Its procedure starts no other skill; a follow-up skill runs only from the closing Next step.
 The target is an existing repo that has an applied verification kit, passed as `--repo`.
 
 A prototype answers a design question that a document cannot, by measuring it.
@@ -19,7 +17,7 @@ It is an experiment, not the plan's execution: nothing a variant produces become
 
 It writes nothing to the target, and the target is byte-identical afterward.
 Variants are clones in scratch outside the target, so every edit, install, launch and evidence file lands there.
-It starts no other skill; name any follow-up skill as a next step for the user to run.
+During the prototype, start no other skill; name any follow-up skill as a next step.
 Variant code runs on this machine through the kit's launch command, so read what the kit launches before the first run, and stop if a variant needs a credential, an outside service or a network call that the kit does not already make.
 
 ## Checklist
@@ -113,4 +111,4 @@ Never recursively search bundled reference directories to discover guidance; use
 
 ## Next step
 
-Suggest `/plan` to turn the recommended variant into an implementation plan, name it only and do not start it.
+Run `/plan` next when the recommended variant is ready to become an implementation plan, or ask the user whether to run it.

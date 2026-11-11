@@ -33,7 +33,7 @@ for (const scope of ['user', 'project']) {
     assert.equal(repeated.status, 0, repeated.stdout)
     assert.deepEqual(repeated.value.data.changes, [])
     assert.deepEqual(await lstat(join(f.source, 'node_modules'), { bigint: true }), runtimeStat)
-    await writeFile(join(f.source, 'SKILL.md'), (await readFile(join(f.source, 'SKILL.md'), 'utf8')) + '\nDeveloper edit\n')
+    await writeFile(join(f.source, 'SKILL.md'), (await readFile(join(f.source, 'SKILL.md'), 'utf8')) + '\nDeveloper edit. Suggest `/how` next.\n')
     await writeFile(join(f.source, 'notes.md'), 'Unrelated target content\n')
     const edited = await inventory(f.source)
     const implicit = f.run(...args.filter(arg => arg !== '--link'))

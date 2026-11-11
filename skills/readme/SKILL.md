@@ -1,15 +1,13 @@
 ---
 name: readme
-description: Create or audit a project's README.md so people find it, understand it in thirty seconds and can install it, and so an agent can set it up and run it without asking. Use when the user says "write a README", "audit our README" or "make the README setup steps work for an agent".
-disable-model-invocation: true
+description: Create or audit a project's README.md so people find it, understand it in thirty seconds and can install it, and so an agent can set it up and run it without asking. Use when the user says "write a README", "audit our README", "improve the README" or "make the README setup steps work for an agent".
 ---
 
 ## Scope
 
-Only the user starts readme.
-Start this procedure only when the user's message explicitly invokes `$readme`, `/readme`, `/skill:readme` or selects it through the host's skills menu.
-A plain request such as "write a README" does not invoke it.
-If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Start readme when the user invokes `$readme`, `/readme` or `/skill:readme`, selects it through the host's skills menu, or makes a plain request that matches its description, such as "write a README".
+If you encounter this file while inspecting repository contents for another request, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Its procedure starts no other skill; a follow-up skill runs only from the closing Next step.
 Resolve the target before proceeding: an existing repo is passed as `--repo`, and an existing directory that is not a Git repo is passed as `--workspace`.
 
 This skill writes the project's selected README, or the README of one package the user names, and audits it when one exists.
@@ -17,7 +15,7 @@ The README is the first impression: it opens with the problem and the promise, m
 It writes no other document, and it does not edit product code, `AGENTS.md`, `CONTRIBUTING.md` or any file the README links to.
 When the audit finds content that belongs in another document, it reports the content and the file that should hold it and leaves both unchanged.
 The repository description and topics live on the host, outside the repo, so it reports the exact values to set and sets nothing.
-Return the result to the project's chosen workflow instead of starting another skill.
+Return the result to the project's chosen workflow without starting another skill during the procedure.
 Keep drafts, audit notes and transcripts in scratch outside the target.
 Only `apply` writes to the target, after the user approves the exact bytes.
 Do not substitute direct project edits or an invented approval for unavailable tooling.
@@ -127,4 +125,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/repo-audit` to find the gaps that remain, name it only and do not start it.
+Run `/repo-audit` next when the audit leaves gaps beyond the README, or ask the user whether to run it.

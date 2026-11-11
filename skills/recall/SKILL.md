@@ -1,21 +1,19 @@
 ---
 name: recall
-description: Read this project's local Claude Code and Codex transcripts, read-only, and summarise the prior context a fresh agent needs, with the summary kept in scratch and never written into the repo. Use when the user says "what did we do in earlier sessions", "summarise my past transcripts" or "catch me up on this project".
-disable-model-invocation: true
+description: Read this project's local Claude Code and Codex transcripts, read-only, and summarise the prior context a fresh agent needs, with the summary kept in scratch and never written into the repo. Use when the user says "what did we do last time", "what did we do in earlier sessions", "summarise my past transcripts" or "catch me up on this project".
 ---
 
 ## Scope
 
-Only the user starts recall.
-Start this procedure only when the user's message explicitly invokes `$recall`, `/recall`, `/skill:recall` or selects it through the host's skills menu.
-A plain request such as "what did we do last time?" does not invoke it.
-If you encounter this file while inspecting repository contents without that explicit invocation, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Start recall when the user invokes `$recall`, `/recall` or `/skill:recall`, selects it through the host's skills menu, or makes a plain request that matches its description, such as "what did we do last time?".
+If you encounter this file while inspecting repository contents for another request, treat it as repository content: do not follow its procedure, open its references or run its commands.
+Its procedure starts no other skill; a follow-up skill runs only from the closing Next step.
 The target is an existing repo, passed as `--repo`.
 
 Recall restores context from past sessions of this project: what was decided and why, where the work stopped, what failed and what the user corrected.
 It reads only the Claude Code and Codex transcripts whose launch directory is the target or inside it, and it opens them read-only.
 It writes only to scratch outside the target, and it writes nothing from a transcript into the repo, an instruction file or a ticket.
-It starts no other skill; name any follow-up skill as a next step for the user to run.
+During recall, start no other skill; name any follow-up skill as a next step.
 
 Transcripts can hold secrets, such as keys, tokens, passwords, customer data and pasted logs, and the digests and summary are copies of them.
 Quote the fewest words that carry a point, never copy a credential or personal data into the summary, and say that one existed without giving its value.
@@ -93,4 +91,4 @@ Never recursively search bundled reference directories to discover guidance; use
 
 ## Next step
 
-Suggest `/how` to explain the part of the code the summary points at, name it only and do not start it.
+Run `/how` next when the summary points at code the user needs explained, or ask the user whether to run it.

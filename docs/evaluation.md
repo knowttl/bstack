@@ -515,7 +515,7 @@ Include exactly one `agentProcesses` row for every smoke scenario; the example a
 `failures` counts non-infrastructure agent process failures among the initial five attempts; two or more are a hard break.
 `infrastructureFailures` counts separate failures that need replacement evidence before qualification.
 The nine named checks must each appear exactly once.
-False means a hard break, including any read-only fixture mutation, write before scripted approval, failed installation or isolation, explicit invocation failing to start the skill, or implicit invocation starting it.
+False means a hard break, including any read-only fixture mutation, write before scripted approval, failed installation or isolation, or explicit or implicit invocation failing to start the skill.
 Ledger failures for AC-42, AC-43, `fixtureUnchanged` and `installerPassed` also constitute hard breaks even when the report says passed.
 
 Each smoke check needs a five-run without-skill baseline with matching model, adapter, fixture and criteria hashes.
