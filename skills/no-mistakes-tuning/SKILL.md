@@ -132,4 +132,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/maintenance` to wire the tuned gate to the project's document checks. Name it only and do not start it.
+Suggest `/maintenance` to wire the tuned gate to the project's document checks, name it only and do not start it.

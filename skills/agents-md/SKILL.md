@@ -141,4 +141,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/readme` so the README points to the same rules. Name it only and do not start it.
+Suggest `/readme` so the README points to the same rules, name it only and do not start it.

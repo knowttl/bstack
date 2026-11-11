@@ -15,4 +15,4 @@ Inspect the target.
 
 ## Next step
 
-Suggest `/how` to explain the result. Do not start it.
+Suggest `/how` to explain the result, do not start it.

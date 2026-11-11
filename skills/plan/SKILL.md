@@ -143,4 +143,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/prototype` to try a risky unit in scratch before it is built. Name it only and do not start it.
+Suggest `/prototype` to try a risky unit in scratch before it is built, name it only and do not start it.

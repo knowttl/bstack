@@ -11,4 +11,4 @@ description: Check a fixture package against the package rules. Use when the use
 
 ## Next step
 
-Suggest `/how` to explain the result. Do not start it.
+Suggest `/how` to explain the result, do not start it.

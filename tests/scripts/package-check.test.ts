@@ -101,6 +101,8 @@ for (const [name, ending, expected] of [
   ['a suggestion that names a bstack skill', '## Next step\n\nSuggest `/repo-audit` next.\n', 0],
   ['several real suggestions', '## Next step\n\nSuggest `/how` or `/why`.\n', 0],
   ['a suggestion across a soft break', '## Next step\n\nSuggest\n/how next.\n', 0],
+  ['an earlier sentence in a paragraph', '## Next step\n\nSuggest /how next. Continue editing.\n', 1],
+  ['an earlier sentence in the final list item', '## Next step\n\n- Suggest /how next. Continue editing.\n', 1],
   ['a negation across a soft break', '## Next step\n\nDo not\nsuggest /how.\n', 1],
   ['a list suggestion across a soft break', '## Next step\n\n- Suggest\n  `/how` next.\n', 0],
   ['a URL beside a suggestion', '## Next step\n\nSuggest /how using https://example.com/guide.\n', 0],
@@ -149,7 +151,7 @@ test('every independent problem is reported together', async t => {
 
 test('line limits include their boundary and exclude frontmatter', async t => {
   const directory = await sandbox(t)
-  await writeFile(join(directory, 'SKILL.md'), '---\r\ndescription: Check a fixture. Use when the user says "check the fixture".\r\n---\r\n## Load when\r\n| When | Open |\r\n|---|---|\r\n| Needed | `references/guide.md` |\r\n## Next step\r\nSuggest `/how` to explain the result.\r\n' + 'Text.\r\n'.repeat(494))
+  await writeFile(join(directory, 'SKILL.md'), '---\r\ndescription: Check a fixture. Use when the user says "check the fixture".\r\n---\r\n## Load when\r\n| When | Open |\r\n|---|---|\r\n| Needed | `references/guide.md` |\r\n' + 'Text.\r\n'.repeat(494) + '## Next step\r\nSuggest `/how` to explain the result.\r\n')
   await writeFile(join(directory, 'references', 'guide.md'), '# Guide\n' + 'Text.\n'.repeat(99))
   assert.equal(run('--skill', directory).status, 0)
 })

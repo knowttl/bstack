@@ -127,4 +127,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/repo-audit` to find the gaps that remain. Name it only and do not start it.
+Suggest `/repo-audit` to find the gaps that remain, name it only and do not start it.

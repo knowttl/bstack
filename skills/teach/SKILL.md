@@ -89,4 +89,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/glossary` to record the terms the explanation introduced. Name it only and do not start it.
+Suggest `/glossary` to record the terms the explanation introduced, name it only and do not start it.

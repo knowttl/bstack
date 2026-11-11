@@ -140,4 +140,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/glossary` to define the terms the vision uses. Name it only and do not start it.
+Suggest `/glossary` to define the terms the vision uses, name it only and do not start it.

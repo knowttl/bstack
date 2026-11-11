@@ -239,4 +239,4 @@ Run scripts without loading their source, and pass schemas to scripts without re
 
 ## Next step
 
-Suggest `/maintenance` to register the suite so it stays true as the code changes. Name it only and do not start it.
+Suggest `/maintenance` to register the suite so it stays true as the code changes, name it only and do not start it.

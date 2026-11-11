@@ -324,4 +324,4 @@ Run scripts without loading their source, and pass schemas to scripts without re
 
 ## Next step
 
-Suggest `/maintenance` to keep the kit and its documents true as the product changes. Name it only and do not start it.
+Suggest `/maintenance` to keep the kit and its documents true as the product changes, name it only and do not start it.

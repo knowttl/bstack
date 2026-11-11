@@ -134,4 +134,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/verification` to create the kit that launches and drives the new project. Name it only and do not start it.
+Suggest `/verification` to create the kit that launches and drives the new project, name it only and do not start it.

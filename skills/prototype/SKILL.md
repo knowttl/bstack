@@ -113,4 +113,4 @@ Never recursively search bundled reference directories to discover guidance; use
 
 ## Next step
 
-Suggest `/plan` to turn the recommended variant into an implementation plan. Name it only and do not start it.
+Suggest `/plan` to turn the recommended variant into an implementation plan, name it only and do not start it.

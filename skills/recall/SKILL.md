@@ -93,4 +93,4 @@ Never recursively search bundled reference directories to discover guidance; use
 
 ## Next step
 
-Suggest `/how` to explain the part of the code the summary points at. Name it only and do not start it.
+Suggest `/how` to explain the part of the code the summary points at, name it only and do not start it.

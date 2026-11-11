@@ -186,4 +186,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/architecture` to record the boundaries the terms imply. Name it only and do not start it.
+Suggest `/architecture` to record the boundaries the terms imply, name it only and do not start it.

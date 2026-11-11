@@ -82,4 +82,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/teach` to build a fuller mental model of the area. Name it only and do not start it.
+Suggest `/teach` to build a fuller mental model of the area, name it only and do not start it.

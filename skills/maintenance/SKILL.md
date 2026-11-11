@@ -181,4 +181,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/agents-md` to point the root `AGENTS.md` at the registered documents and checks. Name it only and do not start it.
+Suggest `/agents-md` to point the root `AGENTS.md` at the registered documents and checks, name it only and do not start it.

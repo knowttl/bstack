@@ -77,4 +77,4 @@ Never recursively search bundled reference or schema directories to discover gui
 
 ## Next step
 
-Suggest `/why` to explain why that code is built the way it is. Name it only and do not start it.
+Suggest `/why` to explain why that code is built the way it is, name it only and do not start it.
