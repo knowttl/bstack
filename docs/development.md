@@ -189,7 +189,7 @@ node scripts/check-package.mjs
 
 `check` first invokes the project-local TypeScript 7 CLI explicitly (`node node_modules/typescript/bin/tsc --noEmit`) on tests and development tooling, avoiding the TypeScript 6 compatibility dependency's `tsc` binary.
 The root [tsconfig](../tsconfig.json) resolves `typescript` imports to the side-by-side `@typescript/typescript6` declarations for compiler API consumers; fixture execution still uses each fixture's own dependencies.
-It then verifies the generated files in each skill against the [shared runtime](../runtime/) and the README skills table against `skills/*/SKILL.md` (`node scripts/generate-readme.ts` rewrites that table), then runs the package checks for user-only metadata, local resource paths, reference loading, line limits, literal script imports, top-level constant comments, step completion lines and bundled language policy, followed by the [standalone checker freshness gate](command-contract.md#standalone-checker-generation).
+It then verifies the generated files in each skill against the [shared runtime](../runtime/) and the README skills table against `skills/*/SKILL.md` (`node scripts/generate-readme.ts` rewrites that table), then runs the [package checks](command-contract.md#package-check), followed by the [standalone checker freshness gate](command-contract.md#standalone-checker-generation).
 It reports every detected problem with a stable rule code and exits 1 on failure.
 See the [package check contract](command-contract.md#package-check) for exact syntax and limits.
 Local validation uses the [affected gate](#affected-validation) after dependency setup.

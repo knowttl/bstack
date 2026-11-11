@@ -318,7 +318,7 @@ Two limits came out of it:
 
 #### Skill specification
 
-- Frontmatter: `name: formal-verification`, a description that starts with the capability and has a `Use when` clause (C11), and a final `Next step` section that suggests a bstack skill.
+- Frontmatter: `name: formal-verification` and a description that starts with the capability and has a `Use when` clause (C11); the skill ends by suggesting a bstack skill.
 - Scope rules: one property per `create` run; never edits product code, never weakens a property, never adds hosted CI; only `apply` writes, after the user approves the exact diff; a Kani harness in product source needs its own approval (C7); a missing tool means unproven (C10).
 - `create` checklist:
   1. Interview the repo and choose the target, with citations that `cite-check` resolves, asking only what the codebase cannot show.
@@ -2437,7 +2437,7 @@ The implementation plan cites these by number as AC-1, AC-2 and so on.
 86. `/architecture` treats a design document the user names as the user's explanation of the idea, lists the expected changes from it and asks only about gaps.
 87. `/foundation` treats a design document the user names as the user's explanation of the technical context, summarises it and asks only about gaps.
 88. Both repo-audit checklists list `/plan` last, after `/agents-md`.
-89. `/formal-verification` requires the user to name it, starts no other skill, and the package check fails when its description is not trigger quality or its final section does not suggest a real bstack skill (formal verification C11).
+89. `/formal-verification` requires the user to name it, starts no other skill, and the package check applies mechanical controls to its description and final suggestion naming a real bstack skill (formal verification C11).
 90. `/formal-verification create` interviews the repo first and asks only what it cannot show, chooses one target with citations that `cite-check` resolves, states one property and its harm, and chooses the tool by the kind of question (formal verification D4).
 91. `formal scaffold` renders the suite's `SKILL.md`, property files, transition table and model files from the plan into a `formal-<target>` folder, and rejects a model step that cites no atomic code step (formal verification D3, C6, C12).
 92. `formal check` fails on a property file with no `Source paths:` line, a transition table that differs from the plan and a tool file whose sha256 differs from the pin, and reports a missing tool as unproven and never as a pass (formal verification D3, D5, C10).
