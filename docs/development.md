@@ -148,8 +148,8 @@ Never build a shell string from project data.
 - **Writing.** No em dashes or en dashes in any file.
 Canadian spelling.
 One term for each concept, matching the design.
-- **Constants.** Each top-level constant has a comment on the line above that gives its reason.
-The [package check contract](command-contract.md#package-check) defines the implemented syntactic enforcement and its limits.
+- **Comments.** Code carries no prose comments; a name, type or test carries the reason.
+The [comment ban](../skills/verification/references/slop-baseline.md#the-comment-ban) and its keep-list apply to bstack's own code, enforced as described under [lint, boundaries and comments](#lint-boundaries-and-comments).
 - **Tests.** Each script has tests in `tests/scripts/` that call it through its command interface, not its internal functions.
 
 ## Validate
@@ -190,9 +190,34 @@ node scripts/check-package.mjs
 `check` first invokes the project-local TypeScript 7 CLI explicitly (`node node_modules/typescript/bin/tsc --noEmit`) on tests and development tooling, avoiding the TypeScript 6 compatibility dependency's `tsc` binary.
 The root [tsconfig](../tsconfig.json) resolves `typescript` imports to the side-by-side `@typescript/typescript6` declarations for compiler API consumers; fixture execution still uses each fixture's own dependencies.
 It then verifies the generated files in each skill against the [shared runtime](../runtime/) and the README skills table against `skills/*/SKILL.md` (`node scripts/generate-readme.ts` rewrites that table), then runs the [package checks](command-contract.md#package-check), followed by the [standalone checker freshness gate](command-contract.md#standalone-checker-generation).
+It ends with the [lint, boundary and comment checks](#lint-boundaries-and-comments).
 It reports every detected problem with a stable rule code and exits 1 on failure.
 See the [package check contract](command-contract.md#package-check) for exact syntax and limits.
 Local validation uses the [affected gate](#affected-validation) after dependency setup.
+
+### Lint, boundaries and comments
+
+`check` runs Oxlint, pinned as a root development dependency, with the four rules in [`.oxlintrc.json`](../.oxlintrc.json) and no others.
+Each import rule prints its rule id and the code to use instead:
+
+| Rule id | Rule |
+|---|---|
+| `lib-imports-command` | A file under `runtime/scripts/lib` may not import a command. |
+| `command-imports-command` | A command may import another command only through an edge listed for that command in `.oxlintrc.json`. |
+| `test-imports-runtime` | A file under `tests` may import from `runtime/scripts` only `lib/fingerprint.mjs` and `lib/run.mjs`. |
+| `max-lines` | A code file holds at most 1000 code lines, not counting blank lines and comments. |
+
+The listed command edges are the 18 imports that existed when the rule was adopted, so that list is debt to shrink by moving each shared function into `runtime/scripts/lib`, not a list to extend.
+The two test commands `tests/inputs/contract.ts` and `tests/inputs/child-contract.ts` exist to expose the shared library through a command, so `test-imports-runtime` does not apply to them, and `tests/scripts/evidence-validate.test.ts` keeps its one existing import of `lib/evidence-policy.mjs` as debt.
+`tests/scripts/apply.test.ts`, `tests/scripts/eval.test.ts` and `tests/scripts/evidence-validate.test.ts` were over the length limit at adoption and are exempt until they are split.
+Generated skill bundles and assets, vendored upstream trees, fixture projects, recorded evaluation results and package-check fixtures are not linted.
+The rules match import specifiers as written, so an import through a computed specifier is outside them.
+`npm test -- --task lint-boundaries` proves each rule against a clean tree and a seeded violation through `rule-proof`.
+
+`check` then runs [`scripts/check-comments.mjs`](../scripts/check-comments.mjs), the TypeScript checker that `comment-check generate` writes, over the authored code folders named in the `check` script.
+Comments that predate the rule are recorded in [`scripts/check-comments.baseline.json`](../scripts/check-comments.baseline.json), and the check fails on a new prose comment and on a baseline entry that no longer matches a comment.
+Fix a recorded comment by deleting it, reshaping the code so a name or type says it, or encoding it as a test or lint rule, then remove its entry; do not add entries.
+A new code folder must be added to the `check` script before its files are checked.
 
 ### Affected validation
 

@@ -750,7 +750,6 @@ Use the explicit-file runner above rather than passing a directory as a test fil
    - A reference file over 100 lines without a table of contents in its first 20 lines.
    - A description that fails the mechanical capability and request checks or is over 1024 characters.
    - A `SKILL.md` that does not end with a suggestion naming a bstack skill that exists.
-   - A top-level constant in a script with no comment on the line above.
    - A `### Step` heading in `SKILL.md` with no `Done when:` line before the next heading.
    - A lint config file, lint preset or list of language tools in the skill folder (design "Language-agnostic by design").
    Use a short deny list of config file names and tool names, and keep it in the check script, not the skill.

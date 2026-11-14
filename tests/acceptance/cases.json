@@ -757,7 +757,7 @@
       "procedure": {
         "status": "completed",
         "path": "tests/scripts/package-check.test.ts",
-        "name": "unexplained-constant fails with constant-comment",
+        "name": "unfinished-step fails with step-done",
         "artifacts": [
           "tests/scripts/package-check.test.ts"
         ]
