@@ -2149,7 +2149,7 @@ Degrees of freedom:
 Scripts:
 
 - Each script handles its own errors and prints a message that names the problem and the fix.
-- Each constant has a comment that gives its reason.
+- Scripts carry no prose comments: bstack's own code follows the [comment ban](#default-slop-baseline-and-comment-ban-q6-q7-q13), and a name, type or test carries the reason.
 - `SKILL.md` says to run each script and does not ask the agent to read it.
 
 Testing:
@@ -2322,7 +2322,6 @@ These steps give the order of work inside those phases.
    - A reference file over 100 lines with no table of contents.
    - A description that fails the mechanical capability and request checks or is over 1024 characters.
    - A `SKILL.md` that does not end with a suggestion naming a bstack skill that exists.
-   - A constant in a script with no comment that gives its reason.
    - A step in `SKILL.md` with no completion criterion.
 4. Run an agent without the skill on at least three realistic comparable scenarios, and record its results as the baseline. Phase 1.
 5. Write `repo-audit/SKILL.md` by the authoring rules. Include the scope, both paths with checklists, the subagent rule, write safeguards and the "load when" table. Phases 1 and 2.
@@ -2412,7 +2411,7 @@ The implementation plan cites these by number as AC-1, AC-2 and so on.
 42. In the current agent, a request such as "audit this repo" without the explicit command starts repo-audit.
 43. In the current agent, the explicit command starts repo-audit.
 44. The package check fails when the frontmatter setting or `agents/openai.yaml` is missing.
-45. The package check fails on a seeded unexplained constant and a seeded step with no completion criterion.
+45. The package check fails on a seeded step with no completion criterion.
 46. Each evaluation scenario records pass rates over repeated runs without the skill and with it, and the skill meets the margin on every check that the model did not already pass.
 47. The skill folder contains no per-language rule set, lint preset or tool list.
 48. Each language-specific recommendation cites its source and read date, and a run with no web access marks them not researched.

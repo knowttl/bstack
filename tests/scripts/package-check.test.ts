@@ -31,7 +31,6 @@ for (const [folder, code] of [
   ['long-reference', 'reference-toc'],
   ['host-metadata', 'host-metadata'],
   ['undeclared-import', 'script-import'],
-  ['unexplained-constant', 'constant-comment'],
   ['unfinished-step', 'step-done'],
   ['language-policy', 'language-policy']
 ] satisfies [unknown, unknown][]) {
@@ -271,9 +270,9 @@ for (const source of ["import 'undeclared'", "export * from 'undeclared'", "awai
   })
 }
 
-test('strings, comments, regexes and nested constants do not impersonate script policy', async t => {
+test('strings, comments and regexes do not impersonate script imports', async t => {
   const directory = await sandbox(t)
-  await writeFile(join(directory, 'example.mjs'), "// Explain the text fixture.\nconst text = `import 'undeclared'; const fake = 1`\n/* import 'undeclared'; const fake = 1 */\n// Explain the regular expression.\nconst pattern = /const fake = 1/\nfunction example() { const nested = 1; return nested }\n")
+  await writeFile(join(directory, 'example.mjs'), "const text = `import 'undeclared'`\n/* import 'undeclared' */\nconst pattern = /import 'undeclared'/\n")
   assert.equal(run('--skill', directory).status, 0)
 })
 
@@ -290,19 +289,14 @@ test('CommonJS top-level return passes', async t => {
   assert.equal(result.status, 0, result.stdout + result.stderr)
 })
 
-for (const [source, code] of [
-  ["require('undeclared')\n", 'script-import'],
-  ['const value = 1\n', 'constant-comment']
-] satisfies [unknown, unknown][]) {
-  test(`CommonJS top-level return preserves ${code}`, async t => {
-    const directory = await sandbox(t)
-    await writeFile(join(directory, 'example.cjs'), 'if (!process.env.RUN_AUDIT) return;\n' + source)
-    const result = run('--skill', directory)
-    assert.equal(result.status, 1, result.stdout + result.stderr)
-    assert.match(result.stdout, new RegExp(`^${code}: example\\.cjs:`, 'm'))
-    assert.doesNotMatch(result.stdout, /^script-syntax:/m)
-  })
-}
+test('CommonJS top-level return preserves script-import', async t => {
+  const directory = await sandbox(t)
+  await writeFile(join(directory, 'example.cjs'), "if (!process.env.RUN_AUDIT) return;\nrequire('undeclared')\n")
+  const result = run('--skill', directory)
+  assert.equal(result.status, 1, result.stdout + result.stderr)
+  assert.match(result.stdout, /^script-import: example\.cjs:/m)
+  assert.doesNotMatch(result.stdout, /^script-syntax:/m)
+})
 
 for (const extension of ['js', 'mjs']) {
   test(`${extension} module rejects top-level return`, async t => {
@@ -311,23 +305,6 @@ for (const extension of ['js', 'mjs']) {
     const result = run('--skill', directory)
     assert.equal(result.status, 1, result.stdout + result.stderr)
     assert.match(result.stdout, /^script-syntax:/m)
-  })
-}
-
-for (const [source, expected] of [
-  ['// Reason.\nexport const { first, second } = values\n', 0],
-  ['/* Reason. */\r\nconst first = 1, second = 2\r\n', 0],
-  ['/* Multi-line\nreason. */\nconst first = 1\n', 0],
-  ['// Too far away.\n\nconst first = 1\n', 1],
-  ['export const first = 1 // Too late.\n', 1],
-  ['if (true) { const nested = 1 }\n', 0]
-] satisfies [unknown, unknown][]) {
-  test(`constant comment boundary ${JSON.stringify(source)}`, async t => {
-    const directory = await sandbox(t)
-    await writeFile(join(directory, 'example.mjs'), source)
-    const result = run('--skill', directory)
-    assert.equal(result.status, expected, result.stdout)
-    if (expected) assert.match(result.stdout, /constant-comment:/)
   })
 }
 

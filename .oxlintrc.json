@@ -1,0 +1,116 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  "plugins": [],
+  "categories": { "correctness": "off" },
+  "ignorePatterns": [
+    "skills/*/scripts/**",
+    "skills/*/assets/**",
+    "upstream/*/**",
+    "tests/fixtures/*/**",
+    "tests/eval/results/**",
+    "tests/package-check/**"
+  ],
+  "rules": {
+    "max-lines": ["error", { "max": 1000, "skipBlankLines": true, "skipComments": true }]
+  },
+  "overrides": [
+    {
+      "files": ["tests/scripts/apply.test.ts", "tests/scripts/eval.test.ts", "tests/scripts/evidence-validate.test.ts"],
+      "rules": { "max-lines": "off" }
+    },
+    {
+      "files": ["runtime/scripts/lib/**"],
+      "rules": {
+        "no-restricted-imports": ["error", { "patterns": [{
+          "group": ["**/commands/**"],
+          "message": "lib-imports-command: runtime/scripts/lib may not import a command. Use a function in runtime/scripts/lib, moving the shared one there first."
+        }] }]
+      }
+    },
+    {
+      "files": ["runtime/scripts/commands/**"],
+      "rules": {
+        "no-restricted-imports": ["error", { "patterns": [{
+          "group": ["./*", "**/commands/**"],
+          "message": "command-imports-command: a command may import another command only through the reviewed edges in .oxlintrc.json. Use a function in runtime/scripts/lib, moving the shared one there first."
+        }] }]
+      }
+    },
+    {
+      "files": ["runtime/scripts/commands/apply.mjs", "runtime/scripts/commands/baseline.mjs"],
+      "rules": {
+        "no-restricted-imports": ["error", { "patterns": [{
+          "group": ["./*", "**/commands/**", "!./findings.mjs"],
+          "message": "command-imports-command: a command may import another command only through the reviewed edges in .oxlintrc.json. Use a function in runtime/scripts/lib, moving the shared one there first."
+        }] }]
+      }
+    },
+    {
+      "files": ["runtime/scripts/commands/docs-check.mjs", "runtime/scripts/commands/docs-generate.mjs", "runtime/scripts/commands/evidence.mjs", "runtime/scripts/commands/run-checks.mjs"],
+      "rules": {
+        "no-restricted-imports": ["error", { "patterns": [{
+          "group": ["./*", "**/commands/**", "!./contract.mjs"],
+          "message": "command-imports-command: a command may import another command only through the reviewed edges in .oxlintrc.json. Use a function in runtime/scripts/lib, moving the shared one there first."
+        }] }]
+      }
+    },
+    {
+      "files": ["runtime/scripts/commands/no-mistakes-tuning-apply.mjs", "runtime/scripts/commands/project.mjs"],
+      "rules": {
+        "no-restricted-imports": ["error", { "patterns": [{
+          "group": ["./*", "**/commands/**", "!./apply.mjs"],
+          "message": "command-imports-command: a command may import another command only through the reviewed edges in .oxlintrc.json. Use a function in runtime/scripts/lib, moving the shared one there first."
+        }] }]
+      }
+    },
+    {
+      "files": ["runtime/scripts/commands/formal-chart.mjs"],
+      "rules": {
+        "no-restricted-imports": ["error", { "patterns": [{
+          "group": ["./*", "**/commands/**", "!./formal-check.mjs"],
+          "message": "command-imports-command: a command may import another command only through the reviewed edges in .oxlintrc.json. Use a function in runtime/scripts/lib, moving the shared one there first."
+        }] }]
+      }
+    },
+    {
+      "files": ["runtime/scripts/commands/evidence-validate.mjs"],
+      "rules": {
+        "no-restricted-imports": ["error", { "patterns": [{
+          "group": ["./*", "**/commands/**", "!./contract.mjs", "!./evidence.mjs", "!./findings.mjs", "!./run-checks.mjs"],
+          "message": "command-imports-command: a command may import another command only through the reviewed edges in .oxlintrc.json. Use a function in runtime/scripts/lib, moving the shared one there first."
+        }] }]
+      }
+    },
+    {
+      "files": ["runtime/scripts/commands/sweep.mjs"],
+      "rules": {
+        "no-restricted-imports": ["error", { "patterns": [{
+          "group": ["./*", "**/commands/**", "!./contract.mjs", "!./docs-check.mjs", "!./docs-generate.mjs", "!./formal-check.mjs", "!./kit-check.mjs"],
+          "message": "command-imports-command: a command may import another command only through the reviewed edges in .oxlintrc.json. Use a function in runtime/scripts/lib, moving the shared one there first."
+        }] }]
+      }
+    },
+    {
+      "files": ["tests/**"],
+      "rules": {
+        "no-restricted-imports": ["error", { "patterns": [{
+          "group": ["**/runtime/scripts/**", "!**/runtime/scripts/lib/fingerprint.mjs", "!**/runtime/scripts/lib/run.mjs"],
+          "message": "test-imports-runtime: tests may import from runtime/scripts only lib/fingerprint.mjs and lib/run.mjs. Use a run helper from tests/scripts/discovery-fixture.ts to drive the command as a child process."
+        }] }]
+      }
+    },
+    {
+      "files": ["tests/scripts/evidence-validate.test.ts"],
+      "rules": {
+        "no-restricted-imports": ["error", { "patterns": [{
+          "group": ["**/runtime/scripts/**", "!**/runtime/scripts/lib/fingerprint.mjs", "!**/runtime/scripts/lib/run.mjs", "!**/runtime/scripts/lib/evidence-policy.mjs"],
+          "message": "test-imports-runtime: tests may import from runtime/scripts only lib/fingerprint.mjs and lib/run.mjs. Use a run helper from tests/scripts/discovery-fixture.ts to drive the command as a child process."
+        }] }]
+      }
+    },
+    {
+      "files": ["tests/inputs/contract.ts", "tests/inputs/child-contract.ts"],
+      "rules": { "no-restricted-imports": "off" }
+    }
+  ]
+}

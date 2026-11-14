@@ -29,21 +29,12 @@ const descriptionNonCapabilityOpeners = /^(?:use|when|this|a|an|the)\b/i
 const descriptionMaxLength = 1024
 
 function scriptProblems(file, text, dependencies, add) {
-  const comments = []
   let program
   try {
-    program = parse(text, { ecmaVersion: 'latest', sourceType: file.endsWith('.cjs') ? 'script' : 'module', allowReturnOutsideFunction: file.endsWith('.cjs'), locations: true, onComment: comments })
+    program = parse(text, { ecmaVersion: 'latest', sourceType: file.endsWith('.cjs') ? 'script' : 'module', allowReturnOutsideFunction: file.endsWith('.cjs'), locations: true })
   } catch (error) {
     add('script-syntax', file, error.message, 'Use valid JavaScript supported by the package checker.')
     return
-  }
-  for (const statement of program.body) {
-    const declaration = statement.type === 'ExportNamedDeclaration' ? statement.declaration : statement
-    if (declaration?.type !== 'VariableDeclaration' || declaration.kind !== 'const') continue
-    const line = statement.loc.start.line
-    if (!comments.some(comment => comment.loc.end.line === line - 1)) {
-      add('constant-comment', file, `Top-level const at line ${line} has no comment on the preceding line.`, 'Add a comment explaining the declaration on the line above.')
-    }
   }
   function visit(node) {
     if (!node || typeof node !== 'object') return
@@ -236,7 +227,7 @@ export async function checkPackage(skill, { sourcePreflight = false } = {}) {
 async function main() {
   const args = process.argv.slice(2)
   if (args.length === 1 && args[0] === '--help') {
-    console.log('Usage: node scripts/check-package.mjs [--skill <folder>]\nChecks authored skill metadata, resources, imports, constants, steps and language policy.\nDefault: every skill folder under skills/ in this checkout.\nExample: node scripts/check-package.mjs --skill tests/package-check/valid')
+    console.log('Usage: node scripts/check-package.mjs [--skill <folder>]\nChecks authored skill metadata, resources, imports, steps and language policy.\nDefault: every skill folder under skills/ in this checkout.\nExample: node scripts/check-package.mjs --skill tests/package-check/valid')
   } else if (args.length && (args.length !== 2 || args[0] !== '--skill' || !args[1] || args[1].startsWith('--'))) {
     emitResult({ command: 'check-package', status: 'usage-error', problems: [{ code: 'invalid-arguments', message: 'Expected only --skill <folder>.', fix: 'Run node scripts/check-package.mjs --help.' }] }, false)
   } else {
