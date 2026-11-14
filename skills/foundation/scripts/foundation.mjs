@@ -84,7 +84,7 @@ function parseArgs(argv, valueOptions = []) {
   return options;
 }
 
-// runtime/scripts/dispatch.mjs
+// runtime/scripts/dispatch.ts
 async function dispatch(argv, skill, commands) {
   const command = Object.keys(commands).find((name) => name.split(" ").every((word, index) => argv[index] === word));
   if (!argv.length || argv.length === 1 && argv[0] === "--help") {
@@ -114,7 +114,7 @@ Missing or unsupported arguments are a usage error (exit 3).`);
   }
 }
 
-// runtime/scripts/commands/rule-proof.mjs
+// runtime/scripts/commands/rule-proof.ts
 import { cp, lstat as lstat3, readFile as readFile2, rm, symlink, writeFile, realpath as realpath5, stat as stat4 } from "node:fs/promises";
 import { dirname as dirname3, join as join5, relative as relative3 } from "node:path";
 
@@ -597,7 +597,7 @@ async function capture(command, { cwd, timeoutMs, signal, env, outputLimitBytes,
   }
 }
 
-// runtime/scripts/commands/rule-proof.mjs
+// runtime/scripts/commands/rule-proof.ts
 async function run(options) {
   if (!["check-plan", "check-id", "valid", "violation", "expect"].every((key) => options[key]?.trim()) || Boolean(options.replacement?.trim()) === Boolean(options["no-replacement"]?.trim())) {
     throw new CommandError("usage-error", [{ code: "missing-proof-options", message: "A proof needs a check plan, check ID, valid directory, violation directory, specific diagnostic and exactly one of the replacement that diagnostic names or the reason no replacement exists.", fix: "Supply --check-plan <file> --check-id <id> --valid <dir> --violation <dir> --expect <text> and either --replacement <file, type or function to use instead> or --no-replacement <reason>." }]);
@@ -675,7 +675,7 @@ ${execution.stderr}`;
   return { status, data, problems: cases.filter((item) => item.status !== "passed").map((item) => ({ code: "rule-proof-" + item.status, message: `${item.kind}: ${item.reason}`, fix: 'Restore native tool setup, correct the rule and fixture, or word the diagnostic as "path:line: rule-id: what is wrong. Use <replacement>.", then rerun proof.' })) };
 }
 
-// runtime/scripts/commands/project.mjs
+// runtime/scripts/commands/project.ts
 import { readFile as readFile6, writeFile as writeFile2, mkdir as mkdir3, readdir as readdir3, lstat as lstat4, realpath as realpath6 } from "node:fs/promises";
 import { dirname as dirname7, join as join8, resolve as resolve6 } from "node:path";
 import { spawnSync as spawnSync4 } from "node:child_process";
@@ -908,7 +908,7 @@ async function applyWrites(target, plan, staged, directory, previous, affectedCh
   }
 }
 
-// runtime/scripts/commands/apply.mjs
+// runtime/scripts/commands/apply.ts
 import { readFile as readFile5 } from "node:fs/promises";
 import { dirname as dirname6, relative as relative5, resolve as resolve5 } from "node:path";
 import { spawnSync as spawnSync3 } from "node:child_process";
@@ -2818,7 +2818,7 @@ var findings_schema_default = {
   }
 };
 
-// runtime/scripts/commands/findings.mjs
+// runtime/scripts/commands/findings.ts
 var stageOutcomes = { audit: ["starting-checks"], foundation: ["journey", "foundation-review"] };
 function invalid(code, message, path) {
   throw new CommandError("failed", [{ code, message, path, fix: "Regenerate findings for the reviewed target, scope and selections." }]);
@@ -2997,7 +2997,7 @@ function validateCheckIntegration(path, proposed, selected) {
   }
 }
 
-// runtime/scripts/commands/apply.mjs
+// runtime/scripts/commands/apply.ts
 function reject3(code, message, path) {
   throw new CommandError("failed", [{ code, message, path, fix: "Regenerate the plan from current findings and resolved scope, then review the exact proposed bytes again." }]);
 }
@@ -3163,7 +3163,7 @@ async function run2(options) {
   return result.status ? { inputs, ...result } : { inputs, data: result };
 }
 
-// runtime/scripts/commands/project.mjs
+// runtime/scripts/commands/project.ts
 function block(code, message, path) {
   throw new CommandError("blocked", [{ code, message, path, fix: "Inspect the retained scratch plan and project, resolve the conflict and resume the unchanged approved plan." }]);
 }
@@ -3351,7 +3351,7 @@ async function run3(options) {
   }
 }
 
-// runtime/scripts/commands/run-checks.mjs
+// runtime/scripts/commands/run-checks.ts
 import { readFile as readFile8, stat as stat8, writeFile as writeFile3 } from "node:fs/promises";
 import { basename as basename3, join as join10, relative as relative7, resolve as resolve8 } from "node:path";
 
@@ -3420,7 +3420,7 @@ function matchesPath(glob, path) {
   return sharedPath(glob, { states, end: states.length - 1 }) !== null;
 }
 
-// runtime/scripts/commands/contract.mjs
+// runtime/scripts/commands/contract.ts
 import { readFile as readFile7, readdir as readdir4, stat as stat7 } from "node:fs/promises";
 import { dirname as dirname8, join as join9, relative as relative6, resolve as resolve7, sep as sep3 } from "node:path";
 function reject4(code, path, message, status = "failed") {
@@ -3505,7 +3505,7 @@ async function exactPathCase(root, input2, allowMissing = false) {
   }
 }
 
-// runtime/scripts/commands/run-checks.mjs
+// runtime/scripts/commands/run-checks.ts
 async function checkCommandPaths(target, checks, paths = []) {
   const known = new Set([
     ...paths,

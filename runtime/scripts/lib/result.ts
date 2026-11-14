@@ -9,7 +9,9 @@ export type ResultData = Record<string, any>
 
 export type Result = { command: string; status: Status; problems?: Problem[]; data?: ResultData; inputs?: Record<string, unknown> }
 
-type Debt = { rule: string; path: string; key: string; reason: string; removalCondition: string }
+export type CommandReturn = Partial<Omit<Result, 'command'>>
+
+type Debt ={ rule: string; path: string; key: string; reason: string; removalCondition: string }
 
 type CheckOutcome = { id: string; status: string; reason?: string }
 

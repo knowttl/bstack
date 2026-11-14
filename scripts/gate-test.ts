@@ -3,7 +3,7 @@ import { readFile, readdir } from 'node:fs/promises'
 import { basename, dirname, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { selectCommand } from '../runtime/scripts/lib/run.ts'
-import { commands } from '../runtime/scripts/commands.mjs'
+import { commands } from '../runtime/scripts/commands.ts'
 import type { SkillBundle } from './lib/bundle.ts'
 
 type AffectedMap = {
@@ -73,11 +73,11 @@ try {
   }
   // Static imports are a lower bound on protocol dependencies, which the map also declares.
   for (const file of await readdir(resolve(root, 'runtime/scripts/commands'))) {
-    if (!file.endsWith('.mjs')) continue
-    const name = basename(file, '.mjs')
+    if (!file.endsWith('.ts')) continue
+    const name = basename(file, '.ts')
     if (!map.commands[name]) throw new Error(`unmapped command: ${name}`)
     const source = await readFile(resolve(root, 'runtime/scripts/commands', file), 'utf8')
-    for (const [, dependency] of source.matchAll(/(?:from\s*|import\s*(?:\(\s*)?)['"]\.\/([^/'"]+)\.mjs['"]/g)) {
+    for (const [, dependency] of source.matchAll(/(?:from\s*|import\s*(?:\(\s*)?)['"]\.\/([^/'"]+)\.ts['"]/g)) {
       if (!map.commands[dependency]?.dependents.includes(name)) throw new Error(`undeclared dependency: ${dependency} -> ${name}`)
     }
   }
@@ -86,7 +86,7 @@ try {
     if (!map.skills[skill]) throw new Error(`unmapped skill: ${skill}`)
     const inputs = bundle.commands.map((name) => {
       if (!commands[name]) throw new Error(`unmapped bundled command: ${name}`)
-      return basename(commands[name].module, '.mjs')
+      return basename(commands[name].module, '.ts')
     })
     generated.set(`skills/${skill}/scripts/${skill}.mjs`, { skill, modules: inputs })
     for (const folder of ['schemas', 'assets', 'references'] as const) {
@@ -96,7 +96,7 @@ try {
   for (const path of paths) {
     if (map.full.some((pattern) => new RegExp(pattern).test(path))) throw new Error(`shared infrastructure: ${path}`)
     if (generated.has(path)) continue
-    const command = /^runtime\/scripts\/commands\/([^/]+)\.mjs$/.exec(path)
+    const command = /^runtime\/scripts\/commands\/([^/]+)\.ts$/.exec(path)
     const schema = /^runtime\/schemas\/([^/]+)$/.exec(path)
     const skill = /^skills\/([^/]+)\/(?:SKILL\.md|references\/.+\.md|agents\/openai\.yaml)$/.exec(path)
     if (command) addModule(command[1])

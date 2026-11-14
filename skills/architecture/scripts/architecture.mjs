@@ -84,7 +84,7 @@ function parseArgs(argv, valueOptions = []) {
   return options;
 }
 
-// runtime/scripts/dispatch.mjs
+// runtime/scripts/dispatch.ts
 async function dispatch(argv, skill, commands) {
   const command = Object.keys(commands).find((name) => name.split(" ").every((word, index) => argv[index] === word));
   if (!argv.length || argv.length === 1 && argv[0] === "--help") {
@@ -114,7 +114,7 @@ Missing or unsupported arguments are a usage error (exit 3).`);
   }
 }
 
-// runtime/scripts/commands/rule-proof.mjs
+// runtime/scripts/commands/rule-proof.ts
 import { cp, lstat as lstat3, readFile as readFile2, rm, symlink, writeFile, realpath as realpath5, stat as stat4 } from "node:fs/promises";
 import { dirname as dirname3, join as join5, relative as relative3 } from "node:path";
 
@@ -597,7 +597,7 @@ async function capture(command, { cwd, timeoutMs, signal, env, outputLimitBytes,
   }
 }
 
-// runtime/scripts/commands/rule-proof.mjs
+// runtime/scripts/commands/rule-proof.ts
 async function run(options) {
   if (!["check-plan", "check-id", "valid", "violation", "expect"].every((key) => options[key]?.trim()) || Boolean(options.replacement?.trim()) === Boolean(options["no-replacement"]?.trim())) {
     throw new CommandError("usage-error", [{ code: "missing-proof-options", message: "A proof needs a check plan, check ID, valid directory, violation directory, specific diagnostic and exactly one of the replacement that diagnostic names or the reason no replacement exists.", fix: "Supply --check-plan <file> --check-id <id> --valid <dir> --violation <dir> --expect <text> and either --replacement <file, type or function to use instead> or --no-replacement <reason>." }]);
@@ -675,11 +675,11 @@ ${execution.stderr}`;
   return { status, data, problems: cases.filter((item) => item.status !== "passed").map((item) => ({ code: "rule-proof-" + item.status, message: `${item.kind}: ${item.reason}`, fix: 'Restore native tool setup, correct the rule and fixture, or word the diagnostic as "path:line: rule-id: what is wrong. Use <replacement>.", then rerun proof.' })) };
 }
 
-// runtime/scripts/commands/baseline.mjs
+// runtime/scripts/commands/baseline.ts
 import { readFile as readFile4, rename, rm as rm2, stat as stat5, writeFile as writeFile2 } from "node:fs/promises";
 import { randomUUID as randomUUID2 } from "node:crypto";
 
-// runtime/scripts/commands/findings.mjs
+// runtime/scripts/commands/findings.ts
 import { readFile as readFile3 } from "node:fs/promises";
 import { resolve as resolve4 } from "node:path";
 import { spawnSync as spawnSync3 } from "node:child_process";
@@ -986,7 +986,7 @@ var findings_schema_default = {
   }
 };
 
-// runtime/scripts/commands/findings.mjs
+// runtime/scripts/commands/findings.ts
 var stageOutcomes = { audit: ["starting-checks"], foundation: ["journey", "foundation-review"] };
 function invalid(code, message, path) {
   throw new CommandError("failed", [{ code, message, path, fix: "Regenerate findings for the reviewed target, scope and selections." }]);
@@ -1053,7 +1053,7 @@ async function run2(options) {
   return { inputs: { target, findings: options.findings }, data: assessment };
 }
 
-// runtime/scripts/commands/baseline.mjs
+// runtime/scripts/commands/baseline.ts
 var identity = (entry) => JSON.stringify([entry.rule, entry.path, entry.key]);
 async function run3(options) {
   const adding = ["finding", "findings", "entry"].some((key) => options[key]);
@@ -1105,7 +1105,7 @@ async function run3(options) {
   return { status: problems.length ? "failed" : "passed", problems, data: { baseline: path, debt: retained, newDebt, removedDebt, refreshed: Boolean(options.refresh && !problems.length) } };
 }
 
-// runtime/scripts/commands/apply.mjs
+// runtime/scripts/commands/apply.ts
 import { readFile as readFile7 } from "node:fs/promises";
 import { dirname as dirname6, relative as relative5, resolve as resolve6 } from "node:path";
 import { spawnSync as spawnSync4 } from "node:child_process";
@@ -3083,7 +3083,7 @@ function validateCheckIntegration(path, proposed, selected) {
   }
 }
 
-// runtime/scripts/commands/apply.mjs
+// runtime/scripts/commands/apply.ts
 function reject3(code, message, path) {
   throw new CommandError("failed", [{ code, message, path, fix: "Regenerate the plan from current findings and resolved scope, then review the exact proposed bytes again." }]);
 }
@@ -3249,7 +3249,7 @@ async function run4(options) {
   return result.status ? { inputs, ...result } : { inputs, data: result };
 }
 
-// runtime/scripts/commands/state.mjs
+// runtime/scripts/commands/state.ts
 async function run5(options) {
   if (!options.run) throw new CommandError("usage-error", [{ code: "missing-run", message: "--run is required.", fix: "Supply the run ID returned by apply." }]);
   const target = await resolveTarget(options, { draftOnly: true });
@@ -3258,7 +3258,7 @@ async function run5(options) {
   return { inputs: { target }, data: await inspectJournal(journal) };
 }
 
-// runtime/scripts/commands/measure.mjs
+// runtime/scripts/commands/measure.ts
 import { readFile as readFile8 } from "node:fs/promises";
 
 // runtime/scripts/lib/glob.ts
@@ -3326,7 +3326,7 @@ function matchesPath(glob, path) {
   return sharedPath(glob, { states, end: states.length - 1 }) !== null;
 }
 
-// runtime/scripts/commands/measure.mjs
+// runtime/scripts/commands/measure.ts
 var lockfiles = ["package-lock.json", "npm-shrinkwrap.json", "pnpm-lock.yaml", "yarn.lock", "bun.lock", "bun.lockb", "uv.lock", "poetry.lock", "Pipfile.lock", "Cargo.lock", "go.sum", "Gemfile.lock", "composer.lock"];
 var pairPathLimit = 100;
 function gitRecords(output) {
@@ -3476,7 +3476,7 @@ async function run6(options) {
   } };
 }
 
-// runtime/scripts/commands/overlap.mjs
+// runtime/scripts/commands/overlap.ts
 import { readFile as readFile9 } from "node:fs/promises";
 async function run7(options) {
   if (!options.plans) throw new CommandError("usage-error", [{ code: "missing-plans", message: "--plans requires two files.", fix: "Supply --plans <file> <file>." }]);
@@ -3518,7 +3518,7 @@ async function run7(options) {
   } };
 }
 
-// runtime/scripts/commands/cite-check.mjs
+// runtime/scripts/commands/cite-check.ts
 import { readFile as readFile11 } from "node:fs/promises";
 
 // runtime/scripts/lib/citations.ts
@@ -3554,7 +3554,7 @@ async function fileCitationProblems(root, citation) {
   return problems;
 }
 
-// runtime/scripts/commands/cite-check.mjs
+// runtime/scripts/commands/cite-check.ts
 async function run8(options) {
   if (!options.report) throw new CommandError("usage-error", [{ code: "missing-report", message: "--report is required.", fix: "Supply --report <research-report.json>." }]);
   const target = await resolveTarget(options, { draftOnly: true });

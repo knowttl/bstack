@@ -84,7 +84,7 @@ function parseArgs(argv, valueOptions = []) {
   return options;
 }
 
-// runtime/scripts/dispatch.mjs
+// runtime/scripts/dispatch.ts
 async function dispatch(argv, skill, commands) {
   const command = Object.keys(commands).find((name) => name.split(" ").every((word, index) => argv[index] === word));
   if (!argv.length || argv.length === 1 && argv[0] === "--help") {
@@ -114,7 +114,7 @@ Missing or unsupported arguments are a usage error (exit 3).`);
   }
 }
 
-// runtime/scripts/commands/cite-check.mjs
+// runtime/scripts/commands/cite-check.ts
 import { readFile as readFile2 } from "node:fs/promises";
 
 // runtime/scripts/lib/repo.ts
@@ -340,7 +340,7 @@ function validateIds(records, path) {
   if (problems.length) throw new CommandError("failed", problems);
 }
 
-// runtime/scripts/commands/cite-check.mjs
+// runtime/scripts/commands/cite-check.ts
 async function run(options) {
   if (!options.report) throw new CommandError("usage-error", [{ code: "missing-report", message: "--report is required.", fix: "Supply --report <research-report.json>." }]);
   const target = await resolveTarget(options, { draftOnly: true });

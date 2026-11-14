@@ -84,7 +84,7 @@ function parseArgs(argv, valueOptions = []) {
   return options;
 }
 
-// runtime/scripts/dispatch.mjs
+// runtime/scripts/dispatch.ts
 async function dispatch(argv, skill, commands) {
   const command = Object.keys(commands).find((name) => name.split(" ").every((word, index) => argv[index] === word));
   if (!argv.length || argv.length === 1 && argv[0] === "--help") {
@@ -114,7 +114,7 @@ Missing or unsupported arguments are a usage error (exit 3).`);
   }
 }
 
-// runtime/scripts/commands/rule-proof.mjs
+// runtime/scripts/commands/rule-proof.ts
 import { cp, lstat as lstat3, readFile as readFile2, rm, symlink, writeFile, realpath as realpath5, stat as stat4 } from "node:fs/promises";
 import { dirname as dirname3, join as join5, relative as relative3 } from "node:path";
 
@@ -597,7 +597,7 @@ async function capture(command, { cwd, timeoutMs, signal, env, outputLimitBytes,
   }
 }
 
-// runtime/scripts/commands/rule-proof.mjs
+// runtime/scripts/commands/rule-proof.ts
 async function run(options) {
   if (!["check-plan", "check-id", "valid", "violation", "expect"].every((key) => options[key]?.trim()) || Boolean(options.replacement?.trim()) === Boolean(options["no-replacement"]?.trim())) {
     throw new CommandError("usage-error", [{ code: "missing-proof-options", message: "A proof needs a check plan, check ID, valid directory, violation directory, specific diagnostic and exactly one of the replacement that diagnostic names or the reason no replacement exists.", fix: "Supply --check-plan <file> --check-id <id> --valid <dir> --violation <dir> --expect <text> and either --replacement <file, type or function to use instead> or --no-replacement <reason>." }]);
@@ -675,11 +675,11 @@ ${execution.stderr}`;
   return { status, data, problems: cases.filter((item) => item.status !== "passed").map((item) => ({ code: "rule-proof-" + item.status, message: `${item.kind}: ${item.reason}`, fix: 'Restore native tool setup, correct the rule and fixture, or word the diagnostic as "path:line: rule-id: what is wrong. Use <replacement>.", then rerun proof.' })) };
 }
 
-// runtime/scripts/commands/baseline.mjs
+// runtime/scripts/commands/baseline.ts
 import { readFile as readFile4, rename, rm as rm2, stat as stat5, writeFile as writeFile2 } from "node:fs/promises";
 import { randomUUID as randomUUID2 } from "node:crypto";
 
-// runtime/scripts/commands/findings.mjs
+// runtime/scripts/commands/findings.ts
 import { readFile as readFile3 } from "node:fs/promises";
 import { resolve as resolve4 } from "node:path";
 import { spawnSync as spawnSync3 } from "node:child_process";
@@ -986,7 +986,7 @@ var findings_schema_default = {
   }
 };
 
-// runtime/scripts/commands/findings.mjs
+// runtime/scripts/commands/findings.ts
 var stageOutcomes = { audit: ["starting-checks"], foundation: ["journey", "foundation-review"] };
 function invalid(code, message, path) {
   throw new CommandError("failed", [{ code, message, path, fix: "Regenerate findings for the reviewed target, scope and selections." }]);
@@ -1053,7 +1053,7 @@ async function run2(options) {
   return { inputs: { target, findings: options.findings }, data: assessment };
 }
 
-// runtime/scripts/commands/baseline.mjs
+// runtime/scripts/commands/baseline.ts
 var identity = (entry) => JSON.stringify([entry.rule, entry.path, entry.key]);
 async function run3(options) {
   const adding = ["finding", "findings", "entry"].some((key) => options[key]);
@@ -1105,7 +1105,7 @@ async function run3(options) {
   return { status: problems.length ? "failed" : "passed", problems, data: { baseline: path, debt: retained, newDebt, removedDebt, refreshed: Boolean(options.refresh && !problems.length) } };
 }
 
-// runtime/scripts/commands/probe.mjs
+// runtime/scripts/commands/probe.ts
 import { readFile as readFile5, writeFile as writeFile3, stat as stat6 } from "node:fs/promises";
 import { basename, join as join6, resolve as resolve5 } from "node:path";
 
@@ -1174,7 +1174,7 @@ function matchesPath(glob, path) {
   return sharedPath(glob, { states, end: states.length - 1 }) !== null;
 }
 
-// runtime/scripts/commands/probe.mjs
+// runtime/scripts/commands/probe.ts
 var schemas = {
   "probe-spec": new URL("../schemas/probe-spec.json", import.meta.url),
   "probe-record": new URL("../schemas/probe-record.json", import.meta.url),
@@ -1354,11 +1354,11 @@ async function compare(target, options) {
   };
 }
 
-// runtime/scripts/commands/run-checks.mjs
+// runtime/scripts/commands/run-checks.ts
 import { readFile as readFile7, stat as stat8, writeFile as writeFile4 } from "node:fs/promises";
 import { basename as basename3, join as join8, relative as relative5, resolve as resolve7 } from "node:path";
 
-// runtime/scripts/commands/contract.mjs
+// runtime/scripts/commands/contract.ts
 import { readFile as readFile6, readdir as readdir2, stat as stat7 } from "node:fs/promises";
 import { dirname as dirname4, join as join7, relative as relative4, resolve as resolve6, sep as sep3 } from "node:path";
 
@@ -1510,7 +1510,7 @@ function validateCheckIntegration(path, proposed, selected) {
   }
 }
 
-// runtime/scripts/commands/contract.mjs
+// runtime/scripts/commands/contract.ts
 function reject2(code, path, message, status = "failed") {
   throw new CommandError(status, [{ code, path, message, fix: "Review the version 1 project contract and its authoritative source pointers." }]);
 }
@@ -1593,7 +1593,7 @@ async function exactPathCase(root, input2, allowMissing = false) {
   }
 }
 
-// runtime/scripts/commands/run-checks.mjs
+// runtime/scripts/commands/run-checks.ts
 async function checkCommandPaths(target, checks, paths = []) {
   const known = new Set([
     ...paths,
@@ -1830,7 +1830,7 @@ async function run5(options) {
   return { status, problems, inputs: { repo: target.root, plan: options.plan, phase }, data: { ...data, path } };
 }
 
-// runtime/scripts/commands/apply.mjs
+// runtime/scripts/commands/apply.ts
 import { readFile as readFile10 } from "node:fs/promises";
 import { dirname as dirname7, relative as relative7, resolve as resolve9 } from "node:path";
 import { spawnSync as spawnSync4 } from "node:child_process";
@@ -3660,7 +3660,7 @@ async function applyWrites(target, plan, staged, directory, previous, affectedCh
   }
 }
 
-// runtime/scripts/commands/apply.mjs
+// runtime/scripts/commands/apply.ts
 function reject4(code, message, path) {
   throw new CommandError("failed", [{ code, message, path, fix: "Regenerate the plan from current findings and resolved scope, then review the exact proposed bytes again." }]);
 }
@@ -3826,7 +3826,7 @@ async function run6(options) {
   return result.status ? { inputs, ...result } : { inputs, data: result };
 }
 
-// runtime/scripts/commands/state.mjs
+// runtime/scripts/commands/state.ts
 async function run7(options) {
   if (!options.run) throw new CommandError("usage-error", [{ code: "missing-run", message: "--run is required.", fix: "Supply the run ID returned by apply." }]);
   const target = await resolveTarget(options, { draftOnly: true });
@@ -3835,7 +3835,7 @@ async function run7(options) {
   return { inputs: { target }, data: await inspectJournal(journal) };
 }
 
-// runtime/scripts/commands/kit-scaffold.mjs
+// runtime/scripts/commands/kit-scaffold.ts
 import { readdir as readdir4, readFile as readFile12, writeFile as writeFile5 } from "node:fs/promises";
 import { join as join12 } from "node:path";
 import { spawnSync as spawnSync5 } from "node:child_process";
@@ -4265,7 +4265,7 @@ function managedFiles(plan) {
   return [...kitFiles(plan), { path: `.claude/skills/verify-${plan.app}/SKILL.md`, content: pointerDocument(plan) }];
 }
 
-// runtime/scripts/commands/kit-scaffold.mjs
+// runtime/scripts/commands/kit-scaffold.ts
 async function original(path) {
   const bytes = await fileBytes(path);
   return bytes === null ? null : bytes.toString("utf8");
@@ -4404,7 +4404,7 @@ ${pointer}
   return { inputs: { target, plan: options.plan }, data: { path, planDigest: changeSet.planDigest, files: edits.map((edit) => edit.path), diff: edits.map((edit) => edit.diff).join("") } };
 }
 
-// runtime/scripts/commands/kit-check.mjs
+// runtime/scripts/commands/kit-check.ts
 import { readdir as readdir5, readFile as readFile13 } from "node:fs/promises";
 import { join as join13 } from "node:path";
 var repair = "If the product changed, edit the kit plan and run kit scaffold --update; if the file was edited by hand, restore it the same way, then re-drive the feature with kit prove.";
@@ -4458,7 +4458,7 @@ async function run9(options) {
   return { inputs: { target, app: plan.app }, data: { app: plan.app, features: plan.features.map((feature) => feature.id), files: managed.length } };
 }
 
-// runtime/scripts/commands/kit-prove.mjs
+// runtime/scripts/commands/kit-prove.ts
 import { spawn as spawn2 } from "node:child_process";
 import { createHash as createHash3, randomUUID as randomUUID4 } from "node:crypto";
 import { mkdtemp, mkdir as mkdir3, readdir as readdir6, readFile as readFile14, realpath as realpath6, rm as rm3, stat as stat11, writeFile as writeFile6 } from "node:fs/promises";
@@ -4676,7 +4676,7 @@ async function run10(options) {
   return { inputs: { target, app: plan.app, feature: feature.id }, data };
 }
 
-// runtime/scripts/commands/comment-check.mjs
+// runtime/scripts/commands/comment-check.ts
 import { writeFile as writeFile7 } from "node:fs/promises";
 import { join as join15 } from "node:path";
 
@@ -5392,7 +5392,7 @@ function generateChecker(language) {
   };
 }
 
-// runtime/scripts/commands/comment-check.mjs
+// runtime/scripts/commands/comment-check.ts
 async function run11(options) {
   if (!Object.hasOwn(checkers, options.language)) {
     throw new CommandError("usage-error", [{

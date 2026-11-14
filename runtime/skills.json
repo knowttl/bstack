@@ -81,7 +81,7 @@
   },
   "no-mistakes-tuning": {
     "commands": ["apply", "state show"],
-    "commandModules": { "apply": "./commands/no-mistakes-tuning-apply.mjs" },
+    "commandModules": { "apply": "./commands/no-mistakes-tuning-apply.ts" },
     "schemas": ["change-set.schema.json", "evidence.schema.json", "findings.schema.json", "resume-state.schema.json"],
     "assets": [],
     "references": ["no-mistakes-history.md"]

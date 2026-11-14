@@ -84,7 +84,7 @@ function parseArgs(argv, valueOptions = []) {
   return options;
 }
 
-// runtime/scripts/dispatch.mjs
+// runtime/scripts/dispatch.ts
 async function dispatch(argv, skill, commands) {
   const command = Object.keys(commands).find((name) => name.split(" ").every((word, index) => argv[index] === word));
   if (!argv.length || argv.length === 1 && argv[0] === "--help") {
@@ -114,7 +114,7 @@ Missing or unsupported arguments are a usage error (exit 3).`);
   }
 }
 
-// runtime/scripts/commands/inspect.mjs
+// runtime/scripts/commands/inspect.ts
 import { readFile } from "node:fs/promises";
 import { join as join4 } from "node:path";
 import { spawnSync as spawnSync3 } from "node:child_process";
@@ -277,7 +277,7 @@ async function selectCommand(executable, args, { platform = process.platform, en
   return { executable, args };
 }
 
-// runtime/scripts/commands/inspect.mjs
+// runtime/scripts/commands/inspect.ts
 var manifests = /* @__PURE__ */ new Set(["package.json", "package-lock.json", "npm-shrinkwrap.json", "pnpm-lock.yaml", "yarn.lock", "bun.lock", "bun.lockb", "pyproject.toml", "requirements.txt", "Pipfile", "Pipfile.lock", "uv.lock", "poetry.lock", "Cargo.toml", "Cargo.lock", "go.mod", "go.sum", "Gemfile", "Gemfile.lock", "composer.json", "composer.lock"]);
 async function run(options) {
   const target = await resolveTarget(options);
@@ -351,7 +351,7 @@ async function run(options) {
   };
 }
 
-// runtime/scripts/commands/inventory.mjs
+// runtime/scripts/commands/inventory.ts
 import { readFile as readFile3 } from "node:fs/promises";
 import { basename, dirname as dirname3, join as join5, relative as relative3, sep as sep3 } from "node:path";
 
@@ -2020,7 +2020,7 @@ async function includedFiles(root, exclude) {
   return (await repoFiles(root)).filter((path) => !globs.some((glob) => matchesPath(glob, path)));
 }
 
-// runtime/scripts/commands/inventory.mjs
+// runtime/scripts/commands/inventory.ts
 var documentNames = {
   vision: /^(?:vision|goals|purpose|product[-_ ]?requirements|requirements|prd)$/i,
   design: /^(?:design|architecture|technical[-_ ]?design|principles)$/i,
@@ -2094,7 +2094,7 @@ async function run2(options) {
   return { data: { root: target.root, files, absent, candidates, shadowing }, inputs: { repo: target.root } };
 }
 
-// runtime/scripts/commands/history.mjs
+// runtime/scripts/commands/history.ts
 import { existsSync } from "node:fs";
 import { writeFile } from "node:fs/promises";
 import { homedir as homedir2 } from "node:os";
@@ -2128,7 +2128,7 @@ async function createScratch(target) {
   return await realpath3(directory);
 }
 
-// runtime/scripts/commands/history.mjs
+// runtime/scripts/commands/history.ts
 var share = (part, whole) => whole ? Math.round(part / whole * 1e3) / 1e3 : 0;
 var count = (counts, key) => {
   counts[key] = (counts[key] ?? 0) + 1;
@@ -2420,7 +2420,7 @@ async function loadConstraints(root, contractFile = ".bstack/project.json") {
   return { entries: ledger.entries, contractFile, checkIds: contract ? contract.checks.map((check) => check.id) : null };
 }
 
-// runtime/scripts/commands/scorecard.mjs
+// runtime/scripts/commands/scorecard.ts
 var principles = {
   "conventional-structure": "Conventional structure and co-location",
   "hard-boundaries": "Hard boundaries enforced by dependency graphs",
@@ -2443,7 +2443,7 @@ async function run4(options) {
   } };
 }
 
-// runtime/scripts/commands/cite-check.mjs
+// runtime/scripts/commands/cite-check.ts
 import { readFile as readFile6 } from "node:fs/promises";
 
 // runtime/scripts/lib/citations.ts
@@ -2479,7 +2479,7 @@ async function fileCitationProblems(root, citation) {
   return problems;
 }
 
-// runtime/scripts/commands/cite-check.mjs
+// runtime/scripts/commands/cite-check.ts
 async function run5(options) {
   if (!options.report) throw new CommandError("usage-error", [{ code: "missing-report", message: "--report is required.", fix: "Supply --report <research-report.json>." }]);
   const target = await resolveTarget(options, { draftOnly: true });
@@ -2514,7 +2514,7 @@ async function run5(options) {
   return { inputs: { target, report: options.report }, data: { mode: report.mode, filesChecked, webRecorded, webVerifiedByChecker: false } };
 }
 
-// runtime/scripts/commands/contract-test.mjs
+// runtime/scripts/commands/contract-test.ts
 import { readFile as readFile7 } from "node:fs/promises";
 async function readJSON(path) {
   try {

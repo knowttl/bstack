@@ -7,6 +7,7 @@ import { canonicalJSON, hashBytes } from './fingerprint.ts'
 import { inspectJSON } from './json.ts'
 import { validateData, validateIds } from './schema.ts'
 import { CommandError } from './result.ts'
+import type { Problem } from './result.ts'
 import type { Target } from './repo.ts'
 
 type JournalEdit = {
@@ -28,6 +29,12 @@ export type StagedEdit = {
 type InspectedEdit = JournalEdit & { state: 'applied' | 'pending' | 'conflicting'; actualHash?: string | null; problem?: string }
 
 type FileStep = (temporary: string) => Promise<void>
+
+type JournalState = Awaited<ReturnType<typeof inspectJournal>>
+
+export type WriteResult =
+  | (JournalState & { journal: string; outcome: 'already-applied' | 'applied'; limitations: string[]; status?: undefined; data?: undefined })
+  | { status: 'blocked'; problems: Problem[]; data: Partial<JournalState> & { journal: string; limitations: string[] }; journal?: undefined }
 
 export async function fileBytes(path: string) {
   try { return await readFile(path) } catch (error: any) {
@@ -136,7 +143,7 @@ export async function saveRecovery(path: string, value: unknown) {
   return limitations
 }
 
-export async function applyWrites(target: Target, plan: ReviewedPlan, staged: StagedEdit[], directory: string, previous: Journal | null, affectedChecks: string[], guard?: (temporary?: string) => Promise<void>) {
+export async function applyWrites(target: Target, plan: ReviewedPlan, staged: StagedEdit[], directory: string, previous: Journal | null, affectedChecks: string[], guard?: (temporary?: string) => Promise<void>): Promise<WriteResult> {
   const limitations = ['Replacement is atomic per file where supported, never across the whole change set.']
   const journal: Journal = previous ?? { schemaVersion: 1, runId: plan.planDigest, target: plan.target, planDigest: plan.planDigest,
     edits: staged.map((edit, index) => ({ id: edit.id, path: edit.path, resolvedPath: edit.resolvedPath, originalHash: edit.originalHash, proposedHash: edit.proposedHash,

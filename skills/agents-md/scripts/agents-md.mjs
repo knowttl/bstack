@@ -5762,7 +5762,7 @@ function parseArgs(argv, valueOptions = []) {
   return options;
 }
 
-// runtime/scripts/dispatch.mjs
+// runtime/scripts/dispatch.ts
 async function dispatch(argv, skill, commands) {
   const command = Object.keys(commands).find((name) => name.split(" ").every((word, index) => argv[index] === word));
   if (!argv.length || argv.length === 1 && argv[0] === "--help") {
@@ -5792,7 +5792,7 @@ Missing or unsupported arguments are a usage error (exit 3).`);
   }
 }
 
-// runtime/scripts/commands/apply.mjs
+// runtime/scripts/commands/apply.ts
 import { readFile as readFile3 } from "node:fs/promises";
 import { dirname as dirname4, relative as relative4, resolve as resolve4 } from "node:path";
 import { spawnSync as spawnSync2 } from "node:child_process";
@@ -7957,7 +7957,7 @@ var findings_schema_default = {
   }
 };
 
-// runtime/scripts/commands/findings.mjs
+// runtime/scripts/commands/findings.ts
 var stageOutcomes = { audit: ["starting-checks"], foundation: ["journey", "foundation-review"] };
 function invalid(code, message, path) {
   throw new CommandError("failed", [{ code, message, path, fix: "Regenerate findings for the reviewed target, scope and selections." }]);
@@ -8382,7 +8382,7 @@ function validateCheckIntegration(path, proposed, selected) {
   }
 }
 
-// runtime/scripts/commands/apply.mjs
+// runtime/scripts/commands/apply.ts
 function reject3(code, message, path) {
   throw new CommandError("failed", [{ code, message, path, fix: "Regenerate the plan from current findings and resolved scope, then review the exact proposed bytes again." }]);
 }
@@ -8548,7 +8548,7 @@ async function run(options) {
   return result.status ? { inputs, ...result } : { inputs, data: result };
 }
 
-// runtime/scripts/commands/state.mjs
+// runtime/scripts/commands/state.ts
 async function run2(options) {
   if (!options.run) throw new CommandError("usage-error", [{ code: "missing-run", message: "--run is required.", fix: "Supply the run ID returned by apply." }]);
   const target = await resolveTarget(options, { draftOnly: true });
@@ -8557,7 +8557,7 @@ async function run2(options) {
   return { inputs: { target }, data: await inspectJournal(journal) };
 }
 
-// runtime/scripts/commands/inventory.mjs
+// runtime/scripts/commands/inventory.ts
 import { readFile as readFile5 } from "node:fs/promises";
 import { basename as basename3, dirname as dirname5, join as join7, relative as relative5, sep as sep3 } from "node:path";
 
@@ -8858,7 +8858,7 @@ async function measureInstructions(root, files) {
   return { sources: list, total: Object.fromEntries(["bytes", "lines", "tokens"].map((key) => [key, list.reduce((sum, source) => sum + source[key], 0)])) };
 }
 
-// runtime/scripts/commands/inventory.mjs
+// runtime/scripts/commands/inventory.ts
 var documentNames = {
   vision: /^(?:vision|goals|purpose|product[-_ ]?requirements|requirements|prd)$/i,
   design: /^(?:design|architecture|technical[-_ ]?design|principles)$/i,
@@ -8932,7 +8932,7 @@ async function run3(options) {
   return { data: { root: target.root, files, absent, candidates, shadowing }, inputs: { repo: target.root } };
 }
 
-// runtime/scripts/commands/instructions-measure.mjs
+// runtime/scripts/commands/instructions-measure.ts
 async function run4(options) {
   const target = await resolveTarget(options, { draftOnly: true });
   const { exclude } = await loadInstructionSettings(target.root);

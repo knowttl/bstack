@@ -84,7 +84,7 @@ function parseArgs(argv, valueOptions = []) {
   return options;
 }
 
-// runtime/scripts/dispatch.mjs
+// runtime/scripts/dispatch.ts
 async function dispatch(argv, skill, commands) {
   const command = Object.keys(commands).find((name) => name.split(" ").every((word, index) => argv[index] === word));
   if (!argv.length || argv.length === 1 && argv[0] === "--help") {
@@ -114,7 +114,7 @@ Missing or unsupported arguments are a usage error (exit 3).`);
   }
 }
 
-// runtime/scripts/commands/transcripts.mjs
+// runtime/scripts/commands/transcripts.ts
 import { createReadStream } from "node:fs";
 import { chmod, readdir, stat as stat3, writeFile } from "node:fs/promises";
 import { homedir as homedir2 } from "node:os";
@@ -206,7 +206,7 @@ async function createScratch(target) {
   return await realpath3(directory);
 }
 
-// runtime/scripts/commands/transcripts.mjs
+// runtime/scripts/commands/transcripts.ts
 var turnLimit = 2e3;
 var promptLimit = 120;
 async function* records(file) {

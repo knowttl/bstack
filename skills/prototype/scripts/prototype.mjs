@@ -84,7 +84,7 @@ function parseArgs(argv, valueOptions = []) {
   return options;
 }
 
-// runtime/scripts/dispatch.mjs
+// runtime/scripts/dispatch.ts
 async function dispatch(argv, skill, commands) {
   const command = Object.keys(commands).find((name) => name.split(" ").every((word, index) => argv[index] === word));
   if (!argv.length || argv.length === 1 && argv[0] === "--help") {
@@ -114,7 +114,7 @@ Missing or unsupported arguments are a usage error (exit 3).`);
   }
 }
 
-// runtime/scripts/commands/kit-check.mjs
+// runtime/scripts/commands/kit-check.ts
 import { readdir as readdir2, readFile as readFile2 } from "node:fs/promises";
 import { join as join4 } from "node:path";
 
@@ -845,7 +845,7 @@ function managedFiles(plan) {
   return [...kitFiles(plan), { path: `.claude/skills/verify-${plan.app}/SKILL.md`, content: pointerDocument(plan) }];
 }
 
-// runtime/scripts/commands/kit-check.mjs
+// runtime/scripts/commands/kit-check.ts
 var repair = "If the product changed, edit the kit plan and run kit scaffold --update; if the file was edited by hand, restore it the same way, then re-drive the feature with kit prove.";
 async function readIfPresent(root, path) {
   return readFile2(await resolveFilePath(root, path), "utf8").catch((error) => error.code === "ENOENT" ? null : Promise.reject(error));
@@ -897,7 +897,7 @@ async function run(options) {
   return { inputs: { target, app: plan.app }, data: { app: plan.app, features: plan.features.map((feature) => feature.id), files: managed.length } };
 }
 
-// runtime/scripts/commands/kit-prove.mjs
+// runtime/scripts/commands/kit-prove.ts
 import { spawn } from "node:child_process";
 import { createHash, randomUUID } from "node:crypto";
 import { mkdtemp, mkdir, readdir as readdir3, readFile as readFile3, realpath as realpath3, rm, stat as stat3, writeFile } from "node:fs/promises";

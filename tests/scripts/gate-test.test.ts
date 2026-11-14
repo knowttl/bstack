@@ -37,15 +37,15 @@ async function fixture(t: import('node:test').TestContext, { remote = true, real
   } }))
   await put(repo, 'README.md', 'Usage\n')
   await put(repo, 'skills/architecture/SKILL.md', '# Architecture\n')
-  await put(repo, 'runtime/scripts/commands/measure.mjs', 'console.log(2 + 2)\n')
-  await put(repo, 'runtime/scripts/commands/contract.mjs', 'export const version = 1\n')
-  await put(repo, 'runtime/scripts/commands/docs-check.mjs', "import { version } from './contract.mjs'\nconsole.log(version)\n")
+  await put(repo, 'runtime/scripts/commands/measure.ts', 'console.log(2 + 2)\n')
+  await put(repo, 'runtime/scripts/commands/contract.ts', 'export const version = 1\n')
+  await put(repo, 'runtime/scripts/commands/docs-check.ts', "import { version } from './contract.ts'\nconsole.log(version)\n")
   await mkdir(join(repo, 'tests/package-check'), { recursive: true })
   for (const path of new Set(Object.values(registry).flat())) {
     const name = path.split('/').at(-1)!.replace('.test.ts', '')
     const command = ({ measure: ['measure', '4'], 'docs-check': ['docs-check', '1'] } as Record<string, string[]>)[name]
     await put(repo, path, command ?
-      `import test from 'node:test'\nimport assert from 'node:assert/strict'\nimport { execFileSync } from 'node:child_process'\ntest('${name} public result', () => assert.equal(execFileSync(process.execPath, ['runtime/scripts/commands/${command[0]}.mjs'], { encoding: 'utf8' }).trim(), '${command[1]}'))\n` :
+      `import test from 'node:test'\nimport assert from 'node:assert/strict'\nimport { execFileSync } from 'node:child_process'\ntest('${name} public result', () => assert.equal(execFileSync(process.execPath, ['runtime/scripts/commands/${command[0]}.ts'], { encoding: 'utf8' }).trim(), '${command[1]}'))\n` :
       `import test from 'node:test'\ntest('${name} fixture', () => console.log('SUITE ${name}'))\n`)
   }
   git(repo, 'add', '.')
@@ -140,7 +140,7 @@ test('evaluation-contract prose runs the full evaluation harness through the rea
 
 test('a full fallback without a base propagates a failing suite', async t => {
   const repo = await fixture(t, { remote: false, realRunner: true })
-  await put(repo, 'runtime/scripts/commands/measure.mjs', 'console.log(5)\n')
+  await put(repo, 'runtime/scripts/commands/measure.ts', 'console.log(5)\n')
   const result = gate(repo)
   assert.equal(result.status, 1, result.stdout + result.stderr)
   assert.match(result.stdout, /Gate: full suite /)
@@ -173,7 +173,7 @@ for (const state of ['committed', 'staged', 'unstaged', 'untracked', 'renamed', 
 
 test('a generated bundle follows its authored command and does not add unrelated installer tests', async t => {
   const repo = await fixture(t)
-  await put(repo, 'runtime/scripts/commands/measure.mjs', 'console.log(4)\n')
+  await put(repo, 'runtime/scripts/commands/measure.ts', 'console.log(4)\n')
   await put(repo, 'skills/architecture/scripts/architecture.mjs', '// generated consequence\n')
   assert.deepEqual(records(gate(repo)), ['CHECK ', 'TEST --task T2.4 --task T3.1 --task architecture'])
 })
@@ -199,7 +199,7 @@ for (const [command, bundles, suite] of [
 ] satisfies [unknown, unknown, unknown][]) {
   test(`${command} and its regenerated bundles run the ${suite} journey`, async t => {
     const repo = await fixture(t, { realRunner: true })
-    const path = `runtime/scripts/commands/${command}.mjs`
+    const path = `runtime/scripts/commands/${command}.ts`
     await put(repo, path, await readFile(join(repo, path), 'utf8') + '\n')
     for (const skill of bundles) await put(repo, `skills/${skill}/scripts/${skill}.mjs`, '// generated consequence\n')
     const result = gate(repo)
@@ -235,7 +235,7 @@ test('a missing registered task forces full validation', async t => {
 
 test('a missing dependency declaration forces full validation', async t => {
   const repo = await fixture(t)
-  await put(repo, 'runtime/scripts/commands/measure.mjs', "import './overlap.mjs'\n")
+  await put(repo, 'runtime/scripts/commands/measure.ts', "import './overlap.ts'\n")
   const result = gate(repo)
   assert.deepEqual(records(result), full)
   assert.match(result.stdout, /undeclared dependency: overlap -> measure/)
@@ -251,12 +251,12 @@ test('an unregistered discovered suite forces full validation', async t => {
 
 test('selected module proof has a clean control and propagates an independently seeded failure', async t => {
   const repo = await fixture(t, { realRunner: true })
-  await put(repo, 'runtime/scripts/commands/measure.mjs', 'console.log(4)\n')
+  await put(repo, 'runtime/scripts/commands/measure.ts', 'console.log(4)\n')
   const clean = gate(repo)
   assert.equal(clean.status, 0, clean.stdout + clean.stderr)
   assert.match(clean.stdout, /measure public result/)
   assert.match(clean.stdout, /# tests 5\n/)
-  await put(repo, 'runtime/scripts/commands/measure.mjs', 'console.log(5)\n')
+  await put(repo, 'runtime/scripts/commands/measure.ts', 'console.log(5)\n')
   const broken = gate(repo)
   assert.equal(broken.status, 1, broken.stdout + broken.stderr)
   assert.match(broken.stdout, /not ok .*measure public result/)
@@ -264,11 +264,11 @@ test('selected module proof has a clean control and propagates an independently 
 
 test('a changed protocol selects the dependent public-command test and propagates its failure', async t => {
   const repo = await fixture(t, { realRunner: true })
-  await put(repo, 'runtime/scripts/commands/contract.mjs', 'export const version = 1 // compatible\n')
+  await put(repo, 'runtime/scripts/commands/contract.ts', 'export const version = 1 // compatible\n')
   const clean = gate(repo)
   assert.equal(clean.status, 0, clean.stdout + clean.stderr)
   assert.match(clean.stdout, /docs-check public result/)
-  await put(repo, 'runtime/scripts/commands/contract.mjs', 'export const version = 2\n')
+  await put(repo, 'runtime/scripts/commands/contract.ts', 'export const version = 2\n')
   const broken = gate(repo)
   assert.equal(broken.status, 1, broken.stdout + broken.stderr)
   assert.match(broken.stdout, /Modules: .*docs-check/)

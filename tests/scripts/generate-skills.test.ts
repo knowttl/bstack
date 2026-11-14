@@ -10,8 +10,8 @@ import { spawnSync } from 'node:child_process'
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 
 const registry = `export const commands = {
-  alpha: { module: './commands/alpha.mjs', options: [], help: 'Report the shared schema.\\nUsage: {entry} alpha --json' },
-  beta: { module: './commands/beta.mjs', options: [], help: 'Report beta.\\nUsage: {entry} beta --json' }
+  alpha: { module: './commands/alpha.ts', options: [], help: 'Report the shared schema.\\nUsage: {entry} alpha --json' },
+  beta: { module: './commands/beta.ts', options: [], help: 'Report beta.\\nUsage: {entry} beta --json' }
 }
 `
 const skills = {
@@ -26,16 +26,16 @@ async function sandbox(t: import('node:test').TestContext, files = {}) {
   for (const file of ['scripts/generate-skills.ts', 'scripts/lib/bundle.ts']) await cp(join(root, file), join(directory, file))
   await symlink(join(root, 'node_modules'), join(directory, 'node_modules'), 'junction')
   const runtime = {
-    'scripts/commands.mjs': registry,
-    'scripts/commands/alpha.mjs': "import { readFile } from 'node:fs/promises'\nexport async function run() { return { data: { schema: await readFile(new URL('../../schemas/plan.json', import.meta.url), 'utf8') } } }\n",
-    'scripts/commands/beta.mjs': "export async function run() { return { data: { beta: true } } }\n",
+    'scripts/commands.ts': registry,
+    'scripts/commands/alpha.ts': "import { readFile } from 'node:fs/promises'\nexport async function run() { return { data: { schema: await readFile(new URL('../../schemas/plan.json', import.meta.url), 'utf8') } } }\n",
+    'scripts/commands/beta.ts': "export async function run() { return { data: { beta: true } } }\n",
     'schemas/plan.json': '{"title":"plan"}\n',
     'assets/pic.txt': 'picture\n',
     'references/guide.md': '# Guide\n',
     'skills.json': JSON.stringify(skills),
     ...files
   }
-  for (const file of ['scripts/dispatch.mjs', 'scripts/lib/args.ts', 'scripts/lib/result.ts']) {
+  for (const file of ['scripts/dispatch.ts', 'scripts/lib/args.ts', 'scripts/lib/result.ts']) {
     await mkdir(dirname(join(directory, 'runtime', file)), { recursive: true })
     await cp(join(root, 'runtime', file), join(directory, 'runtime', file))
   }
@@ -124,17 +124,17 @@ test('a skill keeps its own authored references beside the shared copies', async
 test('editing one command makes only the skills that ship it stale', async t => {
   const directory = await sandbox(t)
   assert.equal(generate(directory).status, 0)
-  await writeFile(join(directory, 'runtime/scripts/commands/beta.mjs'), 'export async function run() { return { data: { beta: false } } }\n')
+  await writeFile(join(directory, 'runtime/scripts/commands/beta.ts'), 'export async function run() { return { data: { beta: false } } }\n')
   const result = generate(directory, '--check')
   assert.match(result.stderr, /skills\/two\/scripts\/two\.mjs is stale/)
   assert.doesNotMatch(result.stderr, /skills\/one\//)
 })
 
 for (const [name, files, message] of [
-  ['a command the registry lacks', { 'skills.json': JSON.stringify({ one: { ...skills.one, commands: ['gamma'] } }) }, /one lists commands missing from runtime\/scripts\/commands\.mjs: gamma/],
+  ['a command the registry lacks', { 'skills.json': JSON.stringify({ one: { ...skills.one, commands: ['gamma'] } }) }, /one lists commands missing from runtime\/scripts\/commands\.ts: gamma/],
   ['a schema runtime lacks', { 'skills.json': JSON.stringify({ one: { ...skills.one, schemas: ['gone.json'] } }) }, /one lists schemas\/gone\.json, which is missing from runtime\/schemas/],
-  ['an import outside runtime', { '../outside.mjs': 'export const value = 1\n', 'scripts/commands/beta.mjs': "import { value } from '../../../outside.mjs'\nexport async function run() { return { data: { value } } }\n" }, /two bundles files outside runtime\/: outside\.mjs/],
-  ['a resource URL in another shape', { 'scripts/commands/beta.mjs': "export async function run() { return { data: { here: import.meta.url } } }\n" }, /runtime\/scripts\/commands\/beta\.mjs must use import\.meta only as new URL/]
+  ['an import outside runtime', { '../outside.mjs': 'export const value = 1\n', 'scripts/commands/beta.ts': "import { value } from '../../../outside.mjs'\nexport async function run() { return { data: { value } } }\n" }, /two bundles files outside runtime\/: outside\.mjs/],
+  ['a resource URL in another shape', { 'scripts/commands/beta.ts': "export async function run() { return { data: { here: import.meta.url } } }\n" }, /runtime\/scripts\/commands\/beta\.ts must use import\.meta only as new URL/]
 ] satisfies [unknown, unknown, unknown][]) {
   for (const args of [[], ['--check']]) {
     test(`${args.length ? 'check' : 'generation'} refuses ${name} before writing`, async t => {
@@ -154,7 +154,7 @@ test('committed skill files match the shared runtime source', () => {
 
 test('bundled YAML passes package policy and preserves alias serialization', async t => {
   const directory = await sandbox(t, {
-    'scripts/commands/alpha.mjs': "import { stringify } from 'yaml'\nexport async function run() { const shared = { value: 1 }; return { data: { yaml: stringify({ first: shared, second: shared }) } } }\n"
+    'scripts/commands/alpha.ts': "import { stringify } from 'yaml'\nexport async function run() { const shared = { value: 1 }; return { data: { yaml: stringify({ first: shared, second: shared }) } } }\n"
   })
   await rm(join(directory, 'node_modules'))
   await mkdir(join(directory, 'node_modules'))

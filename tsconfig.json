@@ -15,6 +15,6 @@
       "typescript": ["./node_modules/@typescript/typescript6/lib/typescript.d.ts"]
     }
   },
-  "include": ["runtime/scripts/lib/*.ts", "scripts/**/*.ts", "tests/scripts/**/*.ts", "tests/inputs/**/*.ts", "tests/fixtures/**/*.ts", "tests/eval/container/assertions.ts", "upstream/fetch.ts"],
+  "include": ["runtime/scripts/*.ts", "runtime/scripts/commands/*.ts", "runtime/scripts/lib/*.ts", "scripts/**/*.ts", "tests/scripts/**/*.ts", "tests/inputs/**/*.ts", "tests/fixtures/**/*.ts", "tests/eval/container/assertions.ts", "upstream/fetch.ts"],
   "exclude": ["tests/fixtures/**/node_modules"]
 }

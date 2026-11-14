@@ -49,7 +49,7 @@ async function compatibleEvidence(ledger: LedgerRow[], definitions: Scenario[], 
         'scripts/eval.ts', 'scripts/lib/evaluation.ts', 'scripts/lib/evaluation-host.ts',
         'scripts/lib/evaluation-container.ts', 'scripts/lib/evaluation-scope.ts', 'tests/eval/container/Dockerfile',
         'package.json', 'package-lock.json', 'scripts/generate-skills.ts', 'scripts/lib/bundle.ts', ...['run', 'paths', 'result', 'schema', 'fingerprint']
-          .map(name => `runtime/scripts/lib/${name}.mjs`)], { cwd: root })
+          .map(name => `runtime/scripts/lib/${name}.ts`)], { cwd: root })
       if (diff.status !== 0 && diff.status !== 1) fail(`Cannot verify evaluation runner inputs: ${row.candidate}`)
       runners.set(row.candidate, diff.status === 0)
     }
