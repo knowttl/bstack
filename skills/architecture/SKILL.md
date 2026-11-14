@@ -85,6 +85,7 @@ Done when: Every proposal has a project-specific reason, evidence, consequence, 
 ### Step 4: Prove the rules
 
 Prove every selected import-boundary rule with `node scripts/architecture.mjs rule-proof` using a clean control that includes a public import, and independent violations for each private, alias or equivalent-resolution bypass and each forbidden cycle, as the boundary checks reference describes.
+Prove a selected [layout convention](references/boundary-checks.md#layout-convention) the same way, with a clean control that follows it, a seeded misplaced file and a feature folder the registry does not list.
 Put existing violations into a visible baseline with `baseline check` instead of weakening the rule, and keep unproven rules and coverage limits next to their evidence.
 Declare the selected command path of each integrating edit in its `checkIntegration` according to the reference.
 A rule that cannot run for lack of a native tool or dependencies, or because the target is a non-Git workspace with no code to check yet, is reported unproven, never assumed.

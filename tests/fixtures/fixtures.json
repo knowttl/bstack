@@ -583,5 +583,20 @@
     "kind": "repo",
     "files": [".gitignore", "package.json", "src"],
     "history": [{ "paths": ["."], "message": "feat: establish fixture", "date": "2026-01-08T12:00:00Z" }]
+  },
+  "ts-layout": {
+    "kind": "repo",
+    "files": ["package.json", "layout.ts", "src"],
+    "history": [{ "paths": ["."], "message": "feat: establish fixture", "date": "2026-01-09T12:00:00Z" }]
+  },
+  "py-layout": {
+    "kind": "repo",
+    "files": [".gitignore", "layout.py", "app"],
+    "history": [{ "paths": ["."], "message": "feat: establish fixture", "date": "2026-01-09T12:00:00Z" }]
+  },
+  "ts-slop": {
+    "kind": "repo",
+    "files": [".gitignore", "lint.json", "package.json", "package-lock.json", "src"],
+    "history": [{ "paths": ["."], "message": "feat: establish fixture", "date": "2026-01-09T12:00:00Z" }]
   }
 }

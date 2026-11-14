@@ -1,10 +1,11 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { mkdir, writeFile } from 'node:fs/promises'
+import { cp, mkdir, mkdtemp, rm, writeFile } from 'node:fs/promises'
+import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
-import { emptyRepo, git, runArchitecture } from './discovery-fixture.ts'
+import { build, emptyRepo, git, runArchitecture } from './discovery-fixture.ts'
 
 // The skill is driven only through its installed entry point, as the user's agent would.
 const entry = join(resolve(dirname(fileURLToPath(import.meta.url)), '../..'), 'skills/architecture/scripts/architecture.mjs')
@@ -82,3 +83,40 @@ test('a maintain pass finds the module added since the design was reviewed, its 
   assert.equal(rejected.exit, 1)
   assert.equal(rejected.problems[0].code, 'new-debt')
 })
+
+for (const { stack, command, violations } of [
+  { stack: 'ts', command: { executable: 'npm', args: ['run', 'check'], cwd: '.', versionArgs: ['--version'] }, violations: [
+    { path: 'src/discount.ts', source: 'export const discount = 1\n',
+      expect: 'src/discount.ts:1: layout-convention: ', replacement: 'src/features/<feature>/discount.ts' },
+    { path: 'src/features/refund/index.ts', source: 'export function refund(): number {\n  return 0\n}\n',
+      expect: 'src/registry.ts:1: registry-stale: ', replacement: 'node layout.ts --write' }
+  ] },
+  { stack: 'py', command: { executable: 'python3', args: ['-B', 'layout.py'], cwd: '.', versionArgs: ['--version'] }, violations: [
+    { path: 'app/discount.py', source: 'DISCOUNT = 1\n',
+      expect: 'app/discount.py:1: layout-convention: ', replacement: 'app/features/<feature>/discount.py' },
+    { path: 'app/features/refund/__init__.py', source: 'def refund() -> int:\n    return 0\n',
+      expect: 'app/registry.py:1: registry-stale: ', replacement: 'python3 layout.py --write' }
+  ] }
+]) {
+  test(`${stack} layout convention passes the feature folders and rejects a misplaced file and an unregistered feature folder`, async t => {
+    const directory = await mkdtemp(join(tmpdir(), 'bstack layout convention '))
+    t.after(() => rm(directory, { recursive: true, force: true }))
+    const env = { ...process.env, XDG_CACHE_HOME: join(directory, 'cache'), LOCALAPPDATA: join(directory, 'cache') }
+    const valid = build(t, `${stack}-layout`)
+    const plan = join(directory, 'plan.json')
+    await writeFile(plan, JSON.stringify({ schemaVersion: 1, changeKind: 'feature',
+      acceptanceSources: [{ id: 'design', path: 'DESIGN.md', contentHash: '0'.repeat(64) }],
+      acceptanceCases: [{ id: 'layout', sourceId: 'design', pointer: 'layout', outcome: 'Each feature lives in its own folder and the registry is generated.', userJourney: false }],
+      checks: [{ id: 'layout', role: 'outcome', required: true, acceptanceCases: ['layout'], inputScopes: ['**'], command }] }))
+    for (const [index, { path, source, expect, replacement }] of violations.entries()) {
+      const violation = join(directory, `violation ${index}`)
+      await cp(valid, violation, { recursive: true })
+      await mkdir(dirname(join(violation, path)), { recursive: true })
+      await writeFile(join(violation, path), source)
+      const proof = runArchitecture('rule-proof', valid, env, ['--check-plan', plan, '--check-id', 'layout', '--valid', valid, '--violation', violation, '--expect', expect, '--replacement', replacement])
+      assert.equal(proof.exit, 0, `${expect}${JSON.stringify(proof)}`)
+      assert.deepEqual(proof.data.cases.map((item: NonNullable<typeof proof.data.cases>[number]) => [item.kind, item.status, item.execution.exitCode === 0]),
+        [['valid', 'passed', true], ['violation', 'passed', false]])
+    }
+  })
+}

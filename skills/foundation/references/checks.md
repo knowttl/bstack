@@ -9,6 +9,7 @@ A new project has no existing debt, so a rule that fails on the first run is fix
 - [Prove a rule before adopting it](#prove-a-rule-before-adopting-it)
 - [Maximum code file length](#maximum-code-file-length)
 - [No-comments rule](#no-comments-rule)
+- [Layout convention](#layout-convention)
 - [Integrate the maintained command](#integrate-the-maintained-command)
 - [Optional pre-push hook](#optional-pre-push-hook)
 - [Capture the outcome](#capture-the-outcome)
@@ -52,6 +53,22 @@ In the check plan select that command and prove it with `rule-proof`: a clean fi
 Include directive, license or SPDX header, and shebang files in the valid fixture and verify they pass.
 Repeat the proof with a plain comment as the sole violation in a project-authored code fixture, such as `tests/fixtures/example.py` in a Python project, and in a snapshot that is code when the project has one; each must fail with the rule's diagnostic.
 Cover the project's code languages and test files, and record any unsupported syntax as a coverage limit rather than claiming it is checked.
+Repeat this proof against the integrated maintained command as described below.
+
+## Layout convention
+
+Propose a layout convention so the project starts with one folder per feature, instead of being retrofitted after a shared file has formed.
+State it in the proposal: the root that holds the feature folders, what one folder contains, and the few files allowed outside it, such as the entry point.
+The first journey's feature is the first folder, and the scaffold adds no empty folder for a feature the journey does not need.
+Where the scaffold needs a list of the features, generate that registry from the tree with a project-owned generator and never edit it by hand.
+Include a small project-owned check in the one maintained check command with two rules:
+
+- A path-convention rule that fails for a file outside the convention and names the folder path where it belongs.
+- A freshness rule that derives the registry again and fails when the committed file differs, naming the generator command to run.
+
+A scaffold with no registry needs only the path-convention rule.
+In the check plan select that command and prove it with `rule-proof`: the clean fixture follows the convention with a fresh registry, one violation holds a misplaced file, and a separate violation adds a feature folder without regenerating.
+Each violation must fail with its rule's diagnostic and the replacement it names.
 Repeat this proof against the integrated maintained command as described below.
 
 ## Integrate the maintained command

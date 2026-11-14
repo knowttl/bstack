@@ -602,3 +602,37 @@ test('every enabled constraint accepts the clean fixture and rejects its seeded 
     assert.deepEqual(proof.data.cases.map((item: NonNullable<typeof proof.data.cases>[number]) => [item.kind, item.status, item.execution.exitCode === 0]), [['valid', 'passed', true], ['violation', 'passed', false]])
   }
 })
+
+const typescriptSeeds = [
+  ['SL-1', 'no-chained-type-assertions', 'export function forced(input: string) {\n  return input as object as { id: string }\n}\n', 'the original precise type'],
+  ['SL-1', 'no-widen-then-assert', 'export function forced(loaded: { id: string }) {\n  const stored: unknown = loaded\n  return stored as { id: string }\n}\n', 'the precise type'],
+  ['SL-2', 'no-unknown-parameters', 'export function handle(input: unknown) {\n  return input\n}\n', 'a named domain type'],
+  ['SL-2', 'no-unknown-returns', 'export function load(input: string): unknown {\n  return input\n}\n', 'a named domain type'],
+  ['SL-2', 'no-unknown-type-aliases', 'export type External = unknown\n', 'the parsed owner type'],
+  ['SL-2', 'no-object-parameters', 'export function save(value: object) {\n  return value\n}\n', 'a named owner type'],
+  ['SL-2', 'no-unsafe-dictionary-type', 'export type Metadata = Record<string, unknown>\n', 'an owner/schema-derived value type'],
+  ['SL-2', 'no-known-value-widening', 'const start = (): number => 1\nexport const handlers: Record<string, () => number> = { start }\n', '`satisfies`'],
+  ['SL-3', 'no-runtime-typeof', 'export function name(input: string | number) {\n  return typeof input === "string" ? input : ""\n}\n', 'Parse input at its I/O boundary'],
+  ['SL-3', 'no-reflect-get', 'export function read(owner: { id: string }) {\n  return Reflect.get(owner, "id")\n}\n', 'typed property access'],
+  ['SL-3', 'no-reflect-apply', 'export function call(operation: () => number) {\n  return Reflect.apply(operation, undefined, [])\n}\n', 'a typed function call']
+] satisfies [unknown, unknown, unknown, unknown][]
+
+test('every TypeScript rule mapped to SL-1, SL-2 and SL-3 accepts the clean fixture and rejects its seeded violation through the maintained command', async t => {
+  const f = await scratch(t)
+  const valid = build(t, 'ts-slop')
+  await cp(resolve(import.meta.dirname, '../../upstream/anti-slop/src'), join(valid, 'tools/oxlint/anti-slop'), { recursive: true })
+  const checkPlan = join(f.directory, 'check-plan.json')
+  await writeFile(checkPlan, JSON.stringify({ schemaVersion: 1, changeKind: 'feature', acceptanceSources: [{ id: 'design', path: 'lint.json', contentHash: '0'.repeat(64) }],
+    acceptanceCases: [{ id: 'constraint', sourceId: 'design', pointer: 'rules', outcome: 'The enabled constraints hold.', userJourney: false }],
+    checks: [{ id: 'maintained', role: 'outcome', required: true, acceptanceCases: ['constraint'], inputScopes: ['**'],
+      command: { executable: 'npm', args: ['run', 'check'], cwd: '.', versionArgs: ['--version'] } }] }))
+  for (const [principle, rule, seed, replacement] of typescriptSeeds) {
+    const violation = join(f.directory, `violation ${rule}`)
+    await cp(valid, violation, { recursive: true, verbatimSymlinks: true })
+    await writeFile(join(violation, 'src/seed.ts'), seed)
+    const proof = runVerification('rule-proof', valid, f.env, ['--check-plan', checkPlan, '--check-id', 'maintained', '--valid', valid, '--violation', violation, '--expect', `anti-slop(${rule})`, '--replacement', replacement])
+    assert.equal(proof.exit, 0, `${principle} ${rule}: ${JSON.stringify(proof)}`)
+    assert.deepEqual(proof.data.cases.map((item: NonNullable<typeof proof.data.cases>[number]) => [item.kind, item.status, item.execution.exitCode === 0]), [['valid', 'passed', true], ['violation', 'passed', false]])
+    await rm(violation, { recursive: true })
+  }
+})

@@ -42,6 +42,9 @@ Python's alias variant uses a relative-import re-export bridge.
 `ts-shop` additionally proves the failing checkout against an ephemeral local HTTP server despite passing mocked units.
 `py-greeter` is the verification skill's disposable target: a small Python HTTP service with the Python slop-baseline mappings enabled in `pyproject.toml` and a maintained `check.py` that runs lint, the formatter check and the generated comment-ban checker.
 Its sanity needs Python 3 and Ruff on `PATH` rather than a lock, and the verification tests generate the kit and checker into disposable copies of it.
+`ts-layout` and `py-layout` are the clean controls for the layout convention: each feature is one folder, the registry is generated from those folders, and the fixture's own `layout.ts` or `layout.py` prints `layout-convention` for a file outside the feature folders and `registry-stale` for a registry that differs from the tree.
+They need only Node or Python 3, and `tests/scripts/architecture.test.ts` seeds a misplaced file and an unregistered feature folder into disposable copies and proves both through `rule-proof`.
+`ts-slop` pins Oxlint 1.90.0 with package-lock.json and enables the eleven anti-slop rules mapped to SL-1, SL-2 and SL-3; `tests/scripts/verification-constraints.test.ts` copies the pinned rules from `upstream/anti-slop/src` into the built folder and proves each rule through the fixture's maintained command.
 Native command results go to stderr while the builder's stdout remains JSON lines.
 
 `formal-charge-once` and its `-violation` variant are the proof input for the `/formal-verification` skill: a worker claims an order once with an atomic `compareAndSet`, a TLA+ model of two workers checks that it is charged at most once, and the variant splits the claim into a `get` then a `set` so the model finds a double charge.

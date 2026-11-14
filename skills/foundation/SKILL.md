@@ -60,6 +60,7 @@ Retain the proposal in scratch as findings following `schemas/findings.schema.js
 Prepare a create-only change set following `schemas/change-set.schema.json` that holds the vision, any glossary and design, the `README.md` and the scaffold, each with its complete UTF-8 payload and hash.
 Declare each selected command path with its edit's `checkIntegration` according to the [checks reference](references/checks.md#integrate-the-maintained-command).
 Include the [maximum code file length](references/checks.md#maximum-code-file-length) check in the plan and maintained command.
+Propose the [layout convention](references/checks.md#layout-convention) and its check beside those two rules, so the project starts with one folder per feature.
 Propose one pointer line as a separate selected edit in the same change set, following the [pointer guide](references/agents-pointer.md): `Run the setup and check commands in README.md before reporting a change complete.` with the file name as the link.
 Prepare `schemas/project-create.json` in scratch, binding the creation plan to the change set digest and the approved destination, stack, first journey, setup commands and prerequisites.
 
@@ -89,7 +90,7 @@ Done when: Only the approved scaffold exists at the reviewed destination in a ne
 Read the returned creation record for the captured setup and first-journey results.
 A failed or interrupted command leaves the project unverified and available for recovery, and an attempted command is never rerun automatically.
 Run the maintained command and capture fresh evidence on the created project, following the [checks reference](references/checks.md#capture-the-outcome).
-Prove each selected rule, including the no-comments rule, with `rule-proof`, and add later selected changes to the created project through `apply --repo <destination>` with the same review rules.
+Prove each selected rule, including the no-comments rule and a selected layout convention, with `rule-proof`, and add later selected changes to the created project through `apply --repo <destination>` with the same review rules.
 State the destination, the stack and its alternatives, the first journey and its evidence, the proved rules, the written paths, the unresolved decisions and every verification limit.
 List `/verification create`, `/maintenance` and `/agents-md` as next steps, and `/architecture` when no design was supplied, and start none of them during the procedure.
 
