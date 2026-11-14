@@ -27,8 +27,12 @@ Default on, adopted with each rule proven by `rule-proof` and existing violation
 | SL-7 | Names describe the domain |
 | SL-8 | Layout belongs to the formatter |
 | SL-9 | Tests wait on a condition, not on the clock: no sleep-based waits, polling loops or unreasoned skips |
+| SL-10 | Closed variants are handled exhaustively: adding a variant fails the check until every branch handles it |
+| SL-11 | Identifiers that share a primitive have distinct types, so one cannot be passed where another is expected |
+| SL-12 | The compiler's or type checker's strict mode is enabled and runs inside the maintained command |
 
-SL-9 is unproven: it ships as a default candidate that stays off until a project proves it with `rule-proof`.
+SL-9 to SL-12 are unproven: each ships as a default candidate that stays off until a project proves it with `rule-proof`.
+SL-10 to SL-12 are the top-rung type candidates: each makes a mistake unrepresentable, so its proof seeds the mistake, such as an unhandled variant or a swapped identifier, and expects the type check to fail inside the maintained command.
 Treat a reasoned skip as one whose reason is recorded where the checker can read it, such as the skip call's reason argument.
 
 ## Per-language mapping
@@ -47,6 +51,9 @@ These are research candidates, not proven equivalents.
 | SL-7 | `no-shape-in-symbol-names` | custom check | custom check |
 | SL-8 | `require-readable-spacing` | `ruff format` | `gofmt` |
 | SL-9 | not in anti-slop; ESLint `no-restricted-properties` on timer calls and custom checks for polling loops and skips | ruff `TID251` banned-api on `time.sleep`; custom checks for polling loops and skips | `forbidigo` on `time.Sleep`; custom checks for polling loops and skips |
+| SL-10 | not in anti-slop; typescript-eslint `switch-exhaustiveness-check`, or a `never`-typed default branch checked by `tsc` | `typing.assert_never` in the final branch, checked by mypy | golangci-lint `exhaustive` |
+| SL-11 | not in anti-slop; branded types checked by `tsc`, with a custom check for identifier parameters typed as a bare primitive | `typing.NewType`, checked by mypy | defined types such as `type OrderID string`, checked by the compiler |
+| SL-12 | not in anti-slop; `strict` in `tsconfig.json` with `tsc --noEmit` in the maintained command | mypy `--strict` in the maintained command | `go vet ./...` in the maintained command; the compiler has no strict mode to enable |
 
 ## TypeScript
 
@@ -57,12 +64,14 @@ Dropped: `require-safety-comment-for-type-assertion`, which conflicts with the c
 ## What is proven and what is not
 
 - Python SL-1, SL-2, SL-4, SL-5, SL-6 and SL-8 were proven on this skill's disposable fixture with ruff 0.15.20, through one maintained command that rejected a seeded violation of each with its diagnostic. In the bstack source checkout, the configuration lives in `tests/fixtures/py-greeter/pyproject.toml`. Prove it again on every project, since versions, rule sets and existing code differ.
+- TypeScript SL-1, SL-2 and SL-3 were proven on a disposable fixture with Oxlint 1.90.0 and the anti-slop rules at the pin above, through one maintained command that rejected a seeded violation of each of the eleven rules in those three rows with its diagnostic. In the bstack source checkout, the configuration lives in `tests/fixtures/ts-slop/lint.json`. The rules read one file's syntax tree and scopes without a type checker, so imported type definitions and cross-file call signatures are a coverage limit. Prove it again on every project.
 - Python SL-3 and SL-7, and Go SL-2, SL-6 and SL-7, have no native rule in this mapping and need a custom check if enabled.
 - Go SL-1, SL-3, SL-4 and SL-5 are verified by rule name in the golangci-lint reference only; golangci-lint itself was not run, so each Go mapping needs a project-specific configuration and proof. `gofmt` for SL-8 ships with the Go toolchain.
 - SL-9 has no proof in any language: every mapping in its row is a candidate by name only, and polling loops and skips need custom checks in each mapping.
 The named timer checks do not cover every sleep-based wait, including bare `setTimeout`, `asyncio.sleep` and `time.After`; those paths remain unproven in TypeScript, Python and Go respectively.
 Prove coverage of sleep-based waits, polling loops and unreasoned skips before treating SL-9 as proven.
-- No Go or TypeScript slop rule was proven by this skill's tests. The comment-ban checkers were tested for Python, Go and TypeScript.
+- SL-10, SL-11 and SL-12 have no proof in any language: every mapping in their rows is a candidate by name only.
+- No Go slop rule, and no TypeScript slop rule outside SL-1, SL-2 and SL-3, was proven by this skill's tests. The comment-ban checkers were tested for Python, Go and TypeScript.
 
 ## The comment ban
 

@@ -8,6 +8,7 @@ Separate formatting from design checks so a cosmetic change cannot conceal an ar
 ## Contents
 
 - [Record each boundary rule](#record-each-boundary-rule)
+- [Layout convention](#layout-convention)
 - [Collect the evidence](#collect-the-evidence)
 - [Prove every rule](#prove-every-rule)
 - [Wire the maintained command](#wire-the-maintained-command)
@@ -36,6 +37,28 @@ Prefer eliminating the footgun; use the native linter's restricted-import or res
 If the wrapper does not exist, report the product change rather than implementing it as a check.
 Inventory design documents, contribution guidance, scoped agent instructions and native checks before proposing a rule, and reuse the one already present when it expresses the constraint reliably.
 Propose a custom checker only when existing tools cannot.
+
+## Layout convention
+
+A layout convention is the boundary type for a shared edit target: it removes the shared file instead of guarding it.
+Propose it only where the evidence shows a file or registry that unrelated changes repeatedly edit, or a hand-synced list with no derivation, and only after inspecting why those changes meet there.
+Offer its three parts independently for selection:
+
+| Part | What it settles | Check |
+|---|---|---|
+| Feature-folder convention | Each feature's code, tests and registration live in one folder under a named root and are discovered by path, so a new feature adds a folder and edits no shared file | None by itself; the design section names the root, what one folder holds and the few files allowed outside it |
+| Generated registry | Any list of the features is derived from the tree by a project-owned generator and never edited by hand | A freshness check that derives the registry again and fails when the committed file differs, naming the generator command to run |
+| Path-convention check | A file cannot land outside the convention unnoticed | A check over the tracked paths that fails for a file outside the convention and names the folder path where it belongs |
+
+Use the project's existing generator, build step or path rule when it has one, and propose a small project-owned check only when it has none.
+Word the two diagnostics in the shape that [Prove every rule](#prove-every-rule) gives, for example `src/discount.ts:1: layout-convention: src/discount.ts is outside the feature folders. Use src/features/<feature>/discount.ts.` and `src/registry.ts:1: registry-stale: src/registry.ts does not match the folders under src/features. Use node layout.ts --write.`
+Prove it like every other rule: the clean control follows the convention with a fresh registry, one violation holds a seeded misplaced file, a separate violation adds a feature folder without regenerating, and each must fail with its diagnostic and replacement.
+In the bstack source checkout, the `ts-layout` and `py-layout` fixtures passed that proof through `rule-proof` for a TypeScript and a Python project; prove it again on every project, since the convention, the generator and the existing tree differ.
+Moving existing files into feature folders is a refactor the user selects and runs elsewhere, so files already outside the convention go into the visible baseline until they move.
+
+Take the before and after number from `measure`: the top file's `changeCount` divided by the number of distinct commits across every file's `commits`, which is the share of commits that touch the most-edited file.
+Record it for the range before the convention as the baseline, and rerun it over the commits since adoption in a later `maintain` pass.
+The share is evidence that the shared edit target went away, never a violation or a threshold, and a small range can move it by chance.
 
 ## Collect the evidence
 

@@ -45,6 +45,9 @@ The scaffold carries these, each with its complete reviewed UTF-8 payload:
 Do not add speculative frameworks, service layers, integrations, hosted pipelines or empty document templates.
 CI is an explicitly selected integration, and hosted behaviour that has not run remains unverified.
 Cover data flow, errors, configuration and external interfaces only where the first journey touches them.
+Propose the checks reference's layout convention for the source: one folder per feature, with any registry generated from the tree.
+Startup validation is a candidate where the first journey reads configuration or a registry: the project validates both when it starts, and the failure names the owner of the bad entry.
+State it in the proposal as guidance the project implements in its own code.
 Terms in code and documents use the glossary's words.
 
 ## Choose the first journey
@@ -60,6 +63,7 @@ When a browser or device interaction cannot be observed here, report that part a
 
 Include setup, formatting, linting, type checking where the stack has it, and tests, using the stack's own tools and one maintained command that runs them together.
 Include the no-comments rule and its proof.
+Propose the layout convention's check and its proof beside the no-comments and file-length rules.
 Use a formatter, linter or type system only when it expresses a required constraint reliably, and separate formatting from design checks.
 Per-language rule mappings are proven in the created project with `rule-proof`, never asserted from a table.
 Testing rules and the verification kit belong to `/verification create`: list it as a next step and do not draft testing guidance here.

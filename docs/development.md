@@ -560,6 +560,7 @@ node skills/verification/scripts/verification.mjs comment-check generate --repo 
 ```
 
 Its fixture acceptance needs Git, Python 3, Ruff and Go on `PATH`, and the TypeScript comment-checker test needs the `ts-shop` fixture's npm install.
+`npm test -- --task verification-constraints` also proves the TypeScript mappings of SL-1, SL-2 and SL-3 through `rule-proof` on the `ts-slop` fixture, which needs that fixture's npm install.
 
 ### formal-verification
 
@@ -683,6 +684,7 @@ The [architecture skill](../skills/architecture/SKILL.md) is started by the user
 Both modes use `apply` for reviewed edits after the user approves the exact bytes and never move product code.
 The runtime also exposes `baseline check --refresh` for direct baseline replacement without an approval prompt; the skill workflow requires baseline edits through reviewed `apply` instead.
 Architecture's `rule-proof` runs the native command selected by `--check-plan` and `--check-id` in separate disposable valid and violation copies, with no separate approval switch; the workflow requires approved commands.
+`npm test -- --task architecture` proves the [layout convention](../skills/architecture/references/boundary-checks.md#layout-convention) through `rule-proof` on the `ts-layout` and `py-layout` fixtures, with a seeded misplaced file and an unregistered feature folder.
 `measure`, `overlap`, `rule-proof` and `baseline check` need a Git repo, so a new idea in a non-Git workspace reviews planned changes by reading and leaves its rules unproven until code exists.
 
 ### foundation

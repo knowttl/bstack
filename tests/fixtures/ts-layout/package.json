@@ -1,0 +1,12 @@
+{
+  "name": "ts-layout",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "check": "node layout.ts",
+    "journey": "node src/main.ts"
+  }
+}

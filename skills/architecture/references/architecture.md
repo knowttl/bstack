@@ -60,6 +60,8 @@ These adaptations follow the pinned design and module guidance attributed in the
   Inspect dependency manifests, wrapper modules and existing restricted-API configuration to establish the intended interface, then trace callers and clustered casts, suppressions or repeated guards around that dependency.
   Cite the wrapper and bypass sites, and look for fix-up or revert commits, review comments or user corrections identifying the footgun.
 - Hand-maintained parallel lists of the same items with no derivation or check that fails when they disagree.
+- Configuration and registries that are read without validation at startup, so a bad entry fails later and far from the code that owns it.
+  Inspect entry points, configuration loaders and registry builders, and cite a fix-up commit or review comment where a bad entry surfaced late.
 - The same business rule, algorithm or documented policy maintained independently in several places, with a concrete change that would require coordinated updates.
 - Abstractions, forwarding layers and configuration options without a current requirement, compared with a simpler design that still meets the approved requirements.
 - Frequently changed files and pairs that repeatedly change together.
@@ -107,7 +109,10 @@ Callers use the public interface and do not depend on private storage or represe
 Private implementation may span files without exposing additional public entry points.
 Keep startup focused on assembly and put behaviour with its domain owner.
 Remove unnecessary shared write targets before serializing work.
+Where the shared target is a registry or a hand-synced list, propose the boundary checks reference's layout convention: one folder per feature, discovered by path, with any registry generated from the tree.
 Where sharing is real, enforce one writer and sequence unavoidable shared edits.
+Startup validation is a candidate where the audit cites configuration or a registry read without validation: the product validates both when it starts, and the failure names the owner of the bad entry.
+Report it as a product change for the user to select, because no skill writes product code.
 
 Review two representative changes against proposed boundaries.
 For example, a pricing-policy change and a notification-template change should remain inside their owners when the public contracts still suffice.
