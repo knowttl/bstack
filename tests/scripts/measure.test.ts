@@ -347,6 +347,19 @@ test('measure reads head inventory and history larger than one MiB', async t => 
   assert.equal(result.data.exclusions.files.length, 4400)
 })
 
+for (const [count, pairs, skipped] of [[100, 4950, false], [101, 0, true]] as const) {
+  test(`measure ${skipped ? 'skips and names' : 'pairs'} a commit that changes ${count} measured paths`, async t => {
+    const { repo } = await emptyRepo(t)
+    await Promise.all(Array.from({ length: count }, (_, index) => writeFile(join(repo, `file-${index}.txt`), 'Authored\n')))
+    const broad = commit(repo, 'broad change')
+    const result = run('measure', repo, process.env, ['--range', 'HEAD'])
+    assert.equal(result.exit, 0)
+    assert.equal(result.data.coChangePairs.length, pairs)
+    assert.deepEqual(result.data.files.map((file: NonNullable<typeof result.data.files>[number]) => file.commits), Array.from({ length: count }, () => [broad]))
+    assert.equal(result.data.limitations.some((limitation: string) => limitation.includes(`${broad} (${count} paths)`)), skipped)
+  })
+}
+
 for (const range of ['', '--all', 'HEAD...HEAD', '..HEAD', 'HEAD..']) {
   test(`measure rejects missing or unsupported range ${JSON.stringify(range)}`, async t => {
     const { repo } = await emptyRepo(t)

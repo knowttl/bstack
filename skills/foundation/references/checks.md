@@ -18,8 +18,11 @@ A new project has no existing debt, so a rule that fails on the first run is fix
 Require a representative valid case and a deliberate violation in disposable fixtures.
 The valid case must pass, and the violation must fail with the expected diagnostic and exit code.
 Include relevant syntax, aliases and re-exports in the proof, and record unsupported syntax and dynamic dependencies as coverage limits instead of assuming they pass.
-After preparing native dependencies in the clean and the independently seeded fixtures, run `node scripts/foundation.mjs rule-proof --repo <destination> --check-plan <file> --check-id <id> --valid <clean-dir> --violation <seeded-dir> --expect <specific-diagnostic> --json`.
+After preparing native dependencies in the clean and the independently seeded fixtures, run `node scripts/foundation.mjs rule-proof --repo <destination> --check-plan <file> --check-id <id> --valid <clean-dir> --violation <seeded-dir> --expect <specific-diagnostic> --replacement <file-type-or-function> --json`.
 The plan follows `schemas/check-plan.json`, and the selected check supplies the native child-command object.
+`--replacement` is the file, type or function the diagnostic tells the reader to use instead, and a violation whose output does not name it fails the proof.
+When nothing replaces the violating code, such as a native length rule or a formatter, pass `--no-replacement <reason>` instead; the reason is saved in the proof and reported as a limitation, and passing both or neither is a usage error.
+Word every diagnostic of a project-owned check in one shape, `path:line: rule-id: what is wrong. Use <replacement>.`, and keep the `rule-id:` prefix stable, because it is how a rule's firings are found in run logs.
 The command runs separate disposable copies, records versions, exits and diagnostics in scratch, and removes the copies.
 Unavailable native tools, interrupted execution and a failed clean setup are blocked, never proof.
 

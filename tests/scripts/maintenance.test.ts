@@ -136,6 +136,8 @@ test('create installs a checker and a docs gate that pass on a true tree and sto
   assert.deepEqual(await snapshot(f.repo), before)
   const applied = maintenance(f.directory, ['apply', '--repo', f.repo, '--plan', plan])
   assert.equal(applied.exit, 0, JSON.stringify(applied))
+  f.commit('register the maintenance contract')
+  git(f.repo, 'update-ref', 'refs/remotes/origin/main', 'HEAD')
 
   // The gate runs the written command in the worktree through the shell, as no-mistakes does.
   const { command, after } = parse(await readFile(join(f.repo, '.no-mistakes.yaml'), 'utf8')).gates.find((entry: ReturnType<typeof JSON.parse>) => entry.name === 'docs')

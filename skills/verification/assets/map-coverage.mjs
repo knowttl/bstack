@@ -84,7 +84,7 @@ function main(args) {
       const explained = new RegExp(`^${trailer}: ${id}: \\S`, 'm').test(commitMessages)
       if (touched.length && !covering.some(path => updated.has(path)) && !explained) {
         const more = touched.length > 1 ? ` and ${touched.length - 1} more` : ''
-        failures.push(`${file}: ${rule}: ${touched[0]}${more} changed without updating ${updates}; update it or add a "${trailer}: ${id}: <reason>" line to a commit message`)
+        failures.push(`${file}:${lines.findIndex(line => line.startsWith('Source paths:')) + 1}: ${rule}: ${touched[0]}${more} changed without updating ${updates}. Use an update to ${updates} or a "${trailer}: ${id}: <reason>" line in a commit message.`)
       }
     }
     if (failures.length) {

@@ -18,8 +18,9 @@ run('uv', ['sync', '--locked', '--python', '3.12'])
 run('uv', ['run', '--no-sync', 'ruff', 'check', '.'])
 run('uv', ['run', '--no-sync', 'python', '-m', 'unittest'])
 run('uv', ['run', '--no-sync', 'python', '-c', 'from app import opening_balance; assert opening_balance() == 10'])
-const expected = name === 'py-ledger' || name.endsWith('-private') ? ['private'] : name.endsWith('-alias') ? ['alias'] : name.endsWith('-cycle') ? ['cycle'] : []
-assert.deepEqual(JSON.parse(run('uv', ['run', '--no-sync', 'python', 'boundaries.py'], expected.length ? 1 : 0)), expected)
+const expected = name === 'py-ledger' || name.endsWith('-private') ? ['private-import'] : name.endsWith('-alias') ? ['alias-import'] : name.endsWith('-cycle') ? ['dependency-cycle'] : []
+const diagnostics = run('uv', ['run', '--no-sync', 'python', 'boundaries.py'], expected.length ? 1 : 0).split('\n').filter(Boolean)
+assert.deepEqual([...new Set(diagnostics.map(line => /^[^:]+:\d+: ([a-z-]+): .+\. Use .+\.$/.exec(line)?.[1]))].sort(), expected)
 if (name === 'py-ledger') {
   assert.match(await readFile(join(path, 'CONTRIBUTING.md'), 'utf8'), /External modules use the public ledger package/)
   run('uv', ['run', '--no-sync', 'python', 'startup.py', 'startup-output.json'])

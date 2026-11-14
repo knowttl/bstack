@@ -60,12 +60,12 @@ test('a maintain pass finds the module added since the design was reviewed, its 
     await writeFile(join(root, 'source.mjs'), source)
   }
   const checkPlan = join(directory, 'check-plan.json')
-  const rule = 'const source = require("node:fs").readFileSync("source.mjs", "utf8"); if (source.includes("/private")) { console.error("private import"); process.exit(1) }'
+  const rule = 'const source = require("node:fs").readFileSync("source.mjs", "utf8"); if (source.includes("/private")) { console.error("source.mjs:1: private-import: imports a private core module. Use ./public.mjs."); process.exit(1) }'
   await writeFile(checkPlan, JSON.stringify({ schemaVersion: 1, changeKind: 'feature', acceptanceSources: [{ id: 'design', path: 'DESIGN.md', contentHash: '0'.repeat(64) }],
     acceptanceCases: [{ id: 'boundary', sourceId: 'design', pointer: 'core', outcome: 'Private imports fail.', userJourney: false }],
     checks: [{ id: 'boundary', role: 'outcome', required: true, acceptanceCases: ['boundary'], inputScopes: ['**'],
       command: { executable: 'node', args: ['-e', rule], cwd: '.', versionArgs: ['--version'] } }] }))
-  const proof = runArchitecture('rule-proof', repo, env, ['--check-plan', checkPlan, '--check-id', 'boundary', '--valid', valid, '--violation', violation, '--expect', 'private import'])
+  const proof = runArchitecture('rule-proof', repo, env, ['--check-plan', checkPlan, '--check-id', 'boundary', '--valid', valid, '--violation', violation, '--expect', 'private-import', '--replacement', './public.mjs'])
   assert.equal(proof.exit, 0, JSON.stringify(proof))
   assert.deepEqual(proof.data.cases.map((item: NonNullable<typeof proof.data.cases>[number]) => item.execution.exitCode), [0, 1])
 

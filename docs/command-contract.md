@@ -457,6 +457,8 @@ In linear history, earlier lifetimes of reused endpoint paths contribute no supp
 Gitlink events are excluded as non-blobs using historical object modes, including deleted gitlinks and blob/gitlink type changes.
 Only the current blob lifetime at a reused gitlink path remains eligible for signals.
 `data.coChangePairs` gives sorted path pairs, change counts and their supporting commits.
+A commit that changes more than 100 measured paths adds no pairs, because pairs grow with the square of the path count and a commit that broad is mechanical rather than a coupling signal.
+It still counts toward each file's `changeCount`, and `data.limitations` names every such commit with its path count.
 There are no size or frequency thresholds, violation classifications or import analysis.
 
 History uses `git log` with 50% similarity rename detection and first-parent diffs for merge commits.
@@ -615,7 +617,7 @@ Frontmatter is decoded as YAML before filtering and measurement, including escap
 
 ## No-mistakes history
 
-`history --repo <target> [--json]` summarises the target's no-mistakes runs without writes or daemon access.
+`history --repo <target> [--export-findings] [--json]` summarises the target's no-mistakes runs without target writes or daemon access.
 It identifies the repo from the basename of its `no-mistakes` Git remote URL, removing a `.git` suffix, and opens `state.sqlite` under `NM_HOME` (default `~/.no-mistakes`) read-only.
 Repo, run, round and step records are read within one SQLite transaction.
 
@@ -624,6 +626,13 @@ Findings are counted once per run, step and finding ID, using their first record
 `data.findings` reports the total, counts by severity, action (including `ask-user`) and step, skipped count, and counts and shares first raised in round 2 or later and in round 3 or later.
 A skipped finding was declined by the user and never selected for a fix in any recorded round.
 `data.hotspots` lists files flagged in at least two distinct readable runs, with run and finding counts.
+A finding records the path its file had when it was raised, so each recorded path is mapped to the current file: a path that is a file at HEAD maps to itself, and any other path follows renames along the first-parent history of HEAD at Git 50% similarity.
+Each hotspot's `file` is that current path, `recordedPaths` lists the recorded paths counted under it and `atHead` is true.
+A recorded path that leads to no file at HEAD, because the file was deleted, the rename was not detected or history is unreadable, keeps its recorded name with `atHead: false` and is named in `data.limitations`.
+
+`--export-findings` saves every counted finding to `findings.json` in a new scratch directory and returns `data.findingsExport` with its `path` and `count`.
+Each record holds `run`, `step`, `round` (the round that first raised it), `id`, `file` (the current path as above, or null when the finding names no file), `recordedFile`, `atHead` and `text` (the finding's description).
+Without the option the command writes nothing.
 `data.stepTime` reports recorded milliseconds per step and each step's share of the sum of recorded step durations, rather than elapsed wall-clock time.
 Shares are fractions rounded to three decimal places, or zero when the denominator is zero.
 
@@ -1550,15 +1559,20 @@ Automatic collection of those separate records belongs to the later evidence tas
 
 ## Rule-proof and temporary debt
 
-`rule-proof --repo <target> --check-plan <file> --check-id <id> --valid <dir> --violation <dir> --expect <text> [--json]` reads the existing `schemas/check-plan.json` format and selects one check's child command.
+`rule-proof --repo <target> --check-plan <file> --check-id <id> --valid <dir> --violation <dir> --expect <text> --replacement <text>|--no-replacement <reason> [--json]` reads the existing `schemas/check-plan.json` format and selects one check's child command.
 The valid and violation directories must be distinct, prepared fixtures with native dependencies already installed.
 Use the clean rule-proof variant as the source of both, with one independently seeded violation per invocation.
 The command copies each fixture into a separate scratch directory, runs the command there, captures the native version, stdout, stderr and exit, then removes the disposable copies.
 It never runs the child against the source fixtures or target repo.
-Valid must exit zero; violation must exit nonzero and include the exact expected text in stdout or stderr.
+Valid must exit zero; violation must exit nonzero and include both the exact expected text and the exact replacement text in stdout or stderr.
+`--replacement` is the file, type or function the diagnostic tells the reader to use instead; a violation that fails with the expected text but does not name it fails the proof with `Violation output does not name the replacement <text>.`
+`--no-replacement <reason>` takes its place for a rule where nothing replaces the violating code, such as a native rule that reports code to remove, a formatter, a size limit or a model-check invariant: the violation then needs only the expected text, `proof.json` records the reason as `noReplacementReason` with `replacement: null`, and `data.limitations` reports it.
+Exactly one of the two is required; passing both or neither, or omitting any other option, is a usage error.
+Every check bstack generates, and every check its references tell an agent to write, prints each violation in one shape, `path:line: rule-id: what is wrong. Use <replacement>.`, so `--expect` can be the `rule-id:` prefix and `--replacement` the text after `Use`.
+The stable `rule-id:` prefix is what lets a rule's firings be counted from run logs.
 A skipped or absent check cannot prove enforcement.
 Unavailable tools, failed version probes, failed clean setup, cancellation, timeouts and missing working directories are blocked.
-The saved `proof.json` reports cases, native commands, diagnostics, status and source locations; failed proof returns exit 1, blocked proof exit 2.
+The saved `proof.json` reports cases, native commands, the expected diagnostic, the replacement, status and source locations; failed proof returns exit 1, blocked proof exit 2.
 Proof establishes only the supplied static cases; it does not infer coverage of unresolved imports, dynamic dependencies or unsupported syntax.
 See [fixture construction](fixtures.md) for the native stacks and independently seeded proof cases, and the [T3.3 progress record](implementation-plan.md#progress) for the baseline research outcome.
 
@@ -1630,9 +1644,9 @@ An unreadable kit blocks with `kit-unavailable` and an unknown feature is a usag
 Passing and failed proof results carry `data.runId`, `data.evidenceDirectory`, each evidence file with its SHA-256 and each executed step's exit code.
 
 `comment-check generate --repo <path> --language python|go|typescript` writes a self-contained, comment-free checker to scratch and returns `data.path`, `data.suggestedPath` and `data.run`.
-The checker exits 1 and prints `path:line:column: no-prose-comments: prose comment: <text>` for each comment outside [the comment-ban keep-list and its syntax limits](../skills/verification/references/slop-baseline.md#the-comment-ban).
+The checker exits 1 and prints `path:line: no-prose-comments: prose comment: <text>. Use a name, type or test that expresses it.` for each comment outside [the comment-ban keep-list and its syntax limits](../skills/verification/references/slop-baseline.md#the-comment-ban).
 `--list` prints the current violations as an array of rule, path and key objects and exits 0.
-`--baseline <file>` follows [the baseline schema](../runtime/schemas/baseline.schema.json), rejects duplicate rule/path/key identities and additionally fails on a listed entry that no longer matches a comment.
+`--baseline <file>` follows [the baseline schema](../runtime/schemas/baseline.schema.json), rejects duplicate rule/path/key identities and additionally fails on a listed entry that no longer matches a comment, printing `<baseline file>:1: no-prose-comments: baseline entry <key> for <path> no longer matches a comment. Use the baseline without this entry.`
 An unreadable or invalid baseline prints `invalid-baseline:` and exits 2, including when combined with `--list`.
 Python uses the standard library tokenizer and Go its scanner package; TypeScript follows the [compiler dependency requirements](../skills/verification/references/slop-baseline.md#the-comment-ban).
 
@@ -1642,7 +1656,7 @@ It takes the merge base of `<ref>` and `HEAD`, unions the committed, staged, uns
 Changes in one inventory remain counted even when reversed in another, including feature-file updates used to satisfy coverage.
 For each `features/*.md` file other than `README.md`, it reads the `Source paths:` line and requires, when a changed file matches one of those paths, that the feature file changed too or that a commit message since the merge base has a line `No-map-impact: <feature-id>: <reason>` with a non-empty reason.
 Exit 0 prints `feature-map-coverage: ok (<n> features checked)`.
-Exit 1 prints one `<feature file>: feature-map-coverage: <first changed path> [and <n> more] changed without updating this feature file; ...` line per uncovered feature on stdout.
+Exit 1 prints one `<feature file>:<line of its Source paths>: feature-map-coverage: <first changed path> [and <n> more] changed without updating this feature file. Use an update to this feature file or a "No-map-impact: <feature-id>: <reason>" line in a commit message.` line per uncovered feature on stdout.
 Exit 2 prints a `feature-map-coverage:` diagnostic on stderr for invalid arguments, an unusable base or kit, an empty feature inventory, invalid source paths or a feature file without exactly one complete `Source paths:` line listing comma-separated backticked paths.
 The gate uses the source-path grammar above.
 A path matches when it equals a declared path, lies under it or matches its `*`, `?` or `**` glob; matching uses Unicode code points, so `?` matches one non-slash code point.
@@ -1691,7 +1705,7 @@ Reader labels, local viewing, optional offline SVG rendering and counterexample 
 `node .agents/skills/formal-<target>/scripts/map-coverage.mjs --base <ref>` is the proof coverage gate that every suite carries, and it needs only Node and Git.
 It follows the [feature-map gate](#verification-skill-commands) in how it takes the merge base, unions the path inventories and drops files inside the suite directory from source-impact matching.
 For each `properties/*.md` file other than `README.md` it reads the `Source paths:` and `Model files:` lines and requires, when a changed file matches a declared source path, that one of the listed model files changed too or that a commit message since the merge base has a line `No-proof-impact: <id>: <reason>` for that property.
-Exit 0 prints `formal-proof-coverage: ok (<n> properties checked)`, exit 1 prints one `<property file>: formal-proof-coverage: <first changed path> [and <n> more] changed without updating a model file of this property; ...` line per uncovered property on stdout, and exit 2 prints a `formal-proof-coverage:` diagnostic on stderr for invalid arguments, an unusable base or suite, an empty property inventory or a property file without exactly one complete `Source paths:` line and one complete `Model files:` line.
+Exit 0 prints `formal-proof-coverage: ok (<n> properties checked)`, exit 1 prints one `<property file>:<line of its Source paths>: formal-proof-coverage: <first changed path> [and <n> more] changed without updating a model file of this property. Use an update to a model file of this property or a "No-proof-impact: <id>: <reason>" line in a commit message.` line per uncovered property on stdout, and exit 2 prints a `formal-proof-coverage:` diagnostic on stderr for invalid arguments, an unusable base or suite, an empty property inventory or a property file without exactly one complete `Source paths:` line and one complete `Model files:` line.
 A `No-map-impact` line never satisfies this gate, and a `No-proof-impact` line never satisfies the feature-map gate.
 
 ## Recall skill command

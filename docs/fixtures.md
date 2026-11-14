@@ -37,6 +37,7 @@ The fixture boundary probes supply native checks for the installed skill's [rule
 See [T3.4](implementation-plan.md#t34-integrate-scoped-checks-with-the-maintained-local-command) for maintained-command integration controls.
 The clean `ts-rule-proof` and `py-rule-proof` fixtures pass with public imports.
 Their `-private`, `-alias` and `-cycle` variants each fail only that boundary probe while native compilation, lint and units pass.
+The probes print each violation as `path:line: rule-id: what is wrong. Use <replacement>.` with the rule IDs `private-import`, `alias-import` and `dependency-cycle`, naming the public entry point to import instead.
 Python's alias variant uses a relative-import re-export bridge.
 `ts-shop` additionally proves the failing checkout against an ephemeral local HTTP server despite passing mocked units.
 `py-greeter` is the verification skill's disposable target: a small Python HTTP service with the Python slop-baseline mappings enabled in `pyproject.toml` and a maintained `check.py` that runs lint, the formatter check and the generated comment-ban checker.

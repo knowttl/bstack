@@ -251,7 +251,7 @@ Done when: Each class lists at least two cited occurrences and any written rule 
 
 Give each class the highest rung of the ladder that can express it, and say why each higher rung cannot.
 Move a class that recurs despite a written rule up at least one rung from the rung that rule sits on, in the same change.
-For a check, write the diagnostic so that it names the file, type or function to use instead.
+For a check, write the diagnostic as `path:line: rule-id: what is wrong. Use <replacement>.`, so that it names the file, type or function to use instead, and pass that name to `rule-proof --replacement`.
 For wrapper bypasses, prefer eliminating the footgun; otherwise propose a native restricted-API rule permitting calls only in the wrapper and naming it in the diagnostic.
 If no sanctioned wrapper exists, report that product change instead of building it.
 

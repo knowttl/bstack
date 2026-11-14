@@ -61,7 +61,7 @@ function parseArgs(argv, valueOptions = []) {
     if (Object.hasOwn(options, name)) {
       problems.push({ code: "duplicate-option", message: `Repeated option: ${token}`, fix: "Supply each option once." });
     }
-    if (name === "json" || name === "dry-run" || name === "approved-by-user" || name === "refresh" || name === "check" || name === "update" || name === "docs-only") options[name] = true;
+    if (name === "json" || name === "dry-run" || name === "approved-by-user" || name === "refresh" || name === "check" || name === "update" || name === "docs-only" || name === "export-findings") options[name] = true;
     else if (!argv[index + 1] || argv[index + 1].startsWith("--")) {
       problems.push({ code: "missing-value", message: `Missing value for ${token}`, fix: "Supply a nonempty value after the option." });
     } else if (name === "plans") {
@@ -595,8 +595,8 @@ async function capture(command, { cwd, timeoutMs, signal, env, outputLimitBytes,
 
 // runtime/scripts/commands/rule-proof.mjs
 async function run(options) {
-  if (!["check-plan", "check-id", "valid", "violation", "expect"].every((key) => options[key]?.trim())) {
-    throw new CommandError("usage-error", [{ code: "missing-proof-options", message: "A proof needs a check plan, check ID, valid directory, violation directory and specific diagnostic.", fix: "Supply --check-plan <file> --check-id <id> --valid <dir> --violation <dir> --expect <text>." }]);
+  if (!["check-plan", "check-id", "valid", "violation", "expect"].every((key) => options[key]?.trim()) || Boolean(options.replacement?.trim()) === Boolean(options["no-replacement"]?.trim())) {
+    throw new CommandError("usage-error", [{ code: "missing-proof-options", message: "A proof needs a check plan, check ID, valid directory, violation directory, specific diagnostic and exactly one of the replacement that diagnostic names or the reason no replacement exists.", fix: "Supply --check-plan <file> --check-id <id> --valid <dir> --violation <dir> --expect <text> and either --replacement <file, type or function to use instead> or --no-replacement <reason>." }]);
   }
   const target = await resolveTarget(options);
   const plan = inspectJSON(await readFile2(options["check-plan"], "utf8")).value;
@@ -634,10 +634,11 @@ async function run(options) {
         } });
         execution = await runCommand({ root }, check.command, { signal: controller.signal });
         const normal = execution.toolVersion.status === "passed" && execution.exitCode !== null && !execution.error && !execution.signal && !execution.timedOut && !execution.cancelled;
-        const diagnostic = `${execution.stdout}
-${execution.stderr}`.includes(options.expect);
-        status2 = !normal ? "blocked" : kind === "valid" ? execution.exitCode === 0 ? "passed" : "blocked" : execution.exitCode !== 0 && diagnostic ? "passed" : "failed";
-        reason = status2 === "passed" ? null : execution.error ?? (kind === "valid" ? "Clean control or tool setup did not pass." : "Violation did not fail with the expected diagnostic.");
+        const output = `${execution.stdout}
+${execution.stderr}`;
+        const rejected = execution.exitCode !== 0 && output.includes(options.expect);
+        status2 = !normal ? "blocked" : kind === "valid" ? execution.exitCode === 0 ? "passed" : "blocked" : rejected && (!options.replacement || output.includes(options.replacement)) ? "passed" : "failed";
+        reason = status2 === "passed" ? null : execution.error ?? (kind === "valid" ? "Clean control or tool setup did not pass." : rejected ? `Violation output does not name the replacement ${options.replacement}.` : "Violation did not fail with the expected diagnostic.");
       } catch (error) {
         reason = error.message;
       } finally {
@@ -656,13 +657,18 @@ ${execution.stderr}`.includes(options.expect);
     checkId: check.id,
     command: check.command,
     expectedDiagnostic: options.expect,
+    replacement: options.replacement ?? null,
+    noReplacementReason: options["no-replacement"] ?? null,
     status,
     cases,
     path,
-    limitations: ["Proof covers only the supplied fixtures and the selected tool diagnostic. It does not establish unsupported syntax or dynamic dependencies."]
+    limitations: [
+      "Proof covers only the supplied fixtures and the selected tool diagnostic. It does not establish unsupported syntax or dynamic dependencies.",
+      ...options["no-replacement"] ? [`The diagnostic was not required to name a replacement: ${options["no-replacement"]}`] : []
+    ]
   };
   await writeFile(path, JSON.stringify(data, null, 2) + "\n", { flag: "wx" });
-  return { status, data, problems: cases.filter((item) => item.status !== "passed").map((item) => ({ code: "rule-proof-" + item.status, message: `${item.kind}: ${item.reason}`, fix: "Restore native tool setup or correct the rule and fixture, then rerun proof." })) };
+  return { status, data, problems: cases.filter((item) => item.status !== "passed").map((item) => ({ code: "rule-proof-" + item.status, message: `${item.kind}: ${item.reason}`, fix: 'Restore native tool setup, correct the rule and fixture, or word the diagnostic as "path:line: rule-id: what is wrong. Use <replacement>.", then rerun proof.' })) };
 }
 
 // runtime/scripts/commands/baseline.mjs
@@ -4755,7 +4761,7 @@ def violations(path):
     for token in tokens:
         if token.type != tokenize.COMMENT:
             continue
-        line, column = token.start
+        line = token.start[0]
         text = token.string
         if (
             (line == 1 and text.startswith("#!"))
@@ -4772,7 +4778,6 @@ def violations(path):
                 "path": path,
                 "key": digest + ":" + str(seen[digest]),
                 "line": line,
-                "column": column + 1,
                 "text": text,
             }
         )
@@ -4855,14 +4860,14 @@ def main():
         if (item["rule"], item["path"], item["key"]) not in recorded:
             failed = True
             print(
-                "%s:%d:%d: %s: prose comment: %s"
-                % (item["path"], item["line"], item["column"], RULE, item["text"])
+                "%s:%d: %s: prose comment: %s. Use a name, type or test that expresses it."
+                % (item["path"], item["line"], RULE, item["text"])
             )
     for rule, path, key in sorted(recorded - current):
         failed = True
         print(
-            "%s: %s: baseline entry %s no longer matches a comment; remove it"
-            % (path, rule, key)
+            "%s:1: %s: baseline entry %s for %s no longer matches a comment. Use the baseline without this entry."
+            % (options.baseline, rule, key, path)
         )
     return 1 if failed else 0
 
@@ -4900,7 +4905,6 @@ type comment struct {
 	path    string
 	line    int
 	last    int
-	column  int
 	text    string
 	key     string
 	leading bool
@@ -5017,7 +5021,7 @@ func scan(path string) ([]comment, error) {
 			continue
 		}
 		position := set.Position(pos)
-		found = append(found, comment{path: path, line: position.Line, last: position.Line + strings.Count(lit, "\\n"), column: position.Column, text: lit, leading: leading, documented: documented[position.Offset]})
+		found = append(found, comment{path: path, line: position.Line, last: position.Line + strings.Count(lit, "\\n"), text: lit, leading: leading, documented: documented[position.Offset]})
 	}
 	licensed := map[int]bool{}
 	for start := 0; start < len(found); {
@@ -5167,7 +5171,7 @@ func main() {
 		current[identity(item)] = true
 		if !recorded[identity(item)] {
 			failed = true
-			fmt.Printf("%s:%d:%d: %s: prose comment: %s\\n", item.path, item.line, item.column, rule, item.text)
+			fmt.Printf("%s:%d: %s: prose comment: %s. Use a name, type or test that expresses it.\\n", item.path, item.line, rule, item.text)
 		}
 	}
 	var stale []string
@@ -5180,7 +5184,7 @@ func main() {
 	for _, id := range stale {
 		parts := strings.Split(id, "\\x00")
 		failed = true
-		fmt.Printf("%s: %s: baseline entry %s no longer matches a comment; remove it\\n", parts[1], parts[0], parts[2])
+		fmt.Printf("%s:1: %s: baseline entry %s for %s no longer matches a comment. Use the baseline without this entry.\\n", *baseline, parts[0], parts[2], parts[1])
 	}
 	if failed {
 		os.Exit(1)
@@ -5297,7 +5301,7 @@ function violations(path) {
   const found = [...ranges.values()].sort((a, b) => a.pos - b.pos).map(range => {
     const start = source.getLineAndCharacterOfPosition(range.pos)
     const last = source.getLineAndCharacterOfPosition(range.end)
-    return { text: text.slice(range.pos, range.end), documented: documented.has(range.pos), line: start.line + 1, column: start.character + 1, last: last.line + 1, leading: range.leading }
+    return { text: text.slice(range.pos, range.end), documented: documented.has(range.pos), line: start.line + 1, last: last.line + 1, leading: range.leading }
   })
   const licensed = new Set()
   for (let start = 0; start < found.length;) {
@@ -5319,7 +5323,7 @@ function violations(path) {
     if (licensed.has(index) || documentation || (item.line === 1 && item.text.startsWith('#!')) || directive) continue
     const digest = createHash('sha256').update(item.text.trim()).digest('hex').slice(0, 12)
     seen.set(digest, (seen.get(digest) ?? 0) + 1)
-    kept.push({ rule, path, key: digest + ':' + seen.get(digest), line: item.line, column: item.column, text: item.text })
+    kept.push({ rule, path, key: digest + ':' + seen.get(digest), line: item.line, text: item.text })
   }
   return kept
 }
@@ -5359,12 +5363,12 @@ if (args.includes('--list')) {
   let failed = false
   for (const item of found.filter(item => !recorded.has(identity(item)))) {
     failed = true
-    console.log(item.path + ':' + item.line + ':' + item.column + ': ' + rule + ': prose comment: ' + item.text)
+    console.log(item.path + ':' + item.line + ': ' + rule + ': prose comment: ' + item.text + '. Use a name, type or test that expresses it.')
   }
   for (const [id, entry] of recorded) {
     if (current.has(id)) continue
     failed = true
-    console.log(entry.path + ': ' + rule + ': baseline entry ' + entry.key + ' no longer matches a comment; remove it')
+    console.log(option('--baseline') + ':1: ' + rule + ': baseline entry ' + entry.key + ' for ' + entry.path + ' no longer matches a comment. Use the baseline without this entry.')
   }
   process.exitCode = failed ? 1 : 0
 }
@@ -5402,7 +5406,7 @@ async function run11(options) {
 
 // runtime/scripts/runtime/scripts/verification.mjs
 await dispatch(process.argv.slice(2), "verification", {
-  "rule-proof": { options: ["check-plan", "check-id", "valid", "violation", "expect"], help: "Prove a selected native check against disposable valid and violation copies.\nUsage: verification.mjs rule-proof --repo <path> --check-plan <file> --check-id <id> --valid <dir> --violation <dir> --expect <text> [--json]\nUses schemas/check-plan.json. Prepare native dependencies in each source fixture first. Unavailable tools or a failed clean control are blocked. Evidence is saved in scratch.", run },
+  "rule-proof": { options: ["check-plan", "check-id", "valid", "violation", "expect", "replacement", "no-replacement"], help: "Prove a selected native check against disposable valid and violation copies.\nUsage: verification.mjs rule-proof --repo <path> --check-plan <file> --check-id <id> --valid <dir> --violation <dir> --expect <text> --replacement <text>|--no-replacement <reason> [--json]\nUses schemas/check-plan.json. The violation must exit nonzero with output that contains both --expect and --replacement, the file, type or function its diagnostic tells the reader to use instead. Pass --no-replacement <reason> instead only when nothing replaces the violating code; the reason is saved in the proof and reported as a limitation. Passing both or neither is a usage error. Prepare native dependencies in each source fixture first. Unavailable tools or a failed clean control are blocked. Evidence is saved in scratch.", run },
   "baseline check": { options: ["baseline", "violations", "refresh", "finding", "findings", "entry"], help: "Check visible temporary debt and reject new or fixed entries.\nUsage: verification.mjs baseline check --repo <path> --baseline <repo-relative-file> --violations <file> [--refresh [--finding <id> --findings <file> --entry <file>]] [--json]\nBaseline follows schemas/baseline.schema.json; violations are an array of rule/path/key objects. Refresh removes fixed entries. Adding one entry requires a selected unresolved debt finding in its scope. A failing refresh writes nothing.", run: run3 },
   "probe record": { options: ["name", "phase", "spec", "approved-by-user", "command"], help: "Capture a live call in scratch.\nUsage: verification.mjs probe record --repo <path> --name <n> --phase before|after --spec <file> [--approved-by-user] [--json] -- <executable> [args...]\nDescriptor follows schemas/probe-spec.json. Side effects require approval for each call. Unavailable calls remain unverified.", run: run4 },
   "probe compare": { options: ["name", "before", "after"], help: "Require a successful matching live probe pair for an outside dependency.\nUsage: verification.mjs probe compare --repo <path> --name <n> --before <run-id> --after <run-id> [--json]\nMissing, mismatched, unsuccessful or stale evidence cannot pass.", run: run4 },

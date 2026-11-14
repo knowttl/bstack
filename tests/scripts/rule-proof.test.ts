@@ -11,7 +11,7 @@ type Fixture = Awaited<ReturnType<typeof emptyRepo>> & {
     acceptanceSources: { id: string; path: string; contentHash: string }[];
     acceptanceCases: { id: string; sourceId: string; pointer: string; outcome: string; userJourney: boolean }[];
     checks: { id: string; role: string; required: boolean; acceptanceCases: string[]; inputScopes: string[]; command: Command; skipReason?: string }[] }
-  invoke: (expect?: string) => Promise<ReturnType<typeof run>>
+  invoke: (expect?: string, replacement?: string, extra?: readonly string[]) => Promise<ReturnType<typeof run>>
 }
 
 async function setup(t: import('node:test').TestContext, command: Command) {
@@ -21,18 +21,20 @@ async function setup(t: import('node:test').TestContext, command: Command) {
   await mkdir(f.valid)
   await mkdir(f.violation)
   await writeFile(join(f.valid, 'case.txt'), 'valid')
-  await writeFile(join(f.violation, 'case.txt'), 'private')
+  await writeFile(join(f.violation, 'case.txt'), diagnostic)
   f.plan = { schemaVersion: 1, changeKind: 'feature', acceptanceSources: [{ id: 'design', path: 'DESIGN.md', contentHash: '0'.repeat(64) }],
     acceptanceCases: [{ id: 'boundary', sourceId: 'design', pointer: 'public', outcome: 'Private imports fail.', userJourney: false }],
     checks: [{ id: 'boundary', role: 'outcome', required: true, acceptanceCases: ['boundary'], inputScopes: ['**'], command }] }
   f.path = join(f.directory, 'plan.json')
-  f.invoke = async (expect = 'private') => {
+  f.invoke = async (expect = 'private-import', replacement = 'src/public.ts', extra = []) => {
     await writeFile(f.path, JSON.stringify(f.plan))
     return run('rule-proof', f.repo, { ...process.env, XDG_CACHE_HOME: join(f.directory, 'cache'), LOCALAPPDATA: join(f.directory, 'cache') },
-      ['--check-plan', f.path, '--check-id', 'boundary', '--valid', f.valid, '--violation', f.violation, '--expect', expect])
+      ['--check-plan', f.path, '--check-id', 'boundary', '--valid', f.valid, '--violation', f.violation, '--expect', expect, ...(replacement ? ['--replacement', replacement] : []), ...extra])
   }
   return f
 }
+
+const diagnostic = 'src/app.ts:1: private-import: app imports a private module. Use src/public.ts.'
 
 const command = { executable: 'node', args: ['-e', 'const fs = require("node:fs"); const kind = fs.readFileSync("case.txt", "utf8"); fs.writeFileSync("generated", kind); console.log(kind); process.exit(kind === "valid" ? 0 : 1)'], cwd: '.', versionArgs: ['--version'] }
 
@@ -70,7 +72,7 @@ test('proof preserves source fixtures and records normal rejection with tool ver
 })
 
 for (const [name, replacement, expected] of [
-  ['passing violation', { args: ['-e', 'console.log("private")'] }, 'failed'],
+  ['passing violation', { args: ['-e', `console.log(${JSON.stringify(diagnostic)})`] }, 'failed'],
   ['wrong diagnostic', { args: ['-e', 'const fs = require("node:fs"); process.exit(fs.readFileSync("case.txt", "utf8") === "valid" ? 0 : 1)'] }, 'failed'],
   ['failed setup', { args: ['-e', 'console.log("private"); process.exit(1)'] }, 'blocked'],
   ['missing tool', { executable: 'bstack-missing-native-tool' }, 'blocked'],
@@ -87,20 +89,47 @@ for (const [name, replacement, expected] of [
   })
 }
 
-for (const [stack, executable, args, versionArgs] of [
-  ['ts', 'node', ['boundaries.ts'], ['-p', 'require("typescript").version']],
-  ['py', 'uv', ['run', '--no-sync', 'python', 'boundaries.py'], ['run', '--no-sync', 'python', '--version']]
-] satisfies [unknown, unknown, unknown, unknown][]) {
+test('a violation whose diagnostic does not name the replacement cannot prove enforcement', async t => {
+  const f = await setup(t, command)
+  const result = await f.invoke('private-import', 'src/other.ts')
+  assert.equal(result.exit, 1)
+  assert.deepEqual(result.data.cases.map((item: NonNullable<typeof result.data.cases>[number]) => item.status), ['passed', 'failed'])
+  assert.equal(result.problems[0].message, 'violation: Violation output does not name the replacement src/other.ts.')
+})
+
+for (const [name, extra] of [['neither a replacement nor a reason', []], ['both a replacement and a reason', ['--replacement', 'src/public.ts', '--no-replacement', 'Nothing replaces it.']]] satisfies [unknown, unknown][]) {
+  test(`a proof with ${name} is a usage error`, async t => {
+    const f = await setup(t, command)
+    const result = await f.invoke('private-import', '', extra)
+    assert.equal(result.exit, 3)
+    assert.equal(result.problems[0].code, 'missing-proof-options')
+  })
+}
+
+test('a proof with a reason instead of a replacement passes and reports the reason as a limitation', async t => {
+  const f = await setup(t, command)
+  const result = await f.invoke('private-import', '', ['--no-replacement', 'The rule removes code and nothing replaces it.'])
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.equal(result.data.replacement, null)
+  assert.equal(result.data.noReplacementReason, 'The rule removes code and nothing replaces it.')
+  assert.equal(result.data.limitations.at(-1), 'The diagnostic was not required to name a replacement: The rule removes code and nothing replaces it.')
+  assert.deepEqual(JSON.parse(await readFile(result.data.path, 'utf8')), result.data)
+})
+
+for (const [stack, executable, args, versionArgs, owner] of [
+  ['ts', 'node', ['boundaries.ts'], ['-p', 'require("typescript").version'], 'packages/core/index.ts'],
+  ['py', 'uv', ['run', '--no-sync', 'python', 'boundaries.py'], ['run', '--no-sync', 'python', '--version'], 'ledger.Ledger']
+] satisfies [unknown, unknown, unknown, unknown, unknown][]) {
   test(`${stack} native public imports and permitted direction pass while private, alias and cycles fail`, async t => {
     const f = await setup(t, { executable, args, versionArgs, cwd: '.' })
     f.valid = build(t, `${stack}-rule-proof`)
-    for (const kind of ['private', 'alias', 'cycle']) {
+    for (const [kind, rule, replacement] of [['private', 'private-import', owner], ['alias', 'alias-import', owner], ['cycle', 'dependency-cycle', 'a one-way dependency']]) {
       f.violation = build(t, `${stack}-rule-proof-${kind}`)
-      const result = await f.invoke(`"${kind}"`)
+      const result = await f.invoke(`: ${rule}: `, replacement)
       assert.equal(result.exit, 0, JSON.stringify(result))
       assert.deepEqual(result.data.cases.map((item: NonNullable<typeof result.data.cases>[number]) => item.status), ['passed', 'passed'])
-      assert.equal(result.data.cases[0].execution.stdout.trim(), '[]')
-      assert.deepEqual(JSON.parse(result.data.cases[1].execution.stdout), [kind])
+      assert.equal(result.data.cases[0].execution.stdout, '')
+      assert.equal(result.data.replacement, replacement)
       t.diagnostic(JSON.stringify({ stack, violation: kind, command: result.data.command,
         cases: result.data.cases.map((item: NonNullable<typeof result.data.cases>[number]) => ({ kind: item.kind, status: item.status, toolVersion: item.execution.toolVersion.stdout.trim(),
           exitCode: item.execution.exitCode, stdout: item.execution.stdout, stderr: item.execution.stderr })) }))

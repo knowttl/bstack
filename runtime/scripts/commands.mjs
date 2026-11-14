@@ -41,8 +41,8 @@ export const commands = {
   },
   'rule-proof': {
     module: './commands/rule-proof.mjs',
-    options: ['check-plan', 'check-id', 'valid', 'violation', 'expect'],
-    help: 'Prove a selected native check against disposable valid and violation copies.\nUsage: {entry} rule-proof --repo <path> --check-plan <file> --check-id <id> --valid <dir> --violation <dir> --expect <text> [--json]\nUses schemas/check-plan.json. Prepare native dependencies in each source fixture first. Unavailable tools or a failed clean control are blocked. Evidence is saved in scratch.'
+    options: ['check-plan', 'check-id', 'valid', 'violation', 'expect', 'replacement', 'no-replacement'],
+    help: 'Prove a selected native check against disposable valid and violation copies.\nUsage: {entry} rule-proof --repo <path> --check-plan <file> --check-id <id> --valid <dir> --violation <dir> --expect <text> --replacement <text>|--no-replacement <reason> [--json]\nUses schemas/check-plan.json. The violation must exit nonzero with output that contains both --expect and --replacement, the file, type or function its diagnostic tells the reader to use instead. Pass --no-replacement <reason> instead only when nothing replaces the violating code; the reason is saved in the proof and reported as a limitation. Passing both or neither is a usage error. Prepare native dependencies in each source fixture first. Unavailable tools or a failed clean control are blocked. Evidence is saved in scratch.'
   },
   'baseline check': {
     module: './commands/baseline.mjs',
@@ -101,13 +101,13 @@ export const commands = {
   },
   history: {
     module: './commands/history.mjs',
-    options: [],
-    help: 'Summarise this repo\'s no-mistakes run history without writes.\nUsage: {entry} history --repo <path> [--json]\nIdentifies the repo from its no-mistakes remote and opens ~/.no-mistakes/state.sqlite (NM_HOME overrides the folder) read-only, never through the daemon. Returns runs read versus total with rounds per run, findings by severity, action and step, the share of findings first raised in round 2 or later and in round 3 or later, skipped findings (declined by the user and never selected for a fix), files flagged in two or more runs, each step\'s share of run time and the counts of fix and revert commits in Git history. A finding that stays listed across rounds counts once per run and step, in the round that first raised it. A repo with no linked history is a pass with a limitation, never a reason to infer prior runs.'
+    options: ['export-findings'],
+    help: 'Summarise this repo\'s no-mistakes run history without target writes.\nUsage: {entry} history --repo <path> [--export-findings] [--json]\nIdentifies the repo from its no-mistakes remote and opens ~/.no-mistakes/state.sqlite (NM_HOME overrides the folder) read-only, never through the daemon. Returns runs read versus total with rounds per run, findings by severity, action and step, the share of findings first raised in round 2 or later and in round 3 or later, skipped findings (declined by the user and never selected for a fix), files flagged in two or more runs, each step\'s share of run time and the counts of fix and revert commits in Git history. A finding that stays listed across rounds counts once per run and step, in the round that first raised it. File paths follow renames to the current file at HEAD, and a path that leads to none keeps its recorded name with atHead false. --export-findings saves every counted finding as run, step, round, id, file, recordedFile, atHead and text in a scratch findings.json and returns its path. A repo with no linked history is a pass with a limitation, never a reason to infer prior runs.'
   },
   measure: {
     module: './commands/measure.mjs',
     options: ['range', 'exclusions'],
-    help: 'Collect endpoint file sizes and current-lifetime history signals without writes.\nUsage: {entry} measure --repo <path> --range <base>..<head>|<head> [--exclusions <file>] [--json]\nA single revision selects its reachable history. Only files present at the endpoint are measured, following renames back to their addition. Exclusions follow schemas/measure-exclusions.json. Signals do not establish violations or merge conflicts.'
+    help: 'Collect endpoint file sizes and current-lifetime history signals without writes.\nUsage: {entry} measure --repo <path> --range <base>..<head>|<head> [--exclusions <file>] [--json]\nA single revision selects its reachable history. Only files present at the endpoint are measured, following renames back to their addition. Exclusions follow schemas/measure-exclusions.json. A commit that changes more than 100 measured paths adds no co-change pairs and is named in the limitations. Signals do not establish violations or merge conflicts.'
   },
   overlap: {
     module: './commands/overlap.mjs',

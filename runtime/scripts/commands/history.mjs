@@ -1,8 +1,9 @@
 import { existsSync } from 'node:fs'
+import { writeFile } from 'node:fs/promises'
 import { homedir } from 'node:os'
 import { basename, join } from 'node:path'
-import { DatabaseSync } from 'node:sqlite'
 import { resolveTarget } from '../lib/repo.mjs'
+import { createScratch } from '../lib/scratch.mjs'
 import { readGit } from '../lib/discovery.mjs'
 
 const share = (part, whole) => whole ? Math.round(part / whole * 1000) / 1000 : 0
@@ -13,6 +14,35 @@ function parseList(json, key) {
   const items = key ? value[key] ?? [] : value
   if (!Array.isArray(items)) throw new TypeError('Expected a list.')
   return items
+}
+
+function currentPaths(root) {
+  const tree = readGit(root, ['ls-tree', '-r', '-z', '--name-only', 'HEAD'])
+  const log = readGit(root, ['log', '--first-parent', '--diff-merges=first-parent', '--find-renames=50%', '--name-status', '-z', '--format=%x01', 'HEAD'])
+  const current = new Map()
+  if (tree.status !== 0 || log.status !== 0) return current
+  for (const path of tree.stdout.split('\0').filter(Boolean)) current.set(path, path)
+  const active = new Map(current)
+  for (const commit of log.stdout.split('\x01')) {
+    const tokens = commit.split('\0').map(token => token.trim()).filter(Boolean)
+    const ended = []
+    const renamed = []
+    for (let index = 0; index < tokens.length; index++) {
+      const status = tokens[index][0]
+      const path = tokens[++index]
+      if (status === 'A') ended.push(path)
+      if (status !== 'R') continue
+      const destination = tokens[++index]
+      ended.push(destination)
+      if (active.has(destination)) renamed.push([path, active.get(destination)])
+    }
+    for (const path of ended) active.delete(path)
+    for (const [path, file] of renamed) {
+      active.set(path, file)
+      if (!current.has(path)) current.set(path, file)
+    }
+  }
+  return current
 }
 
 export async function run(options) {
@@ -34,6 +64,7 @@ export async function run(options) {
   const repoId = basename(gate.stdout.trim(), '.git')
   if (!existsSync(store)) return noHistory(`No no-mistakes state store exists at ${store}.`)
 
+  const { DatabaseSync } = await import('node:sqlite')
   const database = new DatabaseSync(store, { readOnly: true })
   try {
     database.exec('BEGIN')
@@ -65,7 +96,7 @@ export async function run(options) {
       const userDecided = row.selection_source === 'user' || row.selection_source === 'user_declined'
       for (const finding of listed) {
         const key = `${row.run_id}\0${row.step_name}\0${finding.id}`
-        const entry = found.get(key) ?? { run: row.run_id, step: row.step_name, file: finding.file, severity: finding.severity, action: finding.action, firstRound: row.round, selected: false, declined: false }
+        const entry = found.get(key) ?? { run: row.run_id, step: row.step_name, id: finding.id, file: finding.file, text: finding.description, severity: finding.severity, action: finding.action, firstRound: row.round, selected: false, declined: false }
         if (selected.includes(finding.id)) entry.selected = true
         else if (userDecided) entry.declined = true
         found.set(key, entry)
@@ -81,16 +112,31 @@ export async function run(options) {
     const byStep = {}
     const byRun = {}
     const byFile = new Map()
+    const current = currentPaths(target.root)
+    const absent = new Set()
     for (const finding of findings) {
       count(bySeverity, finding.severity)
       count(byAction, finding.action)
       count(byStep, finding.step)
       count(byRun, finding.run)
       if (!finding.file) continue
-      const hotspot = byFile.get(finding.file) ?? { file: finding.file, runs: new Set(), findings: 0 }
+      finding.recordedFile = finding.file
+      finding.atHead = current.has(finding.file)
+      if (finding.atHead) finding.file = current.get(finding.file)
+      else absent.add(finding.file)
+      const hotspot = byFile.get(finding.file) ?? { file: finding.file, recordedPaths: new Set(), atHead: finding.atHead, runs: new Set(), findings: 0 }
+      hotspot.recordedPaths.add(finding.recordedFile)
       hotspot.runs.add(finding.run)
       hotspot.findings++
       byFile.set(finding.file, hotspot)
+    }
+    if (absent.size) limitations.push(`${absent.size} finding paths are not files at HEAD and no rename leads from them to one, so they keep their recorded path with atHead false: ${[...absent].sort().join(', ')}. Renames are followed along the first-parent history of HEAD at Git 50% similarity, so a deleted file, an undetected rename or unreadable history all leave a path unmapped.`)
+    let findingsExport
+    if (options['export-findings']) {
+      const path = join(await createScratch(target), 'findings.json')
+      await writeFile(path, JSON.stringify(findings.map(finding => ({ run: finding.run, step: finding.step, round: finding.firstRound, id: finding.id, file: finding.file ?? null,
+        recordedFile: finding.recordedFile ?? null, atHead: finding.atHead ?? null, text: finding.text ?? null })), null, 2) + '\n', { flag: 'wx' })
+      findingsExport = { path, count: findings.length }
     }
     const fromRound2 = findings.filter(finding => finding.firstRound >= 2).length
     const fromRound3 = findings.filter(finding => finding.firstRound >= 3).length
@@ -124,10 +170,11 @@ export async function run(options) {
           lateRoundShare: { fromRound2: share(fromRound2, findings.length), fromRound3: share(fromRound3, findings.length) }
         },
         hotspots: [...byFile.values()].filter(hotspot => hotspot.runs.size >= 2)
-          .map(hotspot => ({ file: hotspot.file, runs: hotspot.runs.size, findings: hotspot.findings }))
+          .map(hotspot => ({ file: hotspot.file, recordedPaths: [...hotspot.recordedPaths].sort(), atHead: hotspot.atHead, runs: hotspot.runs.size, findings: hotspot.findings }))
           .sort((a, b) => b.runs - a.runs || b.findings - a.findings || a.file.localeCompare(b.file)),
         stepTime: Object.entries(stepMs).map(([step, ms]) => ({ step, ms, share: share(ms, totalMs) })).sort((a, b) => b.ms - a.ms || a.step.localeCompare(b.step)),
         git,
+        ...(findingsExport ? { findingsExport } : {}),
         limitations
       },
       inputs

@@ -55,7 +55,7 @@ Include the documents brief's test-policy and review-instruction signal without 
 If the brief happened to read a test-quality instance, retain one checked `path:line` and rule for the existing `/verification create` checklist line; otherwise state that test quality was not sampled.
 Also retain the brief's cited statement that the suite or the gate is slow, if the documents hold one; do not time a run to find out.
 
-For a Git repo, also run `node scripts/repo-audit.mjs history --repo <target> --json` and keep the output in scratch.
+For a Git repo, also run `node scripts/repo-audit.mjs history --repo <target> --export-findings --json` and keep the output in scratch; its `findingsExport.path` names a scratch file holding each finding's run, step, round, current file and text.
 Run the one history brief from the research briefs reference on that output, reading the run history only as the [history reference](references/no-mistakes-history.md) allows, and add its entry to the same report.
 The brief reports the runs read versus the total, or that the repo has no linked history, and names only mistake classes with two cited occurrences.
 

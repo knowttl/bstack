@@ -1,12 +1,12 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
 import { createHash } from 'node:crypto'
-import { mkdir, readFile } from 'node:fs/promises'
+import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { DatabaseSync } from 'node:sqlite'
 import { emptyRepo, git, run } from './discovery-fixture.ts'
 
-type Finding = { id: string; severity: string; file: string; action: string }
+type Finding = { id: string; severity: string; file: string; action: string; description?: string }
 type Round = { round: number; findings: Finding[]; selected?: string[]; source?: string }
 type Step = { name: string; ms: number; rounds: Round[] }
 type Run = { id: string; status: string; branch: string; steps: Step[]; unreadable?: boolean }
@@ -77,11 +77,43 @@ test('history aggregates rounds, findings, hotspots, step time and Git counts fo
     total: 5, bySeverity: { error: 3, warning: 2 }, byAction: { 'auto-fix': 3, 'ask-user': 2 }, byStep: { review: 5 },
     skipped: 1, firstRaisedFromRound2: 2, firstRaisedFromRound3: 1, lateRoundShare: { fromRound2: 0.4, fromRound3: 0.2 }
   })
-  assert.deepEqual(result.data.hotspots, [{ file: 'a.mjs', runs: 2, findings: 3 }])
+  assert.deepEqual(result.data.hotspots, [{ file: 'a.mjs', recordedPaths: ['a.mjs'], atHead: false, runs: 2, findings: 3 }])
   assert.deepEqual(result.data.stepTime, [{ step: 'review', ms: 4500, share: 0.9 }, { step: 'test', ms: 500, share: 0.1 }])
   assert.deepEqual(result.data.git, { commits: 3, fixes: 1, reverts: 1 })
-  assert.deepEqual(result.data.limitations, [])
+  assert.equal(result.data.limitations.length, 1)
+  assert.match(result.data.limitations[0], /^3 finding paths are not files at HEAD.*: a\.mjs, b\.mjs, c\.mjs\./)
+  assert.equal(result.data.findingsExport, undefined)
   assert.equal(createHash('sha256').update(await readFile(store)).digest('hex'), before)
+})
+
+test('history maps recorded paths through renames to the current file and exports each finding with its text', async t => {
+  const { repo, env } = await fixture(t, [
+    { id: 'run-a', status: 'completed', branch: 'feat/a', steps: [{ name: 'review', ms: 1, rounds: [
+      { round: 1, findings: [{ ...finding('R1', 'first.mjs'), description: 'Totals skip refunds.' }] },
+      { round: 2, findings: [{ ...finding('R1', 'first.mjs'), description: 'Totals skip refunds.' }] }
+    ] }] },
+    { id: 'run-b', status: 'completed', branch: 'feat/b', steps: [{ name: 'review', ms: 1, rounds: [
+      { round: 1, findings: [{ ...finding('R1', 'second.mjs'), description: 'Totals round twice.' }, { ...finding('R2', 'third.mjs'), description: 'Totals ignore tax.' }] }
+    ] }] }
+  ])
+  const commit = (message: string) => { git(repo, 'add', '-A'); git(repo, '-c', 'user.name=Fixture', '-c', 'user.email=fixture@example.invalid', 'commit', '-qm', message) }
+  const content = (name: string) => Array.from({ length: 20 }, (_, line) => `export const ${name}${line} = ${line}\n`).join('')
+  await writeFile(join(repo, 'first.mjs'), content('total'))
+  commit('feat: add totals')
+  git(repo, 'mv', 'first.mjs', 'second.mjs')
+  commit('refactor: rename totals')
+  git(repo, 'mv', 'second.mjs', 'third.mjs')
+  commit('refactor: rename totals again')
+  const result = run('history', repo, env, ['--export-findings'])
+  assert.equal(result.exit, 0)
+  assert.deepEqual(result.data.hotspots, [{ file: 'third.mjs', recordedPaths: ['first.mjs', 'second.mjs', 'third.mjs'], atHead: true, runs: 2, findings: 3 }])
+  assert.deepEqual(result.data.limitations, [])
+  assert.equal(result.data.findingsExport.count, 3)
+  assert.deepEqual(JSON.parse(await readFile(result.data.findingsExport.path, 'utf8')), [
+    { run: 'run-a', step: 'review', round: 1, id: 'R1', file: 'third.mjs', recordedFile: 'first.mjs', atHead: true, text: 'Totals skip refunds.' },
+    { run: 'run-b', step: 'review', round: 1, id: 'R1', file: 'third.mjs', recordedFile: 'second.mjs', atHead: true, text: 'Totals round twice.' },
+    { run: 'run-b', step: 'review', round: 1, id: 'R2', file: 'third.mjs', recordedFile: 'third.mjs', atHead: true, text: 'Totals ignore tax.' }
+  ])
 })
 
 test('history leaves a run with unreadable findings out of every aggregate and names it', async t => {

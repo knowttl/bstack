@@ -61,7 +61,7 @@ function parseArgs(argv, valueOptions = []) {
     if (Object.hasOwn(options, name)) {
       problems.push({ code: "duplicate-option", message: `Repeated option: ${token}`, fix: "Supply each option once." });
     }
-    if (name === "json" || name === "dry-run" || name === "approved-by-user" || name === "refresh" || name === "check" || name === "update" || name === "docs-only") options[name] = true;
+    if (name === "json" || name === "dry-run" || name === "approved-by-user" || name === "refresh" || name === "check" || name === "update" || name === "docs-only" || name === "export-findings") options[name] = true;
     else if (!argv[index + 1] || argv[index + 1].startsWith("--")) {
       problems.push({ code: "missing-value", message: `Missing value for ${token}`, fix: "Supply a nonempty value after the option." });
     } else if (name === "plans") {
@@ -2092,9 +2092,39 @@ async function run2(options) {
 
 // runtime/scripts/commands/history.mjs
 import { existsSync } from "node:fs";
+import { writeFile } from "node:fs/promises";
+import { homedir as homedir2 } from "node:os";
+import { basename as basename2, join as join7 } from "node:path";
+
+// runtime/scripts/lib/scratch.mjs
+import { mkdir, realpath as realpath3 } from "node:fs/promises";
+import { createHash as createHash2, randomUUID } from "node:crypto";
 import { homedir } from "node:os";
-import { basename as basename2, join as join6 } from "node:path";
-import { DatabaseSync } from "node:sqlite";
+import { join as join6, isAbsolute as isAbsolute2 } from "node:path";
+async function scratchDirectory(target, runId) {
+  if (!/^[a-zA-Z0-9-]+$/.test(runId)) throw new CommandError("usage-error", [{ code: "invalid-run", message: "Run ID must contain only letters, digits and hyphens.", fix: "Use the run ID returned by the command." }]);
+  const cache = process.platform === "win32" ? process.env.LOCALAPPDATA : process.platform === "darwin" ? join6(homedir(), "Library", "Caches") : process.env.XDG_CACHE_HOME || join6(homedir(), ".cache");
+  if (!cache || !isAbsolute2(cache)) {
+    throw new CommandError("blocked", [{ code: "cache-unavailable", message: "The OS cache directory must be absolute.", fix: "Configure an absolute OS cache directory." }]);
+  }
+  const base = await resolveLinks(join6(cache, "bstack"));
+  if (isInside(target.root, base)) {
+    throw new CommandError("blocked", [{ code: "scratch-inside-target", message: "Scratch would be written inside the target.", fix: "Select an OS cache directory outside the target.", path: base }]);
+  }
+  const key = createHash2("sha256").update(target.root).digest("hex");
+  const directory = await resolveLinks(join6(base, key, runId));
+  if (isInside(target.root, directory)) {
+    throw new CommandError("blocked", [{ code: "scratch-inside-target", message: "Scratch links resolve inside the target.", fix: "Repair the cache link or select a different cache directory.", path: directory }]);
+  }
+  return directory;
+}
+async function createScratch(target) {
+  const directory = await scratchDirectory(target, randomUUID());
+  await mkdir(directory, { recursive: true });
+  return await realpath3(directory);
+}
+
+// runtime/scripts/commands/history.mjs
 var share = (part, whole) => whole ? Math.round(part / whole * 1e3) / 1e3 : 0;
 var count = (counts, key) => {
   counts[key] = (counts[key] ?? 0) + 1;
@@ -2104,6 +2134,34 @@ function parseList(json, key) {
   const items = key ? value[key] ?? [] : value;
   if (!Array.isArray(items)) throw new TypeError("Expected a list.");
   return items;
+}
+function currentPaths(root) {
+  const tree = readGit(root, ["ls-tree", "-r", "-z", "--name-only", "HEAD"]);
+  const log = readGit(root, ["log", "--first-parent", "--diff-merges=first-parent", "--find-renames=50%", "--name-status", "-z", "--format=%x01", "HEAD"]);
+  const current = /* @__PURE__ */ new Map();
+  if (tree.status !== 0 || log.status !== 0) return current;
+  for (const path of tree.stdout.split("\0").filter(Boolean)) current.set(path, path);
+  const active = new Map(current);
+  for (const commit of log.stdout.split("")) {
+    const tokens = commit.split("\0").map((token) => token.trim()).filter(Boolean);
+    const ended = [];
+    const renamed = [];
+    for (let index = 0; index < tokens.length; index++) {
+      const status = tokens[index][0];
+      const path = tokens[++index];
+      if (status === "A") ended.push(path);
+      if (status !== "R") continue;
+      const destination = tokens[++index];
+      ended.push(destination);
+      if (active.has(destination)) renamed.push([path, active.get(destination)]);
+    }
+    for (const path of ended) active.delete(path);
+    for (const [path, file] of renamed) {
+      active.set(path, file);
+      if (!current.has(path)) current.set(path, file);
+    }
+  }
+  return current;
 }
 async function run3(options) {
   const target = await resolveTarget(options);
@@ -2117,12 +2175,13 @@ async function run3(options) {
     fixes: subjects.filter((subject) => /^fix(\([^)]*\))?!?:/i.test(subject)).length,
     reverts: subjects.filter((subject) => /^revert\b/i.test(subject)).length
   };
-  const store = join6(process.env.NM_HOME ?? join6(homedir(), ".no-mistakes"), "state.sqlite");
+  const store = join7(process.env.NM_HOME ?? join7(homedir2(), ".no-mistakes"), "state.sqlite");
   const noHistory = (reason) => ({ data: { root: target.root, store, runs: { total: 0, read: 0 }, git, limitations: [...limitations, reason] }, inputs });
   const gate = readGit(target.root, ["remote", "get-url", "no-mistakes"]);
   if (gate.status !== 0) return noHistory("The repo has no no-mistakes remote, so no run history is linked to it.");
   const repoId = basename2(gate.stdout.trim(), ".git");
   if (!existsSync(store)) return noHistory(`No no-mistakes state store exists at ${store}.`);
+  const { DatabaseSync } = await import("node:sqlite");
   const database = new DatabaseSync(store, { readOnly: true });
   try {
     database.exec("BEGIN");
@@ -2153,7 +2212,7 @@ async function run3(options) {
       const userDecided = row.selection_source === "user" || row.selection_source === "user_declined";
       for (const finding of listed) {
         const key = `${row.run_id}\0${row.step_name}\0${finding.id}`;
-        const entry = found.get(key) ?? { run: row.run_id, step: row.step_name, file: finding.file, severity: finding.severity, action: finding.action, firstRound: row.round, selected: false, declined: false };
+        const entry = found.get(key) ?? { run: row.run_id, step: row.step_name, id: finding.id, file: finding.file, text: finding.description, severity: finding.severity, action: finding.action, firstRound: row.round, selected: false, declined: false };
         if (selected.includes(finding.id)) entry.selected = true;
         else if (userDecided) entry.declined = true;
         found.set(key, entry);
@@ -2168,16 +2227,39 @@ async function run3(options) {
     const byStep = {};
     const byRun = {};
     const byFile = /* @__PURE__ */ new Map();
+    const current = currentPaths(target.root);
+    const absent = /* @__PURE__ */ new Set();
     for (const finding of findings) {
       count(bySeverity, finding.severity);
       count(byAction, finding.action);
       count(byStep, finding.step);
       count(byRun, finding.run);
       if (!finding.file) continue;
-      const hotspot = byFile.get(finding.file) ?? { file: finding.file, runs: /* @__PURE__ */ new Set(), findings: 0 };
+      finding.recordedFile = finding.file;
+      finding.atHead = current.has(finding.file);
+      if (finding.atHead) finding.file = current.get(finding.file);
+      else absent.add(finding.file);
+      const hotspot = byFile.get(finding.file) ?? { file: finding.file, recordedPaths: /* @__PURE__ */ new Set(), atHead: finding.atHead, runs: /* @__PURE__ */ new Set(), findings: 0 };
+      hotspot.recordedPaths.add(finding.recordedFile);
       hotspot.runs.add(finding.run);
       hotspot.findings++;
       byFile.set(finding.file, hotspot);
+    }
+    if (absent.size) limitations.push(`${absent.size} finding paths are not files at HEAD and no rename leads from them to one, so they keep their recorded path with atHead false: ${[...absent].sort().join(", ")}. Renames are followed along the first-parent history of HEAD at Git 50% similarity, so a deleted file, an undetected rename or unreadable history all leave a path unmapped.`);
+    let findingsExport;
+    if (options["export-findings"]) {
+      const path = join7(await createScratch(target), "findings.json");
+      await writeFile(path, JSON.stringify(findings.map((finding) => ({
+        run: finding.run,
+        step: finding.step,
+        round: finding.firstRound,
+        id: finding.id,
+        file: finding.file ?? null,
+        recordedFile: finding.recordedFile ?? null,
+        atHead: finding.atHead ?? null,
+        text: finding.text ?? null
+      })), null, 2) + "\n", { flag: "wx" });
+      findingsExport = { path, count: findings.length };
     }
     const fromRound2 = findings.filter((finding) => finding.firstRound >= 2).length;
     const fromRound3 = findings.filter((finding) => finding.firstRound >= 3).length;
@@ -2209,9 +2291,10 @@ async function run3(options) {
           firstRaisedFromRound3: fromRound3,
           lateRoundShare: { fromRound2: share(fromRound2, findings.length), fromRound3: share(fromRound3, findings.length) }
         },
-        hotspots: [...byFile.values()].filter((hotspot) => hotspot.runs.size >= 2).map((hotspot) => ({ file: hotspot.file, runs: hotspot.runs.size, findings: hotspot.findings })).sort((a, b) => b.runs - a.runs || b.findings - a.findings || a.file.localeCompare(b.file)),
+        hotspots: [...byFile.values()].filter((hotspot) => hotspot.runs.size >= 2).map((hotspot) => ({ file: hotspot.file, recordedPaths: [...hotspot.recordedPaths].sort(), atHead: hotspot.atHead, runs: hotspot.runs.size, findings: hotspot.findings })).sort((a, b) => b.runs - a.runs || b.findings - a.findings || a.file.localeCompare(b.file)),
         stepTime: Object.entries(stepMs).map(([step, ms]) => ({ step, ms, share: share(ms, totalMs) })).sort((a, b) => b.ms - a.ms || a.step.localeCompare(b.step)),
         git,
+        ...findingsExport ? { findingsExport } : {},
         limitations
       },
       inputs
@@ -2329,7 +2412,7 @@ async function run5(options) {
 await dispatch(process.argv.slice(2), "repo-audit", {
   "inspect": { options: [], help: "Inspect starting Git state, manifests and prerequisite versions without writes.\nUsage: repo-audit.mjs inspect --repo <path> [--json]", run },
   "inventory": { options: [], help: "Discover document sources and scoped instructions without writes.\nUsage: repo-audit.mjs inventory --repo <path>|--workspace <path> [--json]\nAbsent document kinds are reported without failure. Instruction consolidation is a candidate requiring review.", run: run2 },
-  "history": { options: [], help: "Summarise this repo's no-mistakes run history without writes.\nUsage: repo-audit.mjs history --repo <path> [--json]\nIdentifies the repo from its no-mistakes remote and opens ~/.no-mistakes/state.sqlite (NM_HOME overrides the folder) read-only, never through the daemon. Returns runs read versus total with rounds per run, findings by severity, action and step, the share of findings first raised in round 2 or later and in round 3 or later, skipped findings (declined by the user and never selected for a fix), files flagged in two or more runs, each step's share of run time and the counts of fix and revert commits in Git history. A finding that stays listed across rounds counts once per run and step, in the round that first raised it. A repo with no linked history is a pass with a limitation, never a reason to infer prior runs.", run: run3 },
+  "history": { options: ["export-findings"], help: "Summarise this repo's no-mistakes run history without target writes.\nUsage: repo-audit.mjs history --repo <path> [--export-findings] [--json]\nIdentifies the repo from its no-mistakes remote and opens ~/.no-mistakes/state.sqlite (NM_HOME overrides the folder) read-only, never through the daemon. Returns runs read versus total with rounds per run, findings by severity, action and step, the share of findings first raised in round 2 or later and in round 3 or later, skipped findings (declined by the user and never selected for a fix), files flagged in two or more runs, each step's share of run time and the counts of fix and revert commits in Git history. A finding that stays listed across rounds counts once per run and step, in the round that first raised it. File paths follow renames to the current file at HEAD, and a path that leads to none keeps its recorded name with atHead false. --export-findings saves every counted finding as run, step, round, id, file, recordedFile, atHead and text in a scratch findings.json and returns its path. A repo with no linked history is a pass with a limitation, never a reason to infer prior runs.", run: run3 },
   "cite-check": { options: ["report"], help: "Check file citation locations and exact-byte freshness without writes.\nUsage: repo-audit.mjs cite-check --repo <path>|--workspace <path> --report <file> [--json]\nReport follows schemas/research-report.json. Web URL/date records are validated without fetching sources.", run: run4 },
   "contract-test": { options: ["input", "schema"], help: "Validate shared schema and joining-ID contracts without writes.\nUsage: repo-audit.mjs contract-test --repo <path>|--workspace <path> --input <file> [--schema <file>] [--json]\n--schema selects a schema definition for subset validation tests.", run: run5 }
 });

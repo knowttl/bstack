@@ -59,11 +59,15 @@ In correct mode, reproduce a cited real occurrence from a review comment, issue 
 If a faithful reproduction is not possible, report the rule check as unproven.
 After preparing native dependencies in the clean and independently seeded copies, run:
 
-`rule-proof --repo <target> --check-plan <file> --check-id <id> --valid <clean-dir> --violation <seeded-dir> --expect <specific-diagnostic> --json`
+`rule-proof --repo <target> --check-plan <file> --check-id <id> --valid <clean-dir> --violation <seeded-dir> --expect <specific-diagnostic> --replacement <file-type-or-function> --json`
 
 The plan follows `schemas/check-plan.json`; its selected check supplies the native command object.
 The command runs separate disposable copies, records versions, exits and diagnostics in scratch, and removes the copies.
-The valid copy must pass, and the violation must fail with the expected diagnostic.
+The valid copy must pass, and the violation must fail with output that contains both the expected diagnostic and the replacement.
+`--replacement` is the file, type or function the diagnostic tells the reader to use instead, such as the sanctioned wrapper or the public entry point, and a violation whose output does not name it fails the proof.
+When nothing replaces the violating code, such as a native rule that reports code to remove, a formatter or a size limit, pass `--no-replacement <reason>` instead; the reason is saved in the proof and reported as a limitation, and passing both or neither is a usage error.
+Word every diagnostic of a check you write or propose in one shape, `path:line: rule-id: what is wrong. Use <replacement>.`, for example `src/app.py:3: private-import: app imports ledger internals. Use ledger.Ledger.`
+Keep the `rule-id:` prefix stable, because it is how a rule's firings are found in run logs.
 Include relevant syntax, aliases, re-exports, generated code and documented exceptions in the proof, and record unsupported syntax and dynamic dependencies as coverage limits.
 Unavailable tools, interrupted execution and failed clean setup are blocked, never proof.
 

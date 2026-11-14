@@ -23,8 +23,9 @@ async function run(executable: string, args: readonly string[], expected = 0) {
 await run('npm', ['ci', '--ignore-scripts', '--no-audit', '--no-fund'])
 await run('npm', ['run', 'check'])
 await run('npm', ['test'])
-const expected = ['ts-shop', 'selected-ts-shop'].includes(name) ? ['alias', 'cycle', 'private'] : name.endsWith('-private') ? ['private'] : name.endsWith('-alias') ? ['alias'] : name.endsWith('-cycle') ? ['cycle'] : []
-assert.deepEqual(JSON.parse(await run(process.execPath, ['boundaries.ts'], expected.length ? 1 : 0)), expected)
+const expected = ['ts-shop', 'selected-ts-shop'].includes(name) ? ['alias-import', 'dependency-cycle', 'private-import'] : name.endsWith('-private') ? ['private-import'] : name.endsWith('-alias') ? ['alias-import'] : name.endsWith('-cycle') ? ['dependency-cycle'] : []
+const diagnostics = (await run(process.execPath, ['boundaries.ts'], expected.length ? 1 : 0)).split('\n').filter(Boolean)
+assert.deepEqual([...new Set(diagnostics.map(line => /^[^:]+:\d+: ([a-z-]+): .+\. Use .+\.$/.exec(line)?.[1]))].sort(), expected)
 if (['ts-shop', 'selected-ts-shop'].includes(name)) {
   assert.equal(await readFile(join(path, 'CLAUDE.md'), 'utf8'), '@AGENTS.md\n')
   assert.match(await readFile(join(path, 'DESIGN.md'), 'utf8'), /The UI never touches storage/)
