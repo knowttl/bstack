@@ -70,7 +70,7 @@ for (const [path, reason] of [
   ['scripts/generate-skills.ts', 'shared infrastructure'], ['scripts/lib/evaluation.ts', 'shared infrastructure'],
   ['scripts/generate-checker.ts', 'shared infrastructure'], ['scripts/lib/release-evidence.ts', 'shared infrastructure'],
   ['tests/eval/scenarios/new.json', 'shared infrastructure'], ['tests/scripts/discovery-fixture.ts', 'shared infrastructure'],
-  ['runtime/scripts/lib/result.mjs', 'shared infrastructure'], ['runtime/skills.json', 'shared infrastructure'],
+  ['runtime/scripts/lib/result.ts', 'shared infrastructure'], ['runtime/skills.json', 'shared infrastructure'],
   ['runtime/schemas/findings.schema.json', 'shared infrastructure'],
   ['docs/evaluation.md', 'shared infrastructure'],
   ['tests/fixtures/example/new.mjs', 'shared infrastructure'], ['package.json', 'shared infrastructure'],

@@ -1,9 +1,12 @@
 import { realpath, stat } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
-import { CommandError } from './result.mjs'
+import { CommandError } from './result.ts'
+import type { TargetOptions } from './args.ts'
 
-export async function resolveTarget(options, { draftOnly = false } = {}) {
+export type Target = { mode: 'repo' | 'workspace'; root: string }
+
+export async function resolveTarget(options: TargetOptions, { draftOnly = false } = {}): Promise<Target> {
   if (options.workspace && !draftOnly) {
     throw new CommandError('usage-error', [{ code: 'workspace-not-supported', message: 'This command requires a Git repo.', fix: 'Supply --repo for this command.' }])
   }

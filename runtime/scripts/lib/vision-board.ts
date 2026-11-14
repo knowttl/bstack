@@ -1,12 +1,13 @@
 import { readFile, realpath } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
-import { resolveTarget } from './repo.mjs'
-import { isInside } from './paths.mjs'
-import { hashBytes } from './fingerprint.mjs'
-import { validateData, validateIds } from './schema.mjs'
-import { CommandError } from './result.mjs'
+import { resolveTarget } from './repo.ts'
+import { isInside } from './paths.ts'
+import { hashBytes } from './fingerprint.ts'
+import { validateData, validateIds } from './schema.ts'
+import { CommandError } from './result.ts'
+import type { Options } from './args.ts'
 
-export async function readBoard(options) {
+export async function readBoard(options: Options<'board'>) {
   if (!options.board) throw new CommandError('usage-error', [{ code: 'missing-input', message: '--board is required.', fix: 'Supply the scratch board path returned by build.' }])
   const target = await resolveTarget(options, { draftOnly: true })
   const board = await realpath(options.board)
@@ -21,7 +22,7 @@ export async function readBoard(options) {
   if (manifest.schemaVersion !== 1 || typeof manifest.runId !== 'string' || !manifest.runId ||
       manifest.target?.root !== target.root || manifest.target?.mode !== target.mode ||
       manifest.draftRevision !== hashBytes(draft) || proposals.draftRevision !== manifest.draftRevision ||
-      JSON.stringify(manifest.cardIds) !== JSON.stringify(proposals.cards.map(card => card.id))) {
+      JSON.stringify(manifest.cardIds) !== JSON.stringify(proposals.cards.map((card: { id: string }) => card.id))) {
     throw new CommandError('failed', [{ code: 'incompatible-board', message: 'Board metadata, target or draft no longer match.', fix: 'Resume the original unchanged scratch run or build a reviewed new round.' }])
   }
   return { target, board, scratch, manifest }

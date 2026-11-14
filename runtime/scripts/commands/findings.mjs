@@ -1,12 +1,12 @@
 import { readFile } from 'node:fs/promises'
 import { resolve } from 'node:path'
 import { spawnSync } from 'node:child_process'
-import { resolveTarget } from '../lib/repo.mjs'
-import { resolveFilePath } from '../lib/paths.mjs'
-import { inspectJSON } from '../lib/json.mjs'
-import { fingerprint, hashBytes } from '../lib/fingerprint.mjs'
-import { validateData, validateIds } from '../lib/schema.mjs'
-import { CommandError } from '../lib/result.mjs'
+import { resolveTarget } from '../lib/repo.ts'
+import { resolveFilePath } from '../lib/paths.ts'
+import { inspectJSON } from '../lib/json.ts'
+import { fingerprint, hashBytes } from '../lib/fingerprint.ts'
+import { validateData, validateIds } from '../lib/schema.ts'
+import { CommandError } from '../lib/result.ts'
 import schema from '../../schemas/findings.schema.json' with { type: 'json' }
 
 // Audit assesses the starting state. Foundation additionally reviews selected setup.

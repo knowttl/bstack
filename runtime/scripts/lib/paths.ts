@@ -1,13 +1,13 @@
 import { lstat, readlink, realpath, stat } from 'node:fs/promises'
 import { dirname, isAbsolute, join, relative, resolve, sep, win32 } from 'node:path'
-import { CommandError } from './result.mjs'
+import { CommandError } from './result.ts'
 
-export function isInside(root, path) {
+export function isInside(root: string, path: string) {
   const offset = relative(root, path)
   return offset === '' || (!isAbsolute(offset) && offset !== '..' && !offset.startsWith(`..${sep}`))
 }
 
-export async function resolvePath(root, input, reviewedPath, allowMissingLinks = false) {
+export async function resolvePath(root: string, input: string, reviewedPath?: string, allowMissingLinks = false) {
   if (typeof input !== 'string' || !input || input.includes('\0') || isAbsolute(input) || win32.isAbsolute(input) || /^[A-Za-z]:/.test(input) || input.split(/[\\/]/).includes('..')) {
     throw new CommandError('usage-error', [{ code: 'unsafe-path', message: 'Paths must be relative and contain no parent traversal.', fix: 'Supply a path inside the selected target.', path: String(input) }])
   }
@@ -27,35 +27,35 @@ export async function resolvePath(root, input, reviewedPath, allowMissingLinks =
   return resolved
 }
 
-export async function resolveLinks(destination, allowMissingLinks = false) {
+export async function resolveLinks(destination: string, allowMissingLinks = false): Promise<string> {
   let parent = destination
   const missing = []
   for (;;) {
     try {
       await lstat(parent)
       break
-    } catch (error) {
+    } catch (error: any) {
       if (!['ENOENT', 'ENOTDIR'].includes(error.code)) throw error
       missing.unshift(relative(dirname(parent), parent))
       parent = dirname(parent)
     }
   }
   let path
-  try { path = await realpath(parent) } catch (error) {
+  try { path = await realpath(parent) } catch (error: any) {
     if (error.code !== 'ENOENT' || !allowMissingLinks) throw error
     path = await resolveLinks(resolve(dirname(parent), await readlink(parent)), true)
   }
   return join(path, ...missing)
 }
 
-export async function resolveFilePath(root, input, reviewedPath, allowMissingLinks = false) {
+export async function resolveFilePath(root: string, input: string, reviewedPath?: string, allowMissingLinks = false) {
   const path = await resolvePath(root, input, reviewedPath, allowMissingLinks)
   if (/[*?\[\]{}]/.test(input)) {
     throw new CommandError('failed', [{ code: 'invalid-scope', message: 'Reviewed scope cannot contain globs.', fix: 'List concrete file paths, including planned absent files.', path: input }])
   }
   try {
     if ((await stat(path)).isFile()) return path
-  } catch (error) {
+  } catch (error: any) {
     if (error.code === 'ENOENT') return path
     if (error.code === 'ENOTDIR') throw new CommandError('blocked', [{ code: 'unresolved-path', message: 'An existing path or link cannot be resolved.', fix: 'Repair the link or select a resolvable path.', path: input }])
     throw error

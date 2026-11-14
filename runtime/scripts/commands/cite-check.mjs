@@ -1,8 +1,8 @@
 import { readFile } from 'node:fs/promises'
-import { resolveTarget } from '../lib/repo.mjs'
-import { fileCitationProblems } from '../lib/citations.mjs'
-import { validateData, validateIds } from '../lib/schema.mjs'
-import { CommandError } from '../lib/result.mjs'
+import { resolveTarget } from '../lib/repo.ts'
+import { fileCitationProblems } from '../lib/citations.ts'
+import { validateData, validateIds } from '../lib/schema.ts'
+import { CommandError } from '../lib/result.ts'
 
 export async function run(options) {
   if (!options.report) throw new CommandError('usage-error', [{ code: 'missing-report', message: '--report is required.', fix: 'Supply --report <research-report.json>.' }])

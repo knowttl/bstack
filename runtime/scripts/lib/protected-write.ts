@@ -1,25 +1,46 @@
 import { readFile, open, mkdir, rename, unlink, stat } from 'node:fs/promises'
 import { basename, dirname, join } from 'node:path'
 import { randomUUID } from 'node:crypto'
-import { scratchDirectory } from './scratch.mjs'
-import { resolveFilePath } from './paths.mjs'
-import { canonicalJSON, hashBytes } from './fingerprint.mjs'
-import { inspectJSON } from './json.mjs'
-import { validateData, validateIds } from './schema.mjs'
-import { CommandError } from './result.mjs'
+import { scratchDirectory } from './scratch.ts'
+import { resolveFilePath } from './paths.ts'
+import { canonicalJSON, hashBytes } from './fingerprint.ts'
+import { inspectJSON } from './json.ts'
+import { validateData, validateIds } from './schema.ts'
+import { CommandError } from './result.ts'
+import type { Target } from './repo.ts'
 
-export async function fileBytes(path) {
-  try { return await readFile(path) } catch (error) {
+type JournalEdit = {
+  id: string; path: string; resolvedPath: string; originalHash: string | null; proposedHash: string | null
+  backup: string | null; completed: boolean; temporary?: string | null
+}
+
+type ChangeTarget = Target & { revision: string | null }
+
+export type Journal = { schemaVersion: 1; runId: string; target: ChangeTarget; planDigest: string; edits: JournalEdit[]; affectedChecks: string[] }
+
+export type ReviewedPlan = { planDigest: string; target: ChangeTarget; edits: unknown[]; reviewedScope: { path: string; resolvedPath: string }[] }
+
+export type StagedEdit = {
+  id: string; path: string; resolvedPath: string; originalHash: string | null; proposedHash: string | null
+  proposedContent: string | null; originalBytes: Buffer | null
+}
+
+type InspectedEdit = JournalEdit & { state: 'applied' | 'pending' | 'conflicting'; actualHash?: string | null; problem?: string }
+
+type FileStep = (temporary: string) => Promise<void>
+
+export async function fileBytes(path: string) {
+  try { return await readFile(path) } catch (error: any) {
     if (error.code === 'ENOENT') return null
     throw error
   }
 }
 
-export async function loadJournal(target, runId) {
+export async function loadJournal(target: Target, runId: string) {
   const directory = await scratchDirectory(target, runId)
   const bytes = await fileBytes(join(directory, 'journal.json'))
   if (bytes === null) return { directory, journal: null }
-  const journal = inspectJSON(bytes.toString('utf8')).value
+  const journal: Journal = inspectJSON(bytes.toString('utf8')).value
   validateData(JSON.parse(await readFile(new URL('../../schemas/resume-state.schema.json', import.meta.url), 'utf8')), journal)
   validateIds(journal.edits, '$/edits')
   if (journal.runId !== runId || journal.target.root !== target.root || journal.target.mode !== target.mode) {
@@ -28,8 +49,8 @@ export async function loadJournal(target, runId) {
   return { directory, journal }
 }
 
-export async function inspectJournal(journal) {
-  const edits = []
+export async function inspectJournal(journal: Journal) {
+  const edits: InspectedEdit[] = []
   for (const edit of journal.edits) {
     try {
       const path = await resolveFilePath(journal.target.root, edit.path, edit.resolvedPath, edit.originalHash !== null && edit.proposedHash === null)
@@ -37,7 +58,7 @@ export async function inspectJournal(journal) {
       const actualHash = bytes === null ? null : hashBytes(bytes)
       const state = actualHash === edit.proposedHash ? 'applied' : !edit.completed && actualHash === edit.originalHash ? 'pending' : 'conflicting'
       edits.push({ ...edit, actualHash, state })
-    } catch (error) {
+    } catch (error: any) {
       edits.push({ ...edit, state: 'conflicting', problem: error.message })
     }
   }
@@ -47,10 +68,10 @@ export async function inspectJournal(journal) {
     conflicting: edits.filter(edit => edit.state === 'conflicting').map(edit => edit.path) }
 }
 
-export async function journalOriginal(directory, journal, plan, edit, index) {
+export async function journalOriginal(directory: string, journal: Journal, plan: ReviewedPlan, edit: Pick<StagedEdit, 'id' | 'path' | 'originalHash' | 'proposedHash'>, index: number) {
   const recorded = journal.edits[index]
   if (journal.planDigest !== plan.planDigest || canonicalJSON(journal.target) !== canonicalJSON(plan.target) || journal.edits.length !== plan.edits.length ||
-      !recorded || ['id', 'path', 'originalHash', 'proposedHash'].some(key => recorded[key] !== edit[key]) ||
+      !recorded || (['id', 'path', 'originalHash', 'proposedHash'] as const).some(key => recorded[key] !== edit[key]) ||
       recorded.resolvedPath !== plan.reviewedScope.find(entry => entry.path === edit.path)?.resolvedPath ||
       recorded.backup !== (edit.originalHash === null ? null : `original-${index}`)) {
     throw new CommandError('blocked', [{ code: 'journal-mismatch', message: 'Journal does not match the reviewed plan.', fix: 'Use the unchanged reviewed plan or review a new plan.' }])
@@ -62,19 +83,19 @@ export async function journalOriginal(directory, journal, plan, edit, index) {
   return bytes
 }
 
-async function syncDirectory(directory, limitations) {
+async function syncDirectory(directory: string, limitations: string[]) {
   let handle
   try {
     handle = await open(directory, 'r')
     await handle.sync()
-  } catch (error) {
+  } catch (error: any) {
     if (!['EINVAL', 'ENOTSUP', 'EISDIR', 'EPERM', 'EACCES'].includes(error.code)) throw error
     const message = 'Filesystem does not support directory flushes; durability across power loss is limited.'
     if (!limitations.includes(message)) limitations.push(message)
   } finally { await handle?.close() }
 }
 
-async function durableFile(path, bytes, mode) {
+async function durableFile(path: string, bytes: Buffer, mode?: number) {
   const handle = await open(path, 'wx', mode)
   try {
     await handle.writeFile(bytes)
@@ -83,20 +104,20 @@ async function durableFile(path, bytes, mode) {
   } finally { await handle.close() }
 }
 
-async function durableDirectory(directory, limitations) {
+async function durableDirectory(directory: string, limitations: string[]) {
   await mkdir(directory, { recursive: true })
   for (let path = directory; path !== dirname(path); path = dirname(path)) {
     await syncDirectory(dirname(path), limitations)
   }
 }
 
-async function replaceFile(path, bytes, mode, limitations, beforeReplace, prepareTemporary, prefix = '.bstack') {
+async function replaceFile(path: string, bytes: Buffer, mode: number | undefined, limitations: string[], beforeReplace?: FileStep, prepareTemporary?: FileStep, prefix = '.bstack') {
   const temporary = join(dirname(path), `${prefix}-${randomUUID()}.tmp`)
   try {
     if (prepareTemporary) await prepareTemporary(temporary)
     await durableFile(temporary, bytes, mode)
     if (beforeReplace) await beforeReplace(temporary)
-    try { await rename(temporary, path) } catch (error) {
+    try { await rename(temporary, path) } catch (error: any) {
       if (['EXDEV', 'ENOTSUP', 'EPERM', 'EEXIST'].includes(error.code)) {
         throw new CommandError('blocked', [{ code: 'atomic-replacement-unavailable', message: 'Filesystem cannot atomically replace this file. No non-atomic fallback was attempted.', path, fix: 'Use a filesystem supporting same-directory atomic replacement and resume the run.' }])
       }
@@ -104,20 +125,20 @@ async function replaceFile(path, bytes, mode, limitations, beforeReplace, prepar
     }
     await syncDirectory(dirname(path), limitations)
   } finally {
-    try { await unlink(temporary) } catch (error) { if (error.code !== 'ENOENT') throw error }
+    try { await unlink(temporary) } catch (error: any) { if (error.code !== 'ENOENT') throw error }
   }
 }
 
-export async function saveRecovery(path, value) {
-  const limitations = []
+export async function saveRecovery(path: string, value: unknown) {
+  const limitations: string[] = []
   await durableDirectory(dirname(path), limitations)
   await replaceFile(path, Buffer.from(JSON.stringify(value, null, 2) + '\n'), undefined, limitations, undefined, undefined, `.bstack-recovery-${basename(path)}`)
   return limitations
 }
 
-export async function applyWrites(target, plan, staged, directory, previous, affectedChecks, guard) {
+export async function applyWrites(target: Target, plan: ReviewedPlan, staged: StagedEdit[], directory: string, previous: Journal | null, affectedChecks: string[], guard?: (temporary?: string) => Promise<void>) {
   const limitations = ['Replacement is atomic per file where supported, never across the whole change set.']
-  const journal = previous ?? { schemaVersion: 1, runId: plan.planDigest, target: plan.target, planDigest: plan.planDigest,
+  const journal: Journal = previous ?? { schemaVersion: 1, runId: plan.planDigest, target: plan.target, planDigest: plan.planDigest,
     edits: staged.map((edit, index) => ({ id: edit.id, path: edit.path, resolvedPath: edit.resolvedPath, originalHash: edit.originalHash, proposedHash: edit.proposedHash,
       backup: edit.originalHash === null ? null : `original-${index}`, completed: edit.originalHash === edit.proposedHash })), affectedChecks }
   const journalPath = join(directory, 'journal.json')
@@ -154,11 +175,11 @@ export async function applyWrites(target, plan, staged, directory, previous, aff
     if (!previous) {
       for (const [index, edit] of staged.entries()) {
         if (edit.originalHash !== null) {
-          const backup = join(directory, journal.edits[index].backup)
+          const backup = join(directory, journal.edits[index].backup!)
           // An interrupted preparation can leave backups without a journal.
           const existing = await fileBytes(backup)
           if (existing !== null && hashBytes(existing) !== edit.originalHash) throw new Error('Prepared backup differs from the reviewed original.')
-          if (existing === null) await replaceFile(backup, edit.originalBytes, undefined, limitations)
+          if (existing === null) await replaceFile(backup, edit.originalBytes!, undefined, limitations)
         }
       }
       await syncDirectory(directory, limitations)
@@ -170,7 +191,7 @@ export async function applyWrites(target, plan, staged, directory, previous, aff
       if (state.conflicting.length) throw new CommandError('blocked', [{ code: 'user-change', message: 'A user change blocks all remaining writes.', fix: 'Review conflicting target files before continuing.' }])
       if (state.edits[index].state === 'applied') continue
       const path = edit.resolvedPath
-      const beforeWrite = async temporary => {
+      const beforeWrite = async (temporary?: string) => {
         if (guard) await guard(temporary)
         const current = await inspectJournal(journal)
         const resolved = await resolveFilePath(target.root, edit.path, path)
@@ -201,7 +222,7 @@ export async function applyWrites(target, plan, staged, directory, previous, aff
       throw new CommandError('blocked', [{ code: 'user-change', message: 'Target changed before execution completed.', fix: 'Review the changed target files before continuing.' }])
     }
     return { ...state, journal: journalPath, outcome: 'applied', limitations }
-  } catch (error) {
+  } catch (error: any) {
     let state
     try { state = await inspectJournal(journal) } catch { state = { runId: journal.runId, planDigest: journal.planDigest } }
     return { status: 'blocked', problems: error instanceof CommandError ? error.problems : [{ code: 'write-io-failure', message: error.message,

@@ -2,9 +2,9 @@ import { existsSync } from 'node:fs'
 import { writeFile } from 'node:fs/promises'
 import { homedir } from 'node:os'
 import { basename, join } from 'node:path'
-import { resolveTarget } from '../lib/repo.mjs'
-import { createScratch } from '../lib/scratch.mjs'
-import { readGit } from '../lib/discovery.mjs'
+import { resolveTarget } from '../lib/repo.ts'
+import { createScratch } from '../lib/scratch.ts'
+import { readGit } from '../lib/discovery.ts'
 
 const share = (part, whole) => whole ? Math.round(part / whole * 1000) / 1000 : 0
 const count = (counts, key) => { counts[key] = (counts[key] ?? 0) + 1 }

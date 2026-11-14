@@ -319,7 +319,7 @@ npm run check
 npm test
 ```
 
-`npm run check` strictly type-checks tests and development tooling, then verifies the generated skill files, this README's skills table, the combined command contract and the package rules.
+`npm run check` strictly type-checks the shared runtime library, tests and development tooling, then verifies the generated skill files, this README's skills table, the combined command contract and the package rules.
 After editing a `SKILL.md` description, run `node scripts/generate-readme.ts` to refresh the table.
 After editing a `*.contract.md` file, run `node scripts/generate-contract.ts` to refresh [docs/command-contract.md](docs/command-contract.md).
 See [docs/development.md](docs/development.md) for fixtures, evaluation, the shared runtime and the delivery gate.

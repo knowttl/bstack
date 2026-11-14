@@ -1,15 +1,15 @@
 import { basename } from 'node:path'
-import { inspectJSON } from './json.mjs'
-import { CommandError } from './result.mjs'
+import { inspectJSON } from './json.ts'
+import { CommandError } from './result.ts'
 
-function reject(path) {
+function reject(path: string): never {
   throw new CommandError('failed', [{ code: 'ignored-check-failure', path,
     message: 'Check integration must preserve failures. Use simple commands joined with && and disable failure-tolerance settings.',
     fix: 'Review selected command paths and failure-preserving commands, use JSON syntax for marked CI edits, and prove exit codes in disposable controls.' }])
 }
 
-export function isIndirectExecutable(executable) {
-  const name = executable.split(/[\\/]/).at(-1).toLowerCase().replace(/\.(exe|cmd|bat)$/, '')
+export function isIndirectExecutable(executable: string) {
+  const name = executable.split(/[\\/]/).at(-1)!.toLowerCase().replace(/\.(exe|cmd|bat)$/, '')
   return ['set', 'exit', 'trap', 'eval', 'exec', 'env', 'command', 'builtin', 'source', '.',
     'sh', 'bash', 'rbash', 'zsh', 'dash', 'ash', 'ksh', 'ksh88', 'ksh93', 'mksh', 'pdksh', 'yash', 'posh',
     'csh', 'tcsh', 'fish', 'busybox', 'time', 'nohup', 'nice', 'timeout', 'setsid', 'sudo', 'doas', 'xargs',
@@ -18,12 +18,12 @@ export function isIndirectExecutable(executable) {
 
 // A bounded command grammar avoids claiming to understand arbitrary shell programs.
 // Quoted arguments are literal; shell control flow must use fail-fast && chains.
-export function integrationCommand(text, path) {
+export function integrationCommand(text: string, path: string) {
   if (text.includes('\r')) reject(path)
   text = text.replace(/^[ \t\n]+|[ \t\n]+$/g, '')
-  let quote = null
+  let quote: string | null = null
   let word = ''
-  const words = []
+  const words: string[] = []
   const flush = () => {
     if (/[|;&`\n]|\$\(/.test(word)) reject(path)
     if (word) words.push(word)
@@ -64,7 +64,7 @@ export function integrationCommand(text, path) {
     if (word === '&&') { first = true; continue }
     if (first && /^[A-Za-z_][A-Za-z0-9_]*=/.test(word)) reject(path)
     if (!first) continue
-    const executable = word.split(/[\\/]/).at(-1).toLowerCase().replace(/\.(exe|cmd|bat)$/, '')
+    const executable = word.split(/[\\/]/).at(-1)!.toLowerCase().replace(/\.(exe|cmd|bat)$/, '')
     if (isIndirectExecutable(word)) reject(path)
     const next = words.indexOf('&&', index + 1)
     const args = words.slice(index + 1, next === -1 ? words.length : next)
@@ -75,14 +75,14 @@ export function integrationCommand(text, path) {
   return words
 }
 
-export function validateCheckIntegration(path, proposed, selected) {
+export function validateCheckIntegration(path: string, proposed: string | null, selected?: string[][] | null) {
   if (!selected) return
   const packageScript = basename(path) === 'package.json'
   if (proposed === null || (!packageScript && !/\.ya?ml$/i.test(path))) reject(path)
   let document
   try { document = inspectJSON(proposed).value } catch { reject(path) }
   for (const keys of selected) {
-    if (packageScript ? keys.length !== 2 || keys[0] !== 'scripts' : !['run', 'script'].includes(keys.at(-1))) reject(path)
+    if (packageScript ? keys.length !== 2 || keys[0] !== 'scripts' : !['run', 'script'].includes(keys.at(-1)!)) reject(path)
     let value = document
     for (const key of keys) {
       if (value === null || typeof value !== 'object' || !Object.hasOwn(value, key)) reject(path)

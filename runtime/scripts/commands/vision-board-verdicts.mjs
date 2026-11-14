@@ -1,10 +1,10 @@
 import { readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import { readBoard } from '../lib/vision-board.mjs'
-import { createScratch } from '../lib/scratch.mjs'
-import { hashBytes } from '../lib/fingerprint.mjs'
-import { validateData, validateIds } from '../lib/schema.mjs'
-import { CommandError } from '../lib/result.mjs'
+import { readBoard } from '../lib/vision-board.ts'
+import { createScratch } from '../lib/scratch.ts'
+import { hashBytes } from '../lib/fingerprint.ts'
+import { validateData, validateIds } from '../lib/schema.ts'
+import { CommandError } from '../lib/result.ts'
 
 export async function run(options) {
   if (!options.input || !options.draft) throw new CommandError('usage-error', [{ code: 'missing-input', message: '--input and --draft are required.', fix: 'Supply complete-round context JSON and the agent-revised UTF-8 draft.' }])

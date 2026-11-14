@@ -1,11 +1,11 @@
 import { readFile, rename, rm, stat, writeFile } from 'node:fs/promises'
 import { randomUUID } from 'node:crypto'
-import { resolveTarget } from '../lib/repo.mjs'
-import { resolveFilePath } from '../lib/paths.mjs'
-import { inspectJSON } from '../lib/json.mjs'
-import { validateData } from '../lib/schema.mjs'
+import { resolveTarget } from '../lib/repo.ts'
+import { resolveFilePath } from '../lib/paths.ts'
+import { inspectJSON } from '../lib/json.ts'
+import { validateData } from '../lib/schema.ts'
 import { validateFindings } from './findings.mjs'
-import { CommandError } from '../lib/result.mjs'
+import { CommandError } from '../lib/result.ts'
 
 // Positions preserve an exact identity even when diagnostic text contains separators.
 const identity = entry => JSON.stringify([entry.rule, entry.path, entry.key])

@@ -1,11 +1,11 @@
 import { readdir, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import { resolveTarget } from '../lib/repo.mjs'
-import { resolveFilePath } from '../lib/paths.mjs'
-import { repoFiles } from '../lib/discovery.mjs'
-import { matchesPath, pathGlob } from '../lib/glob.mjs'
-import { CommandError } from '../lib/result.mjs'
-import { agentsPointer, kitDirectory, managedFiles, readKitPlan } from '../lib/kit.mjs'
+import { resolveTarget } from '../lib/repo.ts'
+import { resolveFilePath } from '../lib/paths.ts'
+import { repoFiles } from '../lib/discovery.ts'
+import { matchesPath, pathGlob } from '../lib/glob.ts'
+import { CommandError } from '../lib/result.ts'
+import { agentsPointer, kitDirectory, managedFiles, readKitPlan } from '../lib/kit.ts'
 
 const repair = 'If the product changed, edit the kit plan and run kit scaffold --update; if the file was edited by hand, restore it the same way, then re-drive the feature with kit prove.'
 

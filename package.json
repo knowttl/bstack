@@ -8,7 +8,7 @@
     "node": ">=24"
   },
   "scripts": {
-    "check": "node node_modules/typescript/bin/tsc --noEmit && node scripts/generate-skills.ts --check && node scripts/generate-readme.ts --check && node scripts/generate-contract.ts --check && node scripts/check-package.mjs && node scripts/generate-checker.ts --repo . --check && node node_modules/oxlint/bin/oxlint -f agent && node scripts/check-comments.mjs --baseline scripts/check-comments.baseline.json install/*.mjs runtime/assets/*.mjs runtime/scripts/*.mjs runtime/scripts/commands/*.mjs runtime/scripts/lib/*.mjs scripts/*.mjs scripts/*.ts scripts/lib/*.ts tests/eval/container/*.ts tests/fixtures/*.ts tests/inputs/*.ts tests/scripts/*.ts upstream/*.ts",
+    "check": "node node_modules/typescript/bin/tsc --noEmit && node scripts/generate-skills.ts --check && node scripts/generate-readme.ts --check && node scripts/generate-contract.ts --check && node scripts/check-package.mjs && node scripts/generate-checker.ts --repo . --check && node node_modules/oxlint/bin/oxlint -f agent && node scripts/check-comments.mjs --baseline scripts/check-comments.baseline.json install/*.mjs runtime/assets/*.mjs runtime/scripts/*.mjs runtime/scripts/commands/*.mjs runtime/scripts/lib/*.ts scripts/*.mjs scripts/*.ts scripts/lib/*.ts tests/eval/container/*.ts tests/fixtures/*.ts tests/inputs/*.ts tests/scripts/*.ts upstream/*.ts",
     "test": "node scripts/test.ts",
     "eval": "node scripts/eval.ts"
   },

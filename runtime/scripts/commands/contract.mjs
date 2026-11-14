@@ -1,12 +1,12 @@
 import { readFile, readdir, stat } from 'node:fs/promises'
 import { dirname, join, relative, resolve, sep } from 'node:path'
-import { resolveTarget } from '../lib/repo.mjs'
-import { resolveFilePath, resolvePath } from '../lib/paths.mjs'
-import { inspectJSON } from '../lib/json.mjs'
-import { validateData, validateIds } from '../lib/schema.mjs'
-import { pathGlob } from '../lib/glob.mjs'
-import { integrationCommand, isIndirectExecutable } from '../lib/check-integration.mjs'
-import { CommandError } from '../lib/result.mjs'
+import { resolveTarget } from '../lib/repo.ts'
+import { resolveFilePath, resolvePath } from '../lib/paths.ts'
+import { inspectJSON } from '../lib/json.ts'
+import { validateData, validateIds } from '../lib/schema.ts'
+import { pathGlob } from '../lib/glob.ts'
+import { integrationCommand, isIndirectExecutable } from '../lib/check-integration.ts'
+import { CommandError } from '../lib/result.ts'
 import schema from '../../schemas/project.schema.json' with { type: 'json' }
 
 function reject(code, path, message, status = 'failed') {

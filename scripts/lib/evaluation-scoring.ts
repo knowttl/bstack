@@ -2,8 +2,8 @@ import type { Answers, Correction, EvaluationRecord } from './evaluation-types.t
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { text, object, array, readJSON, fail } from './evaluation.ts'
-import { validateData, validateIds } from '../../runtime/scripts/lib/schema.mjs'
-import { hashBytes, canonicalJSON } from '../../runtime/scripts/lib/fingerprint.mjs'
+import { validateData, validateIds } from '../../runtime/scripts/lib/schema.ts'
+import { hashBytes, canonicalJSON } from '../../runtime/scripts/lib/fingerprint.ts'
 
 export const scoreChecks = array({ ...object({ id: text, passed: { type: 'boolean' },
   startLine: { type: 'integer' }, endLine: { type: 'integer' }, companionRunId: text }),

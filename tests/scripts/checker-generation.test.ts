@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { maintenanceRepo } from './maintenance-fixture.ts'
 import { runMaintenance as run, snapshot } from './discovery-fixture.ts'
-import { hashBytes, canonicalJSON } from '../../runtime/scripts/lib/fingerprint.mjs'
+import { hashBytes, canonicalJSON } from '../../runtime/scripts/lib/fingerprint.ts'
 
 const root = fileURLToPath(new URL('../../', import.meta.url))
 const installedPath = '.bstack/bin/bstack-check.mjs'

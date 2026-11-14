@@ -1,13 +1,13 @@
 import { writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { spawnSync } from 'node:child_process'
-import { resolveTarget } from '../lib/repo.mjs'
-import { createScratch } from '../lib/scratch.mjs'
-import { previousPolicy, mapInventory } from '../lib/evidence-policy.mjs'
-import { CommandError } from '../lib/result.mjs'
+import { resolveTarget } from '../lib/repo.ts'
+import { createScratch } from '../lib/scratch.ts'
+import { previousPolicy, mapInventory } from '../lib/evidence-policy.ts'
+import { CommandError } from '../lib/result.ts'
 import { loadContract } from './contract.mjs'
 import { relative, resolve } from 'node:path'
-import { resolveLinks } from '../lib/paths.mjs'
+import { resolveLinks } from '../lib/paths.ts'
 
 // Inventory reads are independent of ambient Git overrides, just like target resolution.
 const gitEnv = { ...process.env, GIT_DIR: undefined, GIT_WORK_TREE: undefined, GIT_COMMON_DIR: undefined, GIT_INDEX_FILE: undefined }

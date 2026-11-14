@@ -94,8 +94,8 @@
       "files": ["tests/**"],
       "rules": {
         "no-restricted-imports": ["error", { "patterns": [{
-          "group": ["**/runtime/scripts/**", "!**/runtime/scripts/lib/fingerprint.mjs", "!**/runtime/scripts/lib/run.mjs"],
-          "message": "test-imports-runtime: tests may import from runtime/scripts only lib/fingerprint.mjs and lib/run.mjs. Use a run helper from tests/scripts/discovery-fixture.ts to drive the command as a child process."
+          "group": ["**/runtime/scripts/**", "!**/runtime/scripts/lib/fingerprint.ts", "!**/runtime/scripts/lib/run.ts"],
+          "message": "test-imports-runtime: tests may import from runtime/scripts only lib/fingerprint.ts and lib/run.ts. Use a run helper from tests/scripts/discovery-fixture.ts to drive the command as a child process."
         }] }]
       }
     },
@@ -103,8 +103,8 @@
       "files": ["tests/scripts/evidence-validate.test.ts"],
       "rules": {
         "no-restricted-imports": ["error", { "patterns": [{
-          "group": ["**/runtime/scripts/**", "!**/runtime/scripts/lib/fingerprint.mjs", "!**/runtime/scripts/lib/run.mjs", "!**/runtime/scripts/lib/evidence-policy.mjs"],
-          "message": "test-imports-runtime: tests may import from runtime/scripts only lib/fingerprint.mjs and lib/run.mjs. Use a run helper from tests/scripts/discovery-fixture.ts to drive the command as a child process."
+          "group": ["**/runtime/scripts/**", "!**/runtime/scripts/lib/fingerprint.ts", "!**/runtime/scripts/lib/run.ts", "!**/runtime/scripts/lib/evidence-policy.ts"],
+          "message": "test-imports-runtime: tests may import from runtime/scripts only lib/fingerprint.ts and lib/run.ts. Use a run helper from tests/scripts/discovery-fixture.ts to drive the command as a child process."
         }] }]
       }
     },

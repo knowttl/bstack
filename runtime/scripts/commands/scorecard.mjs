@@ -1,5 +1,5 @@
-import { resolveTarget } from '../lib/repo.mjs'
-import { ledgerPath, loadConstraints, rungs } from '../lib/constraints.mjs'
+import { resolveTarget } from '../lib/repo.ts'
+import { ledgerPath, loadConstraints, rungs } from '../lib/constraints.ts'
 
 const principles = {
   'conventional-structure': 'Conventional structure and co-location',

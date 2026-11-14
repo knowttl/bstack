@@ -1,8 +1,8 @@
 import { readFile } from 'node:fs/promises'
-import { resolveTarget } from '../lib/repo.mjs'
-import { validateData, validateIds } from '../lib/schema.mjs'
-import { pathGlob, sharedPath } from '../lib/glob.mjs'
-import { CommandError } from '../lib/result.mjs'
+import { resolveTarget } from '../lib/repo.ts'
+import { validateData, validateIds } from '../lib/schema.ts'
+import { pathGlob, sharedPath } from '../lib/glob.ts'
+import { CommandError } from '../lib/result.ts'
 
 export async function run(options) {
   if (!options.plans) throw new CommandError('usage-error', [{ code: 'missing-plans', message: '--plans requires two files.', fix: 'Supply --plans <file> <file>.' }])

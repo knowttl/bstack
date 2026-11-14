@@ -1,10 +1,10 @@
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { spawnSync } from 'node:child_process'
-import { resolveTarget } from '../lib/repo.mjs'
-import { repoFiles, readGit } from '../lib/discovery.mjs'
-import { hashBytes } from '../lib/fingerprint.mjs'
-import { selectCommand } from '../lib/run.mjs'
+import { resolveTarget } from '../lib/repo.ts'
+import { repoFiles, readGit } from '../lib/discovery.ts'
+import { hashBytes } from '../lib/fingerprint.ts'
+import { selectCommand } from '../lib/run.ts'
 
 // Manifest detection describes the starting stack without executing project code.
 const manifests = new Set(['package.json', 'package-lock.json', 'npm-shrinkwrap.json', 'pnpm-lock.yaml', 'yarn.lock', 'bun.lock', 'bun.lockb', 'pyproject.toml', 'requirements.txt', 'Pipfile', 'Pipfile.lock', 'uv.lock', 'poetry.lock', 'Cargo.toml', 'Cargo.lock', 'go.mod', 'go.sum', 'Gemfile', 'Gemfile.lock', 'composer.json', 'composer.lock'])

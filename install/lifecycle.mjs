@@ -1,10 +1,10 @@
 import { copyFile, lstat, mkdir, mkdtemp, readFile, readdir, readlink, rename, rmdir, unlink, writeFile } from 'node:fs/promises'
 import { basename, dirname, join, relative } from 'node:path'
 import { createInterface } from 'node:readline/promises'
-import { hashBytes, canonicalJSON } from '../runtime/scripts/lib/fingerprint.mjs'
-import { resolvePath } from '../runtime/scripts/lib/paths.mjs'
-import { saveRecovery } from '../runtime/scripts/lib/protected-write.mjs'
-import { CommandError } from '../runtime/scripts/lib/result.mjs'
+import { hashBytes, canonicalJSON } from '../runtime/scripts/lib/fingerprint.ts'
+import { resolvePath } from '../runtime/scripts/lib/paths.ts'
+import { saveRecovery } from '../runtime/scripts/lib/protected-write.ts'
+import { CommandError } from '../runtime/scripts/lib/result.ts'
 
 function blocked(code, message) {
   throw new CommandError('blocked', [{ code, message, fix: 'Preserve the installation and journal. Review the reported paths before retrying.' }])

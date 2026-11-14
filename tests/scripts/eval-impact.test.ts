@@ -160,7 +160,7 @@ for (const [key, bundling] of [
   ['scripts/commands/inspect.mjs', ['repo-audit']],
   ['scripts/commands/probe.mjs', ['verification', 'maintenance']],
   ['scripts/commands/vision-board-build.mjs', ['vision']],
-  ['scripts/lib/vision-board.mjs', ['vision']],
+  ['scripts/lib/vision-board.ts', ['vision']],
   ['schemas/findings.schema.json', ['vision', 'glossary', 'architecture', 'foundation', 'verification', 'maintenance', 'agents-md', 'plan']],
   ['schemas/vision-proposals.json', ['vision']],
   ['schemas/check-plan.json', ['verification', 'architecture', 'foundation', 'maintenance']],

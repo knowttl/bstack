@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
 import { join } from 'node:path'
-import { selectCommand } from '../../../runtime/scripts/lib/run.mjs'
+import { selectCommand } from '../../../runtime/scripts/lib/run.ts'
 const [path] = process.argv.slice(2)
 let npm
 try {

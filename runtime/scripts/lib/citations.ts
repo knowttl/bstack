@@ -1,14 +1,16 @@
 import { readFile } from 'node:fs/promises'
 import { spawnSync } from 'node:child_process'
-import { resolvePath } from './paths.mjs'
-import { hashBytes } from './fingerprint.mjs'
-import { CommandError } from './result.mjs'
+import { resolvePath } from './paths.ts'
+import { hashBytes } from './fingerprint.ts'
+import { CommandError } from './result.ts'
+import type { Problem } from './result.ts'
 
-// A file citation is { location: "path:line", state: { kind: "sha256" | "revision", value } } and resolves only against the exact bytes it records.
-export async function fileCitationProblems(root, citation) {
-  const [, path, number] = citation.location.match(/^(.*):([1-9][0-9]*)$/u)
-  const problems = []
-  const problem = (code, message) => problems.push({ code, message, path: citation.location, fix: 'Reopen the cited source and regenerate its location and state.' })
+export type FileCitation = { location: string; state: { kind: 'sha256' | 'revision'; value: string } }
+
+export async function fileCitationProblems(root: string, citation: FileCitation) {
+  const [, path, number] = citation.location.match(/^(.*):([1-9][0-9]*)$/u)!
+  const problems: Problem[] = []
+  const problem = (code: string, message: string) => problems.push({ code, message, path: citation.location, fix: 'Reopen the cited source and regenerate its location and state.' })
   let bytes
   try { bytes = await readFile(await resolvePath(root, path)) } catch (error) {
     if (error instanceof CommandError) return error.problems

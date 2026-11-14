@@ -5,7 +5,7 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { selectCommand } from '../../runtime/scripts/lib/run.mjs'
+import { selectCommand } from '../../runtime/scripts/lib/run.ts'
 import { cloneRepository, cloneSeed } from './fixture-seed.ts'
 
 // Every installer invocation selects a disposable snapshot and isolated home.
@@ -138,7 +138,7 @@ export async function legacyInstallation(t: import('node:test').TestContext, hos
   const installer = command('git', ['show', '98b9ab1d8de5f9a238dde2383295c2c04450d852:install/install.mjs'], root, f.env)
   assert.equal(installer.status, 0, installer.stderr)
   // The recorded installer predates the shared runtime folder, so point its libraries at the current source tree.
-  await writeFile(join(f.checkout, 'install/install.mjs'), installer.stdout.replaceAll('../skills/repo-audit/scripts/lib/', '../runtime/scripts/lib/'))
+  await writeFile(join(f.checkout, 'install/install.mjs'), installer.stdout.replaceAll(/\.\.\/skills\/repo-audit\/scripts\/lib\/([a-z-]+)\.mjs/g, '../runtime/scripts/lib/$1.ts'))
   const args = ['--scope', 'project', '--project', f.project, '--host', host]
   assert.equal(f.run(...args).status, 0)
   await cp(join(root, 'install/install.mjs'), join(f.checkout, 'install/install.mjs'))

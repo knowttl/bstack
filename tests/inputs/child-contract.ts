@@ -1,15 +1,16 @@
 import { readFile, watch } from 'node:fs/promises'
 import { mock } from 'node:test'
-import { parseArgs } from '../../runtime/scripts/lib/args.mjs'
-import { resolveTarget } from '../../runtime/scripts/lib/repo.mjs'
-import { emitResult } from '../../runtime/scripts/lib/result.mjs'
-import { runCommand, selectCommand } from '../../runtime/scripts/lib/run.mjs'
-import { fingerprint } from '../../runtime/scripts/lib/fingerprint.mjs'
+import { parseArgs } from '../../runtime/scripts/lib/args.ts'
+import { resolveTarget } from '../../runtime/scripts/lib/repo.ts'
+import { emitResult } from '../../runtime/scripts/lib/result.ts'
+import type { Problem, Status } from '../../runtime/scripts/lib/result.ts'
+import { runCommand, selectCommand } from '../../runtime/scripts/lib/run.ts'
+import { fingerprint } from '../../runtime/scripts/lib/fingerprint.ts'
 
 try {
   const options = parseArgs(process.argv.slice(2), ['mode', 'input'])
   const target = await resolveTarget(options, { draftOnly: true })
-  const input = JSON.parse(await readFile(options.input, 'utf8'))
+  const input = JSON.parse(await readFile(options.input!, 'utf8'))
   let data
   if (options.mode === 'run') {
     const readinessDirectory = input.cancelDirectory ?? input.timeoutDirectory
@@ -37,9 +38,9 @@ try {
   } else if (options.mode === 'fingerprint') {
     data = await fingerprint(target, input)
   } else throw new Error('Unknown fixture mode')
-  emitResult({ command: 'child-contract', status: data.status ?? 'passed', data, inputs: { target } }, options.json)
+  emitResult({ command: 'child-contract', status: 'status' in data ? data.status : 'passed', data, inputs: { target } }, options.json)
 } catch (error) {
-  emitResult({ command: 'child-contract', status: (error as { status?: string }).status ?? 'blocked', problems: (error as { problems?: unknown[] }).problems ?? [
+  emitResult({ command: 'child-contract', status: (error as { status?: Status }).status ?? 'blocked', problems: (error as { problems?: Problem[] }).problems ?? [
     { code: 'fixture-failed', message: (error as Error).message, fix: 'Supply a valid fixture input.' }
   ] }, true)
 }

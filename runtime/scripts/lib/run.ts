@@ -2,18 +2,34 @@ import { spawn } from 'node:child_process'
 import { access } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { performance } from 'node:perf_hooks'
-import { resolvePath } from './paths.mjs'
-import { CommandError } from './result.mjs'
+import { resolvePath } from './paths.ts'
+import { CommandError } from './result.ts'
+import type { Target } from './repo.ts'
 
 // Keep useful output tails without letting a noisy tool exhaust memory.
 const outputLimit = 65536
 
-export async function selectCommand(executable, args, { platform = process.platform, env = process.env, node = process.execPath } = {}) {
+export type ChildCommand = { executable: string; args: readonly string[]; versionArgs: readonly string[]; cwd: string; timeoutMs?: number }
+
+type SelectedCommand = { executable: string; args: readonly string[] }
+
+type Exit = [exitCode: number | null, signal: NodeJS.Signals | null]
+
+export type ProcessCapture = {
+  status: 'passed' | 'failed' | 'blocked'; stdout: string; stderr: string; durationMs: number; exitCode: number | null
+  signal: NodeJS.Signals | null; timedOut: boolean; cancelled: boolean; outputTruncated: boolean; error: string | null
+}
+
+export type Execution = ProcessCapture & { toolVersion: ProcessCapture }
+
+type CaptureOptions = { cwd: string; timeoutMs: number; signal?: AbortSignal; env: NodeJS.ProcessEnv; outputLimitBytes: number; exactOutput?: boolean }
+
+export async function selectCommand(executable: string, args: readonly string[], { platform = process.platform, env = process.env, node = process.execPath }: { platform?: string; env?: NodeJS.ProcessEnv; node?: string } = {}): Promise<SelectedCommand> {
   if (executable === 'node') return { executable: node, args }
   if (platform !== 'win32') return { executable, args }
   const manager = /^(npm|pnpm|yarn)(?:\.cmd)?$/i.exec(executable)?.[1].toLowerCase()
   if (manager) {
-    const entry = { npm: 'npm-cli.js', pnpm: 'pnpm.cjs', yarn: 'yarn.js' }[manager]
+    const entry = { npm: 'npm-cli.js', pnpm: 'pnpm.cjs', yarn: 'yarn.js' }[manager as 'npm' | 'pnpm' | 'yarn']
     const candidates = [manager === 'npm' ? env.npm_execpath : undefined,
       join(dirname(node), 'node_modules', manager, 'bin', entry),
       ...(env.PATH || '').split(';').filter(Boolean).map(path => join(path, 'node_modules', manager, 'bin', entry))]
@@ -32,7 +48,7 @@ export async function selectCommand(executable, args, { platform = process.platf
   return { executable, args }
 }
 
-export async function runCommand(target, command, { signal, env = process.env, outputLimitBytes = outputLimit, exactOutput = false } = {}) {
+export async function runCommand(target: Pick<Target, 'root'>, command: ChildCommand, { signal, env = process.env, outputLimitBytes = outputLimit, exactOutput = false }: { signal?: AbortSignal; env?: NodeJS.ProcessEnv; outputLimitBytes?: number; exactOutput?: boolean } = {}): Promise<Execution> {
   const timeoutMs = command.timeoutMs ?? 120000
   if (!command.executable || !Array.isArray(command.args) || command.args.some(arg => typeof arg !== 'string') ||
       !Array.isArray(command.versionArgs) || command.versionArgs.some(arg => typeof arg !== 'string') ||
@@ -47,13 +63,13 @@ export async function runCommand(target, command, { signal, env = process.env, o
   return { ...await capture(selected, { cwd, timeoutMs, signal, env, outputLimitBytes, exactOutput }), toolVersion }
 }
 
-async function capture(command, { cwd, timeoutMs, signal, env, outputLimitBytes, exactOutput }) {
+async function capture(command: SelectedCommand, { cwd, timeoutMs, signal, env, outputLimitBytes, exactOutput }: CaptureOptions) {
   const started = performance.now()
   let stdout = Buffer.alloc(0)
   let stderr = Buffer.alloc(0)
   let timedOut = false
   let cancelled = signal?.aborted ?? false
-  let error = null
+  let error: string | null = null
   let outputTruncated = false
   let cleanup = Promise.resolve()
   if (cancelled) return result(null, null)
@@ -61,10 +77,10 @@ async function capture(command, { cwd, timeoutMs, signal, env, outputLimitBytes,
   child.stdout.on('data', chunk => { outputTruncated ||= stdout.length + chunk.length > outputLimitBytes; stdout = Buffer.concat([stdout, chunk]).subarray(-outputLimitBytes) })
   child.stderr.on('data', chunk => { outputTruncated ||= stderr.length + chunk.length > outputLimitBytes; stderr = Buffer.concat([stderr, chunk]).subarray(-outputLimitBytes) })
   child.on('error', failure => { error = failure.message })
-  let finish
-  const completion = new Promise(resolve => { finish = resolve })
+  let finish: (exit: Exit) => void
+  const completion = new Promise<Exit>(resolve => { finish = resolve })
   child.on('close', (code, exitSignal) => finish([code, exitSignal]))
-  const cleanupFailed = message => {
+  const cleanupFailed = (message: string) => {
     error ??= message
     if (child.exitCode === null && child.signalCode === null && !child.kill('SIGKILL')) child.unref()
     child.stdout.destroy()
@@ -74,13 +90,13 @@ async function capture(command, { cwd, timeoutMs, signal, env, outputLimitBytes,
   const stop = () => {
     if (!child.pid) return
     if (process.platform === 'win32') {
-      cleanup = new Promise(resolve => {
+      cleanup = new Promise<void>(resolve => {
         const killer = spawn('taskkill', ['/pid', String(child.pid), '/T', '/F'], { shell: false, stdio: 'ignore' })
         killer.on('error', failure => { cleanupFailed(failure.message); resolve() })
         killer.on('close', code => { if (code !== 0) cleanupFailed('Process-tree cleanup failed.'); resolve() })
       })
     } else {
-      try { process.kill(-child.pid, 'SIGKILL') } catch (failure) { if (failure.code !== 'ESRCH') cleanupFailed(failure.message) }
+      try { process.kill(-child.pid, 'SIGKILL') } catch (failure: any) { if (failure.code !== 'ESRCH') cleanupFailed(failure.message) }
     }
   }
   const cancel = () => { cancelled = true; stop() }
@@ -94,7 +110,7 @@ async function capture(command, { cwd, timeoutMs, signal, env, outputLimitBytes,
   await cleanup
   return result(exitCode, exitSignal)
 
-  function result(exitCode, exitSignal) {
+  function result(exitCode: number | null, exitSignal: NodeJS.Signals | null): ProcessCapture {
     if (exactOutput && !Buffer.from(stdout.toString('utf8')).equals(stdout)) error ??= 'Generated output must be valid UTF-8.'
     return { status: error ? 'blocked' : exitCode === 0 && !timedOut && !cancelled ? 'passed' : 'failed',
       stdout: stdout.toString('utf8'), stderr: stderr.toString('utf8'), durationMs: performance.now() - started,

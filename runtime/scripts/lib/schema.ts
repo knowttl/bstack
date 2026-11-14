@@ -1,16 +1,22 @@
-import { CommandError } from './result.mjs'
-import { canonicalJSON } from './fingerprint.mjs'
+import { CommandError } from './result.ts'
+import type { Problem } from './result.ts'
+import { canonicalJSON } from './fingerprint.ts'
 
 // Only keywords exercised by installed input formats belong to this subset.
 const keywords = ['$schema', 'title', 'type', 'const', 'enum', 'properties', 'required', 'additionalProperties', 'items', 'minItems', 'minLength', 'pattern', 'uniqueItems']
 // JSON types distinguish arrays from objects and exclude JavaScript-only values.
 const types = ['object', 'array', 'string', 'number', 'integer', 'boolean', 'null']
 
-function object(value) {
+export type Schema = {
+  type?: string | string[]; const?: unknown; enum?: unknown[]; properties?: Record<string, Schema>; required?: string[]
+  additionalProperties?: boolean | Schema; items?: Schema; minItems?: number; minLength?: number; pattern?: string; uniqueItems?: boolean
+}
+
+function object(value: unknown): value is Record<string, any> {
   return value !== null && typeof value === 'object' && !Array.isArray(value)
 }
 
-function matchesType(value, type) {
+function matchesType(value: unknown, type: string) {
   if (type === 'object') return object(value)
   if (type === 'array') return Array.isArray(value)
   if (type === 'null') return value === null
@@ -18,10 +24,10 @@ function matchesType(value, type) {
   return typeof value === type && (type !== 'number' || Number.isFinite(value))
 }
 
-export function validateSchema(schema) {
-  const problems = []
-  function visit(node, path) {
-    const invalid = message => problems.push({ code: 'invalid-schema', message, path, fix: 'Use the documented schema subset and keyword value types.' })
+export function validateSchema(schema: unknown) {
+  const problems: Problem[] = []
+  function visit(node: unknown, path: string) {
+    const invalid = (message: string) => problems.push({ code: 'invalid-schema', message, path, fix: 'Use the documented schema subset and keyword value types.' })
     if (!object(node)) { invalid('A schema must be an object.'); return }
     for (const key of Object.keys(node)) {
       if (!keywords.includes(key)) problems.push({ code: 'unsupported-keyword', message: `Unsupported schema keyword: ${key}`, path: `${path}/${key}`, fix: `Remove ${key} or extend the tested schema subset in its owning task.` })
@@ -53,11 +59,11 @@ export function validateSchema(schema) {
   if (problems.length) throw new CommandError('failed', problems)
 }
 
-export function validateData(schema, data) {
+export function validateData(schema: Schema, data: unknown) {
   validateSchema(schema)
-  const problems = []
-  function visit(node, value, path) {
-    const problem = (code, message, at = path) => problems.push({ code, message, path: at, fix: 'Supply data matching the documented input schema.' })
+  const problems: Problem[] = []
+  function visit(node: Schema, value: unknown, path: string) {
+    const problem = (code: string, message: string, at = path) => problems.push({ code, message, path: at, fix: 'Supply data matching the documented input schema.' })
     if (node.type && !(Array.isArray(node.type) ? node.type : [node.type]).some(type => matchesType(value, type))) {
       problem('invalid-type', `Expected ${JSON.stringify(node.type)}.`)
       return
@@ -71,14 +77,14 @@ export function validateData(schema, data) {
     if (Array.isArray(value)) {
       if (node.uniqueItems && new Set(value.map(canonicalJSON)).size !== value.length) problem('duplicate-item', 'Array items must be unique.')
       if (node.minItems !== undefined && value.length < node.minItems) problem('min-items', `Expected at least ${node.minItems} items.`)
-      if (node.items) value.forEach((item, index) => visit(node.items, item, `${path}/${index}`))
+      if (node.items) value.forEach((item, index) => visit(node.items!, item, `${path}/${index}`))
     }
     if (object(value)) {
       for (const key of node.required ?? []) {
         if (!Object.hasOwn(value, key)) problem('missing-field', `Missing required field: ${key}`, `${path}/${key}`)
       }
       for (const [key, item] of Object.entries(value)) {
-        if (Object.hasOwn(node.properties ?? {}, key)) visit(node.properties[key], item, `${path}/${key}`)
+        if (Object.hasOwn(node.properties ?? {}, key)) visit(node.properties![key], item, `${path}/${key}`)
         else if (node.additionalProperties === false) problem('unknown-field', `Unknown input field: ${key}`, `${path}/${key}`)
         else if (object(node.additionalProperties)) visit(node.additionalProperties, item, `${path}/${key}`)
       }
@@ -88,8 +94,8 @@ export function validateData(schema, data) {
   if (problems.length) throw new CommandError('failed', problems)
 }
 
-export function validateIds(records, path) {
-  const problems = []
+export function validateIds(records: ({ id?: unknown } | null | undefined)[], path: string) {
+  const problems: Problem[] = []
   const seen = new Set()
   records.forEach((record, index) => {
     const id = record?.id

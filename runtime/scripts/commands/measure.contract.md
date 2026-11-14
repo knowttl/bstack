@@ -47,7 +47,7 @@ Counts describe same-commit changes, rather than observed merge conflicts.
 
 Default exclusions cover lock basenames at every depth: package-lock.json, npm-shrinkwrap.json, pnpm-lock.yaml, yarn.lock, bun.lock, bun.lockb, uv.lock, poetry.lock, Pipfile.lock, Cargo.lock, go.sum, Gemfile.lock and composer.lock.
 Generated directory conventions are .git, node_modules, .venv, venv, __pycache__, dist, build and .cache at every depth.
-These patterns derive from the shared discovery policy in `lib/discovery.mjs`.
+These patterns derive from the shared discovery policy in `lib/discovery.ts`.
 Declare other generated files and broad formatting commits with the [exclusions schema](../skills/architecture/schemas/measure-exclusions.json):
 
 ```json

@@ -5677,7 +5677,7 @@ var init_browser = __esm({
   }
 });
 
-// runtime/scripts/lib/result.mjs
+// runtime/scripts/lib/result.ts
 var exitCodes = { passed: 0, failed: 1, blocked: 2, "usage-error": 3 };
 var CommandError = class extends Error {
   constructor(status, problems, data = {}) {
@@ -5725,7 +5725,7 @@ function emitResult({ command, status, problems = [], data = {}, inputs = {} }, 
   process.exitCode = exitCodes[status];
 }
 
-// runtime/scripts/lib/args.mjs
+// runtime/scripts/lib/args.ts
 function parseArgs(argv, valueOptions = []) {
   const options = {};
   const problems = [];
@@ -5796,7 +5796,7 @@ Missing or unsupported arguments are a usage error (exit 3).`);
 import { readFile as readFile4 } from "node:fs/promises";
 import { extname as extname2 } from "node:path";
 
-// runtime/scripts/lib/repo.mjs
+// runtime/scripts/lib/repo.ts
 import { realpath, stat } from "node:fs/promises";
 import { resolve } from "node:path";
 import { spawnSync } from "node:child_process";
@@ -5821,7 +5821,7 @@ async function resolveTarget(options, { draftOnly = false } = {}) {
   return { mode: "repo", root: await realpath(git.stdout.replace(/\n$/, "")) };
 }
 
-// runtime/scripts/lib/paths.mjs
+// runtime/scripts/lib/paths.ts
 import { lstat, readlink, realpath as realpath2, stat as stat2 } from "node:fs/promises";
 import { dirname, isAbsolute, join, relative, resolve as resolve2, sep, win32 } from "node:path";
 function isInside(root, path) {
@@ -5884,7 +5884,7 @@ async function resolveFilePath(root, input2, reviewedPath, allowMissingLinks = f
   throw new CommandError("failed", [{ code: "invalid-scope", message: "Reviewed scope must identify a regular file or a planned absent file.", fix: "List concrete file paths, including planned absent files.", path: input2 }]);
 }
 
-// runtime/scripts/lib/document-references.mjs
+// runtime/scripts/lib/document-references.ts
 import { readFile, readdir, stat as stat3 } from "node:fs/promises";
 import { dirname as dirname2, extname, join as join2, relative as relative2, resolve as resolve3 } from "node:path";
 
@@ -7222,7 +7222,7 @@ var xn = k.parseInline;
 var Rn = T.parse;
 var Tn = R.lex;
 
-// runtime/scripts/lib/document-references.mjs
+// runtime/scripts/lib/document-references.ts
 function markdownTokens(text) {
   return Tn(text.replace(/^\uFEFF/, "").replace(/\r\n/g, "\n"), { gfm: true });
 }
@@ -7349,7 +7349,7 @@ async function checkLocalLink(root, source, href, documents = /* @__PURE__ */ ne
 import { readFile as readFile3, readdir as readdir3, stat as stat5 } from "node:fs/promises";
 import { dirname as dirname3, join as join4, relative as relative4, resolve as resolve5, sep as sep3 } from "node:path";
 
-// runtime/scripts/lib/json.mjs
+// runtime/scripts/lib/json.ts
 function inspectJSON(text) {
   const value = JSON.parse(text, (key, value2) => {
     if (typeof value2 === "number" && !Number.isFinite(value2)) throw new CommandError("failed", [{ code: "nonfinite-number", message: "JSON numbers must be finite.", fix: "Supply finite numbers in every JSON value." }]);
@@ -7383,12 +7383,12 @@ function inspectJSON(text) {
   return { value, entries, close: tokens[index - 1].index };
 }
 
-// runtime/scripts/lib/fingerprint.mjs
+// runtime/scripts/lib/fingerprint.ts
 import { createHash } from "node:crypto";
 import { readFile as readFile2, stat as stat4, realpath as realpath3, lstat as lstat2, readlink as readlink2 } from "node:fs/promises";
 import { resolve as resolve4 } from "node:path";
 
-// runtime/scripts/lib/discovery.mjs
+// runtime/scripts/lib/discovery.ts
 import { readdir as readdir2 } from "node:fs/promises";
 import { join as join3, relative as relative3, sep as sep2 } from "node:path";
 import { spawnSync as spawnSync2 } from "node:child_process";
@@ -7413,7 +7413,7 @@ function readGit(root, args) {
   });
 }
 
-// runtime/scripts/lib/fingerprint.mjs
+// runtime/scripts/lib/fingerprint.ts
 function hashBytes(bytes) {
   return createHash("sha256").update(bytes).digest("hex");
 }
@@ -7479,7 +7479,7 @@ async function fingerprint(target, { baseCommit, paths, inputs, evidencePath }) 
   return { fingerprint: hashBytes(canonicalJSON(state)), state };
 }
 
-// runtime/scripts/lib/schema.mjs
+// runtime/scripts/lib/schema.ts
 var keywords = ["$schema", "title", "type", "const", "enum", "properties", "required", "additionalProperties", "items", "minItems", "minLength", "pattern", "uniqueItems"];
 var types = ["object", "array", "string", "number", "integer", "boolean", "null"];
 function object(value) {
@@ -7580,7 +7580,7 @@ function validateIds(records, path) {
   if (problems.length) throw new CommandError("failed", problems);
 }
 
-// runtime/scripts/lib/glob.mjs
+// runtime/scripts/lib/glob.ts
 import { posix, win32 as win322 } from "node:path";
 function pathGlob(pattern) {
   if (!pattern || pattern.includes("\0") || pattern.includes("\\") || posix.isAbsolute(pattern) || win322.isAbsolute(pattern) || /^[A-Za-z]:/.test(pattern) || pattern.split("/").some((part) => !part || part === "." || part === "..") || /[\[\]{}()!]/u.test(pattern) || pattern.split("/").some((part) => part.includes("**") && part !== "**")) {
@@ -7645,7 +7645,7 @@ function matchesPath(glob, path) {
   return sharedPath(glob, { states, end: states.length - 1 }) !== null;
 }
 
-// runtime/scripts/lib/check-integration.mjs
+// runtime/scripts/lib/check-integration.ts
 import { basename } from "node:path";
 function reject(path) {
   throw new CommandError("failed", [{
@@ -8192,7 +8192,7 @@ import { watch } from "node:fs";
 import { join as join7 } from "node:path";
 import { setImmediate } from "node:timers/promises";
 
-// runtime/scripts/lib/scratch.mjs
+// runtime/scripts/lib/scratch.ts
 import { mkdir, realpath as realpath4 } from "node:fs/promises";
 import { createHash as createHash2, randomUUID } from "node:crypto";
 import { homedir } from "node:os";
@@ -8220,7 +8220,7 @@ async function createScratch(target) {
   return await realpath4(directory);
 }
 
-// runtime/scripts/lib/run.mjs
+// runtime/scripts/lib/run.ts
 import { spawn } from "node:child_process";
 import { access } from "node:fs/promises";
 import { dirname as dirname4, join as join6 } from "node:path";
@@ -8352,7 +8352,7 @@ async function capture(command, { cwd, timeoutMs, signal, env, outputLimitBytes,
   }
 }
 
-// runtime/scripts/lib/proposed-edit.mjs
+// runtime/scripts/lib/proposed-edit.ts
 import { extname as extname3 } from "node:path";
 function reject3(code2, message) {
   throw new CommandError("failed", [{ code: code2, message, fix: "Review a supported, unambiguous mechanical edit and its complete proposed bytes." }]);
@@ -8656,7 +8656,7 @@ import { writeFile as writeFile2 } from "node:fs/promises";
 import { join as join8 } from "node:path";
 import { spawnSync as spawnSync3 } from "node:child_process";
 
-// runtime/scripts/lib/evidence-policy.mjs
+// runtime/scripts/lib/evidence-policy.ts
 import { posix as posix2, win32 as win323 } from "node:path";
 function baseText(root, base, path) {
   if (base.kind === "empty-tree") return "";
@@ -10035,12 +10035,12 @@ import { join as join14 } from "node:path";
 import { readdir as readdir5, readFile as readFile9 } from "node:fs/promises";
 import { join as join12 } from "node:path";
 
-// runtime/scripts/lib/kit.mjs
+// runtime/scripts/lib/kit.ts
 import { readFileSync } from "node:fs";
 import { readFile as readFile8 } from "node:fs/promises";
 import { isAbsolute as isAbsolute3, join as join11, posix as posix3 } from "node:path";
 
-// runtime/scripts/lib/render.mjs
+// runtime/scripts/lib/render.ts
 function link(text, destination) {
   return ["[", text, "]", "(", destination, ")"].join("");
 }
@@ -10204,7 +10204,7 @@ var kit_plan_default = {
   }
 };
 
-// runtime/scripts/lib/kit.mjs
+// runtime/scripts/lib/kit.ts
 var gatePath = posix3.join("scripts", "map-coverage.mjs");
 var reservedPaths = ["SKILL.md", "kit.json", "features/README.md"];
 var entryContract = [
@@ -10512,7 +10512,7 @@ async function run7(options) {
 import { readdir as readdir6, readFile as readFile12 } from "node:fs/promises";
 import { join as join13 } from "node:path";
 
-// runtime/scripts/lib/citations.mjs
+// runtime/scripts/lib/citations.ts
 import { readFile as readFile10 } from "node:fs/promises";
 import { spawnSync as spawnSync4 } from "node:child_process";
 async function fileCitationProblems(root, citation) {
@@ -10545,7 +10545,7 @@ async function fileCitationProblems(root, citation) {
   return problems;
 }
 
-// runtime/scripts/lib/formal-suite.mjs
+// runtime/scripts/lib/formal-suite.ts
 import { readFileSync as readFileSync2 } from "node:fs";
 import { readFile as readFile11 } from "node:fs/promises";
 import { isAbsolute as isAbsolute4, posix as posix4 } from "node:path";
@@ -10648,7 +10648,7 @@ var formal_plan_default = {
   }
 };
 
-// runtime/scripts/lib/formal-suite.mjs
+// runtime/scripts/lib/formal-suite.ts
 var gatePath2 = posix4.join("scripts", "map-coverage.mjs");
 var planPath = "suite.json";
 var honestLimits = [
@@ -11362,7 +11362,7 @@ import { readFile as readFile16 } from "node:fs/promises";
 import { dirname as dirname6, relative as relative8, resolve as resolve10 } from "node:path";
 import { spawnSync as spawnSync5 } from "node:child_process";
 
-// runtime/scripts/lib/protected-write.mjs
+// runtime/scripts/lib/protected-write.ts
 import { readFile as readFile15, open, mkdir as mkdir2, rename, unlink, stat as stat9 } from "node:fs/promises";
 import { basename as basename4, dirname as dirname5, join as join16 } from "node:path";
 import { randomUUID as randomUUID2 } from "node:crypto";
@@ -11759,7 +11759,7 @@ async function run12(options) {
   return { inputs: { target }, data: await inspectJournal(journal) };
 }
 
-// runtime/scripts/lib/instructions.mjs
+// runtime/scripts/lib/instructions.ts
 import { readFile as readFile17 } from "node:fs/promises";
 import { join as join17, posix as posix5 } from "node:path";
 var contractPath = ".bstack/project.json";

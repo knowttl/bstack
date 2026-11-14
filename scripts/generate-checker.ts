@@ -3,14 +3,16 @@ import { fileURLToPath } from 'node:url'
 import { join } from 'node:path'
 import { version } from 'esbuild'
 import { bundle } from './lib/bundle.ts'
-import { parseArgs } from '../runtime/scripts/lib/args.mjs'
-import { resolveTarget } from '../runtime/scripts/lib/repo.mjs'
-import { createScratch } from '../runtime/scripts/lib/scratch.mjs'
-import { fileBytes } from '../runtime/scripts/lib/protected-write.mjs'
-import { hashBytes, canonicalJSON } from '../runtime/scripts/lib/fingerprint.mjs'
-import { resolveFilePath } from '../runtime/scripts/lib/paths.mjs'
-import { exactDiff } from '../runtime/scripts/lib/proposed-edit.mjs'
-import { CommandError, emitResult } from '../runtime/scripts/lib/result.mjs'
+import { parseArgs } from '../runtime/scripts/lib/args.ts'
+import type { Options } from '../runtime/scripts/lib/args.ts'
+import { resolveTarget } from '../runtime/scripts/lib/repo.ts'
+import { createScratch } from '../runtime/scripts/lib/scratch.ts'
+import { fileBytes } from '../runtime/scripts/lib/protected-write.ts'
+import { hashBytes, canonicalJSON } from '../runtime/scripts/lib/fingerprint.ts'
+import { resolveFilePath } from '../runtime/scripts/lib/paths.ts'
+import { exactDiff } from '../runtime/scripts/lib/proposed-edit.ts'
+import { CommandError, emitResult } from '../runtime/scripts/lib/result.ts'
+import type { Result } from '../runtime/scripts/lib/result.ts'
 
 // Generation always resolves authored sources from this checkout, never the target.
 const root = fileURLToPath(new URL('../', import.meta.url))
@@ -27,7 +29,7 @@ async function generate() {
     '\n// Build identity binds validator sources, schemas and generation inputs.\nexport const buildVersion = ' + JSON.stringify(buildVersion) + '\n'
 }
 
-async function run(options: ReturnType<typeof parseArgs>) {
+async function run(options: Options<'check'>): Promise<Omit<Result, 'command'>> {
   const target = await resolveTarget(options)
   const content = await generate()
   const current = await fileBytes(join(root, generatedPath))
@@ -59,8 +61,8 @@ if (argv.length === 1 && argv[0] === '--help') {
     const options = parseArgs(argv, ['check'])
     emitResult({ command: 'checker generate', ...await run(options) }, options.json)
   } catch (error) {
-    emitResult({ command: 'checker generate', status: error instanceof CommandError ? (error as { status?: string }).status : 'blocked',
-      problems: error instanceof CommandError ? (error as { problems?: unknown[] }).problems : [{ code: 'generation-unavailable', message: (error as Error).message,
+    emitResult({ command: 'checker generate', status: error instanceof CommandError ? error.status : 'blocked',
+      problems: error instanceof CommandError ? error.problems : [{ code: 'generation-unavailable', message: (error as Error).message,
         fix: 'Restore checkout build dependencies and source files.' }] }, argv.includes('--json'))
   }
 }

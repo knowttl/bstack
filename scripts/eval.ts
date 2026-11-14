@@ -4,10 +4,11 @@ import { randomUUID } from 'node:crypto'
 import { join, resolve } from 'node:path'
 import { freemem, platform, release } from 'node:os'
 import { root, text, object, array, options, scenario, readJSON, fail, verifiedExecution, isApprovedBaseline, fixtureHash, evaluatedSkills, explicitInvocation } from './lib/evaluation.ts'
-import { validateData, validateIds } from '../runtime/scripts/lib/schema.mjs'
-import { hashBytes, canonicalJSON } from '../runtime/scripts/lib/fingerprint.mjs'
-import { runCommand } from '../runtime/scripts/lib/run.mjs'
-import { emitResult } from '../runtime/scripts/lib/result.mjs'
+import { validateData, validateIds } from '../runtime/scripts/lib/schema.ts'
+import { hashBytes, canonicalJSON } from '../runtime/scripts/lib/fingerprint.ts'
+import { runCommand } from '../runtime/scripts/lib/run.ts'
+import { emitResult } from '../runtime/scripts/lib/result.ts'
+import type { Problem } from '../runtime/scripts/lib/result.ts'
 import { readAdapter, isolate, hostTurn, closeHost, redactEvidence, candidateSkillHash } from './lib/evaluation-host.ts'
 import { scoreChecks, validateScore, correctedScore } from './lib/evaluation-scoring.ts'
 import { readJudge, judgeInput, judgeAnswers } from './lib/evaluation-judge.ts'
@@ -496,6 +497,6 @@ try {
   }
 } catch (error) {
   // Bad manual evidence must leave the saved run blocked rather than imply a result.
-  emitResult({ command: 'eval', status: (error as { status?: string }).status === 'usage-error' ? (error as { status?: string }).status : 'blocked',
-    problems: (error as { problems?: unknown[] }).problems ?? [{ code: 'evaluation-blocked', message: (error as Error).message, fix: 'Follow docs/evaluation.md and retry with complete evidence.' }] }, process.argv.includes('--json'))
+  emitResult({ command: 'eval', status: (error as { status?: string }).status === 'usage-error' ? 'usage-error' : 'blocked',
+    problems: (error as { problems?: Problem[] }).problems ?? [{ code: 'evaluation-blocked', message: (error as Error).message, fix: 'Follow docs/evaluation.md and retry with complete evidence.' }] }, process.argv.includes('--json'))
 }

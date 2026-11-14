@@ -4,8 +4,8 @@ import { dirname, join } from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { execFileSync } from 'node:child_process'
 import { root, fail } from './evaluation.ts'
-import { hashBytes, canonicalJSON } from '../../runtime/scripts/lib/fingerprint.mjs'
-import { runCommand } from '../../runtime/scripts/lib/run.mjs'
+import { hashBytes, canonicalJSON } from '../../runtime/scripts/lib/fingerprint.ts'
+import { runCommand } from '../../runtime/scripts/lib/run.ts'
 
 // Subject and judge sessions use the same pinned disposable toolchain.
 export const image = 'bstack-eval-toolchain:node24-codex0.162.1'

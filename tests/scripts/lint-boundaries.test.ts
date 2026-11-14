@@ -12,7 +12,7 @@ const thousandCodeLines = Array.from({ length: 1000 }, (_, index) => `export con
 const clean = {
   'runtime/scripts/lib/shared.mjs': "import { other } from './other.mjs'\nexport const shared = other\n",
   'runtime/scripts/commands/alpha.mjs': "import { shared } from '../lib/shared.mjs'\nexport const run = shared\n",
-  'tests/scripts/alpha.test.ts': "import { hashBytes } from '../../runtime/scripts/lib/fingerprint.mjs'\nimport { selectCommand } from '../../runtime/scripts/lib/run.mjs'\nexport const used = [hashBytes, selectCommand]\n",
+  'tests/scripts/alpha.test.ts': "import { hashBytes } from '../../runtime/scripts/lib/fingerprint.ts'\nimport { selectCommand } from '../../runtime/scripts/lib/run.ts'\nexport const used = [hashBytes, selectCommand]\n",
   'scripts/long.ts': `${thousandCodeLines}\n// A comment line.\n/* A block\n   comment. */\n\n`
 }
 

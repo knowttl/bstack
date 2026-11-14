@@ -1,15 +1,31 @@
 import { posix, win32 } from 'node:path'
-import { readGit } from './discovery.mjs'
-import { inspectJSON } from './json.mjs'
-import { validateData, validateIds } from './schema.mjs'
-import { pathGlob, matchesPath } from './glob.mjs'
-import { CommandError } from './result.mjs'
-import { resolvePath } from './paths.mjs'
+import { readGit } from './discovery.ts'
+import { inspectJSON } from './json.ts'
+import { validateData, validateIds } from './schema.ts'
+import { pathGlob, matchesPath } from './glob.ts'
+import { CommandError } from './result.ts'
+import { resolvePath } from './paths.ts'
 import schema from '../../schemas/project.schema.json' with { type: 'json' }
 
-export function baseText(root, base, path) {
+export type ComparisonBase = { kind: 'empty-tree' | 'commit'; objectId: string }
+
+type Change = { status: string; path: string; oldPath?: string }
+
+export type Inventory = { changes: Change[]; paths: string[] }
+
+export type CoveragePolicy = {
+  schemaVersion: number
+  documents: { id: string; path: string }[]
+  scopes: { id: string; paths: string[]; documentIds: string[]; ruleIds: string[] }[]
+  rules: { id: string; checkIds: string[] }[]
+  checks: { id: string }[]
+  generators: { id: string }[]
+  acceptanceSources: { id: string }[]
+}
+
+export function baseText(root: string, base: ComparisonBase, path: string) {
   if (base.kind === 'empty-tree') return ''
-  function unavailable(message) {
+  function unavailable(message: string): never {
     throw new CommandError('blocked', [{ code: 'previous-source-unavailable', path,
       message, fix: 'Restore an internal, acyclic source and its blobs in the comparison tree before validating evidence.' }])
   }
@@ -50,7 +66,7 @@ export function baseText(root, base, path) {
 }
 
 // Discover prior config even when the proposed contract moved or removed its old location.
-export async function previousPolicy(root, base, contractPath, inventory, priorPath) {
+export async function previousPolicy(root: string, base: ComparisonBase, contractPath: string, inventory: Inventory, priorPath?: string) {
   if (base.kind === 'empty-tree') return null
   const tree = readGit(root, ['ls-tree', '-r', '--name-only', '-z', base.objectId])
   if (tree.status !== 0) throw new CommandError('blocked', [{ code: 'previous-contract-unavailable',
@@ -71,7 +87,7 @@ export async function previousPolicy(root, base, contractPath, inventory, priorP
     if (!paths.includes(path)) throw new CommandError('blocked', [{ code: 'previous-contract-unavailable', path,
       message: 'The selected previous contract is absent from the comparison base.', fix: 'Select the authoritative contract path at the comparison base.' }])
     const text = baseText(root, base, path)
-    let value
+    let value: CoveragePolicy
     try { value = inspectJSON(text).value } catch (error) {
       throw new CommandError('blocked', [{ code: 'previous-contract-unavailable', path,
         message: 'Previous contract is not readable JSON.', fix: 'Restore or explicitly migrate the previous policy before validating.' }])
@@ -80,7 +96,7 @@ export async function previousPolicy(root, base, contractPath, inventory, priorP
       message: 'Previous contract version is unsupported.', fix: 'Provide a reviewed migration for the previous contract version.' }])
     try {
       validateData(schema, value)
-      for (const key of ['documents', 'scopes', 'rules', 'checks', 'generators', 'acceptanceSources']) validateIds(value[key], key)
+      for (const key of ['documents', 'scopes', 'rules', 'checks', 'generators', 'acceptanceSources'] as const) validateIds(value[key], key)
       for (const scope of value.scopes) {
         scope.paths.forEach(pathGlob)
         if (scope.documentIds.some(id => !value.documents.some(doc => doc.id === id)) || scope.ruleIds.some(id => !value.rules.some(rule => rule.id === id))) throw new Error('Unknown scope reference')
@@ -100,7 +116,7 @@ export async function previousPolicy(root, base, contractPath, inventory, priorP
   return candidates[0]
 }
 
-export function mapInventory(inventory, contracts) {
+export function mapInventory(inventory: Inventory, contracts: CoveragePolicy[]) {
   const mappings = inventory.paths.map(path => {
     const scopes = contracts.flatMap(contract => contract.scopes.filter(scope => scope.paths.some(pattern => matchesPath(pathGlob(pattern), path))))
     return { path, scopeIds: [...new Set(scopes.map(scope => scope.id))],

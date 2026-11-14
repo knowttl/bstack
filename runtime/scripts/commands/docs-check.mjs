@@ -1,8 +1,8 @@
 import { readFile } from 'node:fs/promises'
 import { extname } from 'node:path'
-import { resolveTarget } from '../lib/repo.mjs'
-import { resolveFilePath } from '../lib/paths.mjs'
-import { markdownTokens, markdownBlocks, markdownCoverageLimit, markdownLinks, checkLocalLink } from '../lib/document-references.mjs'
+import { resolveTarget } from '../lib/repo.ts'
+import { resolveFilePath } from '../lib/paths.ts'
+import { markdownTokens, markdownBlocks, markdownCoverageLimit, markdownLinks, checkLocalLink } from '../lib/document-references.ts'
 import { loadContract } from './contract.mjs'
 
 function glossaryInline(tokens) {

@@ -1,12 +1,14 @@
 import { readFile } from 'node:fs/promises'
 import { join, posix } from 'node:path'
 import { Lexer, Tokenizer } from 'marked'
-import { markdownTokens } from './document-references.mjs'
-import { readGit, repoFiles } from './discovery.mjs'
-import { matchesPath, pathGlob } from './glob.mjs'
-import { resolveFilePath } from './paths.mjs'
-import { validateData } from './schema.mjs'
-import { CommandError } from './result.mjs'
+import type { Tokens } from 'marked'
+import { markdownTokens } from './document-references.ts'
+import { readGit, repoFiles } from './discovery.ts'
+import { matchesPath, pathGlob } from './glob.ts'
+import { resolveFilePath } from './paths.ts'
+import { validateData } from './schema.ts'
+import { CommandError } from './result.ts'
+import type { Problem } from './result.ts'
 import schema from '../../schemas/project.schema.json' with { type: 'json' }
 
 const contractPath = '.bstack/project.json'
@@ -14,13 +16,19 @@ const importDepth = 5
 const skillDescription = /^\.(?:claude|agents)\/skills\/[^/]+\/SKILL\.md$/
 const instructionFile = /(?:^|\/)(?:AGENTS\.md|CLAUDE\.md)$/
 
-export async function loadInstructionSettings(root, file = contractPath) {
+type InstructionBaseline = { bytes: number; reason: string }
+
+type InstructionSettings = { exclude: string[]; baseline: InstructionBaseline | null }
+
+type InstructionSource = { path: string; kind: 'instructions' | 'import' | 'skill-description'; bytes: number; lines: number; tokens: number; imports?: string[] }
+
+export async function loadInstructionSettings(root: string, file = contractPath): Promise<InstructionSettings> {
   let text
-  try { text = await readFile(await resolveFilePath(root, file), 'utf8') } catch (error) {
+  try { text = await readFile(await resolveFilePath(root, file), 'utf8') } catch (error: any) {
     if (error.code === 'ENOENT') return { exclude: [], baseline: null }
     throw error
   }
-  let contract
+  let contract: { instructions?: Partial<InstructionSettings> }
   try { contract = JSON.parse(text) } catch {
     throw new CommandError('blocked', [{ code: 'contract-unavailable', path: file, message: 'The project contract must be readable JSON.', fix: `Repair ${file} or remove it.` }])
   }
@@ -28,12 +36,12 @@ export async function loadInstructionSettings(root, file = contractPath) {
   return { exclude: contract.instructions?.exclude ?? [], baseline: contract.instructions?.baseline ?? null }
 }
 
-export async function includedFiles(root, exclude) {
+export async function includedFiles(root: string, exclude: string[]) {
   const globs = exclude.map(pathGlob)
   return (await repoFiles(root)).filter(path => !globs.some(glob => matchesPath(glob, path)))
 }
 
-async function description(text, path) {
+async function description(text: string, path: string) {
   const frontmatter = /^\uFEFF?---\r?\n([\s\S]*?\r?\n)---(?:\r?\n|$)/.exec(text)?.[1]
   if (!frontmatter) return null
   let metadata
@@ -46,12 +54,12 @@ async function description(text, path) {
   return metadata?.['disable-model-invocation'] === true || typeof metadata?.description !== 'string' ? null : metadata.description
 }
 
-function instructionProse(tokens) {
+function instructionProse(tokens: Tokens.Generic[]): string {
   return tokens.map(token => {
     if (token.type === 'code' || token.type === 'codespan') return '\n\n'
-    if (token.type === 'list') return '\n' + token.items.map(item => instructionProse(item.tokens)).join('\n') + '\n'
-    if (token.type === 'blockquote') return '\n' + instructionProse(token.tokens) + '\n'
-    if (token.type === 'table') return '\n' + [...token.header, ...token.rows.flat()].map(cell => instructionProse(cell.tokens)).join('\n') + '\n'
+    if (token.type === 'list') return '\n' + token.items.map((item: Tokens.ListItem) => instructionProse(item.tokens)).join('\n') + '\n'
+    if (token.type === 'blockquote') return '\n' + instructionProse(token.tokens!) + '\n'
+    if (token.type === 'table') return '\n' + [...token.header, ...token.rows.flat()].map((cell: Tokens.TableCell) => instructionProse(cell.tokens)).join('\n') + '\n'
     if (token.type === 'html' && token.block) {
       const tokenizer = Object.assign(new Tokenizer(), { html: () => undefined })
       return instructionProse(new Lexer({ gfm: true, tokenizer }).lex(token.raw))
@@ -68,22 +76,22 @@ function instructionProse(tokens) {
   }).join('')
 }
 
-function importsIn(text) {
+function importsIn(text: string) {
   return [...instructionProse(markdownTokens(text)).matchAll(/(?:^|\s)@(\S+)/g)].map(match => match[1].replace(/[.,;:!?)]+$/, ''))
 }
 
-function size(text) {
+function size(text: string) {
   const bytes = Buffer.byteLength(text)
   return { bytes, lines: text === '' ? 0 : text.split('\n').length - (text.endsWith('\n') ? 1 : 0), tokens: Math.ceil(bytes / 4) }
 }
 
-export async function measureInstructions(root, files) {
+export async function measureInstructions(root: string, files: string[]) {
   const present = new Set(files)
-  const sources = new Map()
-  const expandedDepth = new Map()
-  async function load(path, depth) {
+  const sources = new Map<string, InstructionSource>()
+  const expandedDepth = new Map<string, number>()
+  async function load(path: string, depth: number) {
     const text = await readFile(join(root, path), 'utf8')
-    const source = sources.get(path) ?? { path, kind: instructionFile.test(path) ? 'instructions' : 'import', ...size(text), imports: [] }
+    const source: InstructionSource = sources.get(path) ?? { path, kind: instructionFile.test(path) ? 'instructions' : 'import', ...size(text), imports: [] }
     sources.set(path, source)
     if ((posix.basename(path) !== 'CLAUDE.md' && depth === 0) || depth === importDepth) return
     if ((expandedDepth.get(path) ?? Infinity) <= depth) return
@@ -98,10 +106,10 @@ export async function measureInstructions(root, files) {
     if (text !== null) sources.set(path, { path, kind: 'skill-description', ...size(text) })
   }
   const list = [...sources.values()]
-  return { sources: list, total: Object.fromEntries(['bytes', 'lines', 'tokens'].map(key => [key, list.reduce((sum, source) => sum + source[key], 0)])) }
+  return { sources: list, total: Object.fromEntries((['bytes', 'lines', 'tokens'] as const).map(key => [key, list.reduce((sum, source) => sum + source[key], 0)])) }
 }
 
-export async function checkInstructionGrowth(root, file) {
+export async function checkInstructionGrowth(root: string, file?: string): Promise<Problem[]> {
   file ??= contractPath
   const { exclude, baseline } = await loadInstructionSettings(root, file)
   let path = file
@@ -144,7 +152,7 @@ export async function checkInstructionGrowth(root, file) {
   }
   if (!baseline) return previous ? [{ code: 'instructions-baseline-removed', path: file, message: 'The recorded instruction baseline was removed.',
     fix: 'Restore instructions.baseline to keep the instruction growth gate active.' }] : []
-  const problems = []
+  const problems: Problem[] = []
   if (previous && baseline.bytes > previous.bytes && (baseline.reason.trim() === previous.reason.trim() || baseline.reason.trim() === 'Measured when registered')) {
     problems.push({ code: 'instructions-baseline-reason', path: file, message: 'The instruction baseline increased without a new growth reason.',
       fix: 'Replace instructions.baseline.reason with a reason for the growth.' })

@@ -2,10 +2,10 @@ import { mkdir, mkdtemp, readFile, realpath, writeFile } from 'node:fs/promises'
 import { isAbsolute, join, relative, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { run as check } from './formal-check.mjs'
-import { modelPath, readFormalPlan, suiteDirectory } from '../lib/formal-suite.mjs'
-import { isInside, resolveFilePath, resolvePath } from '../lib/paths.mjs'
-import { CommandError } from '../lib/result.mjs'
-import { runCommand } from '../lib/run.mjs'
+import { modelPath, readFormalPlan, suiteDirectory } from '../lib/formal-suite.ts'
+import { isInside, resolveFilePath, resolvePath } from '../lib/paths.ts'
+import { CommandError } from '../lib/result.ts'
+import { runCommand } from '../lib/run.ts'
 
 const chartStyles = [
   '  classDef blue fill:#dbeafe,stroke:#2563eb,color:#1e3a8a',

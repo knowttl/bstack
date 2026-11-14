@@ -1,17 +1,18 @@
 import { readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import { parseArgs } from '../../runtime/scripts/lib/args.mjs'
-import { CommandError, emitResult } from '../../runtime/scripts/lib/result.mjs'
-import { resolveTarget } from '../../runtime/scripts/lib/repo.mjs'
-import { resolvePath } from '../../runtime/scripts/lib/paths.mjs'
-import { createScratch } from '../../runtime/scripts/lib/scratch.mjs'
+import { parseArgs } from '../../runtime/scripts/lib/args.ts'
+import { CommandError, emitResult } from '../../runtime/scripts/lib/result.ts'
+import type { Problem } from '../../runtime/scripts/lib/result.ts'
+import { resolveTarget } from '../../runtime/scripts/lib/repo.ts'
+import { resolvePath } from '../../runtime/scripts/lib/paths.ts'
+import { createScratch } from '../../runtime/scripts/lib/scratch.ts'
 
 // This public test command exercises C4a before production dispatch lands in C4c.
 const argv = process.argv.slice(2)
 let inputs = {}
 try {
   const options = parseArgs(argv, ['input', 'mode'])
-  if (!options.input || !['repo', 'draft'].includes(options.mode)) {
+  if (!options.input || !options.mode || !['repo', 'draft'].includes(options.mode)) {
     throw new CommandError('usage-error', [{ code: 'missing-input', message: 'Select --input and --mode repo|draft.', fix: 'Supply the test command inputs.' }])
   }
   let input
@@ -20,7 +21,7 @@ try {
   } catch {
     throw new CommandError('failed', [{ code: 'invalid-input', message: 'Input must be readable JSON.', fix: 'Supply a readable JSON input file.' }])
   }
-  const problems = []
+  const problems: Problem[] = []
   if (!input || typeof input !== 'object' || Array.isArray(input)) {
     problems.push({ code: 'invalid-input', message: 'Input must be an object.', fix: 'Supply an input object.' })
   } else {
@@ -40,7 +41,7 @@ try {
       paths.push(await resolvePath(target.root, path))
     } catch (error) {
       if (!(error instanceof CommandError)) throw error
-      problems.push(...(error as { problems: unknown[] }).problems)
+      problems.push(...error.problems)
     }
   }
   if (problems.length) throw new CommandError('usage-error', problems)
@@ -51,6 +52,6 @@ try {
   }
   emitResult({ command: 'contract-test', status: 'passed', data: { paths, scratch }, inputs }, options.json)
 } catch (error) {
-  emitResult({ command: 'contract-test', status: error instanceof CommandError ? (error as { status?: string }).status : 'blocked',
-    problems: error instanceof CommandError ? (error as { problems: unknown[] }).problems : [{ code: 'io-unavailable', message: (error as Error).message, fix: 'Restore filesystem access and retry.' }], inputs }, argv.includes('--json'))
+  emitResult({ command: 'contract-test', status: error instanceof CommandError ? error.status : 'blocked',
+    problems: error instanceof CommandError ? error.problems : [{ code: 'io-unavailable', message: (error as Error).message, fix: 'Restore filesystem access and retry.' }], inputs }, argv.includes('--json'))
 }

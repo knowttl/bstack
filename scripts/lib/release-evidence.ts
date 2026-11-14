@@ -4,8 +4,9 @@ import { spawnSync } from 'node:child_process'
 import { root, text, object, array, readJSON, scenario, fail, fixtureHash, verifiedExecution, explicitInvocation } from './evaluation.ts'
 import { redactEvidence } from './evaluation-host.ts'
 import { affectedScenarios } from './evaluation-impact.ts'
-import { validateData } from '../../runtime/scripts/lib/schema.mjs'
-import { canonicalJSON, hashBytes } from '../../runtime/scripts/lib/fingerprint.mjs'
+import { validateData } from '../../runtime/scripts/lib/schema.ts'
+import { canonicalJSON, hashBytes } from '../../runtime/scripts/lib/fingerprint.ts'
+import type { Status } from '../../runtime/scripts/lib/result.ts'
 
 import type { EvaluationRecord, Scenario } from './evaluation-types.ts'
 
@@ -241,7 +242,7 @@ export async function releaseGate(opts: { release: string; candidate: string; ch
     }
   }
   const output = { schemaVersion: 2, version: opts.release, candidate: opts.candidate,
-    verdict: blocking.length ? 'failed' : pending.length || confirmation.size ? 'blocked' : 'passed',
+    verdict: (blocking.length ? 'failed' : pending.length || confirmation.size ? 'blocked' : 'passed') as Status,
     previous: previous?.version ?? null, blocking, knownIssues, pending, confirmation: [...confirmation],
     gatingSet, checks, full, carryover, hardBreakReportHash: hashBytes(canonicalJSON(report)), ledger: 'ledger.jsonl' }
   await mkdir(directory, { recursive: true })

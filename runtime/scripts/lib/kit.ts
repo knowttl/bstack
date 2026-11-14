@@ -1,11 +1,12 @@
 import { readFileSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 import { isAbsolute, join, posix } from 'node:path'
-import { validateData } from './schema.mjs'
-import { inspectJSON } from './json.mjs'
-import { CommandError } from './result.mjs'
-import { pathGlob } from './glob.mjs'
-import { bullets, commandLines, link } from './render.mjs'
+import { validateData } from './schema.ts'
+import { inspectJSON } from './json.ts'
+import { CommandError } from './result.ts'
+import { pathGlob } from './glob.ts'
+import { bullets, commandLines, link } from './render.ts'
+import type { CommandSpec } from './render.ts'
 import schema from '../../schemas/kit-plan.json' with { type: 'json' }
 
 // Every generated file other than helpers lives at one of these kit-relative paths.
@@ -25,21 +26,38 @@ const entryContract = [
   '4. `Gotchas` lists traps that can waste or invalidate a verification run.'
 ]
 
-function invalid(code, message, path) {
+type KitFeature = {
+  id: string; title: string; summary: string; sourcePaths: string[]; subFeatures: { id: string; description: string }[]
+  entryPoints: string[]; preconditions: string[]; gotchas: string[]
+  steps: (CommandSpec & { label: string; expect: string; match: string; artifacts?: string[] })[]
+}
+
+export type KitPlan = {
+  schemaVersion: 1; app: string; description: string; surface: string; isolation: string; baseline: string[]; coverageGate?: boolean
+  launch: CommandSpec & { ready: { url?: string; output?: string }; readiness: string; teardown: string; timeoutSeconds?: number }
+  doctor: CommandSpec & { asserts: string }
+  drive: { harness: string; conventions: string[] }
+  evidence: { directory: string; standards: string[] }
+  cleanup: Partial<CommandSpec> & { notes: string[] }
+  helpers: { path: string; purpose: string; invocation: string; content: string }[]
+  features: KitFeature[]
+}
+
+function invalid(code: string, message: string, path: string): never {
   throw new CommandError('failed', [{ code, message, path, fix: 'Correct the kit plan and run kit scaffold again.' }])
 }
 
-function relativePath(value, path) {
+function relativePath(value: string, path: string) {
   if (isAbsolute(value) || /^[A-Za-z]:/.test(value) || value.includes('\0') || value.split(/[\\/]/).includes('..')) {
     invalid('unsafe-path', `Expected a repo-relative path without parent traversal: ${value}`, path)
   }
 }
 
-export function kitDirectory(app) {
+export function kitDirectory(app: string) {
   return `.agents/skills/verify-${app}`
 }
 
-export function validateKitPlan(plan, { forUpdate = false } = {}) {
+export function validateKitPlan(plan: KitPlan, { forUpdate = false } = {}) {
   validateData(schema, plan)
   const { launch, evidence, helpers, features } = plan
   if (Object.keys(launch.ready).length !== 1 || !(launch.ready.url ?? launch.ready.output)) invalid('invalid-ready', 'Declare exactly one of ready.url or ready.output.', '$/launch/ready')
@@ -51,7 +69,7 @@ export function validateKitPlan(plan, { forUpdate = false } = {}) {
   const kit = kitDirectory(plan.app)
   const evidenceDirectory = posix.normalize(evidence.directory)
   if (evidenceDirectory === kit || evidenceDirectory.startsWith(`${kit}/`)) invalid('evidence-inside-kit', 'Evidence must not live inside the committed kit directory.', '$/evidence/directory')
-  const commands = [['launch', launch], ['doctor', plan.doctor], ['cleanup', plan.cleanup], ...features.flatMap(feature => feature.steps.map((step, index) => [`features/${feature.id}/steps/${index}`, step]))]
+  const commands: [string, Partial<CommandSpec>][] = [['launch', launch], ['doctor', plan.doctor], ['cleanup', plan.cleanup], ...features.flatMap(feature => feature.steps.map((step, index): [string, Partial<CommandSpec>] => [`features/${feature.id}/steps/${index}`, step]))]
   for (const [path, command] of commands) if (command.cwd !== undefined) relativePath(command.cwd, `$/${path}/cwd`)
   const helperPaths = new Set()
   for (const [index, helper] of helpers.entries()) {
@@ -65,7 +83,7 @@ export function validateKitPlan(plan, { forUpdate = false } = {}) {
     if (ids.has(feature.id)) invalid('duplicate-feature', `Duplicate feature ID: ${feature.id}`, `$/features/${index}/id`)
     ids.add(feature.id)
     if (!forUpdate) {
-      for (const field of ['title', 'summary']) {
+      for (const field of ['title', 'summary'] as const) {
         if (/[\r\n]/u.test(feature[field]) || (field === 'summary' && feature[field].startsWith('Source paths:'))) invalid('invalid-feature-metadata', `Feature ${field} must be one line and cannot shadow the source declaration.`, `$/features/${index}/${field}`)
       }
     }
@@ -89,8 +107,8 @@ export function validateKitPlan(plan, { forUpdate = false } = {}) {
   return plan
 }
 
-export async function readKitPlan(root, app, options) {
-  let plan
+export async function readKitPlan(root: string, app: string, options?: { forUpdate?: boolean }) {
+  let plan: KitPlan
   try { plan = inspectJSON(await readFile(join(root, kitDirectory(app), 'kit.json'), 'utf8')).value } catch (error) {
     if (error instanceof CommandError) throw error
     throw new CommandError('blocked', [{ code: 'kit-unavailable', message: `No readable kit at ${kitDirectory(app)}/kit.json.`, fix: 'Apply the scaffolded kit first.' }])
@@ -100,17 +118,17 @@ export async function readKitPlan(root, app, options) {
   return plan
 }
 
-export function readySeconds(plan) {
+export function readySeconds(plan: KitPlan) {
   return plan.launch.timeoutSeconds ?? defaultReadySeconds
 }
 
-function documentedHelpers(plan) {
+function documentedHelpers(plan: KitPlan) {
   const gate = { path: gatePath, purpose: 'Fail when a change touches a feature\'s source paths without updating its feature file or recording a no-impact reason.',
     invocation: `node ${kitDirectory(plan.app)}/${gatePath} --base origin/<default branch>` }
   return plan.coverageGate ? [...plan.helpers, gate] : plan.helpers
 }
 
-function skillDocument(plan) {
+function skillDocument(plan: KitPlan) {
   const { app, launch, doctor, drive, evidence, cleanup, features } = plan
   const helpers = documentedHelpers(plan)
   const ready = launch.ready.url ? `a request to \`${launch.ready.url}\` succeeds` : `output matching \`${launch.ready.output}\` appears`
@@ -131,14 +149,14 @@ function skillDocument(plan) {
     '## Evidence', '',
     `Directory: \`${evidence.directory}\`.`, '', ...bullets(evidence.standards), '',
     '## Cleanup', '',
-    ...(cleanup.command ? [...commandLines('Command', cleanup), ''] : []),
+    ...(cleanup.command ? [...commandLines('Command', cleanup as CommandSpec), ''] : []),
     ...bullets(cleanup.notes), 'Cleanup removes what the run started and never the evidence directory.', '',
     '## Helpers', '',
     ...(helpers.length ? helpers.flatMap(helper => [`- \`${helper.path}\`: ${helper.purpose} Run \`${helper.invocation}\`.`]) : ['None.']), ''
   ].join('\n')
 }
 
-function featureDocument(plan, feature) {
+function featureDocument(plan: KitPlan, feature: KitFeature) {
   return [
     `# ${feature.title}`, '', feature.summary, '',
     `Source paths: ${feature.sourcePaths.map(path => `\`${path}\``).join(', ')}`, '',
@@ -154,7 +172,7 @@ function featureDocument(plan, feature) {
   ].join('\n')
 }
 
-function indexDocument(plan) {
+function indexDocument(plan: KitPlan) {
   return [
     `# ${plan.app} verification map`, '',
     `This directory is the maintained source for verifying the user-facing behavior of ${plan.app}.`,
@@ -169,16 +187,16 @@ function indexDocument(plan) {
   ].join('\n')
 }
 
-export function pointerDocument(plan) {
+export function pointerDocument(plan: KitPlan) {
   return ['---', `name: verify-${plan.app}`, `description: ${JSON.stringify(plan.description)}`, '---', '',
     `Use the verification kit in ${link(kitDirectory(plan.app), `../../../${kitDirectory(plan.app)}/SKILL.md`)}.`, ''].join('\n')
 }
 
-export function agentsPointer(plan) {
+export function agentsPointer(plan: KitPlan) {
   return `Verify changes on the real product with the kit in ${link(kitDirectory(plan.app), `${kitDirectory(plan.app)}/SKILL.md`)}.`
 }
 
-export function kitFiles(plan) {
+export function kitFiles(plan: KitPlan) {
   const kit = kitDirectory(plan.app)
   return [
     { path: `${kit}/SKILL.md`, content: skillDocument(plan) },
@@ -190,6 +208,6 @@ export function kitFiles(plan) {
   ]
 }
 
-export function managedFiles(plan) {
+export function managedFiles(plan: KitPlan) {
   return [...kitFiles(plan), { path: `.claude/skills/verify-${plan.app}/SKILL.md`, content: pointerDocument(plan) }]
 }
