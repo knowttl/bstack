@@ -1015,6 +1015,17 @@ Use this ladder: eliminate through types, schemas or architecture; detect throug
 - **L7** Existing violations go into a visible, shrinking baseline; new ones fail; exceptions are narrow, reasoned and have a removal condition.
 - **L8** No arbitrary size limits, and no design call disguised as a lint error.
 
+### Constraint ledger and lock-down scorecard
+
+The learning loop keeps its memory in a constraint ledger, the data file `.bstack/constraints.json`, with one entry per mistake class: its cited occurrences and, once it is a constraint, its principle, rung, retire-when condition, check ID, diagnostic rule ID, proof date and any debt baseline.
+A class below the L1 threshold is kept with its single occurrence, so its second occurrence is counted instead of forgotten.
+The ledger is data, not an instruction file: it is never loaded into an agent's context and no skill reads it whole, which keeps the instruction-file rule table unadopted.
+The installed checker validates it in its current-tree mode: every check ID is registered in the project contract's checks, a recorded baseline only shrinks against `origin/main`, every Eliminate or Detect constraint records a proven check, and a class that reaches two occurrences without a rung fails.
+`/repo-audit` prints a lock-down scorecard from the `scorecard` command: for each of five principles, the highest rung the ledger records and whether a check registered in the contract proves it.
+The principles are conventional structure and co-location, hard boundaries enforced by dependency graphs, types and structure that make illegal states unrepresentable, lint rules and CI that ban footguns, and early helpful rejection.
+The [ledger contract](command-contract.md#constraint-ledger-and-lock-down-scorecard) owns the fields and problem codes.
+Retiring a constraint stays a user-selected change; nothing retires one automatically.
+
 ### Default slop baseline and comment ban (Q6, Q7, Q13)
 
 The report approves the full community anti-slop ruleset by default, translated into these language-agnostic principles.

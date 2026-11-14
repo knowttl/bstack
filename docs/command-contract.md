@@ -109,7 +109,7 @@ After rebasing or changing the agreed base, recollect, review, bind and commit t
 node .bstack/bin/bstack-check.mjs --repo <path> --docs-only [--contract <repo-relative-file>] [--json]
 ```
 
-`--docs-only` runs `docs check`, the `docs generate --check` comparison and the instruction growth check on the current tree and nothing else, so it takes no base or assessment and starts no leaf command.
+`--docs-only` runs `docs check`, the `docs generate --check` comparison, the instruction growth check and the [constraint ledger validation](#constraint-ledger-and-lock-down-scorecard) on the current tree and nothing else, so it takes no base or assessment and starts no leaf command.
 Supplying `--base`, `--assessment` or `--workspace` with it is a usage error (exit 3, problem code `docs-only-input`).
 When the contract records `instructions.baseline`, the check measures the loaded instructions as `instructions measure` does, applying `instructions.exclude`, and fails with `instructions-grew` when the total bytes exceed `baseline.bytes`.
 A change that needs more instructions raises `baseline.bytes` and replaces `baseline.reason` in the same change, and a baseline without a nonblank reason is a schema violation.
@@ -117,8 +117,8 @@ The checker compares the selected contract with the same path at `origin/main` a
 If `origin/main` or the selected prior contract cannot be read, a current baseline or any loaded instruction bytes fail with `prior-unavailable-fetch-the-ref`, regardless of reason, because the prior baseline cannot be verified.
 If a readable prior contract has no baseline, first registration may use the initial reason.
 If the prior contract has a baseline, removing it fails with `instructions-baseline-removed`; a readable prior contract without a baseline permits a contract without a baseline.
-The full checker does not run the instruction check.
-Results use the shared exit codes: 0 when links, supported glossary structures and generated sections are current and instructions are within the baseline, 1 for a broken link, invalid or duplicate glossary entry, stale generated section, grown instructions, a removed baseline or an increased baseline without a new reason, and 2 when the contract or a registered source cannot be read.
+The full checker runs neither the instruction check nor the ledger validation.
+Results use the shared exit codes: 0 when links, supported glossary structures and generated sections are current, instructions are within the baseline and any constraint ledger is valid, 1 for a broken link, invalid or duplicate glossary entry, stale generated section, grown instructions, a removed baseline, an increased baseline without a new reason or an invalid ledger, and 2 when the contract, a registered source or the ledger cannot be read.
 It is the command of the no-mistakes docs gate that the [maintenance skill](../skills/maintenance/SKILL.md) wires.
 
 ### Previous-policy execution
@@ -133,7 +133,7 @@ An absent or incompatible prior checker blocks for a recorded migration decision
 A selected first-installation foundation with no previous policy has no prior checker to execute.
 The delivery process must actually invoke these checks; changed scripts can omit their own checker, so forge enforcement and hosted CI behavior remain unverified.
 
-The production interface is `node skills/<skill>/scripts/<skill>.mjs <command> [options]`; repo-audit ships only `inspect`, `inventory`, `history`, `cite-check` and the `contract-test` dispatch harness, and each other command ships with the skills that list it in `runtime/skills.json`.
+The production interface is `node skills/<skill>/scripts/<skill>.mjs <command> [options]`; repo-audit ships only `inspect`, `inventory`, `history`, `scorecard`, `cite-check` and the `contract-test` dispatch harness, and each other command ships with the skills that list it in `runtime/skills.json`.
 Resource paths are relative to the installed skill, never the caller's current directory.
 Command-specific options and input formats belong to their owning tasks and command help.
 C4a establishes arguments, targets, paths, scratch and results.
@@ -645,6 +645,79 @@ Unreadable Git history returns `git: null` and a limitation.
 A missing remote, store, repo record or run history returns pass with zero run counts and a limitation, preserving any available Git counts.
 A run with unparseable findings or selection lists is named in `data.limitations` and excluded from readable run, finding, hotspot and step-time aggregates; it remains in the total and recorded date range.
 The command supplies aggregate evidence; the shared [history-reading reference](../runtime/references/no-mistakes-history.md) owns the procedure for reading every run and recording incomplete coverage.
+
+## Constraint ledger and lock-down scorecard
+
+A repo's constraint ledger is the data file `.bstack/constraints.json`, following the [constraint ledger schema](../runtime/schemas/constraints.schema.json).
+It is the memory of the learning loop: one entry per mistake class, so a class seen once is counted the next time it occurs and each adopted constraint keeps its rung, check and proof.
+It is data, not an instruction file: no host loads it into an agent's context, no skill reads it whole, and commands report only what they derive from it.
+
+```json
+{
+  "schemaVersion": 1,
+  "entries": [
+    {
+      "class": "app imports ledger internals",
+      "occurrences": ["commit 1a2b3c4 src/app.py:3", "run 01J finding f3"],
+      "constraint": {
+        "principle": "hard-boundaries",
+        "rung": "detect",
+        "retireWhen": "The internals move out of the package.",
+        "check": { "id": "lint", "ruleId": "private-import", "proofDate": "2026-11-01", "baseline": "debt/boundaries.json" }
+      }
+    },
+    { "class": "handler builds raw SQL", "occurrences": ["commit 5d6e7f8 src/orders.py:41"] }
+  ]
+}
+```
+
+| Field | Meaning |
+|---|---|
+| `class` | The mistake class, unique in the ledger |
+| `occurrences` | Its cited occurrences, each a commit, file location, review comment, run finding or session |
+| `constraint.principle` | `conventional-structure`, `hard-boundaries`, `illegal-states`, `footgun-bans` or `early-rejection` |
+| `constraint.rung` | `eliminate`, `detect`, `encode` or `review`, the rungs of the constraint ladder from highest to lowest |
+| `constraint.retireWhen` | The condition under which the constraint can be retired |
+| `constraint.check.id` | The ID of the check in the project contract's `checks` that enforces the constraint |
+| `constraint.check.ruleId` | The stable `rule-id:` prefix of the check's diagnostic |
+| `constraint.check.proofDate` | The date, as `YYYY-MM-DD`, of the passing `rule-proof` |
+| `constraint.check.baseline` | Optional repo-relative path of the constraint's debt baseline, following the [baseline schema](../runtime/schemas/baseline.schema.json) |
+
+An entry without `constraint` is a class below the two-occurrence threshold, kept with its single occurrence.
+A constraint that comes from an approved requirement or the slop baseline may record no occurrences.
+A native tool's own baseline format is not recorded as `baseline`.
+
+`bstack-check.mjs --docs-only` validates the ledger when the file exists and does nothing when it is absent.
+Each problem names the class in its message:
+
+| Problem code | Failure |
+|---|---|
+| a schema code such as `missing-field` | The file does not follow the schema; a check without a proof date fails here |
+| `duplicate-constraint-class` | Two entries record the same class |
+| `constraint-threshold-reached` | An entry has two or more occurrences and no constraint, so the class now needs a rung |
+| `constraint-unproven` | A constraint on the `eliminate` or `detect` rung records no check |
+| `constraint-check-missing` | The check ID is not registered in the selected project contract |
+| `constraint-baseline-missing` | The named baseline file does not exist |
+| `constraint-baseline-grew` | The baseline holds an entry for the constraint's rule that the baseline at `origin/main` did not |
+| `prior-unavailable-fetch-the-ref` | An entry names a baseline and `origin/main` cannot be read |
+
+A baseline is compared only when the ledger at `origin/main` already records the same class with a baseline, so the first baseline of a new constraint is accepted at any size.
+The comparison covers the baseline entries whose `rule` equals the constraint's `ruleId`, by rule, path and key.
+An `encode` or `review` constraint needs no check, because nothing fails when it is skipped; it is recorded so that a recurrence moves the class up a rung.
+An unreadable ledger is blocked with `constraints-unavailable`.
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs scorecard --repo <target> [--contract <repo-relative-file>] [--json]
+```
+
+`scorecard` reads the ledger and the checks registered in the project contract, `.bstack/project.json` by default, and writes nothing.
+`data.principles` holds one row for each of the five principles, in the order above, with `principle`, `title`, `rung` and `proven`.
+`rung` is the highest rung among the principle's recorded constraints, or null when it has none.
+`proven` is true when a constraint on that rung names a check the contract registers.
+`data.ledger` is the ledger path, or null when the repo has none, which is a pass with every rung null and a limitation.
+A ledger without a project contract reports every rung unproven with a limitation.
+Plain output prints one line per principle with its rung and `proven` or `not proven`, or `none`.
+The command returns the summary only, never the entries, and does not run the validation above.
 
 ## Research citation check
 

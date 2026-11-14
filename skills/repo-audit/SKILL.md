@@ -59,7 +59,10 @@ For a Git repo, also run `node scripts/repo-audit.mjs history --repo <target> --
 Run the one history brief from the research briefs reference on that output, reading the run history only as the [history reference](references/no-mistakes-history.md) allows, and add its entry to the same report.
 The brief reports the runs read versus the total, or that the repo has no linked history, and names only mistake classes with two cited occurrences.
 
-Done when: The report passes `cite-check` against the current bytes, or the missing source is named, each finding says whether it is documented, observed or inferred, and the history output states the runs read versus the total or that no history exists.
+For a Git repo, also run `node scripts/repo-audit.mjs scorecard --repo <target> --json` and keep the output in scratch.
+It summarises the repo's constraint ledger; take the scorecard only from this output and never open the ledger file.
+
+Done when: The report passes `cite-check` against the current bytes, or the missing source is named, each finding says whether it is documented, observed or inferred, the history output states the runs read versus the total or that no history exists, and the scorecard output is in scratch.
 
 ### Step 4: Print the checklist
 
@@ -68,6 +71,7 @@ Mark a line `looks done` when its output already exists and the cited source sho
 A reason that cites nothing is not a reason: drop the claim or mark the line `no evidence` and say what could not be read.
 On the existing-repo path, a reason may instead cite the history output by run ID and finding ID or by its late-round share with the runs read versus the total, as the history brief routes it.
 Do not start any listed skill during the audit, and do not write the checklist into the target.
+On the existing-repo path, print the lock-down scorecard above the checklist: one line per principle from the `scorecard` output, in its order, with the principle's title and its rung followed by `proven` or `not proven`, or `none` when the rung is null, then each limitation the output reports.
 
 New idea:
 
@@ -99,7 +103,7 @@ Existing repo:
 `/foundation` is for new projects only and never appears on the existing-repo checklist, because it refuses a non-empty directory.
 State the limitations and the decisions the audit could not make, then proceed to the closing Next step.
 
-Done when: The checklist for the chosen path is printed with every line citing a reason, nothing has been written to the target, and no other skill has been started during the audit.
+Done when: The checklist for the chosen path is printed with every line citing a reason, the existing-repo path shows the scorecard's five principle lines, nothing has been written to the target, and no other skill has been started during the audit.
 
 ## Load when
 

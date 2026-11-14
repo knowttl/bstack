@@ -10,6 +10,7 @@ import { canonicalJSON } from '../runtime/scripts/lib/fingerprint.mjs'
 import { resolveLinks } from '../runtime/scripts/lib/paths.mjs'
 import { CommandError, emitResult } from '../runtime/scripts/lib/result.mjs'
 import { checkInstructionGrowth } from '../runtime/scripts/lib/instructions.mjs'
+import { checkConstraints } from '../runtime/scripts/lib/constraints.mjs'
 import { leafCommand } from '../runtime/scripts/commands/contract.mjs'
 import { run as checkDocuments } from '../runtime/scripts/commands/docs-check.mjs'
 import { run as validateEvidence } from '../runtime/scripts/commands/evidence-validate.mjs'
@@ -35,8 +36,9 @@ export async function runDocsOnly(options) {
   const docs = await checkDocuments(options)
   if (docs.status !== 'passed') return docs
   const facts = await checkGeneratedFacts(options)
-  const growth = facts.status === 'passed' ? await checkInstructionGrowth((await resolveTarget(options)).root, options.contract) : []
-  return { ...facts, status: growth.length ? 'failed' : facts.status, problems: [...facts.problems, ...growth],
+  const { root } = await resolveTarget(options)
+  const ratchets = facts.status === 'passed' ? [...await checkInstructionGrowth(root, options.contract), ...await checkConstraints(root, options.contract)] : []
+  return { ...facts, status: ratchets.length ? 'failed' : facts.status, problems: [...facts.problems, ...ratchets],
     data: { ...facts.data, coverageLimits: [...docs.data.coverageLimits, ...facts.data.coverageLimits ?? []] } }
 }
 
@@ -133,7 +135,7 @@ export async function runChecker(options, { comparisonPolicy = false } = {}) {
 // Importing the bundled validators never starts the aggregate.
 if (process.argv[1] && await resolveLinks(resolve(process.argv[1])) === fileURLToPath(import.meta.url)) {
   const argv = process.argv.slice(2)
-  if (argv.length === 1 && argv[0] === '--help') console.log('Usage: node .bstack/bin/bstack-check.mjs --repo <path> --base <ref> --assessment <file> [--contract <path>] [--json]\n       node .bstack/bin/bstack-check.mjs --repo <path> --docs-only [--contract <path>] [--json]\nWith --docs-only, check registered document links, glossary structure and generated sections in the current tree without a base or assessment, and fail when the loaded instructions measure more bytes than instructions.baseline records.')
+  if (argv.length === 1 && argv[0] === '--help') console.log('Usage: node .bstack/bin/bstack-check.mjs --repo <path> --base <ref> --assessment <file> [--contract <path>] [--json]\n       node .bstack/bin/bstack-check.mjs --repo <path> --docs-only [--contract <path>] [--json]\nWith --docs-only, check registered document links, glossary structure and generated sections in the current tree without a base or assessment, fail when the loaded instructions measure more bytes than instructions.baseline records, and validate the constraint ledger at .bstack/constraints.json when the repo has one.')
   else {
     try {
       const options = parseArgs(argv, ['base', 'assessment', 'contract', 'docs-only'])

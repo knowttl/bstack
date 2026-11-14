@@ -1,0 +1,38 @@
+{
+  "title": "Constraint ledger version 1",
+  "type": "object", "additionalProperties": false,
+  "required": ["schemaVersion", "entries"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "entries": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false,
+        "required": ["class", "occurrences"],
+        "properties": {
+          "class": { "type": "string", "minLength": 1, "pattern": "\\S" },
+          "occurrences": { "type": "array", "uniqueItems": true, "items": { "type": "string", "minLength": 1, "pattern": "\\S" } },
+          "constraint": {
+            "type": "object", "additionalProperties": false,
+            "required": ["principle", "rung", "retireWhen"],
+            "properties": {
+              "principle": { "enum": ["conventional-structure", "hard-boundaries", "illegal-states", "footgun-bans", "early-rejection"] },
+              "rung": { "enum": ["eliminate", "detect", "encode", "review"] },
+              "retireWhen": { "type": "string", "minLength": 1, "pattern": "\\S" },
+              "check": {
+                "type": "object", "additionalProperties": false,
+                "required": ["id", "ruleId", "proofDate"],
+                "properties": {
+                  "id": { "type": "string", "minLength": 1, "pattern": "\\S" },
+                  "ruleId": { "type": "string", "minLength": 1, "pattern": "\\S" },
+                  "proofDate": { "type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}$" },
+                  "baseline": { "type": "string", "minLength": 1 }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

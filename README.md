@@ -292,6 +292,7 @@ node "$BSTACK_SKILLS/repo-audit/scripts/repo-audit.mjs" --help
 ```
 
 Repo-audit's [`history` command](docs/command-contract.md#no-mistakes-history) summarises the repo's no-mistakes runs read-only.
+Its [`scorecard` command](docs/command-contract.md#constraint-ledger-and-lock-down-scorecard) prints, per lock-down principle, the highest rung the repo's constraint ledger records and whether it is proven.
 
 Measure instruction size without writes:
 
