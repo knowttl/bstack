@@ -80,7 +80,7 @@ The record cannot contain its own commit hash; publication identifies the final 
 Capture includes every authored task artifact.
 Explicit capture requires committed inputs; ordinary tests can capture dirty inputs, but that evidence cannot be attached.
 Attachment excludes its own `<task-id>.json`, `<task-id>.full-tests.txt` and `<task-id>.events.jsonl` files from both inventories and the commitment check.
-It also permits committed or uncommitted post-capture prose changes, additions and removals in `README.md` and top-level `docs/*.md` other than `docs/design.md`, recording their before/after inventory entries in `validation.postCaptureDocumentation`.
+It also permits committed or uncommitted post-capture prose changes, additions and removals in `README.md`, `*.contract.md` files and top-level `docs/*.md` other than `docs/design.md`, recording their before/after inventory entries in `validation.postCaptureDocumentation`.
 For `docs/implementation-plan.md`, only the Progress section may change; requirements, task contracts and acceptance assignments remain evidence inputs.
 Executable documentation, skill instructions, nested documentation, source, scripts, tests, fixtures and all other inputs remain bound and require fresh capture when changed.
 Every other task artifact remains an input, including evidence consumed by acceptance tests.
@@ -221,7 +221,7 @@ bstack/
   docs/
     design.md                    the design of record, migrated from the private source
     implementation-plan.md       this file
-    command-contract.md          command grammar and examples, extended by each owning task
+    command-contract.md          command grammar and examples, generated from the *.contract.md file beside each command
     examples/                    worked examples (T5.1)
   upstream/                      raw pinned upstream files, not installed
   install/install.mjs            the installer

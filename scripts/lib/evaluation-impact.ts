@@ -19,8 +19,8 @@ function coversKey(covers: readonly string[], key: string) {
 }
 
 // The shared runtime mirrors each skill layout, so a changed source is covered by the key of the file it generates.
-const inPackage = (path: string) => path.startsWith('skills/') || path.startsWith('install/') || path.startsWith('runtime/') ||
-  ['scripts/generate-skills.ts', 'scripts/lib/bundle.ts'].includes(path)
+const inPackage = (path: string) => !path.endsWith('.contract.md') && (path.startsWith('skills/') || path.startsWith('install/') || path.startsWith('runtime/') ||
+  ['scripts/generate-skills.ts', 'scripts/lib/bundle.ts'].includes(path))
 
 // Each skill's bundle is declared once in runtime/skills.json.
 const bundleFiles = (bundle: SkillBundle) => [...bundle.schemas.map((name) => `schemas/${name}`), ...bundle.assets.map((name) => `assets/${name}`),
@@ -77,7 +77,7 @@ export async function affectedScenarios(repo: string, base: string, definitions:
   for (const path of paths) {
     if (generated.has(path)) continue
     const skillPath = /^skills\/([^/]+)\/(.+)$/.exec(path)
-    if (path.startsWith('runtime/')) keys.push(path.slice('runtime/'.length))
+    if (path.startsWith('runtime/') && inPackage(path)) keys.push(path.slice('runtime/'.length))
     else if (!skillPath) keys.push(path)
     else if (skillPath[2] !== 'SKILL.md') keys.push(`${skillPath[1]}/${skillPath[2]}`)
     else {

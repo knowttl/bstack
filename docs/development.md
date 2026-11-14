@@ -189,10 +189,12 @@ node scripts/check-package.mjs
 
 `check` first invokes the project-local TypeScript 7 CLI explicitly (`node node_modules/typescript/bin/tsc --noEmit`) on tests and development tooling, avoiding the TypeScript 6 compatibility dependency's `tsc` binary.
 The root [tsconfig](../tsconfig.json) resolves `typescript` imports to the side-by-side `@typescript/typescript6` declarations for compiler API consumers; fixture execution still uses each fixture's own dependencies.
-It then verifies the generated files in each skill against the [shared runtime](../runtime/) and the README skills table against `skills/*/SKILL.md` (`node scripts/generate-readme.ts` rewrites that table), then runs the [package checks](command-contract.md#package-check), followed by the [standalone checker freshness gate](command-contract.md#standalone-checker-generation).
+It then verifies the generated files in each skill against the [shared runtime](../runtime/) and the README skills table against `skills/*/SKILL.md` (`node scripts/generate-readme.ts` rewrites that table) and the combined [command contract](command-contract.md) against its contract files (`node scripts/generate-contract.ts` rewrites that document), then runs the [package checks](command-contract.md#package-check), followed by the [standalone checker freshness gate](command-contract.md#standalone-checker-generation).
 It ends with the [lint, boundary and comment checks](#lint-boundaries-and-comments).
 It reports every detected problem with a stable rule code and exits 1 on failure.
 See the [package check contract](command-contract.md#package-check) for exact syntax and limits.
+Each contract is a `<source>.contract.md` file beside the command or module it describes, and the combined document joins them in the order [command-contract.sources.json](command-contract.sources.json) lists.
+Edit the contract file, never the combined document, and write its links relative to `docs/`, where the combined document lives.
 Local validation uses the [affected gate](#affected-validation) after dependency setup.
 
 ### Lint, boundaries and comments

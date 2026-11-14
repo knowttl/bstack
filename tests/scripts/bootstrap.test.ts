@@ -116,6 +116,7 @@ test('post-capture documentation attaches while source changes require fresh evi
   assert.equal(run(directory, '--capture', '.cache/run.json').status, 0)
   await writeFile(join(directory, 'README.md'), 'Updated usage prose\n')
   await writeFile(join(directory, 'docs/usage.md'), 'Usage prose\n')
+  await writeFile(join(directory, 'tests/scripts/selected.contract.md'), 'Contract prose\n')
   await writeFile(join(directory, 'docs/implementation-plan.md'), plan.replace('Pending', 'Completed'))
   const attached = attach(directory)
   assert.equal(attached.status, 0, attached.stderr + attached.stdout)
@@ -124,7 +125,9 @@ test('post-capture documentation attaches while source changes require fresh evi
     { path: 'README.md', before: null, after: { path: 'README.md', executable: false, sha256: hash('Updated usage prose\n') } },
     { path: 'docs/implementation-plan.md', before: { path: 'docs/implementation-plan.md', executable: false, sha256: hash(plan) },
       after: { path: 'docs/implementation-plan.md', executable: false, sha256: hash(plan.replace('Pending', 'Completed')) } },
-    { path: 'docs/usage.md', before: null, after: { path: 'docs/usage.md', executable: false, sha256: hash('Usage prose\n') } }
+    { path: 'docs/usage.md', before: null, after: { path: 'docs/usage.md', executable: false, sha256: hash('Usage prose\n') } },
+    { path: 'tests/scripts/selected.contract.md', before: null,
+      after: { path: 'tests/scripts/selected.contract.md', executable: false, sha256: hash('Contract prose\n') } }
   ])
   await writeFile(join(directory, 'docs/implementation-plan.md'), plan.replace('Bound assignments', 'Changed assignments'))
   assert.equal(attach(directory).status, 1)
