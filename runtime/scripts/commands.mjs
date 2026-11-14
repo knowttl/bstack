@@ -104,6 +104,11 @@ export const commands = {
     options: ['export-findings'],
     help: 'Summarise this repo\'s no-mistakes run history without target writes.\nUsage: {entry} history --repo <path> [--export-findings] [--json]\nIdentifies the repo from its no-mistakes remote and opens ~/.no-mistakes/state.sqlite (NM_HOME overrides the folder) read-only, never through the daemon. Returns runs read versus total with rounds per run, findings by severity, action and step, the share of findings first raised in round 2 or later and in round 3 or later, skipped findings (declined by the user and never selected for a fix), files flagged in two or more runs, each step\'s share of run time and the counts of fix and revert commits in Git history. A finding that stays listed across rounds counts once per run and step, in the round that first raised it. File paths follow renames to the current file at HEAD, and a path that leads to none keeps its recorded name with atHead false. --export-findings saves every counted finding as run, step, round, id, file, recordedFile, atHead and text in a scratch findings.json and returns its path. A repo with no linked history is a pass with a limitation, never a reason to infer prior runs.'
   },
+  scorecard: {
+    module: './commands/scorecard.mjs',
+    options: ['contract'],
+    help: 'Report, per lock-down principle, the highest rung this repo records and whether it is proven, without writes.\nUsage: {entry} scorecard --repo <path> [--contract <repo-relative-file>] [--json]\nReads the constraint ledger at .bstack/constraints.json, which follows schemas/constraints.schema.json, and the checks registered in the project contract, .bstack/project.json by default. The principles are conventional structure and co-location, hard boundaries enforced by dependency graphs, types and structure that make illegal states unrepresentable, lint rules and CI that ban footguns, and early helpful rejection. The rungs, highest first, are eliminate, detect, encode and review. A rung is proven when a constraint on it names a check the contract registers. A repo with no ledger is a pass with every rung null and a limitation. The output is a summary, never the ledger entries; bstack-check --docs-only validates the ledger.'
+  },
   measure: {
     module: './commands/measure.mjs',
     options: ['range', 'exclusions'],

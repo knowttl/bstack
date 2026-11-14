@@ -1,6 +1,7 @@
 {
   "agents-md": ["tests/scripts/agents-md.test.ts"],
   "architecture": ["tests/scripts/architecture.test.ts"],
+  "constraints": ["tests/scripts/constraints.test.ts"],
   "foundation": ["tests/scripts/foundation.test.ts"],
   "gate-test": ["tests/scripts/gate-test.test.ts"],
   "generate-contract": ["tests/scripts/generate-contract.test.ts"],

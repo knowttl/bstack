@@ -652,6 +652,17 @@ node skills/repo-audit/scripts/repo-audit.mjs history --repo <target> --export-f
 See the [history command contract](command-contract.md#no-mistakes-history) for store discovery, counting rules and coverage limitations.
 Use the [history brief](../skills/repo-audit/references/research-briefs.md#run-history) to interpret the output and route findings to the next skill.
 
+Print the lock-down scorecard, the highest recorded rung per principle and whether it is proven:
+
+```sh
+node skills/repo-audit/scripts/repo-audit.mjs scorecard --repo <target> --json
+npm test -- --task constraints
+```
+
+It reads the repo's constraint ledger, `.bstack/constraints.json`, and the checks in its project contract, and a repo with no ledger passes with every rung empty.
+The ledger is a data file that no skill or host loads into an agent's context, and `bstack-check.mjs --docs-only` validates it whenever it exists.
+See the [ledger contract](command-contract.md#constraint-ledger-and-lock-down-scorecard) for the fields, the validation problem codes and the scorecard output.
+
 Run the documents [research brief](../skills/repo-audit/references/research-briefs.md) as bounded read-only discovery, using a subagent where available or the main thread.
 Save the common [research report](../skills/repo-audit/schemas/research-report.json) in scratch, open each cited source and check it before using the observations:
 

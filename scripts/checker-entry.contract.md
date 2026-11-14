@@ -71,7 +71,7 @@ After rebasing or changing the agreed base, recollect, review, bind and commit t
 node .bstack/bin/bstack-check.mjs --repo <path> --docs-only [--contract <repo-relative-file>] [--json]
 ```
 
-`--docs-only` runs `docs check`, the `docs generate --check` comparison and the instruction growth check on the current tree and nothing else, so it takes no base or assessment and starts no leaf command.
+`--docs-only` runs `docs check`, the `docs generate --check` comparison, the instruction growth check and the [constraint ledger validation](#constraint-ledger-and-lock-down-scorecard) on the current tree and nothing else, so it takes no base or assessment and starts no leaf command.
 Supplying `--base`, `--assessment` or `--workspace` with it is a usage error (exit 3, problem code `docs-only-input`).
 When the contract records `instructions.baseline`, the check measures the loaded instructions as `instructions measure` does, applying `instructions.exclude`, and fails with `instructions-grew` when the total bytes exceed `baseline.bytes`.
 A change that needs more instructions raises `baseline.bytes` and replaces `baseline.reason` in the same change, and a baseline without a nonblank reason is a schema violation.
@@ -79,8 +79,8 @@ The checker compares the selected contract with the same path at `origin/main` a
 If `origin/main` or the selected prior contract cannot be read, a current baseline or any loaded instruction bytes fail with `prior-unavailable-fetch-the-ref`, regardless of reason, because the prior baseline cannot be verified.
 If a readable prior contract has no baseline, first registration may use the initial reason.
 If the prior contract has a baseline, removing it fails with `instructions-baseline-removed`; a readable prior contract without a baseline permits a contract without a baseline.
-The full checker does not run the instruction check.
-Results use the shared exit codes: 0 when links, supported glossary structures and generated sections are current and instructions are within the baseline, 1 for a broken link, invalid or duplicate glossary entry, stale generated section, grown instructions, a removed baseline or an increased baseline without a new reason, and 2 when the contract or a registered source cannot be read.
+The full checker runs neither the instruction check nor the ledger validation.
+Results use the shared exit codes: 0 when links, supported glossary structures and generated sections are current, instructions are within the baseline and any constraint ledger is valid, 1 for a broken link, invalid or duplicate glossary entry, stale generated section, grown instructions, a removed baseline, an increased baseline without a new reason or an invalid ledger, and 2 when the contract, a registered source or the ledger cannot be read.
 It is the command of the no-mistakes docs gate that the [maintenance skill](../skills/maintenance/SKILL.md) wires.
 
 ### Previous-policy execution
@@ -95,7 +95,7 @@ An absent or incompatible prior checker blocks for a recorded migration decision
 A selected first-installation foundation with no previous policy has no prior checker to execute.
 The delivery process must actually invoke these checks; changed scripts can omit their own checker, so forge enforcement and hosted CI behavior remain unverified.
 
-The production interface is `node skills/<skill>/scripts/<skill>.mjs <command> [options]`; repo-audit ships only `inspect`, `inventory`, `history`, `cite-check` and the `contract-test` dispatch harness, and each other command ships with the skills that list it in `runtime/skills.json`.
+The production interface is `node skills/<skill>/scripts/<skill>.mjs <command> [options]`; repo-audit ships only `inspect`, `inventory`, `history`, `scorecard`, `cite-check` and the `contract-test` dispatch harness, and each other command ships with the skills that list it in `runtime/skills.json`.
 Resource paths are relative to the installed skill, never the caller's current directory.
 Command-specific options and input formats belong to their owning tasks and command help.
 C4a establishes arguments, targets, paths, scratch and results.

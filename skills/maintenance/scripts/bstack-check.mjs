@@ -5678,7 +5678,7 @@ var init_browser = __esm({
 });
 
 // scripts/checker-entry.mjs
-import { readFile as readFile9, writeFile as writeFile3 } from "node:fs/promises";
+import { readFile as readFile10, writeFile as writeFile3 } from "node:fs/promises";
 import { resolve as resolve8, join as join11, relative as relative7 } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
@@ -5711,6 +5711,10 @@ function emitResult({ command, status, problems = [], data = {}, inputs = {} }, 
       ...data.outcome ? [data.outcome] : [],
       ...["applied", "pending", "conflicting"].map((state) => `${state}: ${(data[state] ?? []).join(", ") || "none"}`),
       ...data.affectedChecks?.length ? [`checks to rerun: ${data.affectedChecks.join(", ")}`] : [],
+      ...data.limitations ?? []
+    ] : [],
+    ...command === "scorecard" ? [
+      ...data.principles?.map((row) => `${row.title}: ${row.rung ? `${row.rung}, ${row.proven ? "proven" : "not proven"}` : "none"}`) ?? [],
       ...data.limitations ?? []
     ] : [],
     ...data.path ? [data.path] : [],
@@ -8032,9 +8036,8 @@ async function checkInstructionGrowth(root, file) {
   return problems;
 }
 
-// runtime/scripts/commands/contract.mjs
-import { readFile as readFile4, readdir as readdir3, stat as stat5 } from "node:fs/promises";
-import { dirname as dirname4, join as join7, relative as relative4, resolve as resolve5, sep as sep3 } from "node:path";
+// runtime/scripts/lib/constraints.mjs
+import { readFile as readFile4 } from "node:fs/promises";
 
 // runtime/scripts/lib/json.mjs
 function inspectJSON(text) {
@@ -8069,6 +8072,158 @@ function inspectJSON(text) {
   consume(true);
   return { value, entries, close: tokens[index - 1].index };
 }
+
+// runtime/schemas/constraints.schema.json
+var constraints_schema_default = {
+  title: "Constraint ledger version 1",
+  type: "object",
+  additionalProperties: false,
+  required: ["schemaVersion", "entries"],
+  properties: {
+    schemaVersion: { const: 1 },
+    entries: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["class", "occurrences"],
+        properties: {
+          class: { type: "string", minLength: 1, pattern: "\\S" },
+          occurrences: { type: "array", uniqueItems: true, items: { type: "string", minLength: 1, pattern: "\\S" } },
+          constraint: {
+            type: "object",
+            additionalProperties: false,
+            required: ["principle", "rung", "retireWhen"],
+            properties: {
+              principle: { enum: ["conventional-structure", "hard-boundaries", "illegal-states", "footgun-bans", "early-rejection"] },
+              rung: { enum: ["eliminate", "detect", "encode", "review"] },
+              retireWhen: { type: "string", minLength: 1, pattern: "\\S" },
+              check: {
+                type: "object",
+                additionalProperties: false,
+                required: ["id", "ruleId", "proofDate"],
+                properties: {
+                  id: { type: "string", minLength: 1, pattern: "\\S" },
+                  ruleId: { type: "string", minLength: 1, pattern: "\\S" },
+                  proofDate: { type: "string", pattern: "^\\d{4}-\\d{2}-\\d{2}$" },
+                  baseline: { type: "string", minLength: 1 }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+};
+
+// runtime/schemas/baseline.schema.json
+var baseline_schema_default = {
+  title: "Temporary debt baseline version 1",
+  type: "object",
+  additionalProperties: false,
+  required: ["schemaVersion", "entries"],
+  properties: {
+    schemaVersion: { const: 1 },
+    entries: {
+      type: "array",
+      uniqueItems: true,
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["rule", "path", "key", "reason", "removalCondition"],
+        properties: {
+          rule: { type: "string", minLength: 1, pattern: "\\S" },
+          path: { type: "string", minLength: 1, pattern: "\\S" },
+          key: { type: "string", minLength: 1, pattern: "\\S" },
+          reason: { type: "string", minLength: 1, pattern: "\\S" },
+          removalCondition: { type: "string", minLength: 1, pattern: "\\S" }
+        }
+      }
+    }
+  }
+};
+
+// runtime/scripts/lib/constraints.mjs
+var ledgerPath = ".bstack/constraints.json";
+var rungs = constraints_schema_default.properties.entries.items.properties.constraint.properties.rung.enum;
+var checkedRungs = ["eliminate", "detect"];
+function parseRecord(text, file, schema4) {
+  let record;
+  try {
+    record = inspectJSON(text).value;
+  } catch (error) {
+    if (error instanceof CommandError) throw error;
+    throw new CommandError("blocked", [{ code: "constraints-unavailable", path: file, message: `${file} must be readable JSON.`, fix: `Repair ${file}.` }]);
+  }
+  validateData(schema4, record);
+  return record;
+}
+async function currentRecord(root, file, schema4) {
+  let text;
+  try {
+    text = await readFile4(await resolveFilePath(root, file), "utf8");
+  } catch (error) {
+    if (error.code === "ENOENT") return null;
+    throw error;
+  }
+  return parseRecord(text, file, schema4);
+}
+function priorRecord(root, file, schema4) {
+  const shown = readGit(root, ["show", `origin/main:${file}`]);
+  return shown.status === 0 ? parseRecord(shown.stdout, file, schema4) : null;
+}
+async function loadConstraints(root, contractFile = ".bstack/project.json") {
+  const ledger = await currentRecord(root, ledgerPath, constraints_schema_default);
+  if (!ledger) return null;
+  const contract = await currentRecord(root, contractFile, project_schema_default);
+  return { entries: ledger.entries, contractFile, checkIds: contract ? contract.checks.map((check) => check.id) : null };
+}
+var debt = (baseline, ruleId) => baseline.entries.filter((entry) => entry.rule === ruleId).map((entry) => JSON.stringify([entry.rule, entry.path, entry.key]));
+async function checkConstraints(root, contractFile) {
+  const loaded = await loadConstraints(root, contractFile);
+  if (!loaded) return [];
+  const problems = [];
+  const report = (code, entry, message, fix) => problems.push({ code, path: ledgerPath, message: `${entry.class}: ${message}`, fix });
+  const classes = /* @__PURE__ */ new Set();
+  const priorAvailable = readGit(root, ["rev-parse", "--verify", "--quiet", "origin/main^{commit}"]).status === 0;
+  const priorLedger = priorAvailable ? priorRecord(root, ledgerPath, constraints_schema_default) : null;
+  if (!priorAvailable && loaded.entries.some((entry) => entry.constraint?.check?.baseline)) {
+    problems.push({ code: "prior-unavailable-fetch-the-ref", path: ledgerPath, message: "The prior constraint baselines cannot be verified.", fix: "Fetch origin/main before checking that each recorded baseline shrinks." });
+  }
+  for (const entry of loaded.entries) {
+    if (classes.has(entry.class)) report("duplicate-constraint-class", entry, "The class is recorded more than once.", "Merge the occurrences into one entry.");
+    classes.add(entry.class);
+    const { constraint } = entry;
+    if (!constraint) {
+      if (entry.occurrences.length >= 2) report("constraint-threshold-reached", entry, `The class has ${entry.occurrences.length} cited occurrences and no rung.`, "Give the class the highest rung that works with /verification correct and record it as a constraint.");
+      continue;
+    }
+    const { check } = constraint;
+    if (!check) {
+      if (checkedRungs.includes(constraint.rung)) report("constraint-unproven", entry, `The ${constraint.rung} rung records no proven check.`, "Prove the check with rule-proof and record its check id, rule id and proof date.");
+      continue;
+    }
+    if (!loaded.checkIds?.includes(check.id)) report("constraint-check-missing", entry, `${loaded.contractFile} registers no check ${check.id}.`, "Register the check in the maintained check configuration or correct the check id.");
+    if (!check.baseline) continue;
+    const baseline = await currentRecord(root, check.baseline, baseline_schema_default);
+    if (!baseline) {
+      report("constraint-baseline-missing", entry, `The baseline ${check.baseline} does not exist.`, "Restore the baseline, or remove the field once its debt is cleared.");
+      continue;
+    }
+    const priorCheck = priorLedger?.entries.find((prior) => prior.class === entry.class)?.constraint?.check;
+    const priorBaseline = priorCheck?.baseline ? priorRecord(root, priorCheck.baseline, baseline_schema_default) : null;
+    if (!priorBaseline) continue;
+    const recorded = new Set(debt(priorBaseline, priorCheck.ruleId));
+    const grown = debt(baseline, check.ruleId).filter((identity) => !recorded.has(identity));
+    if (grown.length) report("constraint-baseline-grew", entry, `The baseline ${check.baseline} gained ${grown.length} ${check.ruleId} ${grown.length === 1 ? "entry" : "entries"} since origin/main.`, "Fix the new violations instead of recording them: a recorded baseline only shrinks.");
+  }
+  return problems;
+}
+
+// runtime/scripts/commands/contract.mjs
+import { readFile as readFile5, readdir as readdir3, stat as stat5 } from "node:fs/promises";
+import { dirname as dirname4, join as join7, relative as relative4, resolve as resolve5, sep as sep3 } from "node:path";
 
 // runtime/scripts/lib/check-integration.mjs
 function reject(path) {
@@ -8232,7 +8387,7 @@ async function leafCommand(root, command, stack = [], discovery = false) {
     const path = await packageManifestPath(root, cwd, name);
     const packageDirectory = dirname4(path);
     configPaths.push(path);
-    const scripts = inspectJSON(await readFile4(path, "utf8")).value.scripts ?? {};
+    const scripts = inspectJSON(await readFile5(path, "utf8")).value.scripts ?? {};
     if (typeof scripts[script] !== "string") reject2("missing-script", path, `Missing package script: ${script}`);
     const key = `${path}:${script}`;
     if (stack.includes(key)) reject2("recursive-check", path, "Package script graph contains a cycle.");
@@ -8287,7 +8442,7 @@ async function loadContract(target, input = ".bstack/project.json", removedPaths
   await exactPathCase(target.root, input, true);
   let contract;
   try {
-    contract = inspectJSON(await readFile4(path, "utf8")).value;
+    contract = inspectJSON(await readFile5(path, "utf8")).value;
   } catch (error) {
     if (error instanceof CommandError) throw error;
     reject2("contract-unavailable", input, "Contract must be readable JSON. Unsupported existing formats require a reviewed standalone contract.", "blocked");
@@ -8329,7 +8484,7 @@ async function run(options) {
 }
 
 // runtime/scripts/commands/docs-check.mjs
-import { readFile as readFile5 } from "node:fs/promises";
+import { readFile as readFile6 } from "node:fs/promises";
 import { extname as extname2 } from "node:path";
 function glossaryInline(tokens) {
   return tokens.map((token) => {
@@ -8394,7 +8549,7 @@ async function run2(options) {
   const documents = [];
   const paths = new Set([...contract.documents, ...contract.rules, ...contract.acceptanceSources].map((entry) => entry.path));
   for (const path of paths) {
-    const bytes = await readFile5(await resolveFilePath(target.root, path));
+    const bytes = await readFile6(await resolveFilePath(target.root, path));
     let text;
     try {
       text = new TextDecoder("utf-8", { fatal: true }).decode(bytes);
@@ -8449,7 +8604,7 @@ async function run2(options) {
 }
 
 // runtime/scripts/commands/evidence-validate.mjs
-import { readFile as readFile7 } from "node:fs/promises";
+import { readFile as readFile8 } from "node:fs/promises";
 import { join as join9, relative as relative6, resolve as resolve7 } from "node:path";
 
 // runtime/scripts/lib/evidence-policy.mjs
@@ -8651,7 +8806,7 @@ function collectInventory(root, base) {
 }
 
 // runtime/scripts/commands/run-checks.mjs
-import { readFile as readFile6, stat as stat6, writeFile } from "node:fs/promises";
+import { readFile as readFile7, stat as stat6, writeFile } from "node:fs/promises";
 import { basename, join as join8, relative as relative5, resolve as resolve6 } from "node:path";
 async function checkCommandPaths(target, checks, paths = []) {
   const known = new Set([
@@ -8693,7 +8848,7 @@ async function checkInputState(target, plan, planPath) {
   const head = readGit(target.root, ["rev-parse", "--verify", "HEAD"]);
   let planContentHash = null;
   try {
-    planContentHash = hashBytes(await readFile6(planPath));
+    planContentHash = hashBytes(await readFile7(planPath));
   } catch (error) {
     if (error.code !== "ENOENT") throw error;
   }
@@ -9422,7 +9577,7 @@ async function run3(options) {
   let assessment;
   try {
     options = { ...options, assessment: await resolveLinks(resolve7(options.assessment)) };
-    assessment = inspectJSON(await readFile7(options.assessment, "utf8")).value;
+    assessment = inspectJSON(await readFile8(options.assessment, "utf8")).value;
   } catch (error) {
     if (error instanceof CommandError) throw error;
     throw new CommandError("blocked", [{ code: "assessment-unavailable", message: "Assessment file is unavailable.", fix: "Collect and complete an assessment, then pass its readable path with --assessment." }]);
@@ -9474,7 +9629,7 @@ async function run3(options) {
     validateData(impact_assessment_default.properties.citations.items, cite);
     const path = await resolvePath(target.root, cite.path);
     citedPaths.push(cite.path);
-    const text = cite.version === "base" ? baseText(target.root, inventory.base, cite.path) : await readFile7(path, "utf8").catch(() => "");
+    const text = cite.version === "base" ? baseText(target.root, inventory.base, cite.path) : await readFile8(path, "utf8").catch(() => "");
     if (!text.includes(cite.pointer)) problem("citation-unavailable", `Citation ${cite.path} does not contain the ${cite.version} source pointer.`);
   }
   async function impact(entry, document) {
@@ -9495,7 +9650,7 @@ async function run3(options) {
     }
     if (value.result === "updated") {
       const before = baseText(target.root, inventory.base, entry.path);
-      const after = await readFile7(await resolvePath(target.root, entry.path), "utf8").catch(() => "");
+      const after = await readFile8(await resolvePath(target.root, entry.path), "utf8").catch(() => "");
       const delta = value.delta;
       const oldDocument = meaningful(before, void 0, entry.path);
       const newDocument = meaningful(after, void 0, entry.path);
@@ -9511,7 +9666,7 @@ async function run3(options) {
   const sources = contracts.flatMap((contract) => contract.acceptanceSources);
   for (const source of sources) {
     const before = baseText(target.root, inventory.base, source.path);
-    const after = await readFile7(await resolvePath(target.root, source.path), "utf8").catch(() => "");
+    const after = await readFile8(await resolvePath(target.root, source.path), "utf8").catch(() => "");
     if (before === after) continue;
     const decision = assessment.decisions.find((item) => item.source === source.path && item.status === "approved");
     if (!decision || !decision.approval || !(before ? before.includes(decision.oldCase) : decision.oldCase === "[absent]") || !(after ? after.includes(decision.newCase) : decision.newCase === "[absent]") || sources.some((item) => item.path === decision.approval.path)) problem("acceptance-decision-required", `Acceptance source ${source.path} needs old case, approved new case, affected work and a separate approval citation.`);
@@ -9525,9 +9680,9 @@ async function run3(options) {
   const captures = [];
   for (const record of options.preflight || options.currentResults ? [] : assessment.execution) {
     try {
-      const plan = inspectJSON(await readFile7(record.plan, "utf8")).value;
+      const plan = inspectJSON(await readFile8(record.plan, "utf8")).value;
       validateData(check_plan_default, plan);
-      const capture2 = JSON.parse(await readFile7(join9(await scratchDirectory(target, record.runId), "checks.json"), "utf8"));
+      const capture2 = JSON.parse(await readFile8(join9(await scratchDirectory(target, record.runId), "checks.json"), "utf8"));
       const current = await checkInputState(target, plan, record.plan);
       if (capture2.schemaVersion !== 1 || capture2.runId !== record.runId || capture2.phase !== "after" || capture2.status !== "passed" || capture2.planDigest !== hashBytes(canonicalJSON(plan)) || capture2.originalState?.fingerprint !== current.fingerprint || capture2.finalState?.fingerprint !== current.fingerprint) problem("stale-execution", `Capture ${record.runId} does not match current check inputs.`);
       else captures.push({ plan, capture: capture2, current });
@@ -9589,7 +9744,7 @@ async function run3(options) {
 }
 
 // runtime/scripts/commands/docs-generate.mjs
-import { lstat as lstat3, readdir as readdir4, readFile as readFile8, readlink as readlink3, writeFile as writeFile2 } from "node:fs/promises";
+import { lstat as lstat3, readdir as readdir4, readFile as readFile9, readlink as readlink3, writeFile as writeFile2 } from "node:fs/promises";
 import { watch } from "node:fs";
 import { join as join10 } from "node:path";
 import { setImmediate } from "node:timers/promises";
@@ -9628,7 +9783,7 @@ async function projectState(root, watchDirectory = () => {
       const path = prefix + name;
       const file = join10(directory, name);
       const info = await lstat3(file);
-      const content = info.isSymbolicLink() ? await readlink3(file) : info.isFile() ? hashBytes(await readFile8(file)) : null;
+      const content = info.isSymbolicLink() ? await readlink3(file) : info.isFile() ? hashBytes(await readFile9(file)) : null;
       records.push({ path, mode: info.mode, content });
       if (info.isDirectory()) await walk(file, path + "/");
     }
@@ -9667,7 +9822,7 @@ async function run4(options) {
     for (const path of generator.outputPaths) {
       const resolved = await resolveFilePath(target.root, path);
       if (!documents.has(resolved)) {
-        const bytes = await readFile8(resolved);
+        const bytes = await readFile9(resolved);
         let original;
         try {
           original = new TextDecoder("utf-8", { fatal: true, ignoreBOM: true }).decode(bytes);
@@ -9781,11 +9936,12 @@ async function runDocsOnly(options) {
   const docs = await run2(options);
   if (docs.status !== "passed") return docs;
   const facts = await checkGeneratedFacts(options);
-  const growth = facts.status === "passed" ? await checkInstructionGrowth((await resolveTarget(options)).root, options.contract) : [];
+  const { root } = await resolveTarget(options);
+  const ratchets = facts.status === "passed" ? [...await checkInstructionGrowth(root, options.contract), ...await checkConstraints(root, options.contract)] : [];
   return {
     ...facts,
-    status: growth.length ? "failed" : facts.status,
-    problems: [...facts.problems, ...growth],
+    status: ratchets.length ? "failed" : facts.status,
+    problems: [...facts.problems, ...ratchets],
     data: { ...facts.data, coverageLimits: [...docs.data.coverageLimits, ...facts.data.coverageLimits ?? []] }
   };
 }
@@ -9797,15 +9953,15 @@ async function runChecker(options, { comparisonPolicy = false } = {}) {
   }]);
   const target = await resolveTarget(options);
   options = { ...options, assessment: await resolveLinks(resolve8(options.assessment)) };
-  const selected = await readFile9(options.assessment, "utf8").then(JSON.parse).catch(() => null);
+  const selected = await readFile10(options.assessment, "utf8").then(JSON.parse).catch(() => null);
   if (selected?.previousContract) options["previous-contract"] = selected.previousContract;
   const preflight = await run3({ ...options, preflight: true });
   if (preflight.status !== "passed") return { ...preflight, data: { ...preflight.data, phase: "preflight" } };
-  const assessment = JSON.parse(await readFile9(options.assessment, "utf8"));
+  const assessment = JSON.parse(await readFile10(options.assessment, "utf8"));
   const assessmentFile = relative7(target.root, options.assessment).split("\\").join("/");
   const committed = assessment.repo === "." ? readGit(target.root, ["show", `HEAD:${assessmentFile}`]) : null;
   async function checkAssessment() {
-    if (committed && (committed.status !== 0 || committed.stdout !== await readFile9(options.assessment, "utf8"))) {
+    if (committed && (committed.status !== 0 || committed.stdout !== await readFile10(options.assessment, "utf8"))) {
       blocked("assessment-not-committed", "Clean-checkout review must use the unchanged selected committed assessment.", "Bind and commit the completed portable assessment before execution.");
     }
   }
@@ -9899,7 +10055,7 @@ async function runChecker(options, { comparisonPolicy = false } = {}) {
 }
 if (process.argv[1] && await resolveLinks(resolve8(process.argv[1])) === fileURLToPath(import.meta.url)) {
   const argv = process.argv.slice(2);
-  if (argv.length === 1 && argv[0] === "--help") console.log("Usage: node .bstack/bin/bstack-check.mjs --repo <path> --base <ref> --assessment <file> [--contract <path>] [--json]\n       node .bstack/bin/bstack-check.mjs --repo <path> --docs-only [--contract <path>] [--json]\nWith --docs-only, check registered document links, glossary structure and generated sections in the current tree without a base or assessment, and fail when the loaded instructions measure more bytes than instructions.baseline records.");
+  if (argv.length === 1 && argv[0] === "--help") console.log("Usage: node .bstack/bin/bstack-check.mjs --repo <path> --base <ref> --assessment <file> [--contract <path>] [--json]\n       node .bstack/bin/bstack-check.mjs --repo <path> --docs-only [--contract <path>] [--json]\nWith --docs-only, check registered document links, glossary structure and generated sections in the current tree without a base or assessment, fail when the loaded instructions measure more bytes than instructions.baseline records, and validate the constraint ledger at .bstack/constraints.json when the repo has one.");
   else {
     try {
       const options = parseArgs(argv, ["base", "assessment", "contract", "docs-only"]);
@@ -9928,4 +10084,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"26daacc44f088b2da3b3cd8d3f0b645669c45749593ed3188803d321ad9e760a"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"35e167edacb719dd51f745b5b9cac7bbb0c788b90309c80e2bebac75b7b88af3"}

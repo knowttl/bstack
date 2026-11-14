@@ -5708,6 +5708,10 @@ function emitResult({ command, status, problems = [], data = {}, inputs = {} }, 
       ...data.affectedChecks?.length ? [`checks to rerun: ${data.affectedChecks.join(", ")}`] : [],
       ...data.limitations ?? []
     ] : [],
+    ...command === "scorecard" ? [
+      ...data.principles?.map((row) => `${row.title}: ${row.rung ? `${row.rung}, ${row.proven ? "proven" : "not proven"}` : "none"}`) ?? [],
+      ...data.limitations ?? []
+    ] : [],
     ...data.path ? [data.path] : [],
     ...command === "evidence validate" ? [
       ...data.fingerprint ? [`review fingerprint: ${data.fingerprint}`] : [],

@@ -30,6 +30,10 @@ function emitResult({ command, status, problems = [], data = {}, inputs = {} }, 
       ...data.affectedChecks?.length ? [`checks to rerun: ${data.affectedChecks.join(", ")}`] : [],
       ...data.limitations ?? []
     ] : [],
+    ...command === "scorecard" ? [
+      ...data.principles?.map((row) => `${row.title}: ${row.rung ? `${row.rung}, ${row.proven ? "proven" : "not proven"}` : "none"}`) ?? [],
+      ...data.limitations ?? []
+    ] : [],
     ...data.path ? [data.path] : [],
     ...command === "evidence validate" ? [
       ...data.fingerprint ? [`review fingerprint: ${data.fingerprint}`] : [],
@@ -2304,11 +2308,146 @@ async function run3(options) {
   }
 }
 
+// runtime/scripts/lib/constraints.mjs
+import { readFile as readFile4 } from "node:fs/promises";
+
+// runtime/scripts/lib/json.mjs
+function inspectJSON(text) {
+  const value = JSON.parse(text, (key, value2) => {
+    if (typeof value2 === "number" && !Number.isFinite(value2)) throw new CommandError("failed", [{ code: "nonfinite-number", message: "JSON numbers must be finite.", fix: "Supply finite numbers in every JSON value." }]);
+    return value2;
+  });
+  const tokens = [...text.matchAll(/"(?:[^"\\]|\\.)*"|[{}\[\],:]|[^\s{}\[\],:]+/g)];
+  const entries = /* @__PURE__ */ new Map();
+  let index = 0;
+  function consume(root = false) {
+    const token = tokens[index++][0];
+    if (token !== "{" && token !== "[") return;
+    const keys = /* @__PURE__ */ new Set();
+    const close = token === "{" ? "}" : "]";
+    while (tokens[index][0] !== close) {
+      let key;
+      if (token === "{") {
+        key = JSON.parse(tokens[index++][0]);
+        if (keys.has(key)) throw new CommandError("failed", [{ code: "duplicate-key", message: `Duplicate JSON key: ${key}`, fix: "Supply JSON with unique member names in every object." }]);
+        keys.add(key);
+        index++;
+      }
+      const start = tokens[index].index;
+      consume();
+      const last = tokens[index - 1];
+      if (root && token === "{") entries.set(key, { start, end: last.index + last[0].length });
+      if (tokens[index][0] === ",") index++;
+    }
+    index++;
+  }
+  consume(true);
+  return { value, entries, close: tokens[index - 1].index };
+}
+
+// runtime/schemas/constraints.schema.json
+var constraints_schema_default = {
+  title: "Constraint ledger version 1",
+  type: "object",
+  additionalProperties: false,
+  required: ["schemaVersion", "entries"],
+  properties: {
+    schemaVersion: { const: 1 },
+    entries: {
+      type: "array",
+      items: {
+        type: "object",
+        additionalProperties: false,
+        required: ["class", "occurrences"],
+        properties: {
+          class: { type: "string", minLength: 1, pattern: "\\S" },
+          occurrences: { type: "array", uniqueItems: true, items: { type: "string", minLength: 1, pattern: "\\S" } },
+          constraint: {
+            type: "object",
+            additionalProperties: false,
+            required: ["principle", "rung", "retireWhen"],
+            properties: {
+              principle: { enum: ["conventional-structure", "hard-boundaries", "illegal-states", "footgun-bans", "early-rejection"] },
+              rung: { enum: ["eliminate", "detect", "encode", "review"] },
+              retireWhen: { type: "string", minLength: 1, pattern: "\\S" },
+              check: {
+                type: "object",
+                additionalProperties: false,
+                required: ["id", "ruleId", "proofDate"],
+                properties: {
+                  id: { type: "string", minLength: 1, pattern: "\\S" },
+                  ruleId: { type: "string", minLength: 1, pattern: "\\S" },
+                  proofDate: { type: "string", pattern: "^\\d{4}-\\d{2}-\\d{2}$" },
+                  baseline: { type: "string", minLength: 1 }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+};
+
+// runtime/scripts/lib/constraints.mjs
+var ledgerPath = ".bstack/constraints.json";
+var rungs = constraints_schema_default.properties.entries.items.properties.constraint.properties.rung.enum;
+function parseRecord(text, file, schema) {
+  let record;
+  try {
+    record = inspectJSON(text).value;
+  } catch (error) {
+    if (error instanceof CommandError) throw error;
+    throw new CommandError("blocked", [{ code: "constraints-unavailable", path: file, message: `${file} must be readable JSON.`, fix: `Repair ${file}.` }]);
+  }
+  validateData(schema, record);
+  return record;
+}
+async function currentRecord(root, file, schema) {
+  let text;
+  try {
+    text = await readFile4(await resolveFilePath(root, file), "utf8");
+  } catch (error) {
+    if (error.code === "ENOENT") return null;
+    throw error;
+  }
+  return parseRecord(text, file, schema);
+}
+async function loadConstraints(root, contractFile = ".bstack/project.json") {
+  const ledger = await currentRecord(root, ledgerPath, constraints_schema_default);
+  if (!ledger) return null;
+  const contract = await currentRecord(root, contractFile, project_schema_default);
+  return { entries: ledger.entries, contractFile, checkIds: contract ? contract.checks.map((check) => check.id) : null };
+}
+
+// runtime/scripts/commands/scorecard.mjs
+var principles = {
+  "conventional-structure": "Conventional structure and co-location",
+  "hard-boundaries": "Hard boundaries enforced by dependency graphs",
+  "illegal-states": "Types and structure that make illegal states unrepresentable",
+  "footgun-bans": "Lint rules and CI that ban footguns",
+  "early-rejection": "Early helpful rejection"
+};
+async function run4(options) {
+  const target = await resolveTarget(options);
+  const loaded = await loadConstraints(target.root, options.contract);
+  const constraints = (loaded?.entries ?? []).flatMap((entry) => entry.constraint ?? []);
+  return { inputs: { repo: target.root }, data: {
+    ledger: loaded ? ledgerPath : null,
+    principles: Object.entries(principles).map(([principle, title]) => {
+      const held = constraints.filter((constraint) => constraint.principle === principle);
+      const rung = rungs.find((rung2) => held.some((constraint) => constraint.rung === rung2)) ?? null;
+      return { principle, title, rung, proven: held.some((constraint) => constraint.rung === rung && constraint.check && loaded.checkIds?.includes(constraint.check.id)) };
+    }),
+    limitations: !loaded ? [`No constraint ledger at ${ledgerPath}, so no rung is recorded.`] : !loaded.checkIds ? [`No check configuration at ${loaded.contractFile}, so no rung is proven.`] : []
+  } };
+}
+
 // runtime/scripts/commands/cite-check.mjs
-import { readFile as readFile5 } from "node:fs/promises";
+import { readFile as readFile6 } from "node:fs/promises";
 
 // runtime/scripts/lib/citations.mjs
-import { readFile as readFile4 } from "node:fs/promises";
+import { readFile as readFile5 } from "node:fs/promises";
 import { spawnSync as spawnSync4 } from "node:child_process";
 async function fileCitationProblems(root, citation) {
   const [, path, number] = citation.location.match(/^(.*):([1-9][0-9]*)$/u);
@@ -2316,7 +2455,7 @@ async function fileCitationProblems(root, citation) {
   const problem = (code, message) => problems.push({ code, message, path: citation.location, fix: "Reopen the cited source and regenerate its location and state." });
   let bytes;
   try {
-    bytes = await readFile4(await resolvePath(root, path));
+    bytes = await readFile5(await resolvePath(root, path));
   } catch (error) {
     if (error instanceof CommandError) return error.problems;
     problem("citation-file-unavailable", "Cited path must be a readable file.");
@@ -2341,16 +2480,16 @@ async function fileCitationProblems(root, citation) {
 }
 
 // runtime/scripts/commands/cite-check.mjs
-async function run4(options) {
+async function run5(options) {
   if (!options.report) throw new CommandError("usage-error", [{ code: "missing-report", message: "--report is required.", fix: "Supply --report <research-report.json>." }]);
   const target = await resolveTarget(options, { draftOnly: true });
   let report;
   try {
-    report = JSON.parse(await readFile5(options.report, "utf8"));
+    report = JSON.parse(await readFile6(options.report, "utf8"));
   } catch {
     throw new CommandError("failed", [{ code: "invalid-report", message: "Report must be readable JSON.", path: options.report, fix: "Supply a readable research report." }]);
   }
-  const schema = JSON.parse(await readFile5(new URL("../schemas/research-report.json", import.meta.url), "utf8"));
+  const schema = JSON.parse(await readFile6(new URL("../schemas/research-report.json", import.meta.url), "utf8"));
   validateData(schema, report);
   validateIds(report.briefs, "$/briefs");
   const problems = [];
@@ -2376,15 +2515,15 @@ async function run4(options) {
 }
 
 // runtime/scripts/commands/contract-test.mjs
-import { readFile as readFile6 } from "node:fs/promises";
+import { readFile as readFile7 } from "node:fs/promises";
 async function readJSON(path) {
   try {
-    return JSON.parse(await readFile6(path, "utf8"));
+    return JSON.parse(await readFile7(path, "utf8"));
   } catch {
     throw new CommandError("failed", [{ code: "invalid-input", message: `Input must be readable JSON: ${path}`, fix: "Supply a readable JSON file.", path: String(path) }]);
   }
 }
-async function run5(options) {
+async function run6(options) {
   if (!options.input) throw new CommandError("usage-error", [{ code: "missing-input", message: "--input is required.", fix: "Supply --input <file>." }]);
   const target = await resolveTarget(options, { draftOnly: true });
   const schema = await readJSON(options.schema ?? new URL("../schemas/contract-test.json", import.meta.url));
@@ -2413,6 +2552,7 @@ await dispatch(process.argv.slice(2), "repo-audit", {
   "inspect": { options: [], help: "Inspect starting Git state, manifests and prerequisite versions without writes.\nUsage: repo-audit.mjs inspect --repo <path> [--json]", run },
   "inventory": { options: [], help: "Discover document sources and scoped instructions without writes.\nUsage: repo-audit.mjs inventory --repo <path>|--workspace <path> [--json]\nAbsent document kinds are reported without failure. Instruction consolidation is a candidate requiring review.", run: run2 },
   "history": { options: ["export-findings"], help: "Summarise this repo's no-mistakes run history without target writes.\nUsage: repo-audit.mjs history --repo <path> [--export-findings] [--json]\nIdentifies the repo from its no-mistakes remote and opens ~/.no-mistakes/state.sqlite (NM_HOME overrides the folder) read-only, never through the daemon. Returns runs read versus total with rounds per run, findings by severity, action and step, the share of findings first raised in round 2 or later and in round 3 or later, skipped findings (declined by the user and never selected for a fix), files flagged in two or more runs, each step's share of run time and the counts of fix and revert commits in Git history. A finding that stays listed across rounds counts once per run and step, in the round that first raised it. File paths follow renames to the current file at HEAD, and a path that leads to none keeps its recorded name with atHead false. --export-findings saves every counted finding as run, step, round, id, file, recordedFile, atHead and text in a scratch findings.json and returns its path. A repo with no linked history is a pass with a limitation, never a reason to infer prior runs.", run: run3 },
-  "cite-check": { options: ["report"], help: "Check file citation locations and exact-byte freshness without writes.\nUsage: repo-audit.mjs cite-check --repo <path>|--workspace <path> --report <file> [--json]\nReport follows schemas/research-report.json. Web URL/date records are validated without fetching sources.", run: run4 },
-  "contract-test": { options: ["input", "schema"], help: "Validate shared schema and joining-ID contracts without writes.\nUsage: repo-audit.mjs contract-test --repo <path>|--workspace <path> --input <file> [--schema <file>] [--json]\n--schema selects a schema definition for subset validation tests.", run: run5 }
+  "scorecard": { options: ["contract"], help: "Report, per lock-down principle, the highest rung this repo records and whether it is proven, without writes.\nUsage: repo-audit.mjs scorecard --repo <path> [--contract <repo-relative-file>] [--json]\nReads the constraint ledger at .bstack/constraints.json, which follows schemas/constraints.schema.json, and the checks registered in the project contract, .bstack/project.json by default. The principles are conventional structure and co-location, hard boundaries enforced by dependency graphs, types and structure that make illegal states unrepresentable, lint rules and CI that ban footguns, and early helpful rejection. The rungs, highest first, are eliminate, detect, encode and review. A rung is proven when a constraint on it names a check the contract registers. A repo with no ledger is a pass with every rung null and a limitation. The output is a summary, never the ledger entries; bstack-check --docs-only validates the ledger.", run: run4 },
+  "cite-check": { options: ["report"], help: "Check file citation locations and exact-byte freshness without writes.\nUsage: repo-audit.mjs cite-check --repo <path>|--workspace <path> --report <file> [--json]\nReport follows schemas/research-report.json. Web URL/date records are validated without fetching sources.", run: run5 },
+  "contract-test": { options: ["input", "schema"], help: "Validate shared schema and joining-ID contracts without writes.\nUsage: repo-audit.mjs contract-test --repo <path>|--workspace <path> --input <file> [--schema <file>] [--json]\n--schema selects a schema definition for subset validation tests.", run: run6 }
 });

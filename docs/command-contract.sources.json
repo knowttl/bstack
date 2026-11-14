@@ -13,6 +13,7 @@
   "runtime/scripts/commands/inventory.contract.md",
   "runtime/scripts/commands/instructions-measure.contract.md",
   "runtime/scripts/commands/history.contract.md",
+  "runtime/scripts/commands/scorecard.contract.md",
   "runtime/scripts/commands/cite-check.contract.md",
   "runtime/scripts/commands/plan-check.contract.md",
   "runtime/scripts/commands/vision-board-build.contract.md",
