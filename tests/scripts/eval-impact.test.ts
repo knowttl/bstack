@@ -32,7 +32,7 @@ test('each runtime input has its own impact key without an unmapped fallback', a
   const selected = new Set<string>()
   for (const directory of ['schemas', 'scripts/commands', 'assets', 'references']) {
     for (const file of await readdir(join(repo, 'runtime', directory), { recursive: true, withFileTypes: true })) {
-      if (!file.isFile()) continue
+      if (!file.isFile() || file.name.endsWith('.contract.md')) continue
       const path = resolve(file.parentPath, file.name)
       const key = path.slice(resolve(repo, 'runtime').length + 1).replaceAll('\\', '/')
       const original = await readFile(path, 'utf8')
@@ -189,6 +189,14 @@ test('a regenerated skill file adds no key of its own to the change in its share
   assert.equal(result.exit, 0, JSON.stringify(result))
   assert.deepEqual(result.data.keys, ['schemas/research-report.json', 'scripts/commands/cite-check.mjs'])
   assert.deepEqual(result.data.unmapped, [])
+})
+
+test('a contract file beside a command is documentation outside the package', async t => {
+  const repo = await checkout(t)
+  await edit(repo, 'runtime/scripts/commands/cite-check.contract.md', (source) => source + '\n')
+  const result = affected(repo)
+  assert.equal(result.exit, 0, JSON.stringify(result))
+  assert.deepEqual(result.data.unmapped, ['runtime/scripts/commands/cite-check.contract.md'])
 })
 
 test('an unchanged checkout selects no scenarios and an inaccessible base is blocked', async t => {

@@ -3,6 +3,7 @@
   "architecture": ["tests/scripts/architecture.test.ts"],
   "foundation": ["tests/scripts/foundation.test.ts"],
   "gate-test": ["tests/scripts/gate-test.test.ts"],
+  "generate-contract": ["tests/scripts/generate-contract.test.ts"],
   "generate-readme": ["tests/scripts/generate-readme.test.ts"],
   "generate-skills": ["tests/scripts/generate-skills.test.ts"],
   "glossary": ["tests/scripts/glossary.test.ts"],

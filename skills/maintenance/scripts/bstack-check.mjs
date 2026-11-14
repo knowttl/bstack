@@ -9928,4 +9928,4 @@ export {
 };
 
 // Build identity binds validator sources, schemas and generation inputs.
-export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"dc9ecea2697dbb9ac5baa8d079b5b6eb40331a092ae06f16b46adb90207324a4"}
+export const buildVersion = {"version":"0.0.0","bundler":"0.28.2","inputs":"26daacc44f088b2da3b3cd8d3f0b645669c45749593ed3188803d321ad9e760a"}

@@ -67,7 +67,7 @@ export async function postCaptureDocumentation(root: string, run: { inputs: Inpu
       if (hash(tested) !== original.sha256 ||
           stripProgress(tested.toString('utf8')) !== stripProgress(committed) ||
           stripProgress(committed) !== stripProgress(await readFile(join(root, path), 'utf8'))) continue
-    } else if (path !== 'README.md' && (!/^docs\/[^/]+\.md$/.test(path) || path === 'docs/design.md')) continue
+    } else if (path !== 'README.md' && !path.endsWith('.contract.md') && (!/^docs\/[^/]+\.md$/.test(path) || path === 'docs/design.md')) continue
     changes.push({ path, before: original, after: updated })
   }
   return changes
