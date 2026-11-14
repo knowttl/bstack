@@ -50,6 +50,7 @@ History and overlap come from scripts, not guesses.
 `measure --repo <target> --range <base>..<head> --json` reports revision-bound sizes, change frequency and co-change signals with supporting commits.
 It covers eligible files present at the endpoint and follows detected lineage back through renames to addition, but merged deletion and unrelated path reuse can attribute old-lifetime commits to the replacement.
 Pass `--exclusions <file>` following `schemas/measure-exclusions.json` for generated paths, lockfiles and explicitly identified broad formatting commits.
+A commit that changes more than 100 measured paths adds no co-change pairs and is named in the output's limitations; report it, and exclude it or its generated paths when it is mechanical.
 `overlap --repo <target> --plans <file> <file> --json` compares two declared plans following `schemas/overlap-plan.json`.
 Plan paths use forward slashes, case-sensitive `*` and `?` within segments and whole-segment `**` for recursive matching, including planned new files.
 Both are advisory: signals do not establish violations, observed conflicts or semantic independence.
@@ -59,11 +60,15 @@ Both are advisory: signals do not establish violations, observed conflicts or se
 Require a representative valid case and a deliberate violation in disposable fixtures.
 After preparing native dependencies in the clean and independently seeded copies, run:
 
-`rule-proof --repo <target> --check-plan <file> --check-id <id> --valid <clean-dir> --violation <seeded-dir> --expect <specific-diagnostic> --json`
+`rule-proof --repo <target> --check-plan <file> --check-id <id> --valid <clean-dir> --violation <seeded-dir> --expect <specific-diagnostic> --replacement <file-type-or-function> --json`
 
 The plan follows `schemas/check-plan.json`; its selected check supplies the native command object.
 The command runs separate disposable copies, records versions, exits and diagnostics in scratch, and removes the copies.
-The clean copy must pass and the violation must fail with the expected diagnostic.
+The clean copy must pass and the violation must fail with output that contains both the expected diagnostic and the replacement.
+`--replacement` is the file, type or function the diagnostic tells the reader to use instead, such as the module's public entry point or the sanctioned wrapper, and a violation whose output does not name it fails the proof.
+When nothing replaces the violating code, such as a native cycle report, pass `--no-replacement <reason>` instead; the reason is saved in the proof and reported as a limitation, and passing both or neither is a usage error.
+Word every diagnostic of a boundary check you write or propose in one shape, `path:line: rule-id: what is wrong. Use <replacement>.`, for example `packages/web/ui.ts:1: private-import: web imports core storage internals. Use packages/core/index.ts.`
+Keep the `rule-id:` prefix stable, because it is how a rule's firings are found in run logs.
 Repeat for each private import, alias or equivalent-resolution bypass and each forbidden cycle, keeping public imports and the permitted dependency direction in the clean control.
 For execution-context rules, keep permitted context imports in the clean control and seed a forbidden cross-context import independently.
 For sanctioned-wrapper rules, keep the wrapper's dependency access and callers' wrapper use valid, and seed a direct dependency bypass outside the wrapper.

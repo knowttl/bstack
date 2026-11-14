@@ -12,7 +12,7 @@ Put the pinned TLC jar at `tools/tla2tools.jar` in each built folder, which `.gi
 
 - Jar: `tla2tools.jar` from the tlaplus `v1.8.0` release asset, sha256 `15d103b7e5617780bcc904c0af12f1ad242e2b345c0301136c5be4588f17edac`, reporting "Version 2026.10.15.145915 (rev: 932d35e)".
   That release is a prerelease republished on 2026-10-15, so the tag alone does not pin a version; check the hash.
-- Expected with the unchanged `rule-proof` command (`--check-id tlc-charge-once --expect 'Invariant NoDoubleCharge is violated'`): the clean fixture exits 0 with 12 distinct states, the violation fixture exits 12, and the proof passes.
+- Expected with the unchanged `rule-proof` command (`--check-id tlc-charge-once --expect 'Invariant NoDoubleCharge is violated' --no-replacement '<reason>'`): the clean fixture exits 0 with 12 distinct states, the violation fixture exits 12, and the proof passes.
 - TLC exits 75 for a modelling error such as a branch that leaves `charges` unassigned, which is a different signal from the 12 of a property violation.
 - On a violation TLC writes a `ChargeOnce_TTrace_*.tla` trace spec beside the model, which `.gitignore` keeps out of the repo.
 - `rule-proof` records the version of `java`, so nothing in its proof identifies TLC; the suite must check the jar hash itself.

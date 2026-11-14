@@ -73,7 +73,7 @@ for (const [language, spec] of Object.entries(languages)) {
       await writeFile(join(repo, spec.file), prose)
       const failed = execute(repo, command, args)
       assert.equal(failed.exit, 1, failed.output)
-      assert.match(failed.output, new RegExp(`${spec.file}:\\d+:\\d+: no-prose-comments: prose comment`))
+      assert.match(failed.output, new RegExp(`${spec.file}:\\d+: no-prose-comments: prose comment: .+\\. Use a name, type or test that expresses it\\.`))
     }
   })
 
@@ -91,7 +91,7 @@ for (const [language, spec] of Object.entries(languages)) {
     await appendFile(join(repo, spec.file), language === 'go' ? '// second prose\n' : 'y = 2  # second prose\n')
     assert.match(execute(repo, command, [...args, '--baseline', baseline]).output, /prose comment: .*second prose/)
     await writeFile(join(repo, spec.file), spec.clean)
-    assert.match(execute(repo, command, [...args, '--baseline', baseline]).output, /baseline entry .* no longer matches a comment; remove it/)
+    assert.match(execute(repo, command, [...args, '--baseline', baseline]).output, /baseline\.json:1: no-prose-comments: baseline entry .* no longer matches a comment\. Use the baseline without this entry\./)
   })
 
   test(`${language} comment ban scans untracked files once and excludes ignored files`, async t => {
@@ -126,14 +126,14 @@ for (const [language, spec] of Object.entries(languages)) {
     await rename(join(repo, spec.file), join(repo, moved))
     const failed = execute(repo, command, args)
     assert.equal(failed.exit, 1, failed.output)
-    assert.match(failed.output, new RegExp(`${moved}:\\d+:\\d+: no-prose-comments`))
+    assert.match(failed.output, new RegExp(`${moved}:\\d+: no-prose-comments`))
     await rm(join(repo, moved))
     const clean = execute(repo, command, args)
     assert.equal(clean.exit, 0, clean.output)
     assert.notEqual(execute(repo, command, [...args, spec.file]).exit, 0)
     const stale = execute(repo, command, [...args, '--baseline', baseline])
     assert.equal(stale.exit, 1, stale.output)
-    assert.match(stale.output, /no longer matches a comment; remove it/)
+    assert.match(stale.output, /no longer matches a comment\. Use the baseline without this entry\./)
   })
 }
 
@@ -357,7 +357,7 @@ test('typescript comment ban uses the compiler scanner, ignoring comment-like te
   await appendFile(join(repo, 'packages/core/index.ts'), '// explain why\nexport const after = 1 /* trailing prose */\n')
   const failed = execute(repo, command, args)
   assert.equal(failed.exit, 1)
-  assert.match(failed.output, /packages\/core\/index\.ts:\d+:\d+: no-prose-comments: prose comment: \/\/ explain why/)
+  assert.match(failed.output, /packages\/core\/index\.ts:\d+: no-prose-comments: prose comment: \/\/ explain why/)
   assert.match(failed.output, /prose comment: \/\* trailing prose \*\//)
   await writeFile(join(repo, 'packages/core/index.ts'), '// eslint-disable-next-line no-var\nexport var legacy = 1\n')
   assert.equal(execute(repo, command, args).exit, 0)
@@ -373,7 +373,7 @@ test('typescript comment ban uses the compiler scanner, ignoring comment-like te
     await writeFile(join(repo, 'directive.ts'), `${directive}\nexport const value = 1\n`)
     const rejected = execute(repo, command, args)
     assert.equal(rejected.exit, 1, rejected.output)
-    assert.match(rejected.output, /directive\.ts:\d+:\d+: no-prose-comments/)
+    assert.match(rejected.output, /directive\.ts:\d+: no-prose-comments/)
   }
 })
 
@@ -388,7 +388,7 @@ test('typescript comment ban reads comments through the TypeScript 6 package whe
   args.pop()
   const failed = execute(repo, command, args)
   assert.equal(failed.exit, 1, failed.output)
-  assert.match(failed.output, /src\/index\.ts:1:1: no-prose-comments: prose comment: \/\/ explain why the value is fixed/)
+  assert.match(failed.output, /src\/index\.ts:1: no-prose-comments: prose comment: \/\/ explain why the value is fixed/)
   await writeFile(join(repo, 'src/index.ts'), 'export const retries = 3\n')
   const clean = execute(repo, command, args)
   assert.equal(clean.exit, 0, clean.output)
@@ -416,14 +416,14 @@ test('typescript comment ban scans untracked files once and excludes ignored fil
   await rename(join(repo, 'new.ts'), join(repo, 'moved.ts'))
   const moved = execute(repo, command, args)
   assert.equal(moved.exit, 1, moved.output)
-  assert.match(moved.output, /moved\.ts:\d+:\d+: no-prose-comments/)
+  assert.match(moved.output, /moved\.ts:\d+: no-prose-comments/)
   await rm(join(repo, 'moved.ts'))
   const clean = execute(repo, command, args)
   assert.equal(clean.exit, 0, clean.output)
   assert.notEqual(execute(repo, command, [...args, 'new.ts']).exit, 0)
   const stale = execute(repo, command, [...args, '--baseline', baseline])
   assert.equal(stale.exit, 1, stale.output)
-  assert.match(stale.output, /no longer matches a comment; remove it/)
+  assert.match(stale.output, /no longer matches a comment\. Use the baseline without this entry\./)
 })
 
 for (const [language, cases] of Object.entries({
@@ -574,15 +574,15 @@ for (const language of ['python', 'go', 'typescript']) {
 
 // Each enabled constraint has a seeded violation the one maintained command must reject with that constraint's diagnostic.
 const seeds = [
-  ['SL-1 no fabricated type evidence', 'greeter/greeting.py', '\nfrom typing import cast\n\n\ndef forced(value: object) -> int:\n    return cast(int, value)\n', 'Parse at the boundary instead of casting.'],
-  ['SL-2 no escape-hatch types in contracts', 'greeter/greeting.py', '\nfrom typing import Any\n\n\ndef anything(value: Any) -> Any:\n    return value\n', 'ANN401'],
-  ['SL-4 real seams, not module patching', 'greeter/greeting.py', '\nfrom unittest.mock import patch\n\nreplaced = patch\n', 'Use a real seam instead of patching modules.'],
-  ['SL-5 no accidental extra passes', 'greeter/greeting.py', '\n\ndef collect(names: list[str]) -> list[str]:\n    result = []\n    for name in names:\n        result.append(name.upper())\n    return result\n', 'PERF401'],
-  ['SL-6 blanket type ignore', 'greeter/greeting.py', 'value: int = "x"  # type: ignore\n', 'PGH003'],
-  ['SL-6 blanket noqa', 'greeter/greeting.py', 'value = 1  # noqa\n', 'PGH004'],
-  ['SL-8 layout belongs to the formatter', 'greeter/greeting.py', 'value   =   1\n', 'Would reformat'],
-  ['the comment ban', 'greeter/greeting.py', '\n\n# explain why\n', 'no-prose-comments']
-] satisfies [unknown, unknown, unknown, unknown][]
+  ['SL-1 no fabricated type evidence', 'greeter/greeting.py', '\nfrom typing import cast\n\n\ndef forced(value: object) -> int:\n    return cast(int, value)\n', 'Parse at the boundary instead of casting.', ['--replacement', 'Parse at the boundary']],
+  ['SL-2 no escape-hatch types in contracts', 'greeter/greeting.py', '\nfrom typing import Any\n\n\ndef anything(value: Any) -> Any:\n    return value\n', 'ANN401', ['--no-replacement', 'The native rule reports code to remove and names nothing to use instead.']],
+  ['SL-4 real seams, not module patching', 'greeter/greeting.py', '\nfrom unittest.mock import patch\n\nreplaced = patch\n', 'Use a real seam instead of patching modules.', ['--replacement', 'a real seam']],
+  ['SL-5 no accidental extra passes', 'greeter/greeting.py', '\n\ndef collect(names: list[str]) -> list[str]:\n    result = []\n    for name in names:\n        result.append(name.upper())\n    return result\n', 'PERF401', ['--no-replacement', 'The native rule reports code to remove and names nothing to use instead.']],
+  ['SL-6 blanket type ignore', 'greeter/greeting.py', 'value: int = "x"  # type: ignore\n', 'PGH003', ['--no-replacement', 'The native rule reports code to remove and names nothing to use instead.']],
+  ['SL-6 blanket noqa', 'greeter/greeting.py', 'value = 1  # noqa\n', 'PGH004', ['--no-replacement', 'The native rule reports code to remove and names nothing to use instead.']],
+  ['SL-8 layout belongs to the formatter', 'greeter/greeting.py', 'value   =   1\n', 'Would reformat', ['--no-replacement', 'The formatter reports layout and names nothing to use instead.']],
+  ['the comment ban', 'greeter/greeting.py', '\n\n# explain why\n', 'no-prose-comments', ['--replacement', 'a name, type or test']]
+] satisfies [unknown, unknown, unknown, unknown, unknown][]
 
 test('every enabled constraint accepts the clean fixture and rejects its seeded violation through the maintained command', async t => {
   const f = await scratch(t)
@@ -593,11 +593,11 @@ test('every enabled constraint accepts the clean fixture and rejects its seeded 
     acceptanceCases: [{ id: 'constraint', sourceId: 'design', pointer: 'tool.ruff', outcome: 'The enabled constraints hold.', userJourney: false }],
     checks: [{ id: 'maintained', role: 'outcome', required: true, acceptanceCases: ['constraint'], inputScopes: ['**'],
       command: { executable: 'python3', args: ['check.py'], cwd: '.', versionArgs: ['--version'] } }] }))
-  for (const [name, path, seed, diagnostic] of seeds) {
+  for (const [name, path, seed, diagnostic, replacement] of seeds) {
     const violation = join(f.directory, `violation ${diagnostic.replace(/\W+/g, '-')}`)
     await cp(valid, violation, { recursive: true })
     await appendFile(join(violation, path), seed)
-    const proof = runVerification('rule-proof', valid, f.env, ['--check-plan', checkPlan, '--check-id', 'maintained', '--valid', valid, '--violation', violation, '--expect', diagnostic])
+    const proof = runVerification('rule-proof', valid, f.env, ['--check-plan', checkPlan, '--check-id', 'maintained', '--valid', valid, '--violation', violation, '--expect', diagnostic, ...replacement])
     assert.equal(proof.exit, 0, `${name}: ${JSON.stringify(proof)}`)
     assert.deepEqual(proof.data.cases.map((item: NonNullable<typeof proof.data.cases>[number]) => [item.kind, item.status, item.execution.exitCode === 0]), [['valid', 'passed', true], ['violation', 'passed', false]])
   }

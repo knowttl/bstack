@@ -768,7 +768,7 @@ for (const [name, change, message, exit] of [
     commit(f, message)
     const result = coverage(f)
     assert.equal(result.exit, exit, JSON.stringify(result))
-    if (exit === 1) assert.match(result.stdout, new RegExp(`^${kit}/features/greeting\\.md: feature-map-coverage: greeter/greeting\\.py changed without updating this feature file`))
+    if (exit === 1) assert.match(result.stdout, new RegExp(`^${kit}/features/greeting\\.md:\\d+: feature-map-coverage: greeter/greeting\\.py changed without updating this feature file\\. Use an update to this feature file or a "No-map-impact: greeting: <reason>" line in a commit message\\.$`, 'm'))
   })
 }
 

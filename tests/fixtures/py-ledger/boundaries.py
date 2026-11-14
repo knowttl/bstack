@@ -1,14 +1,15 @@
 import ast
 import importlib.util
-import json
 from pathlib import Path
 
 edges = {}
-violations = set()
+paths = {}
+violations = []
 for path in [Path("app.py"), *sorted(Path("ledger").glob("*.py"))]:
     module = ".".join(path.with_suffix("").parts)
     if module.endswith(".__init__"):
         module = module.removesuffix(".__init__")
+    paths[module] = path.as_posix()
     targets = []
     for node in ast.walk(ast.parse(path.read_text())):
         names = []
@@ -23,21 +24,30 @@ for path in [Path("app.py"), *sorted(Path("ledger").glob("*.py"))]:
             spec = importlib.util.find_spec(name)
             if spec is None:
                 raise ValueError(f"Unresolved import: {name}")
-            targets.append(name)
-            if module == "app" and name == "ledger._internal":
-                violations.add("private")
-            if module == "app" and name == "ledger.bridge":
-                violations.add("alias")
+            targets.append((name, node.lineno))
+            if module == "app" and name in ("ledger._internal", "ledger.bridge"):
+                rule = "private-import" if name == "ledger._internal" else "alias-import"
+                violations.append(
+                    (path.as_posix(), node.lineno, rule, f"app imports ledger internals through {name}. Use ledger.Ledger.")
+                )
     edges[module] = targets
 
 
-def cycle(module, ancestors):
-    if module in ancestors:
+def reaches(module, goal, seen):
+    if module == goal:
         return True
-    return any(cycle(target, ancestors | {module}) for target in edges.get(module, []))
+    if module in seen:
+        return False
+    seen.add(module)
+    return any(reaches(target, goal, seen) for target, _ in edges.get(module, []))
 
 
-if any(cycle(module, set()) for module in edges):
-    violations.add("cycle")
-print(json.dumps(sorted(violations)))
+for module, targets in edges.items():
+    for target, line in targets:
+        if reaches(target, module, set()):
+            violations.append(
+                (paths[module], line, "dependency-cycle", f"this import of {target} leads back to {module}. Use a one-way dependency.")
+            )
+for path, line, rule, message in sorted(violations):
+    print(f"{path}:{line}: {rule}: {message}")
 raise SystemExit(1 if violations else 0)

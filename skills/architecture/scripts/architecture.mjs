@@ -61,7 +61,7 @@ function parseArgs(argv, valueOptions = []) {
     if (Object.hasOwn(options, name)) {
       problems.push({ code: "duplicate-option", message: `Repeated option: ${token}`, fix: "Supply each option once." });
     }
-    if (name === "json" || name === "dry-run" || name === "approved-by-user" || name === "refresh" || name === "check" || name === "update" || name === "docs-only") options[name] = true;
+    if (name === "json" || name === "dry-run" || name === "approved-by-user" || name === "refresh" || name === "check" || name === "update" || name === "docs-only" || name === "export-findings") options[name] = true;
     else if (!argv[index + 1] || argv[index + 1].startsWith("--")) {
       problems.push({ code: "missing-value", message: `Missing value for ${token}`, fix: "Supply a nonempty value after the option." });
     } else if (name === "plans") {
@@ -595,8 +595,8 @@ async function capture(command, { cwd, timeoutMs, signal, env, outputLimitBytes,
 
 // runtime/scripts/commands/rule-proof.mjs
 async function run(options) {
-  if (!["check-plan", "check-id", "valid", "violation", "expect"].every((key) => options[key]?.trim())) {
-    throw new CommandError("usage-error", [{ code: "missing-proof-options", message: "A proof needs a check plan, check ID, valid directory, violation directory and specific diagnostic.", fix: "Supply --check-plan <file> --check-id <id> --valid <dir> --violation <dir> --expect <text>." }]);
+  if (!["check-plan", "check-id", "valid", "violation", "expect"].every((key) => options[key]?.trim()) || Boolean(options.replacement?.trim()) === Boolean(options["no-replacement"]?.trim())) {
+    throw new CommandError("usage-error", [{ code: "missing-proof-options", message: "A proof needs a check plan, check ID, valid directory, violation directory, specific diagnostic and exactly one of the replacement that diagnostic names or the reason no replacement exists.", fix: "Supply --check-plan <file> --check-id <id> --valid <dir> --violation <dir> --expect <text> and either --replacement <file, type or function to use instead> or --no-replacement <reason>." }]);
   }
   const target = await resolveTarget(options);
   const plan = inspectJSON(await readFile2(options["check-plan"], "utf8")).value;
@@ -634,10 +634,11 @@ async function run(options) {
         } });
         execution = await runCommand({ root }, check.command, { signal: controller.signal });
         const normal = execution.toolVersion.status === "passed" && execution.exitCode !== null && !execution.error && !execution.signal && !execution.timedOut && !execution.cancelled;
-        const diagnostic = `${execution.stdout}
-${execution.stderr}`.includes(options.expect);
-        status2 = !normal ? "blocked" : kind === "valid" ? execution.exitCode === 0 ? "passed" : "blocked" : execution.exitCode !== 0 && diagnostic ? "passed" : "failed";
-        reason = status2 === "passed" ? null : execution.error ?? (kind === "valid" ? "Clean control or tool setup did not pass." : "Violation did not fail with the expected diagnostic.");
+        const output = `${execution.stdout}
+${execution.stderr}`;
+        const rejected = execution.exitCode !== 0 && output.includes(options.expect);
+        status2 = !normal ? "blocked" : kind === "valid" ? execution.exitCode === 0 ? "passed" : "blocked" : rejected && (!options.replacement || output.includes(options.replacement)) ? "passed" : "failed";
+        reason = status2 === "passed" ? null : execution.error ?? (kind === "valid" ? "Clean control or tool setup did not pass." : rejected ? `Violation output does not name the replacement ${options.replacement}.` : "Violation did not fail with the expected diagnostic.");
       } catch (error) {
         reason = error.message;
       } finally {
@@ -656,13 +657,18 @@ ${execution.stderr}`.includes(options.expect);
     checkId: check.id,
     command: check.command,
     expectedDiagnostic: options.expect,
+    replacement: options.replacement ?? null,
+    noReplacementReason: options["no-replacement"] ?? null,
     status,
     cases,
     path,
-    limitations: ["Proof covers only the supplied fixtures and the selected tool diagnostic. It does not establish unsupported syntax or dynamic dependencies."]
+    limitations: [
+      "Proof covers only the supplied fixtures and the selected tool diagnostic. It does not establish unsupported syntax or dynamic dependencies.",
+      ...options["no-replacement"] ? [`The diagnostic was not required to name a replacement: ${options["no-replacement"]}`] : []
+    ]
   };
   await writeFile(path, JSON.stringify(data, null, 2) + "\n", { flag: "wx" });
-  return { status, data, problems: cases.filter((item) => item.status !== "passed").map((item) => ({ code: "rule-proof-" + item.status, message: `${item.kind}: ${item.reason}`, fix: "Restore native tool setup or correct the rule and fixture, then rerun proof." })) };
+  return { status, data, problems: cases.filter((item) => item.status !== "passed").map((item) => ({ code: "rule-proof-" + item.status, message: `${item.kind}: ${item.reason}`, fix: 'Restore native tool setup, correct the rule and fixture, or word the diagnostic as "path:line: rule-id: what is wrong. Use <replacement>.", then rerun proof.' })) };
 }
 
 // runtime/scripts/commands/baseline.mjs
@@ -3318,6 +3324,7 @@ function matchesPath(glob, path) {
 
 // runtime/scripts/commands/measure.mjs
 var lockfiles = ["package-lock.json", "npm-shrinkwrap.json", "pnpm-lock.yaml", "yarn.lock", "bun.lock", "bun.lockb", "uv.lock", "poetry.lock", "Pipfile.lock", "Cargo.lock", "go.sum", "Gemfile.lock", "composer.lock"];
+var pairPathLimit = 100;
 function gitRecords(output) {
   const records = [];
   const tokens = output.split("\0");
@@ -3406,6 +3413,7 @@ async function run6(options) {
   const lineage = /* @__PURE__ */ new Map([[head, headNames]]);
   const pairs = /* @__PURE__ */ new Map();
   const renames = [];
+  const pairSkips = [];
   for (const record2 of commits) {
     const names = lineage.get(record2.commit);
     const touched = /* @__PURE__ */ new Map();
@@ -3423,7 +3431,8 @@ async function run6(options) {
     }
     const paths = [...touched.keys()].sort();
     for (const path of paths) files.get(path).commits.push(record2.commit);
-    for (let a = 0; a < paths.length; a++) for (let b = a + 1; b < paths.length; b++) {
+    if (paths.length > pairPathLimit) pairSkips.push(`${record2.commit} (${paths.length} paths)`);
+    else for (let a = 0; a < paths.length; a++) for (let b = a + 1; b < paths.length; b++) {
       const sources = touched.get(paths[b]);
       if (![...touched.get(paths[a])].some((source) => sources.size > 1 || !sources.has(source))) continue;
       const key = JSON.stringify([paths[a], paths[b]]);
@@ -3453,7 +3462,13 @@ async function run6(options) {
     exclusions: { rules: rules.map(({ reason, pattern }) => ({ reason, pattern })), files: [...excluded.values()].sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0), formattingCommits: [...formatting].sort() },
     files: [...files.values()].sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0).map((file) => ({ ...file, changeCount: file.commits.length })),
     coChangePairs: [...pairs.values()].map((pair) => ({ ...pair, changeCount: pair.commits.length })),
-    limitations: ["Only eligible blob files present at the resolved head are measured, with byte sizes from that revision. Detected lineage follows renames and stops at addition or blob/gitlink type boundaries. Deleted paths do not create rows; working-tree edits are not measured.", "History and co-change are advisory evidence, never violations, import analysis or observed merge conflicts. Formatting exclusions are explicitly declared, not inferred from commit messages.", "Merge signals use their first-parent diff; lineage follows every selected parent edge. Shared ancestry may support multiple surviving names, without inferring co-change from one historical path. Rename lineage is bounded by the selected range. Shallow history may omit ancestors.", "If a path is deleted on one line of history and reused by an unrelated file, then merged with a branch that edited the old file, old-lifetime commits, rename evidence and co-change pairs can be attributed to the new file. This limitation does not change what counts as a file change."]
+    limitations: [
+      "Only eligible blob files present at the resolved head are measured, with byte sizes from that revision. Detected lineage follows renames and stops at addition or blob/gitlink type boundaries. Deleted paths do not create rows; working-tree edits are not measured.",
+      "History and co-change are advisory evidence, never violations, import analysis or observed merge conflicts. Formatting exclusions are explicitly declared, not inferred from commit messages.",
+      "Merge signals use their first-parent diff; lineage follows every selected parent edge. Shared ancestry may support multiple surviving names, without inferring co-change from one historical path. Rename lineage is bounded by the selected range. Shallow history may omit ancestors.",
+      "If a path is deleted on one line of history and reused by an unrelated file, then merged with a branch that edited the old file, old-lifetime commits, rename evidence and co-change pairs can be attributed to the new file. This limitation does not change what counts as a file change.",
+      ...pairSkips.length ? [`Co-change pairs skip ${pairSkips.length} commits that each changed more than ${pairPathLimit} measured paths, which still count toward each file's change frequency: ${pairSkips.join(", ")}. Declare a mechanical one in formattingCommits, or its generated paths in generatedPaths, to exclude it entirely.`] : []
+    ]
   } };
 }
 
@@ -3572,12 +3587,12 @@ async function run8(options) {
 
 // runtime/scripts/runtime/scripts/architecture.mjs
 await dispatch(process.argv.slice(2), "architecture", {
-  "rule-proof": { options: ["check-plan", "check-id", "valid", "violation", "expect"], help: "Prove a selected native check against disposable valid and violation copies.\nUsage: architecture.mjs rule-proof --repo <path> --check-plan <file> --check-id <id> --valid <dir> --violation <dir> --expect <text> [--json]\nUses schemas/check-plan.json. Prepare native dependencies in each source fixture first. Unavailable tools or a failed clean control are blocked. Evidence is saved in scratch.", run },
+  "rule-proof": { options: ["check-plan", "check-id", "valid", "violation", "expect", "replacement", "no-replacement"], help: "Prove a selected native check against disposable valid and violation copies.\nUsage: architecture.mjs rule-proof --repo <path> --check-plan <file> --check-id <id> --valid <dir> --violation <dir> --expect <text> --replacement <text>|--no-replacement <reason> [--json]\nUses schemas/check-plan.json. The violation must exit nonzero with output that contains both --expect and --replacement, the file, type or function its diagnostic tells the reader to use instead. Pass --no-replacement <reason> instead only when nothing replaces the violating code; the reason is saved in the proof and reported as a limitation. Passing both or neither is a usage error. Prepare native dependencies in each source fixture first. Unavailable tools or a failed clean control are blocked. Evidence is saved in scratch.", run },
   "baseline check": { options: ["baseline", "violations", "refresh", "finding", "findings", "entry"], help: "Check visible temporary debt and reject new or fixed entries.\nUsage: architecture.mjs baseline check --repo <path> --baseline <repo-relative-file> --violations <file> [--refresh [--finding <id> --findings <file> --entry <file>]] [--json]\nBaseline follows schemas/baseline.schema.json; violations are an array of rule/path/key objects. Refresh removes fixed entries. Adding one entry requires a selected unresolved debt finding in its scope. A failing refresh writes nothing.", run: run3 },
   "apply": { options: ["plan", "dry-run", "approved-fingerprint"], help: "Apply or resume a reviewed change set with recoverable originals.\nUsage: architecture.mjs apply --repo <path>|--workspace <path> --plan <file> [--dry-run] [--approved-fingerprint <planDigest>] [--json]\nPlan follows schemas/change-set.schema.json. --dry-run previews exact bytes without writes. Assessment writes require --approved-fingerprint matching the preview planDigest; that value must come from the owner's approval reply for the exact preview, never from the agent's own approval. Repeating a plan resumes its digest-bound run and still requires the approved fingerprint for assessment writes.\nDigests use SHA-256 of UTF-8 JSON: recursively sort object keys, preserve array order, encode keys and primitive values with JSON.stringify and omit whitespace between tokens. Hash the complete findings object for findingsDigest; omit only the top-level planDigest when hashing each plan. Creation changeSetDigest equals the referenced change set's planDigest.", run: run4 },
   "state show": { options: ["run"], help: "Inspect actual pending, applied and conflicting edits without writes.\nUsage: architecture.mjs state show --repo <path>|--workspace <path> --run <id> [--json]", run: run5 },
   "findings validate": { options: ["findings"], help: "Validate findings and assess current readiness without writes.\nUsage: architecture.mjs findings validate --repo <path>|--workspace <path> --findings <file> [--json]", run: run2 },
-  "measure": { options: ["range", "exclusions"], help: "Collect endpoint file sizes and current-lifetime history signals without writes.\nUsage: architecture.mjs measure --repo <path> --range <base>..<head>|<head> [--exclusions <file>] [--json]\nA single revision selects its reachable history. Only files present at the endpoint are measured, following renames back to their addition. Exclusions follow schemas/measure-exclusions.json. Signals do not establish violations or merge conflicts.", run: run6 },
+  "measure": { options: ["range", "exclusions"], help: "Collect endpoint file sizes and current-lifetime history signals without writes.\nUsage: architecture.mjs measure --repo <path> --range <base>..<head>|<head> [--exclusions <file>] [--json]\nA single revision selects its reachable history. Only files present at the endpoint are measured, following renames back to their addition. Exclusions follow schemas/measure-exclusions.json. A commit that changes more than 100 measured paths adds no co-change pairs and is named in the limitations. Signals do not establish violations or merge conflicts.", run: run6 },
   "overlap": { options: ["plans"], help: "Compare declared write paths and changing contracts without writes.\nUsage: architecture.mjs overlap --repo <path> --plans <file> <file> [--json]\nPlans follow schemas/overlap-plan.json. Paths are case-sensitive and repo-relative, using /, * and ? within segments, and ** for zero or more segments. Unsupported glob syntax fails. Intersections include planned new files. Disjoint paths do not prove independence.", run: run7 },
   "cite-check": { options: ["report"], help: "Check file citation locations and exact-byte freshness without writes.\nUsage: architecture.mjs cite-check --repo <path>|--workspace <path> --report <file> [--json]\nReport follows schemas/research-report.json. Web URL/date records are validated without fetching sources.", run: run8 }
 });

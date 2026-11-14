@@ -297,11 +297,12 @@ Portable maintenance is available through the [standalone checker](command-contr
 Prove a selected native rule against prepared clean and independently seeded fixtures:
 
 ```sh
-node skills/verification/scripts/verification.mjs rule-proof --repo <target> --check-plan <file> --check-id <id> --valid <clean-dir> --violation <seeded-dir> --expect <specific-diagnostic> --json
+node skills/verification/scripts/verification.mjs rule-proof --repo <target> --check-plan <file> --check-id <id> --valid <clean-dir> --violation <seeded-dir> --expect <specific-diagnostic> --replacement <file-type-or-function> --json
 npm test -- --task T3.2
 ```
 
 Prepare native dependencies in the fixtures first.
+`--replacement` names the file, type or function the diagnostic tells the reader to use instead; pass `--no-replacement <reason>` instead when nothing replaces the violating code.
 See the [enforcement command contract](command-contract.md#rule-proof-and-temporary-debt) for check selection, saved proof evidence and coverage limits.
 
 Check a temporary baseline when the native tool has no baseline feature:
@@ -615,7 +616,10 @@ Summarise the repo's no-mistakes run history without querying the state store by
 
 ```sh
 node skills/repo-audit/scripts/repo-audit.mjs history --repo <target> --json
+node skills/repo-audit/scripts/repo-audit.mjs history --repo <target> --export-findings --json
 ```
+
+`--export-findings` also saves each finding's run, step, round, current file and text to scratch, and hotspot paths follow renames to the current file.
 
 See the [history command contract](command-contract.md#no-mistakes-history) for store discovery, counting rules and coverage limitations.
 Use the [history brief](../skills/repo-audit/references/research-briefs.md#run-history) to interpret the output and route findings to the next skill.

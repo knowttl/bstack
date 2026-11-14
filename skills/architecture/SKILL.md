@@ -41,7 +41,7 @@ Copy this checklist and tick a step only when its Done when criterion is met.
 
 Start with the reported area, the stated next change, the approved design and the relevant history, and expand only where evidence leads.
 Read the design or architecture document, decision records, contribution guidance, scoped agent instructions and the native checks before proposing anything.
-An existing repo gets the full boundary audit from the [architecture reference](references/architecture.md): inspect what it lists, collect dependency edges with the project's native analysis, and run `node scripts/architecture.mjs measure --repo <target> --range <base>..<head> --json` for revision-bound sizes, change frequency and co-change signals.
+An existing repo gets the full boundary audit from the [architecture reference](references/architecture.md): inspect what it lists, collect dependency edges with the project's native analysis, and run `node scripts/architecture.mjs measure --repo <target> --range <base>..<head> --json` for revision-bound sizes, change frequency and co-change signals, adding `--exclusions <file>` for generated paths and broad formatting commits as the [boundary checks reference](references/boundary-checks.md#collect-the-evidence) describes.
 A new idea has no history, so list the expected changes from the user's explanation and any approved `VISION.md`, and review them against the proposed boundaries.
 A design document the user names counts as the user's explanation, so summarise it and ask only about gaps.
 Choose two representative changes and record each as a declared plan following `schemas/overlap-plan.json`.

@@ -83,7 +83,7 @@ def violations(path):
     for token in tokens:
         if token.type != tokenize.COMMENT:
             continue
-        line, column = token.start
+        line = token.start[0]
         text = token.string
         if (
             (line == 1 and text.startswith("#!"))
@@ -100,7 +100,6 @@ def violations(path):
                 "path": path,
                 "key": digest + ":" + str(seen[digest]),
                 "line": line,
-                "column": column + 1,
                 "text": text,
             }
         )
@@ -183,14 +182,14 @@ def main():
         if (item["rule"], item["path"], item["key"]) not in recorded:
             failed = True
             print(
-                "%s:%d:%d: %s: prose comment: %s"
-                % (item["path"], item["line"], item["column"], RULE, item["text"])
+                "%s:%d: %s: prose comment: %s. Use a name, type or test that expresses it."
+                % (item["path"], item["line"], RULE, item["text"])
             )
     for rule, path, key in sorted(recorded - current):
         failed = True
         print(
-            "%s: %s: baseline entry %s no longer matches a comment; remove it"
-            % (path, rule, key)
+            "%s:1: %s: baseline entry %s for %s no longer matches a comment. Use the baseline without this entry."
+            % (options.baseline, rule, key, path)
         )
     return 1 if failed else 0
 
@@ -230,7 +229,6 @@ type comment struct {
 	path    string
 	line    int
 	last    int
-	column  int
 	text    string
 	key     string
 	leading bool
@@ -347,7 +345,7 @@ func scan(path string) ([]comment, error) {
 			continue
 		}
 		position := set.Position(pos)
-		found = append(found, comment{path: path, line: position.Line, last: position.Line + strings.Count(lit, "\\n"), column: position.Column, text: lit, leading: leading, documented: documented[position.Offset]})
+		found = append(found, comment{path: path, line: position.Line, last: position.Line + strings.Count(lit, "\\n"), text: lit, leading: leading, documented: documented[position.Offset]})
 	}
 	licensed := map[int]bool{}
 	for start := 0; start < len(found); {
@@ -497,7 +495,7 @@ func main() {
 		current[identity(item)] = true
 		if !recorded[identity(item)] {
 			failed = true
-			fmt.Printf("%s:%d:%d: %s: prose comment: %s\\n", item.path, item.line, item.column, rule, item.text)
+			fmt.Printf("%s:%d: %s: prose comment: %s. Use a name, type or test that expresses it.\\n", item.path, item.line, rule, item.text)
 		}
 	}
 	var stale []string
@@ -510,7 +508,7 @@ func main() {
 	for _, id := range stale {
 		parts := strings.Split(id, "\\x00")
 		failed = true
-		fmt.Printf("%s: %s: baseline entry %s no longer matches a comment; remove it\\n", parts[1], parts[0], parts[2])
+		fmt.Printf("%s:1: %s: baseline entry %s for %s no longer matches a comment. Use the baseline without this entry.\\n", *baseline, parts[0], parts[2], parts[1])
 	}
 	if failed {
 		os.Exit(1)
@@ -629,7 +627,7 @@ function violations(path) {
   const found = [...ranges.values()].sort((a, b) => a.pos - b.pos).map(range => {
     const start = source.getLineAndCharacterOfPosition(range.pos)
     const last = source.getLineAndCharacterOfPosition(range.end)
-    return { text: text.slice(range.pos, range.end), documented: documented.has(range.pos), line: start.line + 1, column: start.character + 1, last: last.line + 1, leading: range.leading }
+    return { text: text.slice(range.pos, range.end), documented: documented.has(range.pos), line: start.line + 1, last: last.line + 1, leading: range.leading }
   })
   const licensed = new Set()
   for (let start = 0; start < found.length;) {
@@ -651,7 +649,7 @@ function violations(path) {
     if (licensed.has(index) || documentation || (item.line === 1 && item.text.startsWith('#!')) || directive) continue
     const digest = createHash('sha256').update(item.text.trim()).digest('hex').slice(0, 12)
     seen.set(digest, (seen.get(digest) ?? 0) + 1)
-    kept.push({ rule, path, key: digest + ':' + seen.get(digest), line: item.line, column: item.column, text: item.text })
+    kept.push({ rule, path, key: digest + ':' + seen.get(digest), line: item.line, text: item.text })
   }
   return kept
 }
@@ -691,12 +689,12 @@ if (args.includes('--list')) {
   let failed = false
   for (const item of found.filter(item => !recorded.has(identity(item)))) {
     failed = true
-    console.log(item.path + ':' + item.line + ':' + item.column + ': ' + rule + ': prose comment: ' + item.text)
+    console.log(item.path + ':' + item.line + ': ' + rule + ': prose comment: ' + item.text + '. Use a name, type or test that expresses it.')
   }
   for (const [id, entry] of recorded) {
     if (current.has(id)) continue
     failed = true
-    console.log(entry.path + ': ' + rule + ': baseline entry ' + entry.key + ' no longer matches a comment; remove it')
+    console.log(option('--baseline') + ':1: ' + rule + ': baseline entry ' + entry.key + ' for ' + entry.path + ' no longer matches a comment. Use the baseline without this entry.')
   }
   process.exitCode = failed ? 1 : 0
 }

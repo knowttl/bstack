@@ -61,7 +61,7 @@ function parseArgs(argv, valueOptions = []) {
     if (Object.hasOwn(options, name)) {
       problems.push({ code: "duplicate-option", message: `Repeated option: ${token}`, fix: "Supply each option once." });
     }
-    if (name === "json" || name === "dry-run" || name === "approved-by-user" || name === "refresh" || name === "check" || name === "update" || name === "docs-only") options[name] = true;
+    if (name === "json" || name === "dry-run" || name === "approved-by-user" || name === "refresh" || name === "check" || name === "update" || name === "docs-only" || name === "export-findings") options[name] = true;
     else if (!argv[index + 1] || argv[index + 1].startsWith("--")) {
       problems.push({ code: "missing-value", message: `Missing value for ${token}`, fix: "Supply a nonempty value after the option." });
     } else if (name === "plans") {
@@ -595,8 +595,8 @@ async function capture(command, { cwd, timeoutMs, signal, env, outputLimitBytes,
 
 // runtime/scripts/commands/rule-proof.mjs
 async function run(options) {
-  if (!["check-plan", "check-id", "valid", "violation", "expect"].every((key) => options[key]?.trim())) {
-    throw new CommandError("usage-error", [{ code: "missing-proof-options", message: "A proof needs a check plan, check ID, valid directory, violation directory and specific diagnostic.", fix: "Supply --check-plan <file> --check-id <id> --valid <dir> --violation <dir> --expect <text>." }]);
+  if (!["check-plan", "check-id", "valid", "violation", "expect"].every((key) => options[key]?.trim()) || Boolean(options.replacement?.trim()) === Boolean(options["no-replacement"]?.trim())) {
+    throw new CommandError("usage-error", [{ code: "missing-proof-options", message: "A proof needs a check plan, check ID, valid directory, violation directory, specific diagnostic and exactly one of the replacement that diagnostic names or the reason no replacement exists.", fix: "Supply --check-plan <file> --check-id <id> --valid <dir> --violation <dir> --expect <text> and either --replacement <file, type or function to use instead> or --no-replacement <reason>." }]);
   }
   const target = await resolveTarget(options);
   const plan = inspectJSON(await readFile2(options["check-plan"], "utf8")).value;
@@ -634,10 +634,11 @@ async function run(options) {
         } });
         execution = await runCommand({ root }, check.command, { signal: controller.signal });
         const normal = execution.toolVersion.status === "passed" && execution.exitCode !== null && !execution.error && !execution.signal && !execution.timedOut && !execution.cancelled;
-        const diagnostic = `${execution.stdout}
-${execution.stderr}`.includes(options.expect);
-        status2 = !normal ? "blocked" : kind === "valid" ? execution.exitCode === 0 ? "passed" : "blocked" : execution.exitCode !== 0 && diagnostic ? "passed" : "failed";
-        reason = status2 === "passed" ? null : execution.error ?? (kind === "valid" ? "Clean control or tool setup did not pass." : "Violation did not fail with the expected diagnostic.");
+        const output = `${execution.stdout}
+${execution.stderr}`;
+        const rejected = execution.exitCode !== 0 && output.includes(options.expect);
+        status2 = !normal ? "blocked" : kind === "valid" ? execution.exitCode === 0 ? "passed" : "blocked" : rejected && (!options.replacement || output.includes(options.replacement)) ? "passed" : "failed";
+        reason = status2 === "passed" ? null : execution.error ?? (kind === "valid" ? "Clean control or tool setup did not pass." : rejected ? `Violation output does not name the replacement ${options.replacement}.` : "Violation did not fail with the expected diagnostic.");
       } catch (error) {
         reason = error.message;
       } finally {
@@ -656,13 +657,18 @@ ${execution.stderr}`.includes(options.expect);
     checkId: check.id,
     command: check.command,
     expectedDiagnostic: options.expect,
+    replacement: options.replacement ?? null,
+    noReplacementReason: options["no-replacement"] ?? null,
     status,
     cases,
     path,
-    limitations: ["Proof covers only the supplied fixtures and the selected tool diagnostic. It does not establish unsupported syntax or dynamic dependencies."]
+    limitations: [
+      "Proof covers only the supplied fixtures and the selected tool diagnostic. It does not establish unsupported syntax or dynamic dependencies.",
+      ...options["no-replacement"] ? [`The diagnostic was not required to name a replacement: ${options["no-replacement"]}`] : []
+    ]
   };
   await writeFile(path, JSON.stringify(data, null, 2) + "\n", { flag: "wx" });
-  return { status, data, problems: cases.filter((item) => item.status !== "passed").map((item) => ({ code: "rule-proof-" + item.status, message: `${item.kind}: ${item.reason}`, fix: "Restore native tool setup or correct the rule and fixture, then rerun proof." })) };
+  return { status, data, problems: cases.filter((item) => item.status !== "passed").map((item) => ({ code: "rule-proof-" + item.status, message: `${item.kind}: ${item.reason}`, fix: 'Restore native tool setup, correct the rule and fixture, or word the diagnostic as "path:line: rule-id: what is wrong. Use <replacement>.", then rerun proof.' })) };
 }
 
 // runtime/scripts/commands/project.mjs
@@ -3734,7 +3740,7 @@ async function run4(options) {
 
 // runtime/scripts/runtime/scripts/foundation.mjs
 await dispatch(process.argv.slice(2), "foundation", {
-  "rule-proof": { options: ["check-plan", "check-id", "valid", "violation", "expect"], help: "Prove a selected native check against disposable valid and violation copies.\nUsage: foundation.mjs rule-proof --repo <path> --check-plan <file> --check-id <id> --valid <dir> --violation <dir> --expect <text> [--json]\nUses schemas/check-plan.json. Prepare native dependencies in each source fixture first. Unavailable tools or a failed clean control are blocked. Evidence is saved in scratch.", run },
+  "rule-proof": { options: ["check-plan", "check-id", "valid", "violation", "expect", "replacement", "no-replacement"], help: "Prove a selected native check against disposable valid and violation copies.\nUsage: foundation.mjs rule-proof --repo <path> --check-plan <file> --check-id <id> --valid <dir> --violation <dir> --expect <text> --replacement <text>|--no-replacement <reason> [--json]\nUses schemas/check-plan.json. The violation must exit nonzero with output that contains both --expect and --replacement, the file, type or function its diagnostic tells the reader to use instead. Pass --no-replacement <reason> instead only when nothing replaces the violating code; the reason is saved in the proof and reported as a limitation. Passing both or neither is a usage error. Prepare native dependencies in each source fixture first. Unavailable tools or a failed clean control are blocked. Evidence is saved in scratch.", run },
   "project create": { options: ["plan", "dry-run"], help: "Create or resume the approved minimal project.\nUsage: foundation.mjs project create --workspace <existing-directory> --plan <file> [--dry-run] [--json]\nPlan follows schemas/project-create.json and references a reviewed change set. Dry run builds only in scratch. Repeat the unchanged plan to recover directory, file and Git creation. Failed setup or journey keeps the project unverified.\nDigests use SHA-256 of UTF-8 JSON: recursively sort object keys, preserve array order, encode keys and primitive values with JSON.stringify and omit whitespace between tokens. Hash the complete findings object for findingsDigest; omit only the top-level planDigest when hashing each plan. Creation changeSetDigest equals the referenced change set's planDigest.", run: run3 },
   "run-checks": { options: ["plan", "phase", "prior-run"], help: "Capture declared checks and user outcome coverage in scratch.\nUsage: foundation.mjs run-checks --repo <path> --plan <file> [--phase before|after] [--prior-run <id>] [--json]\nPhase defaults to after. Plans follow schemas/check-plan.json. Bug fixes and refactors require an original-state before capture. Outside dependencies also require probe record and probe compare.", run: run4 },
   "apply": { options: ["plan", "dry-run", "approved-fingerprint"], help: "Apply or resume a reviewed change set with recoverable originals.\nUsage: foundation.mjs apply --repo <path>|--workspace <path> --plan <file> [--dry-run] [--approved-fingerprint <planDigest>] [--json]\nPlan follows schemas/change-set.schema.json. --dry-run previews exact bytes without writes. Assessment writes require --approved-fingerprint matching the preview planDigest; that value must come from the owner's approval reply for the exact preview, never from the agent's own approval. Repeating a plan resumes its digest-bound run and still requires the approved fingerprint for assessment writes.\nDigests use SHA-256 of UTF-8 JSON: recursively sort object keys, preserve array order, encode keys and primitive values with JSON.stringify and omit whitespace between tokens. Hash the complete findings object for findingsDigest; omit only the top-level planDigest when hashing each plan. Creation changeSetDigest equals the referenced change set's planDigest.", run: run2 }

@@ -9,8 +9,8 @@ import { runCommand } from '../lib/run.mjs'
 import { CommandError } from '../lib/result.mjs'
 
 export async function run(options) {
-  if (!['check-plan', 'check-id', 'valid', 'violation', 'expect'].every(key => options[key]?.trim())) {
-    throw new CommandError('usage-error', [{ code: 'missing-proof-options', message: 'A proof needs a check plan, check ID, valid directory, violation directory and specific diagnostic.', fix: 'Supply --check-plan <file> --check-id <id> --valid <dir> --violation <dir> --expect <text>.' }])
+  if (!['check-plan', 'check-id', 'valid', 'violation', 'expect'].every(key => options[key]?.trim()) || Boolean(options.replacement?.trim()) === Boolean(options['no-replacement']?.trim())) {
+    throw new CommandError('usage-error', [{ code: 'missing-proof-options', message: 'A proof needs a check plan, check ID, valid directory, violation directory, specific diagnostic and exactly one of the replacement that diagnostic names or the reason no replacement exists.', fix: 'Supply --check-plan <file> --check-id <id> --valid <dir> --violation <dir> --expect <text> and either --replacement <file, type or function to use instead> or --no-replacement <reason>.' }])
   }
   const target = await resolveTarget(options)
   const plan = inspectJSON(await readFile(options['check-plan'], 'utf8')).value
@@ -49,10 +49,12 @@ export async function run(options) {
         execution = await runCommand({ root }, check.command, { signal: controller.signal })
         const normal = execution.toolVersion.status === 'passed' && execution.exitCode !== null && !execution.error &&
           !execution.signal && !execution.timedOut && !execution.cancelled
-        const diagnostic = `${execution.stdout}\n${execution.stderr}`.includes(options.expect)
+        const output = `${execution.stdout}\n${execution.stderr}`
+        const rejected = execution.exitCode !== 0 && output.includes(options.expect)
         status = !normal ? 'blocked' : kind === 'valid' ? execution.exitCode === 0 ? 'passed' : 'blocked'
-          : execution.exitCode !== 0 && diagnostic ? 'passed' : 'failed'
-        reason = status === 'passed' ? null : execution.error ?? (kind === 'valid' ? 'Clean control or tool setup did not pass.' : 'Violation did not fail with the expected diagnostic.')
+          : rejected && (!options.replacement || output.includes(options.replacement)) ? 'passed' : 'failed'
+        reason = status === 'passed' ? null : execution.error ?? (kind === 'valid' ? 'Clean control or tool setup did not pass.'
+          : rejected ? `Violation output does not name the replacement ${options.replacement}.` : 'Violation did not fail with the expected diagnostic.')
       } catch (error) { reason = error.message }
       finally { await rm(root, { recursive: true, force: true }) }
       cases.push({ kind, source: sources[index], status, reason, execution })
@@ -65,8 +67,9 @@ export async function run(options) {
   }
   const status = cases.some(item => item.status === 'blocked') ? 'blocked' : cases.every(item => item.status === 'passed') ? 'passed' : 'failed'
   const path = join(directory, 'proof.json')
-  const data = { checkId: check.id, command: check.command, expectedDiagnostic: options.expect, status, cases, path,
-    limitations: ['Proof covers only the supplied fixtures and the selected tool diagnostic. It does not establish unsupported syntax or dynamic dependencies.'] }
+  const data = { checkId: check.id, command: check.command, expectedDiagnostic: options.expect, replacement: options.replacement ?? null, noReplacementReason: options['no-replacement'] ?? null, status, cases, path,
+    limitations: ['Proof covers only the supplied fixtures and the selected tool diagnostic. It does not establish unsupported syntax or dynamic dependencies.',
+      ...(options['no-replacement'] ? [`The diagnostic was not required to name a replacement: ${options['no-replacement']}`] : [])] }
   await writeFile(path, JSON.stringify(data, null, 2) + '\n', { flag: 'wx' })
-  return { status, data, problems: cases.filter(item => item.status !== 'passed').map(item => ({ code: 'rule-proof-' + item.status, message: `${item.kind}: ${item.reason}`, fix: 'Restore native tool setup or correct the rule and fixture, then rerun proof.' })) }
+  return { status, data, problems: cases.filter(item => item.status !== 'passed').map(item => ({ code: 'rule-proof-' + item.status, message: `${item.kind}: ${item.reason}`, fix: 'Restore native tool setup, correct the rule and fixture, or word the diagnostic as "path:line: rule-id: what is wrong. Use <replacement>.", then rerun proof.' })) }
 }

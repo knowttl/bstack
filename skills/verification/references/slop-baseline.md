@@ -97,7 +97,7 @@ An explanation after `--` does not replace the required rule name.
 Generate the checker with `comment-check generate --repo <target> --language python|go|typescript --json`.
 This generator retains the public API documentation-comment and linked-constraint comment exemptions, so its output does not establish enforcement of the no-comments rule.
 It uses the language's own tokenizer, so comment-like text inside strings, regular expressions and templates is never flagged.
-It is self-contained, contains no comments itself, runs without bstack and exits 1 with `path:line:column: no-prose-comments: prose comment: <text>` for each violation.
+It is self-contained, contains no comments itself, runs without bstack and exits 1 with `path:line: no-prose-comments: prose comment: <text>. Use a name, type or test that expresses it.` for each violation.
 Propose it as a selected `create` edit at the returned suggested path and wire it into the maintained check command.
 The TypeScript checker uses the project's `typescript` compiler API for versions before 7; add that development dependency as a selected edit when the project lacks it.
 For TypeScript 7 and later, which ship no compiler API, the checker resolves the side-by-side TypeScript 6 package `@typescript/typescript6`; add it as a development dependency in the selected edits.

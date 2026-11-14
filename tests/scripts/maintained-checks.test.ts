@@ -46,12 +46,10 @@ test('ts-shop maintained command accepts documented debt and core imports but re
   const repo = build(t, 'ts-shop')
   // Keep the fixture's native TypeScript resolver and complete graph analysis.
   let checker = await readFile(join(repo, 'boundaries.ts'), 'utf8')
-  checker = "import { readFileSync } from 'node:fs'\n" + checker
-    .replace('const violations = new Set<string>()', 'const violations = []; const add = (rule, file, key) => violations.push({ rule, path: relative(process.cwd(), file).split(sep).join("/"), key })')
-    .replace("violations.add(specifier.startsWith('@storage/') ? 'alias' : 'private')", "add(specifier.startsWith('@storage/') ? 'alias' : 'private', from, specifier)")
-    .replace("if ([...edges.keys()].some(file => cycle(file, new Set()))) violations.add('cycle')", "for (const file of edges.keys()) if (cycle(file, new Set())) add('cycle', file, 'dependency-cycle')")
-    .replace("console.log(JSON.stringify([...violations].sort()))\nprocess.exitCode = violations.size ? 1 : 0", `
-if (process.argv.includes('--report')) console.log(JSON.stringify(violations))
+  const ending = "for (const violation of violations) console.log(`${violation.path}:${violation.line}: ${violation.rule}: ${violation.message}`)\nprocess.exitCode = violations.length ? 1 : 0\n"
+  assert.ok(checker.endsWith(ending))
+  checker = "import { readFileSync } from 'node:fs'\n" + checker.slice(0, -ending.length) + `
+if (process.argv.includes('--report')) console.log(JSON.stringify(violations.map(({ rule, path, key }) => ({ rule, path, key }))))
 else {
   const baseline = JSON.parse(readFileSync('baseline.json', 'utf8')).entries
   const identity = entry => JSON.stringify([entry.rule, entry.path, entry.key])
@@ -59,9 +57,10 @@ else {
   const known = new Set(baseline.map(identity))
   const added = violations.filter(entry => !known.has(identity(entry)))
   const removed = baseline.filter(entry => !current.has(identity(entry)))
-  console.log(JSON.stringify({ debt: baseline, newDebt: added, removedDebt: removed }))
+  for (const violation of added) console.log(violation.path + ':' + violation.line + ': ' + violation.rule + ': ' + violation.message)
+  for (const entry of removed) console.log(entry.path + ':1: ' + entry.rule + ': baseline entry ' + entry.key + ' matches no violation. Use baseline.json without this entry.')
   process.exitCode = added.length || removed.length ? 1 : 0
-}`)
+}`
   await apply(repo, { 'boundaries.ts': checker, 'baseline.json': '{"schemaVersion":1,"entries":[]}' })
   const report = spawnSync(process.execPath, ['boundaries.ts', '--report'], { cwd: repo, encoding: 'utf8' })
   assert.equal(report.status, 0, report.stderr)
@@ -92,7 +91,7 @@ else {
     source !== join(repo, 'node_modules') && source !== join(repo, '.git') })
   await writeFile(join(violation, 'packages/web/new.ts'), "import { price } from '../core/internal/database.ts'; export const forbidden = price\n")
   const result = run('rule-proof', repo, process.env, ['--check-plan', planFile, '--check-id', 'maintained', '--valid', repo,
-    '--violation', violation, '--expect', 'packages/web/new.ts'])
+    '--violation', violation, '--expect', 'packages/web/new.ts:1: private-import: ', '--replacement', 'packages/core/index.ts'])
   assert.equal(result.exit, 0, JSON.stringify(result))
   assert.deepEqual(result.data.cases.map((item: NonNullable<typeof result.data.cases>[number]) => item.execution.exitCode), [0, 1])
   assert.deepEqual(result.data.command, command)

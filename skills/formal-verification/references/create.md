@@ -102,7 +102,8 @@ Prove it twice, in scratch, and keep every product file as it was.
 1. Mechanical proof with the unchanged `rule-proof` command.
    Write a check plan in scratch following `schemas/check-plan.json` with one check of role `protection` that runs the property's check command, with the tool's own version arguments and a timeout that fits the model.
    Prepare a clean copy of the repo and a broken copy in which the code and its model are both changed the way a real mistake would change them, such as a read and a write split apart, and put the pinned tool at its path in each.
-   Run `rule-proof --repo <target> --check-plan <file> --check-id <id> --valid <clean copy> --violation <broken copy> --expect '<violation diagnostic>'`.
+   Run `rule-proof --repo <target> --check-plan <file> --check-id <id> --valid <clean copy> --violation <broken copy> --expect '<violation diagnostic>' --no-replacement '<reason>'`.
+   A model checker's violation names the property and nothing to use instead, so give that as the reason; the proof records it as a limitation.
    The clean copy must exit 0 and the broken copy must exit nonzero with the diagnostic.
    The proof records the version of the executable it ran, so it names the runtime and nothing identifies the model checker; the pinned hash in the suite is what identifies the tool.
    A nonzero exit without the diagnostic is a modeling error, not a violation, and the proof fails on it.

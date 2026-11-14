@@ -403,7 +403,7 @@ for (const [name, message, exit] of [
     f.commit(message)
     const gate = f.gate()
     assert.equal(gate.status, exit, gate.stdout + gate.stderr)
-    if (exit === 1) assert.match(gate.stdout, new RegExp(`^${suite}/properties/charge-once\\.md: formal-proof-coverage: src/charge\\.ts changed without updating a model file of this property`))
+    if (exit === 1) assert.match(gate.stdout, new RegExp(`^${suite}/properties/charge-once\\.md:\\d+: formal-proof-coverage: src/charge\\.ts changed without updating a model file of this property\\. Use an update to a model file of this property or a "No-proof-impact: charge-once: <reason>" line in a commit message\\.$`, 'm'))
     else assert.match(gate.stdout, /^formal-proof-coverage: ok \(1 properties checked\)$/m)
   })
 }
@@ -504,7 +504,7 @@ test('rule-proof passes unchanged on the charge-once pair with the pinned tool',
     await cp(checker.path!, join(repo, 'tools/tla2tools.jar'))
   }
   const proof = (valid: string, invalid: string) => runFormal('rule-proof', clean, process.env, ['--check-plan', join(clean, 'check-plan.json'), '--check-id', 'tlc-charge-once',
-    '--valid', valid, '--violation', invalid, '--expect', violation])
+    '--valid', valid, '--violation', invalid, '--expect', violation, '--no-replacement', 'A violated invariant names the property and nothing to use instead.'])
   const result = proof(clean, broken)
   assert.equal(result.exit, 0, JSON.stringify(result))
   assert.equal(result.status, 'passed')
