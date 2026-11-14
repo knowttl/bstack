@@ -1,13 +1,16 @@
 import { readFileSync } from 'node:fs'
 import { readFile } from 'node:fs/promises'
 import { isAbsolute, posix } from 'node:path'
-import { validateData } from './schema.mjs'
-import { inspectJSON } from './json.mjs'
-import { CommandError } from './result.mjs'
-import { matchesPath, pathGlob } from './glob.mjs'
-import { resolveFilePath } from './paths.mjs'
-import { readGit } from './discovery.mjs'
-import { bullets, commandLines, link } from './render.mjs'
+import { validateData } from './schema.ts'
+import { inspectJSON } from './json.ts'
+import { CommandError } from './result.ts'
+import type { Problem } from './result.ts'
+import { matchesPath, pathGlob } from './glob.ts'
+import type { PathGlob } from './glob.ts'
+import type { FileCitation } from './citations.ts'
+import { resolveFilePath } from './paths.ts'
+import { readGit } from './discovery.ts'
+import { bullets, commandLines, link } from './render.ts'
 import schema from '../../schemas/formal-plan.json' with { type: 'json' }
 
 // Every suite file other than model files lives at one of these suite-relative paths.
@@ -23,35 +26,47 @@ const honestLimits = [
   'A missing tool or runtime means unproven, never a pass.'
 ]
 
-function invalid(code, message, path) {
+type FormalProperty = {
+  id: string; title: string; statement: string; harm: string; design: FileCitation; sourcePaths: string[]; syncCommit?: string
+  bounds: string[]; assumptions: string[]; check: { command: string[]; cwd?: string; violation: string }
+  modelFiles: { name: string; content: string }[]; steps: { action: string; code: string; atomicBecause: string }[]
+}
+
+export type FormalPlan = {
+  schemaVersion: 1; target: string; description: string; evidenceDirectory: string
+  tool: { name: string; path: string; sha256: string; version: string }
+  properties: FormalProperty[]
+}
+
+function invalid(code: string, message: string, path: string): never {
   throw new CommandError('failed', [{ code, message, path, fix: 'Correct the suite plan and run formal scaffold again.' }])
 }
 
-function relativePath(value, path) {
+function relativePath(value: string, path: string) {
   if (isAbsolute(value) || /^[A-Za-z]:/.test(value) || value.includes('\0') || value.split(/[\\/]/).includes('..')) {
     invalid('unsafe-path', `Expected a repo-relative path without parent traversal: ${value}`, path)
   }
 }
 
-export function suiteDirectory(target) {
+export function suiteDirectory(target: string) {
   return `.agents/skills/formal-${target}`
 }
 
-export function modelPath(suite, name) {
+export function modelPath(suite: string, name: string) {
   return `${suite}/model/${name}`
 }
 
 // A source path covers a file when it matches the file or any directory above it, as the coverage gate reads it.
-export function coversFile(glob, file) {
+export function coversFile(glob: PathGlob, file: string) {
   return file.split('/').some((_, index, parts) => matchesPath(glob, parts.slice(0, index + 1).join('/')))
 }
 
-function splitLocation(location) {
-  const [, path, line] = location.match(/^(.*):([1-9][0-9]*)$/u)
+function splitLocation(location: string) {
+  const [, path, line] = location.match(/^(.*):([1-9][0-9]*)$/u)!
   return { path, line: Number(line) }
 }
 
-export function validateFormalPlan(plan) {
+export function validateFormalPlan(plan: FormalPlan) {
   validateData(schema, plan)
   const suite = suiteDirectory(plan.target)
   relativePath(plan.tool.path, '$/tool/path')
@@ -64,7 +79,7 @@ export function validateFormalPlan(plan) {
     const at = `$/properties/${index}`
     if (ids.has(property.id)) invalid('duplicate-property', `Duplicate property ID: ${property.id}`, `${at}/id`)
     ids.add(property.id)
-    for (const field of ['title', 'statement', 'harm']) {
+    for (const field of ['title', 'statement', 'harm'] as const) {
       if (/[\r\n]/u.test(property[field])) invalid('invalid-property-metadata', `Property ${field} must be one line.`, `${at}/${field}`)
     }
     relativePath(splitLocation(property.design.location).path, `${at}/design/location`)
@@ -93,9 +108,9 @@ export function validateFormalPlan(plan) {
   return plan
 }
 
-export async function readFormalPlan(root, target) {
+export async function readFormalPlan(root: string, target: string) {
   const suite = suiteDirectory(target)
-  let plan
+  let plan: FormalPlan
   try { plan = inspectJSON(await readFile(await resolveFilePath(root, `${suite}/${planPath}`), 'utf8')).value } catch (error) {
     if (error instanceof CommandError) throw error
     throw new CommandError('blocked', [{ code: 'suite-unavailable', message: `No readable suite at ${suite}/${planPath}.`, fix: 'Apply the scaffolded suite first.' }])
@@ -106,13 +121,13 @@ export async function readFormalPlan(root, target) {
 }
 
 // A step names a line that must still exist, so a deleted or truncated file is reported before a reader trusts the table.
-export async function stepProblems(root, plan) {
-  const problems = []
+export async function stepProblems(root: string, plan: FormalPlan) {
+  const problems: Problem[] = []
   for (const property of plan.properties) {
     for (const step of property.steps) {
       const { path, line } = splitLocation(step.code)
       let text = null
-      try { text = await readFile(await resolveFilePath(root, path), 'utf8') } catch (error) {
+      try { text = await readFile(await resolveFilePath(root, path), 'utf8') } catch (error: any) {
         if (error instanceof CommandError) throw error
         if (error.code !== 'ENOENT') throw error
       }
@@ -127,7 +142,7 @@ export async function stepProblems(root, plan) {
   return problems
 }
 
-function gitOutput(root, args) {
+function gitOutput(root: string, args: string[]) {
   const result = readGit(root, args)
   if (result.status !== 0) throw new CommandError('blocked', [{ code: 'git-failed', message: `git ${args.join(' ')} failed: ${result.stderr.trim()}`, fix: 'Run formal check in a Git working tree with a complete history.' }])
   return result.stdout
@@ -136,21 +151,21 @@ function gitOutput(root, args) {
 // The gate diffs from the merge base and the cited-line check reads only the current file, so a change that already reached the base branch is invisible to both.
 // A property records the commit its model was last confirmed at, and the question is whether its source paths differ between that commit and HEAD.
 // A proposed commit replaces every recorded one, so maintain can run the whole check against the commit it would record before it records it.
-export function syncProblems(root, plan, proposed) {
+export function syncProblems(root: string, plan: FormalPlan, proposed?: string) {
   const suite = suiteDirectory(plan.target)
-  const hasCommit = sha => readGit(root, ['cat-file', '-e', `${sha}^{commit}`]).status === 0
+  const hasCommit = (sha: string) => readGit(root, ['cat-file', '-e', `${sha}^{commit}`]).status === 0
   if (proposed !== undefined && !(/^[0-9a-f]{40}$/u.test(proposed) && hasCommit(proposed))) {
     throw new CommandError('usage-error', [{ code: 'invalid-sync-commit', message: `${proposed} is not a full lowercase commit hash that this repo has.`, fix: 'Supply --sync-commit with the 40-character hash of a commit in this repo.' }])
   }
   // The suite folder's last commit is the best stand-in for a missing sync commit, and its absence means nothing was committed yet.
   const log = readGit(root, ['log', '-1', '--format=%H', '--', suite])
   const fallback = log.status === 0 && log.stdout.trim() ? log.stdout.trim() : null
-  const changedFiles = new Map()
-  const changedSince = base => {
+  const changedFiles = new Map<string, string[]>()
+  const changedSince = (base: string) => {
     if (!changedFiles.has(base)) changedFiles.set(base, gitOutput(root, ['diff', '--name-only', '--no-renames', '-z', base, 'HEAD']).split('\0').filter(Boolean))
-    return changedFiles.get(base)
+    return changedFiles.get(base)!
   }
-  const problems = []
+  const problems: Problem[] = []
   for (const property of plan.properties) {
     const path = `${suite}/properties/${property.id}.md`
     const recorded = proposed ?? property.syncCommit
@@ -175,16 +190,16 @@ export function syncProblems(root, plan, proposed) {
 }
 
 // Backticks mark every path, command and diagnostic so a reader and the gate parse the same spans.
-const code = text => `\`${text}\``
+const code = (text: string) => `\`${text}\``
 
-function tableRows(property) {
+function tableRows(property: FormalProperty) {
   return property.steps.map(step => `| ${code(step.action)} | ${code(step.code)} | ${step.atomicBecause} |`)
 }
 
 // The table is rendered under its own heading so formal check can compare it apart from the rest of the file.
 export const tableHeading = '## Transition table'
 
-export function propertyDocument(property) {
+export function propertyDocument(property: FormalProperty) {
   return [
     `# ${property.title}`, '', property.statement, '',
     `Harm: ${property.harm}`,
@@ -203,7 +218,7 @@ export function propertyDocument(property) {
   ].join('\n')
 }
 
-function skillDocument(plan) {
+function skillDocument(plan: FormalPlan) {
   const suite = suiteDirectory(plan.target)
   const { tool } = plan
   return [
@@ -243,16 +258,16 @@ function skillDocument(plan) {
   ].join('\n')
 }
 
-export function pointerDocument(plan) {
+export function pointerDocument(plan: FormalPlan) {
   return ['---', `name: formal-${plan.target}`, `description: ${JSON.stringify(plan.description)}`, '---', '',
     `Use the formal verification suite in ${link(suiteDirectory(plan.target), `../../../${suiteDirectory(plan.target)}/SKILL.md`)}.`, ''].join('\n')
 }
 
-export function agentsPointer(plan) {
+export function agentsPointer(plan: FormalPlan) {
   return `Check the model of ${plan.target} against the code with the suite in ${link(suiteDirectory(plan.target), `${suiteDirectory(plan.target)}/SKILL.md`)} before changing its source paths.`
 }
 
-export function suiteFiles(plan) {
+export function suiteFiles(plan: FormalPlan) {
   const suite = suiteDirectory(plan.target)
   return [
     { path: `${suite}/SKILL.md`, content: skillDocument(plan) },
@@ -263,6 +278,6 @@ export function suiteFiles(plan) {
   ]
 }
 
-export function managedFiles(plan) {
+export function managedFiles(plan: FormalPlan) {
   return [...suiteFiles(plan), { path: `.claude/skills/formal-${plan.target}/SKILL.md`, content: pointerDocument(plan) }]
 }

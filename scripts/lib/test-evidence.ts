@@ -3,7 +3,7 @@ import { lstat, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { execFileSync, spawnSync } from 'node:child_process'
 import { platform, release, arch } from 'node:os'
-import { selectCommand } from '../../runtime/scripts/lib/run.mjs'
+import { selectCommand } from '../../runtime/scripts/lib/run.ts'
 import type { BinaryLike } from 'node:crypto'
 
 type InputFile = { path: string; executable?: boolean; sha256?: string; deleted?: boolean }

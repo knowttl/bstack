@@ -134,7 +134,9 @@ Repeated-run release qualification and release approval remain separate work.
 ## Conventions
 
 - **Language.** Repository tests and development tooling use strict TypeScript (`.ts`), executed directly by Node 24 or later.
-Shipped runtime scripts remain JavaScript ES modules (`.mjs`) (design D3).
+Shipped runtime commands remain JavaScript ES modules (`.mjs`) (design D3).
+The shared library under `runtime/scripts/lib` is strict TypeScript limited to erasable syntax: Node strips its types when a script runs from the checkout, and the generator compiles it into each skill's JavaScript bundle.
+Its `Status` union and `Problem` type in [`result.ts`](../runtime/scripts/lib/result.ts) make an unknown result status or a problem without a fix a compile error for every TypeScript caller.
 - **Dependencies.** Installed skill scripts use Node built-in modules only.
 The one runtime dependency is `lavish-axi` for the VISION board.
 Repository development tools may use the root development dependencies declared in `package.json`.
@@ -187,7 +189,7 @@ node scripts/acceptance.ts --check-registry
 node scripts/check-package.mjs
 ```
 
-`check` first invokes the project-local TypeScript 7 CLI explicitly (`node node_modules/typescript/bin/tsc --noEmit`) on tests and development tooling, avoiding the TypeScript 6 compatibility dependency's `tsc` binary.
+`check` first invokes the project-local TypeScript 7 CLI explicitly (`node node_modules/typescript/bin/tsc --noEmit`) on the shared runtime library, tests and development tooling, avoiding the TypeScript 6 compatibility dependency's `tsc` binary.
 The root [tsconfig](../tsconfig.json) resolves `typescript` imports to the side-by-side `@typescript/typescript6` declarations for compiler API consumers; fixture execution still uses each fixture's own dependencies.
 It then verifies the generated files in each skill against the [shared runtime](../runtime/) and the README skills table against `skills/*/SKILL.md` (`node scripts/generate-readme.ts` rewrites that table) and the combined [command contract](command-contract.md) against its contract files (`node scripts/generate-contract.ts` rewrites that document), then runs the [package checks](command-contract.md#package-check), followed by the [standalone checker freshness gate](command-contract.md#standalone-checker-generation).
 It ends with the [lint, boundary and comment checks](#lint-boundaries-and-comments).
@@ -206,11 +208,11 @@ Each import rule prints its rule id and the code to use instead:
 |---|---|
 | `lib-imports-command` | A file under `runtime/scripts/lib` may not import a command. |
 | `command-imports-command` | A command may import another command only through an edge listed for that command in `.oxlintrc.json`. |
-| `test-imports-runtime` | A file under `tests` may import from `runtime/scripts` only `lib/fingerprint.mjs` and `lib/run.mjs`. |
+| `test-imports-runtime` | A file under `tests` may import from `runtime/scripts` only `lib/fingerprint.ts` and `lib/run.ts`. |
 | `max-lines` | A code file holds at most 1000 code lines, not counting blank lines and comments. |
 
 The listed command edges are the 18 imports that existed when the rule was adopted, so that list is debt to shrink by moving each shared function into `runtime/scripts/lib`, not a list to extend.
-The two test commands `tests/inputs/contract.ts` and `tests/inputs/child-contract.ts` exist to expose the shared library through a command, so `test-imports-runtime` does not apply to them, and `tests/scripts/evidence-validate.test.ts` keeps its one existing import of `lib/evidence-policy.mjs` as debt.
+The two test commands `tests/inputs/contract.ts` and `tests/inputs/child-contract.ts` exist to expose the shared library through a command, so `test-imports-runtime` does not apply to them, and `tests/scripts/evidence-validate.test.ts` keeps its one existing import of `lib/evidence-policy.ts` as debt.
 `tests/scripts/apply.test.ts`, `tests/scripts/eval.test.ts` and `tests/scripts/evidence-validate.test.ts` were over the length limit at adoption and are exempt until they are split.
 Generated skill bundles and assets, vendored upstream trees, fixture projects, recorded evaluation results and package-check fixtures are not linted.
 The rules match import specifiers as written, so an import through a computed specifier is outside them.

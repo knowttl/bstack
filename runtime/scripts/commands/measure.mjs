@@ -1,9 +1,9 @@
 import { readFile } from 'node:fs/promises'
-import { resolveTarget } from '../lib/repo.mjs'
-import { excludedDirectories, readGit } from '../lib/discovery.mjs'
-import { validateData } from '../lib/schema.mjs'
-import { pathGlob, matchesPath } from '../lib/glob.mjs'
-import { CommandError } from '../lib/result.mjs'
+import { resolveTarget } from '../lib/repo.ts'
+import { excludedDirectories, readGit } from '../lib/discovery.ts'
+import { validateData } from '../lib/schema.ts'
+import { pathGlob, matchesPath } from '../lib/glob.ts'
+import { CommandError } from '../lib/result.ts'
 
 // Locks describe resolution, rather than authored responsibility or coupling.
 const lockfiles = ['package-lock.json', 'npm-shrinkwrap.json', 'pnpm-lock.yaml', 'yarn.lock', 'bun.lock', 'bun.lockb', 'uv.lock', 'poetry.lock', 'Pipfile.lock', 'Cargo.lock', 'go.sum', 'Gemfile.lock', 'composer.lock']

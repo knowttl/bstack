@@ -1,14 +1,18 @@
 import { posix, win32 } from 'node:path'
-import { CommandError } from './result.mjs'
+import { CommandError } from './result.ts'
 
-export function pathGlob(pattern) {
+type Edge = { to: number; symbol: string } | { to: number; symbol: null }
+
+export type PathGlob = { states: Edge[][]; end: number }
+
+export function pathGlob(pattern: string) {
   if (!pattern || pattern.includes('\0') || pattern.includes('\\') || posix.isAbsolute(pattern) || win32.isAbsolute(pattern) || /^[A-Za-z]:/.test(pattern) || pattern.split('/').some(part => !part || part === '.' || part === '..') || /[\[\]{}()!]/u.test(pattern) || pattern.split('/').some(part => part.includes('**') && part !== '**')) {
     throw new CommandError('failed', [{ code: 'invalid-glob', path: pattern, message: 'Expected a relative forward-slash path using only * and ? within segments, or ** as a whole segment.', fix: 'Remove unsupported glob syntax, absolute paths and traversal.' }])
   }
-  const states = [[]]
+  const states: Edge[][] = [[]]
   const characters = Array.from(pattern)
   let current = 0
-  const edge = (from, to, symbol) => states[from].push({ to, symbol })
+  const edge = (from: number, to: number, symbol: string | null) => states[from].push({ to, symbol })
   const next = () => states.push([]) - 1
   for (let index = 0; index < characters.length; index++) {
     const end = next()
@@ -32,13 +36,13 @@ export function pathGlob(pattern) {
   return { states, end: current, pattern }
 }
 
-function accepts(symbol, character) {
+function accepts(symbol: string, character: string) {
   return symbol === 'any' || (symbol === 'segment' ? character !== '/' : symbol === character)
 }
 
 // Product traversal proves intersection even for files that do not exist yet.
 // The segment state rejects empty, dot and parent segments in the witness path.
-export function sharedPath(left, right) {
+export function sharedPath(left: PathGlob, right: PathGlob) {
   const queue = [{ a: 0, b: 0, segment: '', path: '' }]
   const visited = new Set()
   for (let index = 0; index < queue.length; index++) {
@@ -64,7 +68,7 @@ export function sharedPath(left, right) {
   return null
 }
 
-export function matchesPath(glob, path) {
+export function matchesPath(glob: PathGlob, path: string) {
   // Git filenames are literal, including characters that are glob operators in declarations.
   const states = Array.from(path, (character, index) => [{ to: index + 1, symbol: character }])
   states.push([])

@@ -1,9 +1,9 @@
 import { writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { readBoard } from '../lib/vision-board.mjs'
-import { runCommand } from '../lib/run.mjs'
-import { CommandError } from '../lib/result.mjs'
+import { readBoard } from '../lib/vision-board.ts'
+import { runCommand } from '../lib/run.ts'
+import { CommandError } from '../lib/result.ts'
 
 export async function run(options) {
   const context = await readBoard(options)

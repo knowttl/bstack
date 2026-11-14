@@ -1,9 +1,9 @@
 import { readdir, readFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import { resolveTarget } from '../lib/repo.mjs'
-import { fileCitationProblems } from '../lib/citations.mjs'
-import { validateData, validateIds } from '../lib/schema.mjs'
-import { CommandError } from '../lib/result.mjs'
+import { resolveTarget } from '../lib/repo.ts'
+import { fileCitationProblems } from '../lib/citations.ts'
+import { validateData, validateIds } from '../lib/schema.ts'
+import { CommandError } from '../lib/result.ts'
 
 export async function run(options) {
   if (!options.plan) throw new CommandError('usage-error', [{ code: 'missing-plan', message: '--plan is required.', fix: 'Supply --plan <plan.json>.' }])

@@ -1,27 +1,29 @@
 import { readFile, readdir, stat } from 'node:fs/promises'
 import { dirname, extname, join, relative, resolve } from 'node:path'
 import { lexer, walkTokens } from 'marked'
-import { isInside, resolvePath } from './paths.mjs'
-import { CommandError } from './result.mjs'
+import type { Tokens } from 'marked'
+import { isInside, resolvePath } from './paths.ts'
+import { CommandError } from './result.ts'
+import type { Problem } from './result.ts'
 
-export function markdownTokens(text) {
+export function markdownTokens(text: string) {
   return lexer(text.replace(/^\uFEFF/, '').replace(/\r\n/g, '\n'), { gfm: true })
 }
 
-export function* markdownBlocks(tokens) {
+export function* markdownBlocks(tokens: Tokens.Generic[]): Generator<Tokens.Generic> {
   for (const token of tokens) {
-    if (token.type === 'blockquote') yield* markdownBlocks(token.tokens)
+    if (token.type === 'blockquote') yield* markdownBlocks(token.tokens!)
     else if (token.type === 'list') {
       for (const item of token.items) yield* markdownBlocks(item.tokens)
     } else yield token
   }
 }
 
-function inlineText(tokens) {
+function inlineText(tokens: Tokens.Generic[]): string {
   return tokens.map(token => token.tokens ? inlineText(token.tokens) : token.type === 'html' ? '' : token.type === 'br' ? '\n' : token.text ?? '').join('')
 }
 
-function* referenceTokens(tokens) {
+function* referenceTokens(tokens: Tokens.Generic[]): Generator<Tokens.Generic> {
   for (const token of tokens) {
     yield token
     if (token.type === 'image') continue
@@ -32,12 +34,12 @@ function* referenceTokens(tokens) {
   }
 }
 
-export function markdownAnchors(text) {
-  const anchors = new Set()
-  const counts = new Map()
-  walkTokens(markdownTokens(text), token => {
+export function markdownAnchors(text: string) {
+  const anchors = new Set<string>()
+  const counts = new Map<string, number>()
+  walkTokens(markdownTokens(text), (token: Tokens.Generic) => {
     if (token.type !== 'heading') return
-    const title = inlineText(token.tokens).replace(/[ \t]*\n[ \t]*/g, '\n')
+    const title = inlineText(token.tokens!).replace(/[ \t]*\n[ \t]*/g, '\n')
     const slug = title.toLowerCase().replace(/[^\p{L}\p{N}\p{M}_\-\s]/gu, '').replace(/\s/g, '-')
     let count = counts.get(slug) ?? 0
     let anchor = slug + (count ? `-${count}` : '')
@@ -48,9 +50,9 @@ export function markdownAnchors(text) {
   return anchors
 }
 
-export function markdownCoverageLimit(text) {
+export function markdownCoverageLimit(text: string) {
   let limited = false
-  walkTokens(markdownTokens(text), token => {
+  walkTokens(markdownTokens(text), (token: Tokens.Generic) => {
     if (token.type === 'html' && !token.text.startsWith('<!--')) limited = true
     const value = ['link', 'image', 'def'].includes(token.type) ? token.href : ['text', 'escape'].includes(token.type) && !token.tokens ? token.raw : ''
     if (/&[\w#]+;|\{#[^}]+\}/.test(value)) limited = true
@@ -58,21 +60,21 @@ export function markdownCoverageLimit(text) {
   return limited ? 'HTML, entities and custom anchors require renderer review.' : null
 }
 
-export function markdownLinks(text) {
-  const links = []
+export function markdownLinks(text: string) {
+  const links: string[] = []
   for (const token of referenceTokens(markdownTokens(text))) {
     if (['link', 'image'].includes(token.type) && !/&[\w#]+;/.test(token.href)) links.push(token.href)
   }
   return links
 }
 
-export function isMarkdownLinkLine(text) {
+export function isMarkdownLinkLine(text: string) {
   return /^\[[^\][\r\n\\`*_]+\]\([^\s()[\]<>\\`]+\)\r?\n$/.test(text) && !text.endsWith('\n\n')
 }
 
-export async function checkLocalLink(root, source, href, documents = new Map()) {
+export async function checkLocalLink(root: string, source: string, href: string, documents = new Map<string, string | null>()): Promise<Problem | null> {
   if (/^[A-Za-z][A-Za-z0-9+.-]*:|^\/\//.test(href)) return null
-  const problem = message => ({ code: 'broken-local-link', path: source, message: `${message}: ${href}`, fix: 'Correct the local destination or heading in the authoritative document.' })
+  const problem = (message: string) => ({ code: 'broken-local-link', path: source, message: `${message}: ${href}`, fix: 'Correct the local destination or heading in the authoritative document.' })
   let pathPart, fragment
   try {
     const hash = href.indexOf('#')
@@ -80,7 +82,7 @@ export async function checkLocalLink(root, source, href, documents = new Map()) 
     fragment = hash < 0 ? '' : decodeURIComponent(href.slice(hash + 1))
   } catch { return problem('Invalid URL encoding') }
   if (pathPart.startsWith('/') || pathPart.includes('\0') || pathPart.includes('\\')) return problem('Unsupported local path')
-  const destination = resolve(root, dirname(source), pathPart || source.split('/').at(-1))
+  const destination = resolve(root, dirname(source), pathPart || source.split('/').at(-1)!)
   if (!isInside(root, destination)) return problem('Link escapes the selected target')
   const local = relative(root, destination).split('\\').join('/')
   try {
@@ -91,7 +93,7 @@ export async function checkLocalLink(root, source, href, documents = new Map()) 
     for (const segment of local.split('/').filter(Boolean)) {
       if (!(await readdir(parent)).includes(segment)) {
         if (documents.has(resolved)) {
-          try { await stat(join(parent, segment)); return problem('Wrong-case destination') } catch (error) {
+          try { await stat(join(parent, segment)); return problem('Wrong-case destination') } catch (error: any) {
             if (error.code !== 'ENOENT') throw error
           }
           break
@@ -104,7 +106,7 @@ export async function checkLocalLink(root, source, href, documents = new Map()) 
     if (fragment && ['.md', '.markdown'].includes(extname(local).toLowerCase())) {
       const unsupported = () => ({ code: 'unsupported-link-fragment', path: source, message: `Heading fragment coverage is limited for ${href}.`,
         fix: 'Review this reference using the document renderer.' })
-      let text = documents.get(resolved)
+      let text = documents.get(resolved) as string | undefined
       if (text === undefined) {
         try { text = new TextDecoder('utf-8', { fatal: true }).decode(await readFile(resolved)) } catch (error) {
           if (error instanceof TypeError) return unsupported()
@@ -117,7 +119,7 @@ export async function checkLocalLink(root, source, href, documents = new Map()) 
         return problem('Missing heading fragment')
       }
     }
-  } catch (error) {
+  } catch (error: any) {
     if (!(error instanceof CommandError) && !['ENOENT', 'ENOTDIR'].includes(error.code)) throw error
     return problem('Missing or unsafe destination')
   }

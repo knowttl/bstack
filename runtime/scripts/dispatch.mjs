@@ -1,5 +1,5 @@
-import { parseArgs } from './lib/args.mjs'
-import { CommandError, emitResult } from './lib/result.mjs'
+import { parseArgs } from './lib/args.ts'
+import { CommandError, emitResult } from './lib/result.ts'
 
 // Each skill's generated entry file passes only the commands that skill ships.
 export async function dispatch(argv, skill, commands) {

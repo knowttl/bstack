@@ -1,6 +1,6 @@
-import { resolveTarget } from '../lib/repo.mjs'
-import { loadJournal, inspectJournal } from '../lib/protected-write.mjs'
-import { CommandError } from '../lib/result.mjs'
+import { resolveTarget } from '../lib/repo.ts'
+import { loadJournal, inspectJournal } from '../lib/protected-write.ts'
+import { CommandError } from '../lib/result.ts'
 
 export async function run(options) {
   if (!options.run) throw new CommandError('usage-error', [{ code: 'missing-run', message: '--run is required.', fix: 'Supply the run ID returned by apply.' }])

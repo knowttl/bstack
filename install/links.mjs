@@ -1,9 +1,9 @@
 import { lstat, mkdir, mkdtemp, readFile, readlink, realpath, rename, rmdir, symlink, unlink, writeFile } from 'node:fs/promises'
 import { basename, dirname, join } from 'node:path'
-import { canonicalJSON, hashBytes } from '../runtime/scripts/lib/fingerprint.mjs'
-import { isInside, resolvePath } from '../runtime/scripts/lib/paths.mjs'
-import { saveRecovery } from '../runtime/scripts/lib/protected-write.mjs'
-import { CommandError } from '../runtime/scripts/lib/result.mjs'
+import { canonicalJSON, hashBytes } from '../runtime/scripts/lib/fingerprint.ts'
+import { isInside, resolvePath } from '../runtime/scripts/lib/paths.ts'
+import { saveRecovery } from '../runtime/scripts/lib/protected-write.ts'
+import { CommandError } from '../runtime/scripts/lib/result.ts'
 import { runtimeIdentity, ownsRuntime, removeEmpty } from './lifecycle.mjs'
 
 function blocked(code, message) {

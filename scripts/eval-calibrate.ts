@@ -3,8 +3,9 @@ import { join, resolve } from 'node:path'
 import { root, options, readJSON, fail } from './lib/evaluation.ts'
 import { correctedScore, validateScore } from './lib/evaluation-scoring.ts'
 import { readJudge, judgeInput, judgeAnswers } from './lib/evaluation-judge.ts'
-import { hashBytes, canonicalJSON } from '../runtime/scripts/lib/fingerprint.mjs'
-import { emitResult } from '../runtime/scripts/lib/result.mjs'
+import { hashBytes, canonicalJSON } from '../runtime/scripts/lib/fingerprint.ts'
+import { emitResult } from '../runtime/scripts/lib/result.ts'
+import type { Problem, Status } from '../runtime/scripts/lib/result.ts'
 import type { Answers, EvaluationRecord, ScoreCheck } from './lib/evaluation-types.ts'
 
 type Prepared = Awaited<ReturnType<typeof judgeInput>>
@@ -13,7 +14,7 @@ type CorpusRun = { record: EvaluationRecord; transcript: string; human: Pick<Ans
 type CalibrationReport = {
   schemaVersion: number; model: string; configHash: string; rubricHash: string; planHash: string; startedAt: string;
   expectedRuns: number; completedRuns: number; total: number; agreed: number; agreement: number; minimumAgreement: number;
-  status: string; pending: (Prepared['pending'][number] & { runId: string })[];
+  status: Status; pending: (Prepared['pending'][number] & { runId: string })[];
   disagreements: { runId: string; check: string; caseId: string; human: Pick<ScoreCheck, 'passed' | 'startLine' | 'endLine'>; judge: ScoreCheck }[];
   runs: (Awaited<ReturnType<typeof judgeAnswers>>['evidence'] & { runId: string; answersHash: string })[];
   reason?: string; finishedAt?: string
@@ -105,6 +106,6 @@ try {
     }
   }
 } catch (error) {
-  emitResult({ command: 'eval calibrate', status: (error as { status?: string }).status === 'usage-error' ? (error as { status?: string }).status : 'blocked',
-    problems: (error as { problems?: unknown[] }).problems ?? [{ code: 'calibration-blocked', message: 'Calibration inputs or output directory are unavailable.', fix: help }] }, process.argv.includes('--json'))
+  emitResult({ command: 'eval calibrate', status: (error as { status?: string }).status === 'usage-error' ? 'usage-error' : 'blocked',
+    problems: (error as { problems?: Problem[] }).problems ?? [{ code: 'calibration-blocked', message: 'Calibration inputs or output directory are unavailable.', fix: help }] }, process.argv.includes('--json'))
 }

@@ -4,21 +4,23 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { parse } from 'acorn'
-import { validateData, validateIds } from '../../runtime/scripts/lib/schema.mjs'
-import { CommandError } from '../../runtime/scripts/lib/result.mjs'
-import { canonicalJSON, hashBytes } from '../../runtime/scripts/lib/fingerprint.mjs'
+import { validateData, validateIds } from '../../runtime/scripts/lib/schema.ts'
+import type { Schema } from '../../runtime/scripts/lib/schema.ts'
+import { CommandError } from '../../runtime/scripts/lib/result.ts'
+import type { Status } from '../../runtime/scripts/lib/result.ts'
+import { canonicalJSON, hashBytes } from '../../runtime/scripts/lib/fingerprint.ts'
 
 // Repository-owned formats are resolved independently of the invoking directory.
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 // Nonempty strings are the shared primitive for joining IDs and evidence descriptions.
 export const text = { type: 'string', minLength: 1 }
 
-export function object(properties: Record<string, unknown>) {
+export function object(properties: Record<string, Schema>) {
   return { type: 'object', additionalProperties: false, required: Object.keys(properties), properties }
 }
 
-export function array(items: unknown) { return { type: 'array', items } }
-export function fail(message: string, status = 'blocked'): never {
+export function array(items: Schema) { return { type: 'array', items } }
+export function fail(message: string, status: Status = 'blocked'): never {
   throw new CommandError(status, [{ code: 'invalid-evidence', message, fix: 'Use the format and prerequisites in docs/evaluation.md.' }])
 }
 export async function readJSON(path: string) { return JSON.parse(await readFile(path, 'utf8')) }

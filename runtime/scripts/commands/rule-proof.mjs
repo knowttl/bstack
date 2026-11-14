@@ -1,12 +1,12 @@
 import { cp, lstat, readFile, rm, symlink, writeFile, realpath, stat } from 'node:fs/promises'
 import { dirname, join, relative } from 'node:path'
-import { isInside } from '../lib/paths.mjs'
-import { resolveTarget } from '../lib/repo.mjs'
-import { createScratch } from '../lib/scratch.mjs'
-import { inspectJSON } from '../lib/json.mjs'
-import { validateData, validateIds } from '../lib/schema.mjs'
-import { runCommand } from '../lib/run.mjs'
-import { CommandError } from '../lib/result.mjs'
+import { isInside } from '../lib/paths.ts'
+import { resolveTarget } from '../lib/repo.ts'
+import { createScratch } from '../lib/scratch.ts'
+import { inspectJSON } from '../lib/json.ts'
+import { validateData, validateIds } from '../lib/schema.ts'
+import { runCommand } from '../lib/run.ts'
+import { CommandError } from '../lib/result.ts'
 
 export async function run(options) {
   if (!['check-plan', 'check-id', 'valid', 'violation', 'expect'].every(key => options[key]?.trim()) || Boolean(options.replacement?.trim()) === Boolean(options['no-replacement']?.trim())) {

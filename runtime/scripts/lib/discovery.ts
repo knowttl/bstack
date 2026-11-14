@@ -5,9 +5,9 @@ import { spawnSync } from 'node:child_process'
 // Generated dependencies, build output and Git internals are not project evidence.
 export const excludedDirectories = new Set(['.git', 'node_modules', '.venv', 'venv', '__pycache__', 'dist', 'build', '.cache'])
 
-export async function repoFiles(root) {
-  const files = []
-  async function walk(directory) {
+export async function repoFiles(root: string) {
+  const files: string[] = []
+  async function walk(directory: string) {
     for (const entry of await readdir(directory, { withFileTypes: true })) {
       const path = join(directory, entry.name)
       if (entry.isDirectory() && !excludedDirectories.has(entry.name)) await walk(path)
@@ -18,7 +18,7 @@ export async function repoFiles(root) {
   return files.sort()
 }
 
-export function readGit(root, args) {
+export function readGit(root: string, args: string[]) {
   return spawnSync('git', ['-C', root, ...args], { encoding: 'utf8', maxBuffer: Infinity,
     env: { ...process.env, GIT_OPTIONAL_LOCKS: '0', GIT_DIR: undefined, GIT_WORK_TREE: undefined, GIT_COMMON_DIR: undefined, GIT_INDEX_FILE: undefined } })
 }

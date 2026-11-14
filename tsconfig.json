@@ -7,6 +7,7 @@
     "allowImportingTsExtensions": true,
     "erasableSyntaxOnly": true,
     "skipLibCheck": true,
+    "resolveJsonModule": true,
     "types": ["node"],
     "rootDirs": ["tests/fixtures/maintained-ts-shop/overlay", "tests/fixtures/ts-shop"],
     "paths": {
@@ -14,6 +15,6 @@
       "typescript": ["./node_modules/@typescript/typescript6/lib/typescript.d.ts"]
     }
   },
-  "include": ["scripts/**/*.ts", "tests/scripts/**/*.ts", "tests/inputs/**/*.ts", "tests/fixtures/**/*.ts", "tests/eval/container/assertions.ts", "upstream/fetch.ts"],
+  "include": ["runtime/scripts/lib/*.ts", "scripts/**/*.ts", "tests/scripts/**/*.ts", "tests/inputs/**/*.ts", "tests/fixtures/**/*.ts", "tests/eval/container/assertions.ts", "upstream/fetch.ts"],
   "exclude": ["tests/fixtures/**/node_modules"]
 }

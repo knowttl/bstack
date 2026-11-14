@@ -4,8 +4,8 @@ import { readFile, writeFile, rename, rm, mkdir, symlink } from 'node:fs/promise
 import { join } from 'node:path'
 import { maintenanceRepo } from './maintenance-fixture.ts'
 import { git, runMaintenance as run } from './discovery-fixture.ts'
-import { hashBytes } from '../../runtime/scripts/lib/fingerprint.mjs'
-import { baseText } from '../../runtime/scripts/lib/evidence-policy.mjs'
+import { hashBytes } from '../../runtime/scripts/lib/fingerprint.ts'
+import { baseText } from '../../runtime/scripts/lib/evidence-policy.ts'
 import { transform } from 'esbuild'
 
 type Fixture = Awaited<ReturnType<typeof maintenanceRepo>> & {

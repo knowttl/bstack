@@ -3,8 +3,8 @@ import { chmod, readdir, stat, writeFile } from 'node:fs/promises'
 import { homedir } from 'node:os'
 import { basename, join, sep } from 'node:path'
 import { createInterface } from 'node:readline'
-import { resolveTarget } from '../lib/repo.mjs'
-import { createScratch } from '../lib/scratch.mjs'
+import { resolveTarget } from '../lib/repo.ts'
+import { createScratch } from '../lib/scratch.ts'
 
 // A transcript line can hold a pasted file or log, so a digest keeps each turn short and the summary quotes only a few words.
 const turnLimit = 2000

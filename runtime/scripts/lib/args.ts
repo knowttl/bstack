@@ -1,8 +1,17 @@
-import { CommandError } from './result.mjs'
+import { CommandError } from './result.ts'
+import type { Problem } from './result.ts'
 
-export function parseArgs(argv, valueOptions = []) {
-  const options = {}
-  const problems = []
+type Flag = 'json' | 'dry-run' | 'approved-by-user' | 'refresh' | 'check' | 'update' | 'docs-only' | 'export-findings'
+
+export type TargetOptions = { repo: string; workspace?: undefined } | { repo?: undefined; workspace: string }
+
+export type Options<Name extends string = never> = TargetOptions & { json?: true } &
+  { [Key in Name]?: Key extends Flag ? true : Key extends 'plans' | 'command' ? string[] : string }
+
+export function parseArgs<const Name extends string = never>(argv: string[], valueOptions?: readonly Name[]): Options<Name>
+export function parseArgs(argv: string[], valueOptions: readonly string[] = []): Options<string> {
+  const options: Record<string, true | string | string[]> = {}
+  const problems: Problem[] = []
   for (let index = 0; index < argv.length; index++) {
     const token = argv[index]
     if (token === '--' && valueOptions.includes('command')) {
@@ -23,7 +32,7 @@ export function parseArgs(argv, valueOptions = []) {
     } else if (name === 'plans') {
       options[name] = [argv[++index]]
       if (!argv[index + 1] || argv[index + 1].startsWith('--')) problems.push({ code: 'missing-value', message: '--plans requires two files.', fix: 'Supply --plans <file> <file>.' })
-      else options[name].push(argv[++index])
+      else (options[name] as string[]).push(argv[++index])
     } else options[name] = argv[++index]
   }
   if (options.repo && options.workspace) {
@@ -33,5 +42,5 @@ export function parseArgs(argv, valueOptions = []) {
     problems.push({ code: 'missing-target', message: 'An explicit target is required.', fix: 'Supply --repo or, for draft-only commands, --workspace.' })
   }
   if (problems.length) throw new CommandError('usage-error', problems)
-  return options
+  return options as Options<string>
 }

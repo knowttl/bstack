@@ -1,12 +1,12 @@
-import { CommandError } from './result.mjs'
+import { CommandError } from './result.ts'
 
-export function inspectJSON(text) {
+export function inspectJSON(text: string) {
   const value = JSON.parse(text, (key, value) => {
     if (typeof value === 'number' && !Number.isFinite(value)) throw new CommandError('failed', [{ code: 'nonfinite-number', message: 'JSON numbers must be finite.', fix: 'Supply finite numbers in every JSON value.' }])
     return value
   })
   const tokens = [...text.matchAll(/"(?:[^"\\]|\\.)*"|[{}\[\],:]|[^\s{}\[\],:]+/g)]
-  const entries = new Map()
+  const entries = new Map<string, { start: number; end: number }>()
   let index = 0
   function consume(root = false) {
     const token = tokens[index++][0]

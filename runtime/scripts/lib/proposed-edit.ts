@@ -1,14 +1,26 @@
 import { extname } from 'node:path'
-import { validateData } from './schema.mjs'
-import { CommandError } from './result.mjs'
-import { inspectJSON } from './json.mjs'
-import { isMarkdownLinkLine } from './document-references.mjs'
+import { validateData } from './schema.ts'
+import type { Schema } from './schema.ts'
+import { CommandError } from './result.ts'
+import { inspectJSON } from './json.ts'
+import { isMarkdownLinkLine } from './document-references.ts'
 
-function reject(code, message) {
+export type ProposedEdit = { path: string } & (
+  | { operation: 'create'; payload: { content: string } }
+  | { operation: 'replace-file'; payload: { content: string } }
+  | { operation: 'replace'; payload: { search: string; replacement: string } }
+  | { operation: 'move-rule'; payload: { sourcePath: string; destinationPath: string; rule: string; link: string; destinationAnchor: string } }
+  | { operation: 'delete'; payload: object }
+  | { operation: 'set-heading-section'; payload: { heading: string; content: string } }
+  | { operation: 'set-json-key'; payload: { key: string; value: unknown } }
+  | { operation: 'append-line-once'; payload: { line: string } }
+)
+
+function reject(code: string, message: string): never {
   throw new CommandError('failed', [{ code, message, fix: 'Review a supported, unambiguous mechanical edit and its complete proposed bytes.' }])
 }
 
-function jsonObject(text) {
+function jsonObject(text: string) {
   let parsed
   try { parsed = inspectJSON(text) } catch (error) {
     if (error instanceof CommandError) throw error
@@ -19,10 +31,10 @@ function jsonObject(text) {
   return parsed
 }
 
-function headingSection(text, heading, content) {
+function headingSection(text: string, heading: string, content: string) {
   const lines = text.match(/[^\n]*\n|[^\n]+$/g) ?? []
   const headings = []
-  let fence
+  let fence: string | undefined
   let offset = 0
   for (const line of lines) {
     const semanticLine = offset === 0 ? line.replace(/^\uFEFF/, '') : line
@@ -39,7 +51,7 @@ function headingSection(text, heading, content) {
         const match = /^(#{1,6})[ \t]+(.+)$/.exec(semanticLine.replace(/\r?\n$/, ''))
         const title = match?.[2].replace(/(?:^|[ \t]+)#+[ \t]*$/, '').trim()
         if (!title) reject('unsupported-format', 'Unsupported Markdown structure; use whole-file replacement.')
-        headings.push({ title, level: match[1].length, start: offset, body: offset + line.length })
+        headings.push({ title, level: match![1].length, start: offset, body: offset + line.length })
       }
     }
     offset += line.length
@@ -54,8 +66,8 @@ function headingSection(text, heading, content) {
   return text.slice(0, selected.body) + content + text.slice(end)
 }
 
-export function proposedEdit(edit, original) {
-  const fields = {
+export function proposedEdit(edit: ProposedEdit, original: string | null) {
+  const fields: Record<string, Schema> = {
     create: { content: { type: 'string' } },
     replace: { search: { type: 'string', minLength: 1 }, replacement: { type: 'string' } },
     'replace-file': { content: { type: 'string' } },
@@ -132,9 +144,9 @@ export function proposedEdit(edit, original) {
   return original + (original && !original.endsWith('\n') ? newline : '') + edit.payload.line + newline
 }
 
-export function exactDiff(path, original, proposed) {
+export function exactDiff(path: string, original: string | null, proposed: string | null) {
   if (original === proposed) return ''
-  const lines = text => text === null ? [] : text.match(/[^\n]*\n|[^\n]+$/g) ?? []
+  const lines = (text: string | null) => text === null ? [] : text.match(/[^\n]*\n|[^\n]+$/g) ?? []
   const before = lines(original)
   const after = lines(proposed)
   const output = [`--- ${original === null ? '/dev/null' : 'a/' + path}`, `+++ ${proposed === null ? '/dev/null' : 'b/' + path}`,

@@ -701,13 +701,17 @@ if (args.includes('--list')) {
 `
 
 // Each generated checker is self-contained, comment-free and runs without bstack.
-export const checkers = {
+export type CheckerLanguage = keyof typeof exemptions
+
+type Checker = { template: string; directory: string; file: string; run: string; format: (patterns: string[]) => string }
+
+export const checkers: Record<CheckerLanguage, Checker> = {
   python: { template: python, directory: 'scripts', file: 'check-comments.py', run: 'python3', format: patterns => patterns.map(pattern => `        ${JSON.stringify(pattern)},`).join('\n') },
   go: { template: go, directory: 'tools/check-comments', file: 'main.go', run: 'go run', format: patterns => patterns.map(pattern => `regexp.MustCompile(${JSON.stringify(pattern)})`).join(', ') },
   typescript: { template: typescript, directory: 'scripts', file: 'check-comments.mjs', run: 'node', format: patterns => `[${patterns.map(pattern => JSON.stringify(pattern)).join(', ')}]` }
 }
 
-export function generateChecker(language) {
+export function generateChecker(language: CheckerLanguage) {
   const checker = checkers[language]
   const suggestedPath = `${checker.directory}/${checker.file}`
   return { suggestedPath, run: language === 'go' ? `${checker.run} ./${checker.directory}` : `${checker.run} ${suggestedPath}`,

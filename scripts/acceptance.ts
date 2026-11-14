@@ -1,8 +1,9 @@
 import { readFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 import { root, text, object, array, options, readJSON, checkRegistry, fail } from './lib/evaluation.ts'
-import { validateData } from '../runtime/scripts/lib/schema.mjs'
-import { emitResult } from '../runtime/scripts/lib/result.mjs'
+import { validateData } from '../runtime/scripts/lib/schema.ts'
+import { emitResult } from '../runtime/scripts/lib/result.ts'
+import type { Problem } from '../runtime/scripts/lib/result.ts'
 import { releaseGate } from './lib/release-evidence.ts'
 import { correctedScore, validateScore } from './lib/evaluation-scoring.ts'
 
@@ -51,6 +52,6 @@ try {
     emitResult({ command: 'acceptance', status: 'verdict' in data ? data.verdict ?? 'passed' : 'passed', data }, true)
   }
 } catch (error) {
-  emitResult({ command: 'acceptance', status: (error as { status?: string }).status === 'usage-error' ? (error as { status?: string }).status : 'blocked',
-    problems: (error as { problems?: unknown[] }).problems ?? [{ code: 'acceptance-blocked', message: (error as Error).message, fix: help }] }, true)
+  emitResult({ command: 'acceptance', status: (error as { status?: string }).status === 'usage-error' ? 'usage-error' : 'blocked',
+    problems: (error as { problems?: Problem[] }).problems ?? [{ code: 'acceptance-blocked', message: (error as Error).message, fix: help }] }, true)
 }

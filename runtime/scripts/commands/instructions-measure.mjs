@@ -1,5 +1,5 @@
-import { resolveTarget } from '../lib/repo.mjs'
-import { includedFiles, loadInstructionSettings, measureInstructions } from '../lib/instructions.mjs'
+import { resolveTarget } from '../lib/repo.ts'
+import { includedFiles, loadInstructionSettings, measureInstructions } from '../lib/instructions.ts'
 
 export async function run(options) {
   const target = await resolveTarget(options, { draftOnly: true })

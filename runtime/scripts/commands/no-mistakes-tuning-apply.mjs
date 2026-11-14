@@ -1,6 +1,6 @@
 import { readFile } from 'node:fs/promises'
-import { inspectJSON } from '../lib/json.mjs'
-import { CommandError } from '../lib/result.mjs'
+import { inspectJSON } from '../lib/json.ts'
+import { CommandError } from '../lib/result.ts'
 import { run as applyRun } from './apply.mjs'
 
 const gateConfig = '.no-mistakes.yaml'

@@ -6,7 +6,7 @@ import { createHash } from 'node:crypto'
 import { parse } from 'acorn'
 import { lexer, marked } from 'marked'
 import { parse as parseYaml } from 'yaml'
-import { emitResult } from '../runtime/scripts/lib/result.mjs'
+import { emitResult } from '../runtime/scripts/lib/result.ts'
 
 // Keep the default independent of the caller's working directory.
 const skillsRoot = fileURLToPath(new URL('../skills/', import.meta.url))

@@ -35,7 +35,7 @@ async function sandbox(t: import('node:test').TestContext, files = {}) {
     'skills.json': JSON.stringify(skills),
     ...files
   }
-  for (const file of ['scripts/dispatch.mjs', 'scripts/lib/args.mjs', 'scripts/lib/result.mjs']) {
+  for (const file of ['scripts/dispatch.mjs', 'scripts/lib/args.ts', 'scripts/lib/result.ts']) {
     await mkdir(dirname(join(directory, 'runtime', file)), { recursive: true })
     await cp(join(root, 'runtime', file), join(directory, 'runtime', file))
   }

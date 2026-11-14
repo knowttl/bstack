@@ -1,9 +1,9 @@
 import { writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
-import { resolveTarget } from '../lib/repo.mjs'
-import { createScratch } from '../lib/scratch.mjs'
-import { checkers, generateChecker } from '../lib/comment-checkers.mjs'
-import { CommandError } from '../lib/result.mjs'
+import { resolveTarget } from '../lib/repo.ts'
+import { createScratch } from '../lib/scratch.ts'
+import { checkers, generateChecker } from '../lib/comment-checkers.ts'
+import { CommandError } from '../lib/result.ts'
 
 export async function run(options) {
   if (!Object.hasOwn(checkers, options.language)) {

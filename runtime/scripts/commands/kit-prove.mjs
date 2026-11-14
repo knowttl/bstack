@@ -4,10 +4,10 @@ import { mkdtemp, mkdir, readdir, readFile, realpath, rm, stat, writeFile } from
 import { createServer } from 'node:net'
 import { tmpdir } from 'node:os'
 import { join, relative, resolve } from 'node:path'
-import { resolveTarget } from '../lib/repo.mjs'
-import { resolvePath } from '../lib/paths.mjs'
-import { CommandError } from '../lib/result.mjs'
-import { readKitPlan, readySeconds } from '../lib/kit.mjs'
+import { resolveTarget } from '../lib/repo.ts'
+import { resolvePath } from '../lib/paths.ts'
+import { CommandError } from '../lib/result.ts'
+import { readKitPlan, readySeconds } from '../lib/kit.ts'
 
 // A single doctor or drive command that outlives this limit is stuck, not slow.
 const commandTimeoutMs = 120000

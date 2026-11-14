@@ -14,13 +14,13 @@ const source = join(root, 'runtime')
 const resourceUrls: Plugin = {
   name: 'resource-urls',
   setup(build) {
-    build.onLoad({ filter: /\.mjs$/ }, async ({ path }) => {
+    build.onLoad({ filter: /\.(?:mjs|ts)$/ }, async ({ path }) => {
       const text = (await readFile(path, 'utf8')).replaceAll(/new URL\((['"`])\.\.\/\.\.\//g, 'new URL($1../')
       // Any other import.meta use would resolve against the bundle and fail only when a command runs.
       if (/import\.meta/.test(text.replaceAll(/new URL\((['"`])\.\.\/[^'"`]*\1, import\.meta\.url\)/g, ''))) {
         throw new Error(`${relative(root, path)} must use import.meta only as new URL('../../<resource>', import.meta.url)`)
       }
-      return { contents: text, loader: 'js' }
+      return { contents: text, loader: path.endsWith('.ts') ? 'ts' : 'js' }
     })
   }
 }

@@ -6,7 +6,7 @@ import { tmpdir } from 'node:os'
 import { delimiter, dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
-import { hashBytes, canonicalJSON } from '../../runtime/scripts/lib/fingerprint.mjs'
+import { hashBytes, canonicalJSON } from '../../runtime/scripts/lib/fingerprint.ts'
 
 // Test the grading commands as child processes; no test starts a real provider.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')

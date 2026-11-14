@@ -7,9 +7,9 @@ import { randomUUID } from 'node:crypto'
 import { root, text, object, array, readJSON, fail } from './evaluation.ts'
 import { scoreChecks, validateScore, correctedScore } from './evaluation-scoring.ts'
 import { createContainer, image } from './evaluation-container.ts'
-import { validateData } from '../../runtime/scripts/lib/schema.mjs'
-import { hashBytes, canonicalJSON } from '../../runtime/scripts/lib/fingerprint.mjs'
-import { runCommand } from '../../runtime/scripts/lib/run.mjs'
+import { validateData } from '../../runtime/scripts/lib/schema.ts'
+import { hashBytes, canonicalJSON } from '../../runtime/scripts/lib/fingerprint.ts'
+import { runCommand } from '../../runtime/scripts/lib/run.ts'
 
 type JudgeConfig = { schemaVersion: number; model: string; host: string; executable: string; args: string[];
   versionArgs: string[]; timeoutMs: number; outputLimitBytes: number }

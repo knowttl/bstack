@@ -1,7 +1,7 @@
 import { readFile } from 'node:fs/promises'
-import { resolveTarget } from '../lib/repo.mjs'
-import { validateData, validateIds } from '../lib/schema.mjs'
-import { CommandError } from '../lib/result.mjs'
+import { resolveTarget } from '../lib/repo.ts'
+import { validateData, validateIds } from '../lib/schema.ts'
+import { CommandError } from '../lib/result.ts'
 
 async function readJSON(path) {
   try { return JSON.parse(await readFile(path, 'utf8')) } catch {

@@ -1,8 +1,8 @@
 import { readFile } from 'node:fs/promises'
 import { basename, dirname, join, relative, sep } from 'node:path'
-import { resolveTarget } from '../lib/repo.mjs'
-import { includedFiles, loadInstructionSettings } from '../lib/instructions.mjs'
-import { hashBytes } from '../lib/fingerprint.mjs'
+import { resolveTarget } from '../lib/repo.ts'
+import { includedFiles, loadInstructionSettings } from '../lib/instructions.ts'
+import { hashBytes } from '../lib/fingerprint.ts'
 
 // Name families discover equivalent sources without claiming their content is authoritative.
 const documentNames = {
