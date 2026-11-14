@@ -14,13 +14,13 @@ const source = join(root, 'runtime')
 const resourceUrls: Plugin = {
   name: 'resource-urls',
   setup(build) {
-    build.onLoad({ filter: /\.(?:mjs|ts)$/ }, async ({ path }) => {
+    build.onLoad({ filter: /\.ts$/ }, async ({ path }) => {
       const text = (await readFile(path, 'utf8')).replaceAll(/new URL\((['"`])\.\.\/\.\.\//g, 'new URL($1../')
       // Any other import.meta use would resolve against the bundle and fail only when a command runs.
       if (/import\.meta/.test(text.replaceAll(/new URL\((['"`])\.\.\/[^'"`]*\1, import\.meta\.url\)/g, ''))) {
         throw new Error(`${relative(root, path)} must use import.meta only as new URL('../../<resource>', import.meta.url)`)
       }
-      return { contents: text, loader: path.endsWith('.ts') ? 'ts' : 'js' }
+      return { contents: text, loader: 'ts' }
     })
   }
 }
@@ -32,12 +32,12 @@ function entryFor(skill: string, names: readonly string[], registry: CommandRegi
     const { options, help } = registry[name]
     return `  ${JSON.stringify(name)}: { options: ${JSON.stringify(options)}, help: ${JSON.stringify(help.replaceAll('{entry}', `${skill}.mjs`))}, run: run${modules.indexOf(moduleOf(name))} }`
   })
-  return [`import { dispatch } from './dispatch.mjs'`, ...modules.map((module, index) => `import { run as run${index} } from ${JSON.stringify(module)}`),
+  return [`import { dispatch } from './dispatch.ts'`, ...modules.map((module, index) => `import { run as run${index} } from ${JSON.stringify(module)}`),
     `await dispatch(process.argv.slice(2), ${JSON.stringify(skill)}, {\n${commands.join(',\n')}\n})`].join('\n') + '\n'
 }
 
 async function generatedFiles() {
-  const registry: CommandRegistry = (await import(pathToFileURL(join(source, 'scripts/commands.mjs')).href)).commands
+  const registry: CommandRegistry = (await import(pathToFileURL(join(source, 'scripts/commands.ts')).href)).commands
   const skills: Record<string, SkillBundle> = JSON.parse(await readFile(join(source, 'skills.json'), 'utf8'))
   const files = new Map<string, Buffer>()
   const problems = []
@@ -45,7 +45,7 @@ async function generatedFiles() {
     const { commands, schemas, assets, references = [], vendored = [] } = definition
     const unknown = commands.filter((name) => !Object.hasOwn(registry, name))
     if (unknown.length) {
-      problems.push(`${skill} lists commands missing from runtime/scripts/commands.mjs: ${unknown.join(', ')}`)
+      problems.push(`${skill} lists commands missing from runtime/scripts/commands.ts: ${unknown.join(', ')}`)
       continue
     }
     const result = await bundle(root, { stdin: { contents: entryFor(skill, Object.keys(registry).filter(name => commands.includes(name)), registry, definition),

@@ -1,6 +1,6 @@
 ## Command dispatch
 
-`runtime/scripts/commands.mjs` registers every command's metadata, and `runtime/skills.json` lists the commands, schemas, assets and shared references each skill ships.
+`runtime/scripts/commands.ts` registers every command's metadata, and `runtime/skills.json` lists the commands, schemas, assets and shared references each skill ships.
 Only the `vision` skill carries the board commands, so it is the only skill with a pinned runtime.
 The generator bundles a skill's commands and their metadata into that skill's one entry file, `skills/<skill>/scripts/<skill>.mjs`, which validates arguments before it runs the selected command.
 `<command> --help` prints that command's options without resolving a target.

@@ -6,6 +6,7 @@ import { pathGlob, matchesPath } from './glob.ts'
 import { CommandError } from './result.ts'
 import { resolvePath } from './paths.ts'
 import schema from '../../schemas/project.schema.json' with { type: 'json' }
+import type { ChildCommand } from './run.ts'
 
 export type ComparisonBase = { kind: 'empty-tree' | 'commit'; objectId: string }
 
@@ -15,12 +16,13 @@ export type Inventory = { changes: Change[]; paths: string[] }
 
 export type CoveragePolicy = {
   schemaVersion: number
-  documents: { id: string; path: string }[]
+  documents: { id: string; path: string; glossary?: { context: string; format: string } }[]
   scopes: { id: string; paths: string[]; documentIds: string[]; ruleIds: string[] }[]
-  rules: { id: string; checkIds: string[] }[]
-  checks: { id: string }[]
-  generators: { id: string }[]
-  acceptanceSources: { id: string }[]
+  rules: { id: string; path: string; pointer: string; checkIds: string[] }[]
+  checks: { id: string; command: ChildCommand; inputScopes: string[] }[]
+  generators: { id: string; command: ChildCommand; inputScopes: string[]; outputPaths: string[] }[]
+  instructions?: { exclude?: string[]; baseline?: { bytes: number; reason: string } }
+  acceptanceSources: { id: string; path: string; pointer: string }[]
 }
 
 export function baseText(root: string, base: ComparisonBase, path: string) {

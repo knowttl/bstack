@@ -59,7 +59,7 @@ test('skill changes select final runs and exclude skill-free runs', async t => {
 
 test('missing bundled runtime sources block impact selection', async t => {
   const repo = await checkout(t)
-  await rm(join(repo, 'runtime/scripts/commands/vision-board-build.mjs'))
+  await rm(join(repo, 'runtime/scripts/commands/vision-board-build.ts'))
   const result = affected(repo)
   assert.equal(result.exit, 2, JSON.stringify(result))
   assert.equal(result.status, 'blocked')
@@ -79,7 +79,7 @@ test('earlier checkpoints depend only on the named skills', async t => {
   assert.deepEqual(result.data.scenarios, staging('vision').filter((id: string) => id !== 'clear-goals'))
 })
 
-for (const path of ['runtime/scripts/lib/new-helper.mjs', 'references/maintenance-contract.md']) {
+for (const path of ['runtime/scripts/lib/new-helper.ts', 'references/maintenance-contract.md']) {
   test(`an unmapped untracked file selects every scenario: ${path}`, async t => {
     const repo = await checkout(t)
     await mkdir(resolve(repo, path, '..'), { recursive: true })
@@ -154,12 +154,12 @@ for (const [direction, heading, keys] of [
 
 // Change one module or protocol at a time so another changed input cannot mask a missing dependency.
 for (const [key, bundling] of [
-  ['scripts/dispatch.mjs', skillNames],
-  ['scripts/commands/apply.mjs', ['vision', 'glossary', 'architecture', 'foundation', 'maintenance', 'agents-md', 'verification', 'plan']],
-  ['scripts/commands/cite-check.mjs', ['repo-audit', 'vision', 'glossary', 'architecture', 'plan']],
-  ['scripts/commands/inspect.mjs', ['repo-audit']],
-  ['scripts/commands/probe.mjs', ['verification', 'maintenance']],
-  ['scripts/commands/vision-board-build.mjs', ['vision']],
+  ['scripts/dispatch.ts', skillNames],
+  ['scripts/commands/apply.ts', ['vision', 'glossary', 'architecture', 'foundation', 'maintenance', 'agents-md', 'verification', 'plan']],
+  ['scripts/commands/cite-check.ts', ['repo-audit', 'vision', 'glossary', 'architecture', 'plan']],
+  ['scripts/commands/inspect.ts', ['repo-audit']],
+  ['scripts/commands/probe.ts', ['verification', 'maintenance']],
+  ['scripts/commands/vision-board-build.ts', ['vision']],
   ['scripts/lib/vision-board.ts', ['vision']],
   ['schemas/findings.schema.json', ['vision', 'glossary', 'architecture', 'foundation', 'verification', 'maintenance', 'agents-md', 'plan']],
   ['schemas/vision-proposals.json', ['vision']],
@@ -181,13 +181,13 @@ for (const [key, bundling] of [
 
 test('a regenerated skill file adds no key of its own to the change in its shared source', async t => {
   const repo = await checkout(t)
-  for (const path of ['runtime/scripts/commands/cite-check.mjs', 'skills/repo-audit/scripts/repo-audit.mjs', 'skills/vision/scripts/vision.mjs',
+  for (const path of ['runtime/scripts/commands/cite-check.ts', 'skills/repo-audit/scripts/repo-audit.mjs', 'skills/vision/scripts/vision.mjs',
     'runtime/schemas/research-report.json', 'skills/repo-audit/schemas/research-report.json', 'skills/glossary/references/grilling.md']) {
     await edit(repo, path, (source) => source + '\n')
   }
   const result = affected(repo)
   assert.equal(result.exit, 0, JSON.stringify(result))
-  assert.deepEqual(result.data.keys, ['schemas/research-report.json', 'scripts/commands/cite-check.mjs'])
+  assert.deepEqual(result.data.keys, ['schemas/research-report.json', 'scripts/commands/cite-check.ts'])
   assert.deepEqual(result.data.unmapped, [])
 })
 

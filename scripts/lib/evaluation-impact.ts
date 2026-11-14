@@ -50,11 +50,11 @@ async function bundledSources(repo: string, entries: readonly string[]) {
 // Runs without the skill stage nothing, so no skill input can change them.
 async function scenarioCovers(repo: string, definition: Scenario, skills: Record<string, SkillBundle>) {
   if (definition.mode === 'without') return []
-  const { commands } = await import(pathToFileURL(join(repo, 'runtime/scripts/commands.mjs')).href)
+  const { commands } = await import(pathToFileURL(join(repo, 'runtime/scripts/commands.ts')).href)
   const covers = ['install/']
   for (const skill of await evaluatedSkills(definition, definition.checkpoints.at(-1)!)) {
     const modules = skills[skill].commands.map((name) => posix.join('scripts', commandModule(skills[skill], commands, name)))
-    covers.push(`${skill}/`, ...bundleFiles(skills[skill]), ...await bundledSources(repo, ['scripts/dispatch.mjs', ...modules]))
+    covers.push(`${skill}/`, ...bundleFiles(skills[skill]), ...await bundledSources(repo, ['scripts/dispatch.ts', ...modules]))
   }
   return covers
 }

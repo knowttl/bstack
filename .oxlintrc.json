@@ -37,55 +37,55 @@
       }
     },
     {
-      "files": ["runtime/scripts/commands/apply.mjs", "runtime/scripts/commands/baseline.mjs"],
+      "files": ["runtime/scripts/commands/apply.ts", "runtime/scripts/commands/baseline.ts"],
       "rules": {
         "no-restricted-imports": ["error", { "patterns": [{
-          "group": ["./*", "**/commands/**", "!./findings.mjs"],
+          "group": ["./*", "**/commands/**", "!./findings.ts"],
           "message": "command-imports-command: a command may import another command only through the reviewed edges in .oxlintrc.json. Use a function in runtime/scripts/lib, moving the shared one there first."
         }] }]
       }
     },
     {
-      "files": ["runtime/scripts/commands/docs-check.mjs", "runtime/scripts/commands/docs-generate.mjs", "runtime/scripts/commands/evidence.mjs", "runtime/scripts/commands/run-checks.mjs"],
+      "files": ["runtime/scripts/commands/docs-check.ts", "runtime/scripts/commands/docs-generate.ts", "runtime/scripts/commands/evidence.ts", "runtime/scripts/commands/run-checks.ts"],
       "rules": {
         "no-restricted-imports": ["error", { "patterns": [{
-          "group": ["./*", "**/commands/**", "!./contract.mjs"],
+          "group": ["./*", "**/commands/**", "!./contract.ts"],
           "message": "command-imports-command: a command may import another command only through the reviewed edges in .oxlintrc.json. Use a function in runtime/scripts/lib, moving the shared one there first."
         }] }]
       }
     },
     {
-      "files": ["runtime/scripts/commands/no-mistakes-tuning-apply.mjs", "runtime/scripts/commands/project.mjs"],
+      "files": ["runtime/scripts/commands/no-mistakes-tuning-apply.ts", "runtime/scripts/commands/project.ts"],
       "rules": {
         "no-restricted-imports": ["error", { "patterns": [{
-          "group": ["./*", "**/commands/**", "!./apply.mjs"],
+          "group": ["./*", "**/commands/**", "!./apply.ts"],
           "message": "command-imports-command: a command may import another command only through the reviewed edges in .oxlintrc.json. Use a function in runtime/scripts/lib, moving the shared one there first."
         }] }]
       }
     },
     {
-      "files": ["runtime/scripts/commands/formal-chart.mjs"],
+      "files": ["runtime/scripts/commands/formal-chart.ts"],
       "rules": {
         "no-restricted-imports": ["error", { "patterns": [{
-          "group": ["./*", "**/commands/**", "!./formal-check.mjs"],
+          "group": ["./*", "**/commands/**", "!./formal-check.ts"],
           "message": "command-imports-command: a command may import another command only through the reviewed edges in .oxlintrc.json. Use a function in runtime/scripts/lib, moving the shared one there first."
         }] }]
       }
     },
     {
-      "files": ["runtime/scripts/commands/evidence-validate.mjs"],
+      "files": ["runtime/scripts/commands/evidence-validate.ts"],
       "rules": {
         "no-restricted-imports": ["error", { "patterns": [{
-          "group": ["./*", "**/commands/**", "!./contract.mjs", "!./evidence.mjs", "!./findings.mjs", "!./run-checks.mjs"],
+          "group": ["./*", "**/commands/**", "!./contract.ts", "!./evidence.ts", "!./findings.ts", "!./run-checks.ts"],
           "message": "command-imports-command: a command may import another command only through the reviewed edges in .oxlintrc.json. Use a function in runtime/scripts/lib, moving the shared one there first."
         }] }]
       }
     },
     {
-      "files": ["runtime/scripts/commands/sweep.mjs"],
+      "files": ["runtime/scripts/commands/sweep.ts"],
       "rules": {
         "no-restricted-imports": ["error", { "patterns": [{
-          "group": ["./*", "**/commands/**", "!./contract.mjs", "!./docs-check.mjs", "!./docs-generate.mjs", "!./formal-check.mjs", "!./kit-check.mjs"],
+          "group": ["./*", "**/commands/**", "!./contract.ts", "!./docs-check.ts", "!./docs-generate.ts", "!./formal-check.ts", "!./kit-check.ts"],
           "message": "command-imports-command: a command may import another command only through the reviewed edges in .oxlintrc.json. Use a function in runtime/scripts/lib, moving the shared one there first."
         }] }]
       }

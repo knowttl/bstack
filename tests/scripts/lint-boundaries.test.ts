@@ -10,8 +10,8 @@ const oxlint = join(checkout, 'node_modules', 'oxlint', 'bin', 'oxlint')
 const thousandCodeLines = Array.from({ length: 1000 }, (_, index) => `export const value${index} = ${index}\n`).join('')
 
 const clean = {
-  'runtime/scripts/lib/shared.mjs': "import { other } from './other.mjs'\nexport const shared = other\n",
-  'runtime/scripts/commands/alpha.mjs': "import { shared } from '../lib/shared.mjs'\nexport const run = shared\n",
+  'runtime/scripts/lib/shared.ts': "import { other } from './other.ts'\nexport const shared = other\n",
+  'runtime/scripts/commands/alpha.ts': "import { shared } from '../lib/shared.ts'\nexport const run = shared\n",
   'tests/scripts/alpha.test.ts': "import { hashBytes } from '../../runtime/scripts/lib/fingerprint.ts'\nimport { selectCommand } from '../../runtime/scripts/lib/run.ts'\nexport const used = [hashBytes, selectCommand]\n",
   'scripts/long.ts': `${thousandCodeLines}\n// A comment line.\n/* A block\n   comment. */\n\n`
 }
@@ -26,11 +26,11 @@ async function writeTree(root: string, files: Record<string, string>) {
 }
 
 for (const { rule, path, source, proof } of [
-  { rule: 'lib-imports-command', path: 'runtime/scripts/lib/shared.mjs', source: "export { run } from '../commands/alpha.mjs'\n",
+  { rule: 'lib-imports-command', path: 'runtime/scripts/lib/shared.ts', source: "export { run } from '../commands/alpha.ts'\n",
     proof: ['--replacement', 'runtime/scripts/lib'] },
-  { rule: 'command-imports-command', path: 'runtime/scripts/commands/beta.mjs', source: "import { run } from './alpha.mjs'\nexport const again = run\n",
+  { rule: 'command-imports-command', path: 'runtime/scripts/commands/beta.ts', source: "import { run } from './alpha.ts'\nexport const again = run\n",
     proof: ['--replacement', 'runtime/scripts/lib'] },
-  { rule: 'test-imports-runtime', path: 'tests/scripts/beta.test.ts', source: "import { shared } from '../../runtime/scripts/lib/shared.mjs'\nexport const used = shared\n",
+  { rule: 'test-imports-runtime', path: 'tests/scripts/beta.test.ts', source: "import { shared } from '../../runtime/scripts/lib/shared.ts'\nexport const used = shared\n",
     proof: ['--replacement', 'tests/scripts/discovery-fixture.ts'] },
   { rule: 'max-lines', path: 'scripts/long.ts', source: `${clean['scripts/long.ts']}export const oneTooMany = 1\n`,
     proof: ['--no-replacement', 'A length limit names no replacement; the fix is to split the file.'] }

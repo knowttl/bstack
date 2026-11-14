@@ -1,12 +1,13 @@
 import { readFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { build, transform, type BuildOptions, type Plugin } from 'esbuild'
+import type { commands } from '../../runtime/scripts/commands.ts'
 
 export type SkillBundle = {
   commands: string[]; schemas: string[]; assets: string[]; references?: string[]; commandModules?: Record<string, string>;
   vendored?: { source: string; destination: string; license?: string }[]
 }
-export type CommandRegistry = Record<string, { module: string; options: string[]; help: string }>
+export type CommandRegistry = typeof commands
 
 export function commandModule(skill: SkillBundle, registry: CommandRegistry, name: string) {
   return skill.commandModules?.[name] ?? registry[name].module

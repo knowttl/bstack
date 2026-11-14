@@ -84,7 +84,7 @@ function parseArgs(argv, valueOptions = []) {
   return options;
 }
 
-// runtime/scripts/dispatch.mjs
+// runtime/scripts/dispatch.ts
 async function dispatch(argv, skill, commands) {
   const command = Object.keys(commands).find((name) => name.split(" ").every((word, index) => argv[index] === word));
   if (!argv.length || argv.length === 1 && argv[0] === "--help") {
@@ -114,7 +114,7 @@ Missing or unsupported arguments are a usage error (exit 3).`);
   }
 }
 
-// runtime/scripts/commands/plan-check.mjs
+// runtime/scripts/commands/plan-check.ts
 import { readdir, readFile as readFile2 } from "node:fs/promises";
 import { join as join2 } from "node:path";
 
@@ -355,7 +355,7 @@ function validateIds(records, path) {
   if (problems.length) throw new CommandError("failed", problems);
 }
 
-// runtime/scripts/commands/plan-check.mjs
+// runtime/scripts/commands/plan-check.ts
 async function run(options) {
   if (!options.plan) throw new CommandError("usage-error", [{ code: "missing-plan", message: "--plan is required.", fix: "Supply --plan <plan.json>." }]);
   const target = await resolveTarget(options, { draftOnly: true });
@@ -404,7 +404,7 @@ async function run(options) {
   return { inputs: { target, plan: options.plan }, data: { units: order.length, citationsChecked, order } };
 }
 
-// runtime/scripts/commands/apply.mjs
+// runtime/scripts/commands/apply.ts
 import { readFile as readFile5 } from "node:fs/promises";
 import { dirname as dirname4, relative as relative3, resolve as resolve4 } from "node:path";
 import { spawnSync as spawnSync3 } from "node:child_process";
@@ -2348,7 +2348,7 @@ var findings_schema_default = {
   }
 };
 
-// runtime/scripts/commands/findings.mjs
+// runtime/scripts/commands/findings.ts
 var stageOutcomes = { audit: ["starting-checks"], foundation: ["journey", "foundation-review"] };
 function invalid(code, message, path) {
   throw new CommandError("failed", [{ code, message, path, fix: "Regenerate findings for the reviewed target, scope and selections." }]);
@@ -2773,7 +2773,7 @@ function validateCheckIntegration(path, proposed, selected) {
   }
 }
 
-// runtime/scripts/commands/apply.mjs
+// runtime/scripts/commands/apply.ts
 function reject3(code, message, path) {
   throw new CommandError("failed", [{ code, message, path, fix: "Regenerate the plan from current findings and resolved scope, then review the exact proposed bytes again." }]);
 }
@@ -2939,7 +2939,7 @@ async function run2(options) {
   return result.status ? { inputs, ...result } : { inputs, data: result };
 }
 
-// runtime/scripts/commands/state.mjs
+// runtime/scripts/commands/state.ts
 async function run3(options) {
   if (!options.run) throw new CommandError("usage-error", [{ code: "missing-run", message: "--run is required.", fix: "Supply the run ID returned by apply." }]);
   const target = await resolveTarget(options, { draftOnly: true });
@@ -2948,7 +2948,7 @@ async function run3(options) {
   return { inputs: { target }, data: await inspectJournal(journal) };
 }
 
-// runtime/scripts/commands/cite-check.mjs
+// runtime/scripts/commands/cite-check.ts
 import { readFile as readFile6 } from "node:fs/promises";
 async function run4(options) {
   if (!options.report) throw new CommandError("usage-error", [{ code: "missing-report", message: "--report is required.", fix: "Supply --report <research-report.json>." }]);

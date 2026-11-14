@@ -134,9 +134,11 @@ Repeated-run release qualification and release approval remain separate work.
 ## Conventions
 
 - **Language.** Repository tests and development tooling use strict TypeScript (`.ts`), executed directly by Node 24 or later.
-Shipped runtime commands remain JavaScript ES modules (`.mjs`) (design D3).
-The shared library under `runtime/scripts/lib` is strict TypeScript limited to erasable syntax: Node strips its types when a script runs from the checkout, and the generator compiles it into each skill's JavaScript bundle.
-Its `Status` union and `Problem` type in [`result.ts`](../runtime/scripts/lib/result.ts) make an unknown result status or a problem without a fix a compile error for every TypeScript caller.
+The shared runtime under `runtime/scripts`, meaning the command registry, `dispatch`, the commands and the shared library, is strict TypeScript limited to erasable syntax: Node strips its types when a script runs from the checkout, and the generator compiles it into each skill's JavaScript bundle.
+Installed skills therefore still ship JavaScript ES modules (`.mjs`) (design D3).
+The `Status` union and `Problem` type in [`result.ts`](../runtime/scripts/lib/result.ts) make an unknown result status or a problem without a fix a compile error.
+Each command's `run` names the options it reads with `Options` from [`args.ts`](../runtime/scripts/lib/args.ts) and checks what it returns against `CommandReturn`.
+The installer under `install/`, `scripts/checker-entry.mjs`, `scripts/check-package.mjs`, `scripts/check-comments.mjs` and the shipped asset `runtime/assets/map-coverage.mjs` remain untyped JavaScript ES modules.
 - **Dependencies.** Installed skill scripts use Node built-in modules only.
 The one runtime dependency is `lavish-axi` for the VISION board.
 Repository development tools may use the root development dependencies declared in `package.json`.
@@ -541,7 +543,7 @@ node scripts/generate-skills.ts --check
 `--check` exits 1 for a missing or modified listed output or an unlisted file under a registered skill's `schemas/`, `assets/` or declared vendored destinations; generation removes those unlisted files.
 A skill's `references/` also holds its own authored files, so only the listed shared copies are checked.
 Both commands exit 1 when a skill lists a command, schema, asset or reference that `runtime/` lacks or when a bundle would include a file outside `runtime/` other than the pinned `marked` ESM entry and `yaml` package.
-To add a skill, create its folder with `SKILL.md` and add an entry to `runtime/skills.json`; a new command needs a registry entry in `runtime/scripts/commands.mjs` and a listing in each skill that ships it.
+To add a skill, create its folder with `SKILL.md` and add an entry to `runtime/skills.json`; a new command needs a registry entry in `runtime/scripts/commands.ts` and a listing in each skill that ships it.
 `npm run check` runs the verification, and `npm test` repeats it for the committed tree.
 
 ## Skill commands

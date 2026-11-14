@@ -84,7 +84,7 @@ function parseArgs(argv, valueOptions = []) {
   return options;
 }
 
-// runtime/scripts/dispatch.mjs
+// runtime/scripts/dispatch.ts
 async function dispatch(argv, skill, commands) {
   const command = Object.keys(commands).find((name) => name.split(" ").every((word, index) => argv[index] === word));
   if (!argv.length || argv.length === 1 && argv[0] === "--help") {
@@ -114,7 +114,7 @@ Missing or unsupported arguments are a usage error (exit 3).`);
   }
 }
 
-// runtime/scripts/commands/apply.mjs
+// runtime/scripts/commands/apply.ts
 import { readFile as readFile3 } from "node:fs/promises";
 import { dirname as dirname4, relative as relative3, resolve as resolve4 } from "node:path";
 import { spawnSync as spawnSync2 } from "node:child_process";
@@ -2260,7 +2260,7 @@ var findings_schema_default = {
   }
 };
 
-// runtime/scripts/commands/findings.mjs
+// runtime/scripts/commands/findings.ts
 var stageOutcomes = { audit: ["starting-checks"], foundation: ["journey", "foundation-review"] };
 function invalid(code, message, path) {
   throw new CommandError("failed", [{ code, message, path, fix: "Regenerate findings for the reviewed target, scope and selections." }]);
@@ -2691,7 +2691,7 @@ function validateCheckIntegration(path, proposed, selected) {
   }
 }
 
-// runtime/scripts/commands/apply.mjs
+// runtime/scripts/commands/apply.ts
 function reject3(code, message, path) {
   throw new CommandError("failed", [{ code, message, path, fix: "Regenerate the plan from current findings and resolved scope, then review the exact proposed bytes again." }]);
 }
@@ -2857,7 +2857,7 @@ async function run(options) {
   return result.status ? { inputs, ...result } : { inputs, data: result };
 }
 
-// runtime/scripts/commands/state.mjs
+// runtime/scripts/commands/state.ts
 async function run2(options) {
   if (!options.run) throw new CommandError("usage-error", [{ code: "missing-run", message: "--run is required.", fix: "Supply the run ID returned by apply." }]);
   const target = await resolveTarget(options, { draftOnly: true });
@@ -2866,7 +2866,7 @@ async function run2(options) {
   return { inputs: { target }, data: await inspectJournal(journal) };
 }
 
-// runtime/scripts/commands/cite-check.mjs
+// runtime/scripts/commands/cite-check.ts
 import { readFile as readFile5 } from "node:fs/promises";
 
 // runtime/scripts/lib/citations.ts
@@ -2902,7 +2902,7 @@ async function fileCitationProblems(root, citation) {
   return problems;
 }
 
-// runtime/scripts/commands/cite-check.mjs
+// runtime/scripts/commands/cite-check.ts
 async function run3(options) {
   if (!options.report) throw new CommandError("usage-error", [{ code: "missing-report", message: "--report is required.", fix: "Supply --report <research-report.json>." }]);
   const target = await resolveTarget(options, { draftOnly: true });
@@ -2937,7 +2937,7 @@ async function run3(options) {
   return { inputs: { target, report: options.report }, data: { mode: report.mode, filesChecked, webRecorded, webVerifiedByChecker: false } };
 }
 
-// runtime/scripts/commands/vision-board-build.mjs
+// runtime/scripts/commands/vision-board-build.ts
 import { readFile as readFile6, writeFile, copyFile } from "node:fs/promises";
 import { createHash as createHash3, randomUUID as randomUUID3 } from "node:crypto";
 import { join as join5 } from "node:path";
@@ -2986,7 +2986,7 @@ async function run4(options) {
   return { inputs: { target, draftRevision }, data: { scratch, board: boardPath, ...review, cardIds: proposals.cards.map((card) => card.id) } };
 }
 
-// runtime/scripts/commands/vision-board-launch.mjs
+// runtime/scripts/commands/vision-board-launch.ts
 import { writeFile as writeFile2 } from "node:fs/promises";
 import { join as join8 } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -3144,7 +3144,7 @@ async function capture(command, { cwd, timeoutMs, signal, env, outputLimitBytes,
   }
 }
 
-// runtime/scripts/commands/vision-board-launch.mjs
+// runtime/scripts/commands/vision-board-launch.ts
 async function run5(options) {
   const context = await readBoard(options);
   const cli = fileURLToPath(new URL("../node_modules/lavish-axi/dist/cli.mjs", import.meta.url));
@@ -3170,7 +3170,7 @@ async function run5(options) {
   } };
 }
 
-// runtime/scripts/commands/vision-board-verdicts.mjs
+// runtime/scripts/commands/vision-board-verdicts.ts
 import { readFile as readFile8, writeFile as writeFile3 } from "node:fs/promises";
 import { join as join9 } from "node:path";
 async function run6(options) {
