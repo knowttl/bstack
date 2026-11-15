@@ -15,4 +15,4 @@ A skipped or absent check cannot prove enforcement.
 Unavailable tools, failed version probes, failed clean setup, cancellation, timeouts and missing working directories are blocked.
 The saved `proof.json` reports cases, native commands, the expected diagnostic, the replacement, status and source locations; failed proof returns exit 1, blocked proof exit 2.
 Proof establishes only the supplied static cases; it does not infer coverage of unresolved imports, dynamic dependencies or unsupported syntax.
-See [fixture construction](fixtures.md) for the native stacks and independently seeded proof cases, and the [T3.3 progress record](implementation-plan.md#progress) for the baseline research outcome.
+See [fixture construction](../../../docs/fixtures.md) for the native stacks and independently seeded proof cases, and the [T3.3 progress record](../../../docs/implementation-plan.md#progress) for the baseline research outcome.

@@ -37,6 +37,7 @@
   "runtime/scripts/commands/findings.contract.md",
   "runtime/scripts/commands/apply.contract.md",
   "runtime/scripts/commands/state.contract.md",
+  "runtime/scripts/commands/no-mistakes-tuning-apply.contract.md",
   "runtime/scripts/commands/run-checks.contract.md",
   "runtime/scripts/commands/probe.contract.md",
   "runtime/scripts/commands/rule-proof.contract.md",

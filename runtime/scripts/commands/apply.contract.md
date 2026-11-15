@@ -12,7 +12,7 @@ Dry run writes no target, scratch, dependency or journal files.
 Omitting `--dry-run` applies or resumes the reviewed plan with backups and a durable journal.
 The plan digest selects the run automatically.
 
-The [change-set schema source](../runtime/schemas/change-set.schema.json) owns the plan fields.
+The [change-set schema source](../../schemas/change-set.schema.json) owns the plan fields.
 Each plan declares `schemaVersion: 1`, `target`, `findings`, `findingsDigest`, `selectedFindingIds`, `reviewedScope`, `edits` and `planDigest`.
 `--plan` resolves from the invoking cwd; `findings` resolves from the plan's directory and names the full T2.5 findings input.
 Both the findings and plan schemas reject unknown fields.
@@ -45,7 +45,7 @@ The helper derives the full proposed content from the operation and checks it ag
 For a fresh plan or dry run, current file bytes must match `originalHash`; a create must start absent and a delete must start present.
 Resume validates the saved originals against `originalHash` and derives current file states as described below.
 Complete bytes for every file are staged in memory before reporting success.
-The installed [checks reference](../skills/foundation/references/checks.md#integrate-the-maintained-command) owns selected `checkIntegration` paths, their bounded command grammar, supported CI format and disposable-proof requirements.
+The installed [checks reference](../../../skills/foundation/references/checks.md#integrate-the-maintained-command) owns selected `checkIntegration` paths, their bounded command grammar, supported CI format and disposable-proof requirements.
 If any file fails input validation or staging, no diff or proposed edits are returned and every project file remains unchanged.
 Filesystem access failures block the command; invalid plans fail with named problems and renewed-review guidance.
 
@@ -112,7 +112,7 @@ CRLF carriage returns remain in the diff; there is no line-ending normalisation.
 Dry-run JSON returns `data.planDigest`, `data.dryRun`, `data.diff` and `data.edits` containing each complete proposed content, original/proposed hashes and diff.
 An unchanged proposed file produces an empty diff.
 
-The [resume-state schema source](../runtime/schemas/resume-state.schema.json) owns the durable journal.
+The [resume-state schema source](../../schemas/resume-state.schema.json) owns the durable journal.
 The run ID is the reviewed plan digest, under the target's existing OS-cache identity folder.
 Before any replacement, apply revalidates all targets, stages complete proposed bytes, saves exact originals in scratch and flushes the journal containing original/proposed hashes.
 Each replacement uses a flushed same-directory temporary file followed by rename, preserving existing file permissions.

@@ -20,9 +20,9 @@ Those paths remain in the inventory and affected documents remain candidates; `c
 Each candidate contains only `id` and `path`; optional contract metadata such as `glossary` remains in the contract and is not copied into assessment document identities.
 Paths with no document relationship remain in `data.unmappedPaths`, including paths in scopes that name only rules.
 
-The command writes one `assessment.json` skeleton to [scratch](#scratch) and returns its absolute path in `data.path`.
+The command writes one `assessment.json` skeleton to [scratch](../lib/scratch.contract.md#scratch) and returns its absolute path in `data.path`.
 The skeleton preserves the live inventory, mapping, document entries with `assessment: null`, unmapped impact entries with `assessment: null`, and empty decisions, coverage and execution lists.
 These are pending semantic assessments, not no-impact claims or passing check evidence.
 Every collection recomputes from Git and the working tree; no supplied inventory option exists.
-The shared live inventory is also the input for [assessment validation](#assessment-validation), which recomputes rather than trusting the skeleton's path list.
+The shared live inventory is also the input for [assessment validation](evidence-validate.contract.md#assessment-validation), which recomputes rather than trusting the skeleton's path list.
 Assessment validation and local freshness are implemented below; the standalone execution contract above owns portable clean-checkout behavior.

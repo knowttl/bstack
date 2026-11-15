@@ -1,8 +1,8 @@
 ## Findings
 
 `findings validate --findings <file> --json` requires an explicit `--repo` or draft-only `--workspace` target.
-The [findings schema source](../runtime/schemas/findings.schema.json) owns every field.
-Complete [audit](../tests/inputs/findings-audit.json) and [foundation](../tests/inputs/findings-foundation.json) examples deliberately lack execution evidence and therefore cannot claim ready.
+The [findings schema source](../../schemas/findings.schema.json) owns every field.
+Complete [audit](../../../tests/inputs/findings-audit.json) and [foundation](../../../tests/inputs/findings-foundation.json) examples deliberately lack execution evidence and therefore cannot claim ready.
 Replace their target placeholder with the resolved root and record the current full Git HEAD, or null for a repo without commits or a non-Git workspace.
 
 The reviewed scope lists concrete target-relative file paths, including planned absent files, rather than directory names or globs.

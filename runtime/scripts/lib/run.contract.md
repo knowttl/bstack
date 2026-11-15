@@ -36,4 +36,4 @@ No child uses shell interpretation.
 Direct `npm.cmd` execution returned `EINVAL` in a Windows Node `v24.16.0` probe.
 The platform constraint is documented in [Node's child-process guide](https://raw.githubusercontent.com/nodejs/node/v24.0.0/doc/api/child_process.md).
 Windows command selection is tested with injected win32 on Linux in C4b and C11bc, including fixture PATH launchers for all three package managers and literal JavaScript CLI arguments.
-Real Windows process execution remains unverified under R26; the [C11bc task evidence](../tests/eval/results/tasks/T2.2.json) records this captain checklist limitation.
+Real Windows process execution remains unverified under R26; the [C11bc task evidence](../../../tests/eval/results/tasks/T2.2.json) records this captain checklist limitation.

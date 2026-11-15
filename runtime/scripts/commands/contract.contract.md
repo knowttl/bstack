@@ -7,7 +7,7 @@ node skills/maintenance/scripts/maintenance.mjs evidence collect --repo <target>
 
 Both commands require a Git working tree and accept `--contract`, defaulting to `.bstack/project.json`.
 The selected contract path resolves from the target root, independent of the caller's working directory.
-The [project schema source](../runtime/schemas/project.schema.json) owns version 1 and rejects unknown fields and versions.
+The [project schema source](../../schemas/project.schema.json) owns version 1 and rejects unknown fields and versions.
 Existing config is usable only if it expresses the entire contract without loss.
 No adapter is provided for the discovered native check configs: their rules and scripts do not express document relationships, generators and acceptance pointers.
 Unsupported formats block with the prerequisite to review a standalone contract.
@@ -17,7 +17,7 @@ Each collection has unique nonblank IDs in its own namespace.
 Documents have `id` and an existing concrete `path`.
 Scopes have `id`, nonempty `paths` globs, `documentIds` and `ruleIds`.
 Rules have `id`, an existing `path`, an opaque nonblank source `pointer`, and `checkIds` referencing leaf checks; an empty list records a judgement rule.
-Checks have `id`, a [child command](#child-commands) and nonempty `inputScopes` globs.
+Checks have `id`, a [child command](../lib/run.contract.md#child-commands) and nonempty `inputScopes` globs.
 Generators additionally have nonempty concrete `outputPaths`, which may name planned absent files.
 Acceptance sources have `id`, an existing `path` and a nonblank `pointer` identifying the authoritative acceptance section.
 Pointers identify source locations for review; this validator checks file presence, not arbitrary prose anchors or semantic correctness.
@@ -38,7 +38,7 @@ For example, save this contract in a repo with `README.md` and `src/entry.mjs`:
 ```
 
 Paths use repo-relative `/` separators, with exact case on every operating system.
-Scope and input globs reuse the [overlap matcher](#measure-and-overlap): `*` and `?` match within segments and `**` as a whole segment matches zero or more segments.
+Scope and input globs reuse the [overlap matcher](measure.contract.md#measure-and-overlap): `*` and `?` match within segments and `**` as a whole segment matches zero or more segments.
 Absolute paths, traversal, empty or dot segments, backslashes, partial globstars and bracket/brace/extglob syntax fail.
 Source pointers and generator outputs are concrete paths, without wildcards.
 Existing generator output components and the selected contract path also require exact case; absent planned output components are allowed.
@@ -51,8 +51,8 @@ The `evidence validate`, `docs check` and `docs generate` argument pairs require
 Native npm, pnpm and yarn script aliases support `run <script>`, explicit `test`/`start`/`stop`/`restart` scripts and version flags.
 For npm, script lookup uses the nearest ancestor within the repo containing `package.json` or `node_modules`, and script bodies are inspected from that directory.
 For Yarn, lookup uses the nearest ancestor within the repo containing `package.json`, without stopping at `node_modules`.
-Script bodies use the [selected integration grammar](../skills/foundation/references/checks.md#integrate-the-maintained-command), which owns token, quoting, whitespace and unsupported shell-transformation rules.
-That grammar applies to every command in pre/main/post and nested script bodies reached from checks, generators or their version probes; direct child-command arrays retain literal arguments under the [child-command contract](#child-commands).
+Script bodies use the [selected integration grammar](../../../skills/foundation/references/checks.md#integrate-the-maintained-command), which owns token, quoting, whitespace and unsupported shell-transformation rules.
+That grammar applies to every command in pre/main/post and nested script bodies reached from checks, generators or their version probes; direct child-command arrays retain literal arguments under the [child-command contract](../lib/run.contract.md#child-commands).
 The validator follows script aliases and declared npm, pnpm and yarn pre/post lifecycle scripts, rejecting cycles, missing scripts and aggregate calls.
 Declared pnpm hooks are inspected even when local configuration disables them, so enabling hooks cannot introduce aggregate recursion.
 Unsupported package-manager invocation syntax and shell programs require a reviewed direct leaf command.

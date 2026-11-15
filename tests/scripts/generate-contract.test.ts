@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import { cp, mkdir, mkdtemp, readFile, rm, writeFile } from 'node:fs/promises'
+import { cp, mkdir, mkdtemp, readFile, rm, symlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -11,8 +11,10 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 async function sandbox(t: import('node:test').TestContext, sources = ['runtime/beta.contract.md', 'install/alpha.contract.md']) {
   const directory = await mkdtemp(join(tmpdir(), 'bstack contract é '))
   t.after(() => rm(directory, { recursive: true, force: true }))
-  for (const folder of ['scripts', 'docs', 'runtime', 'install']) await mkdir(join(directory, folder))
+  for (const folder of ['scripts', 'docs', 'runtime/scripts/commands', 'install']) await mkdir(join(directory, folder), { recursive: true })
   await cp(join(root, 'scripts/generate-contract.ts'), join(directory, 'scripts/generate-contract.ts'))
+  await cp(join(root, 'runtime/scripts/lib'), join(directory, 'runtime/scripts/lib'), { recursive: true, filter: source => !source.endsWith('.contract.md') })
+  await symlink(join(root, 'node_modules'), join(directory, 'node_modules'))
   await writeFile(join(directory, 'docs/command-contract.sources.json'), JSON.stringify(sources))
   await writeFile(join(directory, 'runtime/beta.contract.md'), '## Beta\n\nBeta rule.\n')
   await writeFile(join(directory, 'install/alpha.contract.md'), '## Alpha\n\nAlpha rule.\n')
@@ -69,4 +71,33 @@ test('generation refuses a listed contract file that does not exist', async t =>
 test('the committed combined document matches the contract files', () => {
   const result = spawnSync(process.execPath, [join(root, 'scripts', 'generate-contract.ts'), '--check'], { encoding: 'utf8', cwd: tmpdir() })
   assert.equal(result.status, 0, result.stderr)
+})
+
+test('a contract link resolves in its file and is rewritten to resolve in the combined document', async t => {
+  const directory = await sandbox(t)
+  await writeFile(join(directory, 'runtime/beta.contract.md'), '## Beta\n\nSee [Alpha](../install/alpha.contract.md#alpha) and [the install folder](../install/).\n')
+  assert.equal(generate(directory).status, 0)
+  assert.match(await readFile(join(directory, 'docs/command-contract.md'), 'utf8'), /See \[Alpha\]\(#alpha\) and \[the install folder\]\(\.\.\/install\/\)\./)
+})
+
+for (const [name, link] of [
+  ['a missing file', '[Gone](../install/missing.md)'],
+  ['a missing heading in a contract file', '[Alpha](../install/alpha.contract.md#missing)'],
+  ['a path written relative to docs', '[Alpha](install/alpha.contract.md#alpha)']
+] satisfies [string, string][]) {
+  test(`generation refuses a contract link to ${name} and names the directory to link from`, async t => {
+    const directory = await sandbox(t)
+    await writeFile(join(directory, 'runtime/beta.contract.md'), `## Beta\n\nSee ${link}.\n`)
+    const result = generate(directory)
+    assert.equal(result.status, 1)
+    assert.match(result.stderr, /^runtime\/beta\.contract\.md:3: contract-link: .+\. Use a link relative to runtime that names an existing file and heading\.$/m)
+  })
+}
+
+test('generation refuses a command module without a listed contract file', async t => {
+  const directory = await sandbox(t)
+  await writeFile(join(directory, 'runtime/scripts/commands/seeded.ts'), 'export const run = () => undefined\n')
+  const result = generate(directory)
+  assert.equal(result.status, 1)
+  assert.match(result.stderr, /^runtime\/scripts\/commands\/seeded\.ts:1: command-contract-missing: .+ Use runtime\/scripts\/commands\/seeded\.contract\.md beside it and list it there\.$/m)
 })

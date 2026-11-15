@@ -15,4 +15,4 @@ Relative target paths resolve from the caller's working directory.
 Target identity is `{ mode: "repo" | "workspace", root: <absolute real path> }`.
 Links to the target share that identity.
 Draft commands do not initialise Git, create a repo or write foundation files.
-The separately selected creation operation uses the [protected project creation contract](#protected-project-creation).
+The separately selected creation operation uses the [protected project creation contract](../commands/project.contract.md#protected-project-creation).

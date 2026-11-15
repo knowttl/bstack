@@ -5,7 +5,7 @@ Absolute paths, Windows drive paths, NUL bytes and parent traversal components u
 Spaces, Unicode and metacharacters remain literal path characters.
 For a new path, resolution starts with its nearest existing parent.
 Existing links must resolve inside the target, including parents of new files.
-Dangling links are refused rather than treated as absent directories, except during [journalled-deletion recovery](#apply-dry-run).
+Dangling links are refused rather than treated as absent directories, except during [journalled-deletion recovery](../commands/apply.contract.md#apply-dry-run).
 Internal links are allowed and return their real destination.
 No validation operation creates target files or directories.
 Callers validate all inputs and paths before any write, and report every detected problem.

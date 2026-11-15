@@ -198,7 +198,10 @@ It ends with the [lint, boundary and comment checks](#lint-boundaries-and-commen
 It reports every detected problem with a stable rule code and exits 1 on failure.
 See the [package check contract](command-contract.md#package-check) for exact syntax and limits.
 Each contract is a `<source>.contract.md` file beside the command or module it describes, and the combined document joins them in the order [command-contract.sources.json](command-contract.sources.json) lists.
-Edit the contract file, never the combined document, and write its links relative to `docs/`, where the combined document lives.
+Every command module under `runtime/scripts/commands/` has one, and the generator check fails for a module without it.
+Edit the contract file, never the combined document.
+Write its links relative to the contract file, where they must resolve, and name a heading in another contract as `<file>.contract.md#heading`, since the generator rewrites every link to resolve in the combined document and turns a contract-to-contract link into a heading anchor.
+The generator check also fails on any contract link that does not resolve in either place.
 Local validation uses the [affected gate](#affected-validation) after dependency setup.
 
 ### Lint, boundaries and comments

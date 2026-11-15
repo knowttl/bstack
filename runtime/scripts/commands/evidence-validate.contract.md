@@ -68,7 +68,7 @@ After reviewing the substantive claims against the live diff, the selected revie
 The validator never writes or automatically approves the review binding.
 Repeated completed assessments have stable fingerprints.
 Changing code, source citations, the base, coverage, decisions or a no-impact reason invalidates the review.
-The review uses the [shared fingerprint contract](#fingerprints) with changed paths, policy pointers, cited sources and check inputs, plus substantive assessment data.
+The review uses the [shared fingerprint contract](../lib/fingerprint.contract.md#fingerprints) with changed paths, policy pointers, cited sources and check inputs, plus substantive assessment data.
 Explicit directory arguments in check commands, resolved package scripts and version probes contribute their file inventory to selection and freshness, including deleted tracked inputs.
 Internal directory links and command working-directory links resolve to that inventory while retaining lexical inputs.
 The selected assessment supplies `evidencePath` and its substantive fields through `inputs`.
@@ -82,4 +82,4 @@ Changed check commands require successful captures of both declarations.
 Missing, failed, unavailable, skipped or stale captures cannot pass.
 Attaching or replacing execution references does not alter the substantive review fingerprint.
 Keep assessment execution records outside leaf-check product scopes so writing capture references cannot invalidate the leaf capture.
-This validates local captures only; prior-checker execution and portable results follow the [standalone execution contract](#standalone-checker-execution).
+This validates local captures only; prior-checker execution and portable results follow the [standalone execution contract](../../../scripts/checker-entry.contract.md#standalone-checker-execution).

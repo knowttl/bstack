@@ -1,10 +1,10 @@
 ## Verification skill commands
 
 `node skills/verification/scripts/verification.mjs <command> --repo <path> [--json]` is the installed entry point of the standalone verification skill, with the same argument, target, scratch and result contracts as repo-audit.
-It runs `apply`, `state show`, `findings validate`, `rule-proof`, `baseline check`, `run-checks`, `probe record` and `probe compare` from the [shared runtime](../runtime/), following their contracts above, and adds the commands below.
+It runs `apply`, `state show`, `findings validate`, `rule-proof`, `baseline check`, `run-checks`, `probe record` and `probe compare` from the [shared runtime](../../), following their contracts above, and adds the commands below.
 `--help` lists the commands, and `<command> --help` prints that command's syntax.
 
-`kit scaffold --repo <path> --plan <file>` reads a kit plan following [the plan schema](../skills/verification/schemas/kit-plan.json) and writes a change set and findings file to scratch for review through `apply`.
+`kit scaffold --repo <path> --plan <file>` reads a kit plan following [the plan schema](../../../skills/verification/schemas/kit-plan.json) and writes a change set and findings file to scratch for review through `apply`.
 It never writes to the target.
 The change set creates `.agents/skills/verify-<app>/` with `SKILL.md`, `kit.json`, `features/README.md`, one file per feature and each helper, plus `.claude/skills/verify-<app>/SKILL.md`, and either creates `AGENTS.md` or appends one pointer line to it.
 The result carries `data.path` (the change set), `data.planDigest`, `data.files` and the exact `data.diff`.

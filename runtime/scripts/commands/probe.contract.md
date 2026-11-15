@@ -3,7 +3,7 @@
 `probe record --repo <path> --name <n> --phase before|after --spec <file> [--approved-by-user] [--json] -- <executable> [args...]` captures one live call in scratch `probe.json`.
 The command after `--` is a literal argument array, with no shell interpolation.
 All helper options precede that delimiter.
-The [descriptor schema source](../runtime/schemas/probe-spec.json) defines this input:
+The [descriptor schema source](../../schemas/probe-spec.json) defines this input:
 
 ```json
 {
@@ -27,7 +27,7 @@ A successful process alone does not prove an arbitrary printed result matches an
 Nonzero outcome assertions fail the probe, including disagreement with a mock.
 The helper captures tool version, exit code, output tails and timing through the shared child-command runner.
 
-The [record schema source](../runtime/schemas/probe-record.json) defines persisted fields.
+The [record schema source](../../schemas/probe-record.json) defines persisted fields.
 Nested descriptors and command objects are validated against the descriptor and check-plan command schemas.
 Records bind the target, name, literal command, endpoint, relevant environment, side-effect marker and assumption with a canonical SHA-256 call digest.
 Side-effecting probes refuse before version or command execution without `--approved-by-user`.

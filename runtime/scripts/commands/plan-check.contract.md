@@ -1,8 +1,8 @@
 ## Plan check
 
 `node skills/plan/scripts/plan.mjs plan check --repo <path>|--workspace <path> --plan <file> [--json]` checks a scratch plan record without target writes.
-The [plan schema source](../runtime/schemas/plan.json) owns the record's versioned fields and constraints; installed skills carry a generated copy at `schemas/plan.json`.
-Each design citation is a file citation of the [research citation check](#research-citation-check) and is resolved by the same code, so a missing or unreadable path, a line past the end, a wrong digest length, changed bytes and an unavailable revision fail with the same citation codes.
+The [plan schema source](../../schemas/plan.json) owns the record's versioned fields and constraints; installed skills carry a generated copy at `schemas/plan.json`.
+Each design citation is a file citation of the [research citation check](cite-check.contract.md#research-citation-check) and is resolved by the same code, so a missing or unreadable path, a line past the end, a wrong digest length, changed bytes and an unavailable revision fail with the same citation codes.
 Each evidence entry names a `check` or a `kit-feature` and may carry the `nonFunctionalTarget` it measures.
 Each unit records whether it is `userFacing`.
 

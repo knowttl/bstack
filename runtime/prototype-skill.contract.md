@@ -1,7 +1,7 @@
 ## Prototype skill commands
 
 `node skills/prototype/scripts/prototype.mjs <command> --repo <path> [--json]` is the installed entry point of the prototype skill, which ships only `kit check` and `kit prove`.
-Both run from the [shared runtime](../runtime/) with the contracts in the [verification skill commands](#verification-skill-commands), and the skill adds no command of its own.
+Both run from the [shared runtime](./) with the contracts in the [verification skill commands](scripts/commands/kit-scaffold.contract.md#verification-skill-commands), and the skill adds no command of its own.
 `--help` lists the commands, and `<command> --help` prints that command's syntax.
 
 The skill runs `kit check` on the target, which reads and never writes, and runs `kit prove` only on scratch clones of the target, because the proof writes its evidence into the repo it runs in.

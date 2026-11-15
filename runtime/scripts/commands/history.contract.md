@@ -25,4 +25,4 @@ Unreadable Git history returns `git: null` and a limitation.
 
 A missing remote, store, repo record or run history returns pass with zero run counts and a limitation, preserving any available Git counts.
 A run with unparseable findings or selection lists is named in `data.limitations` and excluded from readable run, finding, hotspot and step-time aggregates; it remains in the total and recorded date range.
-The command supplies aggregate evidence; the shared [history-reading reference](../runtime/references/no-mistakes-history.md) owns the procedure for reading every run and recording incomplete coverage.
+The command supplies aggregate evidence; the shared [history-reading reference](../../references/no-mistakes-history.md) owns the procedure for reading every run and recording incomplete coverage.

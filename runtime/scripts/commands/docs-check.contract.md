@@ -47,10 +47,10 @@ Synonyms, contradictory definitions and domain relevance remain reviewer judgeme
 An unrecognized glossary format reports a coverage limit while supported local links in that document are still checked.
 
 `node skills/glossary/scripts/glossary.mjs <command> --repo <path> [--json]` is the installed entry point of the standalone glossary skill.
-It runs `docs check`, `apply`, `state show` and `cite-check` from the [shared runtime](../runtime/), with the same arguments, target, scratch and result contracts as repo-audit.
+It runs `docs check`, `apply`, `state show` and `cite-check` from the [shared runtime](../../), with the same arguments, target, scratch and result contracts as repo-audit.
 
 `node skills/agents-md/scripts/agents-md.mjs <command> --repo <path> [--json]` is the installed entry point of the standalone agents-md skill.
-It runs `inventory`, [`instructions measure`](#instructions-measure), `apply` and `state show` from the shared runtime with those same contracts, and writes selected instruction-file edits and deletes a merged `CLAUDE.md` through one reviewed `apply` plan.
+It runs `inventory`, [`instructions measure`](instructions-measure.contract.md#instructions-measure), `apply` and `state show` from the shared runtime with those same contracts, and writes selected instruction-file edits and deletes a merged `CLAUDE.md` through one reviewed `apply` plan.
 
 `node skills/maintenance/scripts/maintenance.mjs <command> --repo <path> [--json]` is the installed entry point of the standalone maintenance skill.
 It runs `contract validate`, `evidence collect`, `evidence validate`, `docs check`, `docs generate`, `run-checks`, `probe record`, `probe compare`, `apply`, `state show` and `sweep` from the shared runtime with those same contracts, and ships the generated checker beside it.
