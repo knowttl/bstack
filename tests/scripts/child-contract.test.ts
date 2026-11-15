@@ -12,7 +12,6 @@ import { syncBuiltinESMExports } from 'node:module'
 import { PassThrough } from 'node:stream'
 import { runCommand } from '../../runtime/scripts/lib/run.ts'
 
-// Public fixture commands run from a target outside the checkout.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 
 type FakeChild = EventEmitter & { pid: number; exitCode: number | null; signalCode: string | null; stdout: PassThrough; stderr: PassThrough }
@@ -101,7 +100,6 @@ for (const cancelled of [false, true]) {
     const pids = JSON.parse(await readFile(join(directory, 'pids.json'), 'utf8'))
     for (const pid of pids) {
       if (process.platform === 'linux') {
-        // An orphan may briefly remain as a zombie, but it can no longer execute.
         const state = await readFile(`/proc/${pid}/stat`, 'utf8').catch(error => {
           if (error.code !== 'ENOENT') throw error
           return null

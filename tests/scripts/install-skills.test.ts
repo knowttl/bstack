@@ -4,7 +4,6 @@ import { cp, lstat, readFile, readdir, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { root, command, fixture, inventory, interrupt } from './install-fixture.ts'
 
-// The fixture ships repo-audit with its pinned runtime; verification joins it as a skill that pins none.
 async function twoSkills(t: import('node:test').TestContext) {
   const f = await fixture(t)
   await cp(join(root, 'skills/verification'), join(f.checkout, 'skills/verification'), { recursive: true })
@@ -28,7 +27,6 @@ test('a skill selected by name installs alone and runs from its installed folder
   const plan = join(f.project, 'plan.json')
   await writeFile(plan, '{}')
   const ran = command(process.execPath, [join(destination, 'scripts/verification.mjs'), 'run-checks', '--repo', f.checkout, '--plan', plan, '--json'], f.project, f.env)
-  // Validation against the installed check-plan schema names the first required field.
   assert.equal(JSON.parse(ran.stdout).problems[0].path, '$/schemaVersion', ran.stdout)
 })
 

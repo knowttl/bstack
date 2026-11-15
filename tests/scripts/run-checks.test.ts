@@ -7,7 +7,6 @@ import { spawn } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { emptyRepo, build, runVerification as run, snapshot, git } from './discovery-fixture.ts'
 
-// Exercise the installed CLI from an unrelated directory with isolated cache evidence.
 const checkout = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 
 type NativeCheck = { id: string; role: string; required: boolean; acceptanceCases: string[]; inputScopes: string[];

@@ -14,7 +14,6 @@ import type { Options } from '../lib/args.ts'
 import type { Target } from '../lib/repo.ts'
 import type { CommandReturn, Problem, Status } from '../lib/result.ts'
 
-// Literal resource URLs let the package checker verify every installed schema.
 const schemas = {
   'probe-spec': new URL('../../schemas/probe-spec.json', import.meta.url),
   'probe-record': new URL('../../schemas/probe-record.json', import.meta.url),

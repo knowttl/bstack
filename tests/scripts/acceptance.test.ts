@@ -7,7 +7,6 @@ import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { repositoryFixture } from './discovery-fixture.ts'
 
-// Commands run from the checkout while inputs remain in disposable directories.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 
 function run(...args: readonly string[]) {

@@ -16,7 +16,6 @@ type JudgeConfig = { schemaVersion: number; model: string; host: string; executa
 type CorpusEntry = { record: EvaluationRecord; transcript?: string }
 type JudgeOptions = { directory?: string; corpus?: CorpusEntry[]; human?: Pick<Answers, 'checks'> }
 
-// Stdin avoids OS argument limits; the wrapper forwards no provider diagnostics.
 const invoke = `const {readFileSync}=require('node:fs');const {spawnSync}=require('node:child_process');
 const [input,configPath]=process.argv.slice(1);const config=JSON.parse(readFileSync(configPath));
 const version=spawnSync(config.executable,config.versionArgs,{encoding:'utf8',timeout:config.timeoutMs,maxBuffer:config.outputLimitBytes});
@@ -178,7 +177,6 @@ export async function judgeAnswers(config: JudgeConfig, record: EvaluationRecord
     validateData(object({ schemaVersion: { const: 1 }, runId: text, reviewer: text, checks: scoreChecks }), answers)
     if (answers.checks.some((check) => Object.hasOwn(check, 'companionRunId'))) fail('Companion selection belongs to the retained human score, not judge output.')
     if (answers.reviewer !== `judge:${config.model}`) fail('Judge output names a different model.')
-    // The judge cannot replace machine results, even in otherwise valid output.
     const semantic = { ...record, scenario: { ...record.scenario, checks: prepared.input.checks } }
     validateScore(semantic, answers, transcript)
     return { answers, evidence: { ...evidence, toolVersion: result.toolVersion, durationMs: result.durationMs,

@@ -7,9 +7,7 @@ import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { emptyRepo, git, snapshot } from './discovery-fixture.ts'
 
-// Public commands run from outside the checkout and target.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
-// No private validator or report helper is used by these tests.
 const entry = join(root, 'skills', 'verification', 'scripts', 'verification.mjs')
 
 type Context = Awaited<ReturnType<typeof emptyRepo>> & {

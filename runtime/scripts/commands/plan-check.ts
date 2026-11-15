@@ -24,7 +24,6 @@ export async function run(options: Options<'plan'>) {
   for (const [index, unit] of plan.units.entries()) {
     const at = `$/units/${index}`
     if (!unit.evidence.length) problems.push({ code: 'unit-no-evidence', message: `Unit ${unit.id} names no check or kit feature that proves it.`, path: `${at}/evidence`, fix: 'Name the check or kit feature that proves the unit, or merge the unit into one that has evidence.' })
-    // A kit feature is a real run of the product, which a user-facing unit needs as evidence once the project has a kit.
     if (hasKit && unit.userFacing && unit.evidence.length && !unit.evidence.some((entry: { kind: string }) => entry.kind === 'kit-feature')) {
       problems.push({ code: 'unit-no-kit-feature', message: `Unit ${unit.id} is user-facing and the project has a verification kit, but no evidence names a kit feature.`, path: `${at}/evidence`, fix: 'Add a kit-feature evidence entry for the feature whose run proves the unit, including a feature the unit adds. Mark a unit that no user sees userFacing false.' })
     }
@@ -36,8 +35,7 @@ export async function run(options: Options<'plan'>) {
       citationsChecked++
     }
   }
-  // Dependencies come before dependents, so the order doubles as a build sequence for the reviewer.
-  const order: string[] = []
+  const dependencyFirstOrder: string[] = []
   const state = new Map()
   const visit = (id: string, ancestors: string[]) => {
     if (state.get(id) === 'done') return
@@ -48,9 +46,9 @@ export async function run(options: Options<'plan'>) {
     state.set(id, 'active')
     for (const dependency of units.get(id)!.dependsOn.filter(dependency => units.has(dependency))) visit(dependency, [...ancestors, id])
     state.set(id, 'done')
-    order.push(id)
+    dependencyFirstOrder.push(id)
   }
   for (const id of units.keys()) visit(id, [])
   if (problems.length) throw new CommandError('failed', problems)
-  return { inputs: { target, plan: options.plan }, data: { units: order.length, citationsChecked, order } } satisfies CommandReturn
+  return { inputs: { target, plan: options.plan }, data: { units: dependencyFirstOrder.length, citationsChecked, order: dependencyFirstOrder } } satisfies CommandReturn
 }

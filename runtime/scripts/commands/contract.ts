@@ -34,7 +34,6 @@ export async function packageManifestPath(root: string, cwd: string, name: strin
   return join(directory, 'package.json')
 }
 
-// Native script aliases are inspected without execution; opaque programs remain reviewed leaf checks.
 export async function leafCommand(root: string, command: ChildCommand, stack: string[] = [], discovery = false): Promise<LeafCommands> {
   const cwd = await resolvePath(root, command.cwd)
   await exactPathCase(root, command.cwd)

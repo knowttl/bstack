@@ -1,4 +1,3 @@
-// Status and exit code are one contract across every command.
 const exitCodes = { passed: 0, failed: 1, blocked: 2, 'usage-error': 3 }
 
 export type Status = keyof typeof exitCodes

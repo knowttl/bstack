@@ -7,11 +7,9 @@ import { CommandError } from '../lib/result.ts'
 import type { Options } from '../lib/args.ts'
 import type { CommandReturn } from '../lib/result.ts'
 
-// Locks describe resolution, rather than authored responsibility or coupling.
 const lockfiles = ['package-lock.json', 'npm-shrinkwrap.json', 'pnpm-lock.yaml', 'yarn.lock', 'bun.lock', 'bun.lockb', 'uv.lock', 'poetry.lock', 'Pipfile.lock', 'Cargo.lock', 'go.sum', 'Gemfile.lock', 'composer.lock']
 
-// Pairs grow with the square of a commit's paths, and a commit this broad is mechanical rather than a coupling signal.
-const pairPathLimit = 100
+const mechanicalCommitPathLimit = 100
 
 type Change = { oldMode: string; newMode: string; status: string; path: string; originalPath?: string }
 
@@ -120,7 +118,7 @@ export async function run(options: Options<'range' | 'exclusions'>) {
     }
     const paths = [...touched.keys()].sort()
     for (const path of paths) files.get(path).commits.push(record.commit)
-    if (paths.length > pairPathLimit) pairSkips.push(`${record.commit} (${paths.length} paths)`)
+    if (paths.length > mechanicalCommitPathLimit) pairSkips.push(`${record.commit} (${paths.length} paths)`)
     else for (let a = 0; a < paths.length; a++) for (let b = a + 1; b < paths.length; b++) {
       const sources = touched.get(paths[b])
       if (![...touched.get(paths[a])].some(source => sources.size > 1 || !sources.has(source))) continue
@@ -151,6 +149,6 @@ export async function run(options: Options<'range' | 'exclusions'>) {
     files: [...files.values()].sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0).map(file => ({ ...file, changeCount: file.commits.length })),
     coChangePairs: [...pairs.values()].map(pair => ({ ...pair, changeCount: pair.commits.length })),
     limitations: ['Only eligible blob files present at the resolved head are measured, with byte sizes from that revision. Detected lineage follows renames and stops at addition or blob/gitlink type boundaries. Deleted paths do not create rows; working-tree edits are not measured.', 'History and co-change are advisory evidence, never violations, import analysis or observed merge conflicts. Formatting exclusions are explicitly declared, not inferred from commit messages.', 'Merge signals use their first-parent diff; lineage follows every selected parent edge. Shared ancestry may support multiple surviving names, without inferring co-change from one historical path. Rename lineage is bounded by the selected range. Shallow history may omit ancestors.', 'If a path is deleted on one line of history and reused by an unrelated file, then merged with a branch that edited the old file, old-lifetime commits, rename evidence and co-change pairs can be attributed to the new file. This limitation does not change what counts as a file change.',
-      ...(pairSkips.length ? [`Co-change pairs skip ${pairSkips.length} commits that each changed more than ${pairPathLimit} measured paths, which still count toward each file's change frequency: ${pairSkips.join(', ')}. Declare a mechanical one in formattingCommits, or its generated paths in generatedPaths, to exclude it entirely.`] : [])]
+      ...(pairSkips.length ? [`Co-change pairs skip ${pairSkips.length} commits that each changed more than ${mechanicalCommitPathLimit} measured paths, which still count toward each file's change frequency: ${pairSkips.join(', ')}. Declare a mechanical one in formattingCommits, or its generated paths in generatedPaths, to exclude it entirely.`] : [])]
   } } satisfies CommandReturn
 }

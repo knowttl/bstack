@@ -8,7 +8,6 @@ import { fileURLToPath } from 'node:url'
 import { parse } from 'yaml'
 import { build, git, runVerification, snapshot } from './discovery-fixture.ts'
 
-// The prototype skill is driven through its installed folder against a fixture target whose kit the verification skill created.
 const skill = resolve(dirname(fileURLToPath(import.meta.url)), '../../skills/prototype')
 const entry = join(skill, 'scripts/prototype.mjs')
 

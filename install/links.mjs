@@ -28,12 +28,10 @@ async function verifyLink(path, saved) {
   if (canonicalJSON(await linkIdentity(path)) !== canonicalJSON(saved.link)) blocked('changed-link', 'Owned link identity or target changed.')
 }
 
-// A skill that pins no runtime has none to report.
 function runtimeReport(runtime) {
   return runtime === null ? {} : { runtime: { version: runtime, verified: true } }
 }
 
-// Link ownership covers the directory entry, never the files reached through it.
 export async function installLinks(context) {
   const { root, source, files, hashes, version, runtime, destinations, selected, child, runtimeVersion, checkPackage, authored } = context
   const data = { mode: 'link', sourceVersion: version, preview: Boolean(selected['dry-run']), destinations: [], changes: [], installations: [] }
@@ -120,7 +118,6 @@ export async function installLinks(context) {
       if (!await runtimeVersion(source, runtime)) {
         if (!journal.runtime) {
           if (await stat(join(source, 'node_modules'))) blocked('runtime-conflict', 'Source runtime appeared before preparation.')
-          // Failed stages stay available for inspection; retries never erase them.
           const stage = await mkdtemp(join(dirname(source), '.bstack-stage-'))
           journal.runtimeStage = stage
           journal.runtimeStages = [...(journal.runtimeStages ?? entry.previous?.runtimeStages ?? []), stage]

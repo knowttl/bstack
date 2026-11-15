@@ -43,7 +43,6 @@ async function repository(t: import('node:test').TestContext, files: Record<stri
 }
 
 const license = 'SPDX-License-Identifier: MIT'
-// Each language lists a clean control with every exemption, then comments that must fail.
 const languages: Record<string, { file: string; clean: string; prose: string; shebangImpostor: string; extra?: Record<string, string> }> = {
   python: {
     file: 'app.py',
@@ -572,7 +571,6 @@ for (const language of ['python', 'go', 'typescript']) {
   })
 }
 
-// Each enabled constraint has a seeded violation the one maintained command must reject with that constraint's diagnostic.
 const seeds = [
   ['SL-1 no fabricated type evidence', 'greeter/greeting.py', '\nfrom typing import cast\n\n\ndef forced(value: object) -> int:\n    return cast(int, value)\n', 'Parse at the boundary instead of casting.', ['--replacement', 'Parse at the boundary']],
   ['SL-2 no escape-hatch types in contracts', 'greeter/greeting.py', '\nfrom typing import Any\n\n\ndef anything(value: Any) -> Any:\n    return value\n', 'ANN401', ['--no-replacement', 'The native rule reports code to remove and names nothing to use instead.']],

@@ -6,7 +6,6 @@ import { hashBytes } from '../lib/fingerprint.ts'
 import type { Options } from '../lib/args.ts'
 import type { CommandReturn } from '../lib/result.ts'
 
-// Name families discover equivalent sources without claiming their content is authoritative.
 const documentNames = {
   vision: /^(?:vision|goals|purpose|product[-_ ]?requirements|requirements|prd)$/i,
   design: /^(?:design|architecture|technical[-_ ]?design|principles)$/i,
@@ -17,9 +16,7 @@ const documentNames = {
   audit: /^(?:repo[-_ ]?audit|audit|audit[-_ ]?(?:record|findings)|technical[-_ ]?debt|known[-_ ]?debt)$/i,
   context: /^readme$/i
 }
-// These names have host-specific scope and shadowing behaviour.
 const instructionNames = new Set(['AGENTS.md', 'CLAUDE.md', 'CLAUDE.local.md'])
-// Candidate removals require a fresh host check as well as author approval.
 const versionLimit = 'Claude Code versions before v2.1.277, some Amazon Bedrock or no-telemetry sessions before v2.1.281, and sessions with the built-in AGENTS.md plugin disabled may read CLAUDE.md only. Recheck official host documentation and runtime before proposing removal.'
 
 type InventoryFile = { path: string; hash: string; kind: string; directory?: string; scope?: string; insideRepo?: boolean; scoped?: boolean; local?: boolean }

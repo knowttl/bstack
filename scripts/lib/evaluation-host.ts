@@ -111,7 +111,6 @@ async function files(directory: string): Promise<string[]> {
   }
   const result = []
   for (const entry of entries.sort((a, b) => a.name.localeCompare(b.name))) {
-    // Runtime dependencies are validated by the installer, not skill discovery.
     if (entry.name === 'node_modules') continue
     const path = join(directory, entry.name)
     if (entry.isSymbolicLink()) fail(`Cannot verify discovery through a symbolic link: ${path}. Use the manual procedure.`)
@@ -126,7 +125,6 @@ async function snapshot(directory: string) {
     [path.slice(directory.length), hashBytes(await readFile(path))]))))
 }
 
-// Staged skills hash as one set, so a scenario's candidate is bound to every skill it stages.
 async function stagedHash(isolation: Isolation) {
   return hashBytes(canonicalJSON(await Promise.all(isolation.skills.map(async (skill) =>
     [skill, await snapshot(join(isolation.skillsPath, skill))]))))
@@ -245,7 +243,6 @@ export async function hostTurn(record: HostedRecord, message: string) {
       turn.sessionId = record.sessionId
     })
   } finally {
-    // The login copy exists only during a host turn, including its timeout cleanup.
     if (record.adapter.isolation.authentication === 'throwaway-codex-login') await rm(login, { force: true })
   }
 }

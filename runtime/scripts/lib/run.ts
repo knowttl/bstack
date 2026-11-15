@@ -6,7 +6,6 @@ import { resolvePath } from './paths.ts'
 import { CommandError } from './result.ts'
 import type { Target } from './repo.ts'
 
-// Keep useful output tails without letting a noisy tool exhaust memory.
 const outputLimit = 65536
 
 export type ChildCommand = { executable: string; args: readonly string[]; versionArgs: readonly string[]; cwd: string; timeoutMs?: number }

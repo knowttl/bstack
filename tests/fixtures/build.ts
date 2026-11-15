@@ -4,7 +4,6 @@ import { devNull, tmpdir } from 'node:os'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { execFileSync } from 'node:child_process'
 
-// Fixture sources belong to this checkout, regardless of the caller's directory.
 const sources = dirname(fileURLToPath(import.meta.url))
 
 type HistoryStep = { write?: Record<string, string>; remove?: string[]; paths: string[]; date: string; message: string }

@@ -7,7 +7,6 @@ import { root, fail } from './evaluation.ts'
 import { hashBytes, canonicalJSON } from '../../runtime/scripts/lib/fingerprint.ts'
 import { runCommand } from '../../runtime/scripts/lib/run.ts'
 
-// Subject and judge sessions use the same pinned disposable toolchain.
 export const image = 'bstack-eval-toolchain:node24-codex0.162.1'
 
 async function docker(args: readonly string[], timeoutMs = 120000, outputLimitBytes = 16777216): Promise<Execution> {
@@ -19,7 +18,6 @@ function completed(result: ProcessCapture, operation: string) {
   return result.stdout.trim()
 }
 
-// Both subject and judge callers own cleanup; creation verifies the shared two-mount policy.
 export async function createContainer(name: string, imageId: string, paths: readonly string[], workdir: string, env: NodeJS.ProcessEnv) {
   const mounts = paths.map((path) => ({ Type: 'bind', Source: path, Destination: path, RW: true }))
   const environment = Object.entries(env).filter(([key]) => key !== 'PATH').flatMap(([key, value]) => ['--env', `${key}=${value}`])
@@ -30,7 +28,6 @@ export async function createContainer(name: string, imageId: string, paths: read
   completed(await docker(['create', ...options, imageId, 'node', '-e', 'setInterval(() => {}, 2147483647)']), 'creation')
   const actual = JSON.parse(completed(await docker(['inspect', name]), 'inspection'))[0]
   const observed = actual.Mounts.map(({ Type, Source, Destination, RW }: (typeof mounts)[number]) => ({ Type, Source, Destination, RW }))
-  // Docker orders mounts by destination independently of their argv order.
   const byDestination = (left: (typeof mounts)[number], right: (typeof mounts)[number]) => left.Destination.localeCompare(right.Destination)
   if (canonicalJSON(observed.sort(byDestination)) !== canonicalJSON([...mounts].sort(byDestination)) || actual.Image !== imageId || actual.Config.User !== user ||
       actual.HostConfig.Privileged || actual.HostConfig.NetworkMode !== 'bridge' ||
@@ -41,9 +38,6 @@ export async function createContainer(name: string, imageId: string, paths: read
   return { name, imageId, mounts, user, network: 'bridge', privileged: false, publishedPorts: [], verified: true }
 }
 
-// Docker receives exactly two mounts and a fixed capability/network policy.
-// Inspect the created container before starting the agent, and remove it even
-// when the attached client times out or fails.
 export async function containerTurn(record: HostedRecord, args: readonly string[], env: NodeJS.ProcessEnv, capture: (result: Execution) => Promise<void>) {
   const committed = (path: string) => execFileSync('git', ['show', `${record.sourceRevision}:${path}`], { cwd: root, maxBuffer: 16777216 })
   const imageData = JSON.parse(completed(await docker(['image', 'inspect', image]), 'image inspection'))[0]
@@ -63,8 +57,6 @@ export async function containerTurn(record: HostedRecord, args: readonly string[
       completed(prepared, 'locked Python fixture preparation')
       record.fixtureRuntime = { imageId: imageData.Id, python: '3.12.15', result: prepared }
     }
-    // Query the same image, with the same two mounts and environment, rather
-    // than reporting the host CLI version as the agent version.
     const query = 'const {execFileSync}=require("node:child_process");const [executable,...args]=JSON.parse(process.argv[1]);' +
       'console.log(JSON.stringify({node:process.version,git:execFileSync("git",["--version"],{encoding:"utf8"}).trim(),' +
       'npm:execFileSync("npm",["--version"],{encoding:"utf8"}).trim(),agent:execFileSync(executable,args,{encoding:"utf8"}).trim()}))'
@@ -79,10 +71,7 @@ export async function containerTurn(record: HostedRecord, args: readonly string[
     async function assertions(input: { action: 'snapshot' } | { action: 'evaluate'; checks: Check[]; before: unknown; events: unknown[]; installer?: Execution; skills?: Record<string, string> }) {
       const path = join(record.isolation.home, 'tmp', `${name}-assertions.json`)
       const grader = join(record.isolation.home, 'tmp', `${name}-grader`)
-      // Captured traces can exceed OS argument limits, so use the existing home mount.
       try {
-        // Baselines also receive citation grading, after the subject has finished.
-        // Each citation check runs the cite-check of the skill it tests.
         if (input.action === 'evaluate') {
           input.skills = {}
           for (const skill of new Set(checks.filter((check) => check.machine.type === 'citeCheck').map(check => check.skill))) {

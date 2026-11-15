@@ -19,7 +19,6 @@ export async function resolveTarget(options: TargetOptions, { draftOnly = false 
     throw new CommandError('blocked', [{ code: 'target-unavailable', message: 'The target must be an existing directory.', fix: 'Create or select an existing directory.', path: selected }])
   }
   if (options.workspace) return { mode: 'workspace', root }
-  // Git discovery is read-only and works before the first commit.
   const env = { ...process.env, GIT_DIR: undefined, GIT_WORK_TREE: undefined, GIT_COMMON_DIR: undefined, GIT_INDEX_FILE: undefined }
   const git = spawnSync('git', ['-C', root, 'rev-parse', '--show-toplevel'], { encoding: 'utf8', env })
   if (git.error || git.status !== 0) {

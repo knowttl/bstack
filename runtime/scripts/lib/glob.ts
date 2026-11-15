@@ -40,7 +40,9 @@ function accepts(symbol: string, character: string) {
   return symbol === 'any' || (symbol === 'segment' ? character !== '/' : symbol === character)
 }
 
-// Product traversal proves intersection even for files that do not exist yet.
+const ordinaryCharacter = 'a'
+const separator = '/'
+
 // The segment state rejects empty, dot and parent segments in the witness path.
 export function sharedPath(left: PathGlob, right: PathGlob) {
   const queue = [{ a: 0, b: 0, segment: '', path: '' }]
@@ -55,8 +57,7 @@ export function sharedPath(left: PathGlob, right: PathGlob) {
     for (const edge of right.states[item.b]) if (edge.symbol === null) queue.push({ ...item, b: edge.to })
     for (const a of left.states[item.a].filter(edge => edge.symbol !== null)) {
       for (const b of right.states[item.b].filter(edge => edge.symbol !== null)) {
-        // Literals constrain a transition. Wildcard pairs need an ordinary character and a slash.
-        for (const character of new Set([a.symbol, b.symbol, 'a', '/'].filter(value => value !== 'any' && value !== 'segment'))) {
+        for (const character of new Set([a.symbol, b.symbol, ordinaryCharacter, separator].filter(value => value !== 'any' && value !== 'segment'))) {
           if (!accepts(a.symbol, character) || !accepts(b.symbol, character)) continue
           if (character === '/' && item.segment !== 'valid') continue
           const segment = character === '/' ? '' : item.segment === '' && character === '.' ? '.' : item.segment === '.' && character === '.' ? '..' : 'valid'
@@ -69,7 +70,6 @@ export function sharedPath(left: PathGlob, right: PathGlob) {
 }
 
 export function matchesPath(glob: PathGlob, path: string) {
-  // Git filenames are literal, including characters that are glob operators in declarations.
   const states = Array.from(path, (character, index) => [{ to: index + 1, symbol: character }])
   states.push([])
   return sharedPath(glob, { states, end: states.length - 1 }) !== null

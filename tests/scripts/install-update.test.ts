@@ -91,7 +91,6 @@ for (const scope of ['user', 'project']) {
     assert.equal(await readFile(outside, 'utf8'), 'Unrelated target\n')
     assert.equal(await readFile(join(f.destination, 'scratch/notes.txt'), 'utf8'), 'Unowned notes\n')
     assert.equal((await readdir(f.parent)).includes('.bstack-install.json'), false)
-    // Unowned retained content is never silently adopted on a later install.
     assert.equal(f.run(...f.args).value.problems[0].code, 'unowned-collision')
   })
 }
@@ -161,7 +160,6 @@ test('uninstall retains edited ownership until explicit hash-bound cleanup and p
   assert.deepEqual(Object.keys(record.files), ['edited.md'])
   assert.equal(record.fileVersions['edited.md'], 'v0.0.1')
   assert.equal(record.runtime, null)
-  // A directory created after runtime removal remains unowned on repeat cleanup.
   await mkdir(join(f.destination, 'node_modules'))
   await writeFile(join(f.destination, 'node_modules/keep.txt'), 'Keep runtime\n')
   const repeated = f.run(...f.args, '--uninstall')

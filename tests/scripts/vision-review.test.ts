@@ -7,7 +7,6 @@ import { fileURLToPath } from 'node:url'
 import { createHash } from 'node:crypto'
 import { spawnSync } from 'node:child_process'
 
-// Public commands run from another directory with literal Unicode and shell metacharacters.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 
 async function setup(t: import('node:test').TestContext) {
@@ -48,7 +47,6 @@ async function setup(t: import('node:test').TestContext) {
 
 test('resumed review preserves previous drafts and decisions and refuses an old round on the revised board', async t => {
   const box = await setup(t)
-  // A new process resumes an earlier build using its explicit board path.
   const accepted = await box.ingest()
   assert.equal(accepted.status, 0, accepted.stdout)
   const saved = accepted.envelope.data
@@ -131,7 +129,6 @@ test('launch reports a missing pinned runtime and preserves the draft for resume
   assert.deepEqual(await readdir(box.workspace), [])
 })
 
-// The documented digest algorithm is implemented here independently of production.
 function canonical(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`
   if (value !== null && typeof value === 'object') return `{${Object.keys(value).sort().map(key => `${JSON.stringify(key)}:${canonical((value as Record<string, unknown>)[key])}`).join(',')}}`

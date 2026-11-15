@@ -8,7 +8,6 @@ import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { parse } from 'yaml'
 
-// The skill is driven through its installed folder against synthetic host folders, never a real transcript.
 const skill = resolve(dirname(fileURLToPath(import.meta.url)), '../../skills/recall')
 const entry = join(skill, 'scripts/recall.mjs')
 

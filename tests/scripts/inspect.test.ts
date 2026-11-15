@@ -49,7 +49,6 @@ test('inspect reads nested manifests and reports missing detected prerequisites'
   assert.deepEqual(result.data.manifests.map((file: NonNullable<typeof result.data.manifests>[number]) => file.path), ['packages/web/package.json'])
   assert.ok(result.data.manifests.every((file: NonNullable<typeof result.data.manifests>[number]) => /^[a-f0-9]{64}$/.test(file.hash)))
   assert.deepEqual(result.data.prerequisites.map((tool: NonNullable<typeof result.data.prerequisites>[number]) => tool.tool), ['git', 'node', 'npm'])
-  // Preserve Git while hiding every other PATH tool for a deterministic missing-tool check.
   const gitPath = git(repo, '--exec-path')
   await writeFile(join(repo, 'uv.lock'), 'version = 1\n')
   const missing = run('inspect', repo, { ...process.env, PATH: gitPath, npm_execpath: '' })

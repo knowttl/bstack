@@ -8,7 +8,6 @@ import { createScratch } from '../lib/scratch.ts'
 import type { Options } from '../lib/args.ts'
 import type { CommandReturn } from '../lib/result.ts'
 
-// A transcript line can hold a pasted file or log, so a digest keeps each turn short and the summary quotes only a few words.
 const turnLimit = 2000
 const promptLimit = 120
 
@@ -20,7 +19,6 @@ async function* records(file: string) {
       try {
         yield JSON.parse(line)
       } catch {
-        // A session still being written can end in a partial line.
         yield null
       }
     }
@@ -30,7 +28,6 @@ async function* records(file: string) {
   }
 }
 
-// Claude Code stamps cwd on most records and Codex puts it in the first session_meta record.
 const cwdOf = (record: any) =>record?.cwd ?? (record?.type === 'session_meta' ? record.payload?.cwd : undefined)
 
 async function launchDirectory(file: string) {
@@ -54,10 +51,8 @@ async function hostDirectory(directory: string, options?: { recursive: true }) {
   }
 }
 
-// Tool calls, tool results and reasoning are left out: they carry the bulk of a transcript and little of its intent.
 const hosts = {
   'claude-code': {
-    // Claude Code keeps one folder per launch directory under projects/, named by replacing every non-alphanumeric character with a hyphen.
     async files(root: string) {
       const projects = join(process.env.CLAUDE_CONFIG_DIR ?? join(homedir(), '.claude'), 'projects')
       const name = root.replaceAll(/[^a-zA-Z0-9]/g, '-')
@@ -72,7 +67,6 @@ const hosts = {
       ? { role: record.type, text: textOf(record.message?.content) } : null
   },
   codex: {
-    // Codex keeps rollout files under sessions/YYYY/MM/DD/ and records the launch directory inside each.
     async files() {
       const sessions = join(process.env.CODEX_HOME ?? join(homedir(), '.codex'), 'sessions')
       const names = await hostDirectory(sessions, { recursive: true })
@@ -115,7 +109,6 @@ export async function run(options: Options) {
       turns.push({ ...turn, at: record.timestamp, text: cut })
     }
     const digest = join(scratch, `${host}-${basename(file, '.jsonl')}.txt`)
-    // The digest repeats transcript text, so only its owner can read it.
     await writeFile(digest, turns.map(turn => `[${turn.at ?? 'unknown time'}] ${turn.role}: ${turn.text}`).join('\n\n') + '\n', { mode: 0o600 })
     const firstPrompt = turns.find(turn => turn.role === 'user')?.text.replaceAll(/\s+/g, ' ').slice(0, promptLimit) ?? ''
     sessions.push({ host, cwd, started: started ?? null, turns: turns.length, firstPrompt, digest })

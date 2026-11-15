@@ -4,11 +4,8 @@ import { execFileSync, spawnSync } from 'node:child_process'
 import { join, matchesGlob } from 'node:path'
 import type { MachineCheck } from '../../../scripts/lib/evaluation-types.ts'
 
-// This program is passed to the existing container, without a third mount.
 const input = JSON.parse(await readFile(process.argv[1], 'utf8'))
-// Fixture equality compares exact bytes, without normalising line endings.
 const digest = (bytes: Buffer) => createHash('sha256').update(bytes).digest('hex')
-// Git supplies the tracked inventory and worktree status of repository fixtures.
 const git = (args: readonly string[]) => execFileSync('git', args, { encoding: 'utf8' })
 
 async function snapshot() {
@@ -69,11 +66,9 @@ function* shellCommands(source: string) {
   if (command.length) yield command
 }
 
-// The skill is the one the check tests: its folder name scopes the path patterns.
 function opened(machine: Extract<MachineCheck, { type: 'opened' | 'notOpened' }>, skill: string) {
   const paths: string[] = []
   let observed = false
-  // Every skill's entry helper is scripts/<skill>.mjs, and a session can run several of them.
   function helperExecution(command: string[]) {
     const [executable, script] = command.map((token: NonNullable<typeof command>[number]) => token.replaceAll('\\', '/'))
     return !/\$\(|`|</.test(command.join(' ')) && /(?:^|\/)node(?:\.exe)?$/.test(executable ?? '') && /(?:^|\/)scripts\/[a-z0-9-]+\.mjs$/.test(script ?? '')
@@ -113,7 +108,6 @@ function opened(machine: Extract<MachineCheck, { type: 'opened' | 'notOpened' }>
       }
     }
   }
-  // Match skill-relative paths too, because globstar excludes hidden install parents.
   const matches = (pattern: string) => paths.some(path => {
     const normal = path.replaceAll('\\', '/')
     if (machine.type === 'notOpened') {

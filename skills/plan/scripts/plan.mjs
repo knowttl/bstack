@@ -386,7 +386,7 @@ async function run(options) {
       citationsChecked++;
     }
   }
-  const order = [];
+  const dependencyFirstOrder = [];
   const state = /* @__PURE__ */ new Map();
   const visit = (id, ancestors) => {
     if (state.get(id) === "done") return;
@@ -397,11 +397,11 @@ async function run(options) {
     state.set(id, "active");
     for (const dependency of units.get(id).dependsOn.filter((dependency2) => units.has(dependency2))) visit(dependency, [...ancestors, id]);
     state.set(id, "done");
-    order.push(id);
+    dependencyFirstOrder.push(id);
   };
   for (const id of units.keys()) visit(id, []);
   if (problems.length) throw new CommandError("failed", problems);
-  return { inputs: { target, plan: options.plan }, data: { units: order.length, citationsChecked, order } };
+  return { inputs: { target, plan: options.plan }, data: { units: dependencyFirstOrder.length, citationsChecked, order: dependencyFirstOrder } };
 }
 
 // runtime/scripts/commands/apply.ts

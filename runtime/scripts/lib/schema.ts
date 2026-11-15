@@ -2,9 +2,7 @@ import { CommandError } from './result.ts'
 import type { Problem } from './result.ts'
 import { canonicalJSON } from './fingerprint.ts'
 
-// Only keywords exercised by installed input formats belong to this subset.
 const keywords = ['$schema', 'title', 'type', 'const', 'enum', 'properties', 'required', 'additionalProperties', 'items', 'minItems', 'minLength', 'pattern', 'uniqueItems']
-// JSON types distinguish arrays from objects and exclude JavaScript-only values.
 const types = ['object', 'array', 'string', 'number', 'integer', 'boolean', 'null']
 
 export type Schema = {

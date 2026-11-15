@@ -67,7 +67,6 @@ export function baseText(root: string, base: ComparisonBase, path: string) {
   return ''
 }
 
-// Discover prior config even when the proposed contract moved or removed its old location.
 export async function previousPolicy(root: string, base: ComparisonBase, contractPath: string, inventory: Inventory, priorPath?: string) {
   if (base.kind === 'empty-tree') return null
   const tree = readGit(root, ['ls-tree', '-r', '--name-only', '-z', base.objectId])

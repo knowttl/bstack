@@ -16,8 +16,6 @@ export function isIndirectExecutable(executable: string) {
     'cmd', 'powershell', 'pwsh', 'call', 'start'].includes(name)
 }
 
-// A bounded command grammar avoids claiming to understand arbitrary shell programs.
-// Quoted arguments are literal; shell control flow must use fail-fast && chains.
 export function integrationCommand(text: string, path: string) {
   if (text.includes('\r')) reject(path)
   text = text.replace(/^[ \t\n]+|[ \t\n]+$/g, '')

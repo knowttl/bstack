@@ -20,11 +20,8 @@ type CalibrationReport = {
   reason?: string; finishedAt?: string
 }
 
-// Adoption uses the complete retained human-scored corpus, never a selected passing subset.
 const expectedRuns = 124
-// The approved agreement threshold counts check verdicts, not whole-run verdicts or citations.
 const minimumAgreement = 0.95
-// Planning never invokes a provider; execution requires an explicit fresh output directory.
 const help = 'eval-calibrate [--judge <config.json>] [--runs <directory>] --plan [--json]\neval-calibrate [--judge <config.json>] [--runs <directory>] --output <new-directory> [--json]\nDefaults: Claude Sonnet 5.5 medium; --runs tests/eval/results/release/runs. Requires exactly 124 human-scored runs. Makes one judge call per run, stops on provider failure, never retries. Agreement below 95% fails and records disagreements.\nExamples:\n  node scripts/eval-calibrate.ts --plan --json\n  node scripts/eval-calibrate.ts --judge judge.json --output .cache/judge-calibration --json'
 
 try {
@@ -94,7 +91,6 @@ try {
           }
         }
       } catch {
-        // Never include provider diagnostics or automatically repeat a possibly billed request.
         report.reason = 'Calibration interrupted by invalid judge output or provider failure. Review saved answers and the private provider session; do not retry or tune the rubric.'
       }
       report.agreement = report.total ? report.agreed / report.total : 0

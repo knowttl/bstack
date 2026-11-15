@@ -2,7 +2,6 @@ import { readdir } from 'node:fs/promises'
 import { join, relative, sep } from 'node:path'
 import { spawnSync } from 'node:child_process'
 
-// Generated dependencies, build output and Git internals are not project evidence.
 export const excludedDirectories = new Set(['.git', 'node_modules', '.venv', 'venv', '__pycache__', 'dist', 'build', '.cache'])
 
 export async function repoFiles(root: string) {

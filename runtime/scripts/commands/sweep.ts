@@ -15,7 +15,6 @@ import type { Target } from '../lib/repo.ts'
 import type { Options } from '../lib/args.ts'
 import type { CommandReturn, Problem } from '../lib/result.ts'
 
-// A registered document's owning skill is read from its registration: the glossary field, or the conventional vision and design IDs.
 type CoverageLimit = { path?: string; reason: string }
 
 function fixFor(document?: CoveragePolicy['documents'][number]) {
@@ -51,7 +50,6 @@ function howToReadSection(text: string) {
   return lines.slice(start + 1, end < 0 ? undefined : end).join('\n')
 }
 
-// A plan is temporary: it is finished when the file its removal condition names exists, and orphaned when a design file it cites is gone or the condition cannot be read.
 async function planItems(target: Target, policy: LoadedContract) {
   const document = policy.contract.documents.find(document => document.id === 'plan')
   if (!document) return []
@@ -111,7 +109,6 @@ async function kitItems(target: Target) {
   return items
 }
 
-// A suite folder has its own prefix, so a verify- kit is never read as a suite. A missing tool leaves a suite unproven, which is a limit and not drift.
 async function formalItems(target: Target, coverageLimits: CoverageLimit[]) {
   const items = []
   const entries = await readdir(join(target.root, '.agents/skills')).catch(error => error.code === 'ENOENT' ? [] : Promise.reject(error))

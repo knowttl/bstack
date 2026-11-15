@@ -8,7 +8,6 @@ import { createHash } from 'node:crypto'
 import { spawnSync } from 'node:child_process'
 import { build, git, snapshot } from './discovery-fixture.ts'
 
-// The skill is driven only through its installed entry point, as the user's agent would.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const entry = join(root, 'skills/plan/scripts/plan.mjs')
 const sha256 = (bytes: Buffer) => createHash('sha256').update(bytes).digest('hex')
@@ -24,7 +23,6 @@ async function planCheck(t: import('node:test').TestContext, flag: string, targe
   return { exit: result.status, ...JSON.parse(result.stdout) }
 }
 
-// A citation names the first line holding the text and binds the exact bytes read.
 const citation = (bytes: Buffer, path: string, needle: string, state = { kind: 'sha256', value: sha256(bytes) }) =>
   ({ location: `${path}:${bytes.toString('utf8').split('\n').findIndex(line => line.includes(needle)) + 1}`, state })
 

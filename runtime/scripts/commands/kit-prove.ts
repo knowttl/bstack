@@ -15,11 +15,8 @@ import type { CommandSpec } from '../lib/render.ts'
 import type { Options } from '../lib/args.ts'
 import type { CommandReturn, Problem } from '../lib/result.ts'
 
-// A single doctor or drive command that outlives this limit is stuck, not slow.
 const commandTimeoutMs = 120000
-// Output beyond this size adds noise to the evidence record without adding proof.
 const outputLimit = 65536
-// A launched process that ignores the first termination signal is killed after this wait.
 const terminationGraceMs = 5000
 
 type Values = { port: number; runDir: string; evidenceDir: string }

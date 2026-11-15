@@ -41,7 +41,6 @@ export async function run(options: Options<'draft' | 'proposals'>) {
   const review = { schemaVersion: 1, runId: randomUUID(), draftRevision }
   const template = await readFile(new URL('../../assets/vision/review-template.html', import.meta.url), 'utf8')
   const slots = { PROJECT: html(proposals.project), RUN_NOTE: html(proposals.runNote), DRAFT_MARKDOWN: scriptJSON(draft.toString('utf8')), REVIEW: scriptJSON(review) }
-  // Replace once so literal slot names in project text never become template instructions.
   const board = template.replace(/const CARDS = \[[\s\S]*?\];|\{\{(PROJECT|RUN_NOTE|DRAFT_MARKDOWN|REVIEW)\}\}/g,
     (match, slot) => slot ? slots[slot as keyof typeof slots] :`const CARDS = ${scriptJSON(proposals.cards)};`)
   const scratch = await createScratch(target)

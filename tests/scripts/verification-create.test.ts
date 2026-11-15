@@ -9,7 +9,6 @@ import { join } from 'node:path'
 import { parse } from 'yaml'
 import { build, git, runVerification } from './discovery-fixture.ts'
 
-// The kit's helpers run inside the target, so they obey the target's own lint and format constraints.
 const doctorHelper = `import sys
 from urllib.request import urlopen
 
@@ -31,7 +30,6 @@ with urlopen(f"{url}/greet?name={quote(name)}", timeout=5) as response:
 Path(out).write_text(body + "\\n")
 print(body)
 `
-// The plan is what a create run writes after interviewing the fixture repo.
 const kit = '.agents/skills/verify-greeter'
 const plan = () => ({
   schemaVersion: 1,

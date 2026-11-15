@@ -10,7 +10,6 @@ import type { Findings } from './findings.ts'
 import type { Options } from '../lib/args.ts'
 import type { CommandReturn } from '../lib/result.ts'
 
-// Positions preserve an exact identity even when diagnostic text contains separators.
 type DebtEntry = { rule: string; path: string; key: string }
 
 const identity = (entry: DebtEntry) =>JSON.stringify([entry.rule, entry.path, entry.key])

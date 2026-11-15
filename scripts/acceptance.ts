@@ -7,7 +7,6 @@ import type { Problem } from '../runtime/scripts/lib/result.ts'
 import { releaseGate } from './lib/release-evidence.ts'
 import { correctedScore, validateScore } from './lib/evaluation-scoring.ts'
 
-// Final selections are explicit inputs, independent of run history ordering.
 const help = 'acceptance --check-registry [--registry <file>] [--json]\nacceptance --selections <file> [--results <directory>] [--json]\nacceptance --release <version> --candidate <commit> --checks <file> [--results <directory>] [--json]\nRelease reads ledger.jsonl and candidate-bound hard-break checks, writes release/<version>.json, and reports any scenarios needing five confirmation runs. It never starts model sessions.'
 
 async function selections(path: string, results: string) {

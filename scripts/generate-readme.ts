@@ -2,9 +2,7 @@ import { readdir, readFile, writeFile } from 'node:fs/promises'
 import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 
-// The README and skills resolve from this checkout, independent of the caller's directory.
 const root = join(dirname(fileURLToPath(import.meta.url)), '..')
-// The table between these markers is the only generated part of the README.
 const markers = ['<!-- skills-table:start -->', '<!-- skills-table:end -->']
 
 async function skillRows() {

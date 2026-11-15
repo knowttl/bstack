@@ -6,7 +6,6 @@ import { tmpdir } from 'node:os'
 import { fileURLToPath, pathToFileURL } from 'node:url'
 import { spawnSync } from 'node:child_process'
 
-// The builder and source byte contract are anchored to this checkout.
 const sources = resolve(dirname(fileURLToPath(import.meta.url)), '../fixtures')
 
 function build(t: import('node:test').TestContext, name: string, env = process.env) {

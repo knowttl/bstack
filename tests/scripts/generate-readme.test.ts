@@ -6,7 +6,6 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 
-// Test the command in a disposable checkout, including paths with spaces and Unicode.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 
 const readme = '# Demo\n\n<!-- skills-table:start -->\n<!-- skills-table:end -->\n\nFooter\n'

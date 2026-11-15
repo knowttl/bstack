@@ -6,11 +6,9 @@ import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { repositoryFixture, git } from './discovery-fixture.ts'
 
-// Impact tests use the real command in a disposable checkout, without agent hosts.
 const root = fileURLToPath(new URL('../..', import.meta.url))
 const definitions = JSON.parse(await readFile(join(root, 'tests/eval/scenarios/scenarios.json'), 'utf8')).scenarios
 const skillNames = Object.keys(JSON.parse(await readFile(join(root, 'runtime/skills.json'), 'utf8')))
-// Scenarios that stage a skill, so a change to that skill selects exactly these.
 const staging = (skill: string) => definitions.filter((item: NonNullable<typeof definitions>[number]) => item.mode !== 'without' &&
   (item.checkpoints.at(-1) === 'final' || item.skills.includes(skill))).map((item: ReturnType<typeof JSON.parse>) => item.id)
 
@@ -152,7 +150,6 @@ for (const [direction, heading, keys] of [
   })
 }
 
-// Change one module or protocol at a time so another changed input cannot mask a missing dependency.
 for (const [key, bundling] of [
   ['scripts/dispatch.ts', skillNames],
   ['scripts/commands/apply.ts', ['vision', 'glossary', 'architecture', 'foundation', 'maintenance', 'agents-md', 'verification', 'plan']],

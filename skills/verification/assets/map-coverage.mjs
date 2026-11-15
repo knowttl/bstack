@@ -27,14 +27,12 @@ function touches(patterns, path) {
   return parts.some((_, index) => patterns.some(candidate => candidate.test(parts.slice(0, index + 1).join('/'))))
 }
 
-// A declaration line lists backticked values after its label, and exactly one such line must exist.
 function declared(lines, label) {
   const declarations = lines.filter(candidate => candidate.startsWith(`${label}:`))
   if (declarations.length !== 1 || !new RegExp(`^${label}: \`[^\`\\r\\n]+\`(?:, \`[^\`\\r\\n]+\`)*$`, 'u').test(declarations[0])) return null
   return [...declarations[0].matchAll(/`([^`]+)`/g)].map(match => match[1])
 }
 
-// A kit feature is current when its own file changed, and a suite property when one of its model files did.
 const kinds = {
   kit: {
     rule: 'feature-map-coverage', folder: 'features', unit: 'feature', trailer: 'No-map-impact', updates: 'this feature file',

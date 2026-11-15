@@ -7,7 +7,6 @@ import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 
-// Tests invoke the public fixture command from outside the checkout.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 
 async function sandbox(t: import('node:test').TestContext) {

@@ -6,7 +6,6 @@ import { fileURLToPath } from 'node:url'
 import { createHash } from 'node:crypto'
 import { emptyRepo, build, run, runVerification, git, snapshot } from './discovery-fixture.ts'
 
-// The installed commands are exercised together without importing their internals.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 
 function hash(bytes: string | Buffer | null) { return bytes === null ? null : createHash('sha256').update(bytes).digest('hex') }

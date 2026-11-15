@@ -250,7 +250,6 @@ for (const boundary of ['link-runtime', 'link-activate', 'link-unlink']) {
     delete f.env.NODE_OPTIONS
     await writeFile(join(f.source, 'scratch-note'), 'Target content\n')
     if (boundary !== 'link-unlink') {
-      // An authored source change cannot silently complete an interrupted install.
       assert.equal(f.run(...operation).value.problems[0].code, 'journal-source-changed')
       await rm(join(f.source, 'scratch-note'))
       await writeFile(join(f.source, 'node_modules/keep.txt'), 'Target content\n')

@@ -9,7 +9,6 @@ import { cloneRepository, cloneSeed } from './fixture-seed.ts'
 
 type Snapshot = { [name: string]: string | { link: string } | Snapshot }
 
-// Tests execute the installed interface from a disposable cwd.
 const checkout = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 
 export function git(repo: string, ...args: readonly string[]) {

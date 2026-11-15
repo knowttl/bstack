@@ -22,7 +22,6 @@ const tasks = new Set<string>()
 
 try {
   base = git('merge-base', 'origin/main', 'HEAD').trim()
-  // Include staged paths even when their contents have been restored only in the worktree.
   paths = [...new Set([
     ...git('diff', '--name-only', '--no-renames', '-z', base, '--').split('\0'),
     ...git('diff', '--cached', '--name-only', '--no-renames', '-z', base, '--').split('\0'),

@@ -5,7 +5,6 @@ import { userInfo } from 'node:os'
 import { execFileSync } from 'node:child_process'
 import { maintenanceSession } from './maintenance-session.ts'
 
-// Modes emulate only the external host's conversation and failure boundary.
 const args = process.argv.slice(2)
 if (args.includes('--version')) {
   console.log('fake-codex 1')

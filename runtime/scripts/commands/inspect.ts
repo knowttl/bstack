@@ -9,7 +9,6 @@ import type { SpawnSyncReturns } from 'node:child_process'
 import type { Options } from '../lib/args.ts'
 import type { CommandReturn, Problem } from '../lib/result.ts'
 
-// Manifest detection describes the starting stack without executing project code.
 const manifests = new Set(['package.json', 'package-lock.json', 'npm-shrinkwrap.json', 'pnpm-lock.yaml', 'yarn.lock', 'bun.lock', 'bun.lockb', 'pyproject.toml', 'requirements.txt', 'Pipfile', 'Pipfile.lock', 'uv.lock', 'poetry.lock', 'Cargo.toml', 'Cargo.lock', 'go.mod', 'go.sum', 'Gemfile', 'Gemfile.lock', 'composer.json', 'composer.lock'])
 
 export async function run(options: Options) {

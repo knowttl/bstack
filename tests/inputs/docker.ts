@@ -1,5 +1,4 @@
 #!/usr/bin/env node
-// External Docker boundary for CLI tests; real release captures use Docker.
 import { appendFileSync, readFileSync, readdirSync, writeFileSync, rmSync } from 'node:fs'
 import { join } from 'node:path'
 import { spawnSync } from 'node:child_process'

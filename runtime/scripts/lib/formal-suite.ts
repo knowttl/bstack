@@ -13,11 +13,8 @@ import { readGit } from './discovery.ts'
 import { bullets, commandLines, link } from './render.ts'
 import schema from '../../schemas/formal-plan.json' with { type: 'json' }
 
-// Every suite file other than model files lives at one of these suite-relative paths.
 const gatePath = posix.join('scripts', 'map-coverage.mjs')
-// The suite plan is the one source for every rendered file, so its name is fixed.
 const planPath = 'suite.json'
-// Generated text is the contract between the plan and the next agent, so its wording lives here once.
 const honestLimits = [
   'A pass covers the model within its bounds, not the whole system.',
   'No tool connects a model to the code, so the model stays true only through the coverage gate and review.',
@@ -56,7 +53,6 @@ export function modelPath(suite: string, name: string) {
   return `${suite}/model/${name}`
 }
 
-// A source path covers a file when it matches the file or any directory above it, as the coverage gate reads it.
 export function coversFile(glob: PathGlob, file: string) {
   return file.split('/').some((_, index, parts) => matchesPath(glob, parts.slice(0, index + 1).join('/')))
 }
@@ -92,7 +88,6 @@ export function validateFormalPlan(plan: FormalPlan) {
       const name = modelPath(suite, file.name)
       if (modelNames.has(name)) invalid('duplicate-model-file', `Model file ${file.name} is used by more than one entry.`, `${at}/modelFiles`)
       modelNames.add(name)
-      // TLC reads the module named by its file, so a mismatch fails at run time with a message that hides the cause.
       if (file.name.endsWith('.tla') && !new RegExp(`^-{4,} MODULE ${file.name.slice(0, -4)} -{4,}\\s*$`, 'mu').test(file.content)) {
         invalid('module-name-mismatch', `${file.name} has no module header naming ${file.name.slice(0, -4)}.`, `${at}/modelFiles`)
       }
@@ -120,7 +115,6 @@ export async function readFormalPlan(root: string, target: string) {
   return plan
 }
 
-// A step names a line that must still exist, so a deleted or truncated file is reported before a reader trusts the table.
 export async function stepProblems(root: string, plan: FormalPlan) {
   const problems: Problem[] = []
   for (const property of plan.properties) {
@@ -148,16 +142,12 @@ function gitOutput(root: string, args: string[]) {
   return result.stdout
 }
 
-// The gate diffs from the merge base and the cited-line check reads only the current file, so a change that already reached the base branch is invisible to both.
-// A property records the commit its model was last confirmed at, and the question is whether its source paths differ between that commit and HEAD.
-// A proposed commit replaces every recorded one, so maintain can run the whole check against the commit it would record before it records it.
 export function syncProblems(root: string, plan: FormalPlan, proposed?: string) {
   const suite = suiteDirectory(plan.target)
   const hasCommit = (sha: string) => readGit(root, ['cat-file', '-e', `${sha}^{commit}`]).status === 0
   if (proposed !== undefined && !(/^[0-9a-f]{40}$/u.test(proposed) && hasCommit(proposed))) {
     throw new CommandError('usage-error', [{ code: 'invalid-sync-commit', message: `${proposed} is not a full lowercase commit hash that this repo has.`, fix: 'Supply --sync-commit with the 40-character hash of a commit in this repo.' }])
   }
-  // The suite folder's last commit is the best stand-in for a missing sync commit, and its absence means nothing was committed yet.
   const log = readGit(root, ['log', '-1', '--format=%H', '--', suite])
   const fallback = log.status === 0 && log.stdout.trim() ? log.stdout.trim() : null
   const changedFiles = new Map<string, string[]>()
@@ -189,14 +179,12 @@ export function syncProblems(root: string, plan: FormalPlan, proposed?: string) 
   return problems
 }
 
-// Backticks mark every path, command and diagnostic so a reader and the gate parse the same spans.
 const code = (text: string) => `\`${text}\``
 
 function tableRows(property: FormalProperty) {
   return property.steps.map(step => `| ${code(step.action)} | ${code(step.code)} | ${step.atomicBecause} |`)
 }
 
-// The table is rendered under its own heading so formal check can compare it apart from the rest of the file.
 export const tableHeading = '## Transition table'
 
 export function propertyDocument(property: FormalProperty) {

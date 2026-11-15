@@ -7,14 +7,12 @@ import { createHash } from 'node:crypto'
 import { spawnSync } from 'node:child_process'
 import { emptyRepo, snapshot } from './discovery-fixture.ts'
 
-// The skill is driven only through its installed entry point, as the user's agent would.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const entry = join(root, 'skills/agents-md/scripts/agents-md.mjs')
 function hash(value: string | Buffer): string
 function hash(value: null): null
 function hash(value: string | Buffer | null): string | null
 function hash(value: string | Buffer | null) { return value === null ? null : createHash('sha256').update(value).digest('hex') }
-// The documented digest algorithm is implemented here independently of production.
 function canonical(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`
   if (value !== null && typeof value === 'object') return `{${Object.keys(value).sort().map(key => `${JSON.stringify(key)}:${canonical((value as Record<string, unknown>)[key])}`).join(',')}}`
@@ -28,7 +26,6 @@ function agentsMd(directory: string, args: readonly string[]) {
   return { exit: result.status, ...JSON.parse(result.stdout) }
 }
 
-// Writes the findings and change set an agent records in scratch after the author approves the exact bytes.
 async function approvedPlan(directory: string, repo: string, edits: ({ path: string; original: string; proposed: string; } | { path: string; original: string; proposed: null; })[], mode: string) {
   const paths = edits.map((edit) => edit.path)
   const target = { mode, root: repo, revision: null }

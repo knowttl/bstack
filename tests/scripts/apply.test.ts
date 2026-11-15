@@ -24,7 +24,6 @@ type ApplyContext = Awaited<ReturnType<typeof emptyRepo>> & {
   plan: { schemaVersion: number; target: ReturnType<typeof JSON.parse>; findings: string; findingsDigest: string;
     selectedFindingIds: string[]; reviewedScope: { path: string; resolvedPath: string }[]; edits: Edit[]; planDigest: string }
 }
-// The documented digest algorithm is implemented here independently of production.
 function canonical(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`
   if (value !== null && typeof value === 'object') return `{${Object.keys(value).sort().map(key => `${JSON.stringify(key)}:${canonical((value as Record<string, unknown>)[key])}`).join(',')}}`

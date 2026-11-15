@@ -7,7 +7,6 @@ import { resolveTarget } from '../../runtime/scripts/lib/repo.ts'
 import { resolvePath } from '../../runtime/scripts/lib/paths.ts'
 import { createScratch } from '../../runtime/scripts/lib/scratch.ts'
 
-// This public test command exercises C4a before production dispatch lands in C4c.
 const argv = process.argv.slice(2)
 let inputs = {}
 try {

@@ -28,7 +28,6 @@ function blocked(code, message, fix) {
   throw new CommandError('blocked', [{ code, message, fix }])
 }
 
-// The pipeline docs gate needs the structural checks on the current tree, with no base, assessment or leaf execution.
 export async function runDocsOnly(options) {
   if (options.workspace || options.base || options.assessment) throw new CommandError('usage-error', [{
     code: 'docs-only-input', message: '--docs-only checks the current tree and takes no base or assessment.',
@@ -48,7 +47,6 @@ export async function runChecker(options, { comparisonPolicy = false } = {}) {
     fix: 'Supply --repo <path> --base <ref> --assessment <file> [--contract <path>].' }])
   const target = await resolveTarget(options)
   options = { ...options, assessment: await resolveLinks(resolve(options.assessment)) }
-  // The explicitly selected record carries any reconciled custom prior path.
   const selected = await readFile(options.assessment, 'utf8').then(JSON.parse).catch(() => null)
   if (selected?.previousContract) options['previous-contract'] = selected.previousContract
   const preflight = await validateEvidence({ ...options, preflight: true })
@@ -132,7 +130,6 @@ export async function runChecker(options, { comparisonPolicy = false } = {}) {
   return saveResult({ ...validated, status, data })
 }
 
-// Importing the bundled validators never starts the aggregate.
 if (process.argv[1] && await resolveLinks(resolve(process.argv[1])) === fileURLToPath(import.meta.url)) {
   const argv = process.argv.slice(2)
   if (argv.length === 1 && argv[0] === '--help') console.log('Usage: node .bstack/bin/bstack-check.mjs --repo <path> --base <ref> --assessment <file> [--contract <path>] [--json]\n       node .bstack/bin/bstack-check.mjs --repo <path> --docs-only [--contract <path>] [--json]\nWith --docs-only, check registered document links, glossary structure and generated sections in the current tree without a base or assessment, fail when the loaded instructions measure more bytes than instructions.baseline records, and validate the constraint ledger at .bstack/constraints.json when the repo has one.')
