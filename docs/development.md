@@ -63,6 +63,8 @@ Use `--scope user --host agents` for the current home, or `--host claude` for Cl
 Each skill keeps its own ownership and journal records beside the skill folders, so updating or uninstalling one skill leaves the others untouched.
 A skill without a `package.json` pins no runtime and skips npm installation of skill dependencies.
 Node 24 or later, Git and npm are prerequisites.
+Node 24.0 to 24.2 print an ExperimentalWarning on stderr when the installer runs from the checkout, because Node strips its TypeScript at load; the warning is harmless, and Node 24.3 or later prints none.
+Keep the checkout outside any `node_modules` directory: Node refuses to strip types for files there and fails with `ERR_UNSUPPORTED_NODE_MODULES_TYPE_STRIPPING`.
 The installer stages the authored package, installs the locked runtime with npm and validates it before activation.
 An occupied unowned destination blocks installation.
 For an update, select the desired source revision and rerun the same command.
