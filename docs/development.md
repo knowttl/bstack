@@ -570,6 +570,7 @@ node skills/verification/scripts/verification.mjs comment-check generate --repo 
 
 Its fixture acceptance needs Git, Python 3, Ruff and Go on `PATH`, and the TypeScript comment-checker test needs the `ts-shop` fixture's npm install.
 `npm test -- --task verification-constraints` also proves the TypeScript mappings of SL-1, SL-2 and SL-3 through `rule-proof` on the `ts-slop` fixture, which needs that fixture's npm install.
+The same task proves the TypeScript mappings of SL-10, SL-11 and SL-12 on the `ts-types` fixture, which needs its npm install.
 
 ### formal-verification
 

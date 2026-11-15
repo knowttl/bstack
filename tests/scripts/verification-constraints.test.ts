@@ -634,3 +634,32 @@ test('every TypeScript rule mapped to SL-1, SL-2 and SL-3 accepts the clean fixt
     await rm(violation, { recursive: true })
   }
 })
+
+const typescriptTypeSeeds = [
+  ['SL-10 added variant', 'src/shape.ts', "export type Shape =", "export type Shape = { kind: 'triangle'; base: number; height: number } |", "not assignable to parameter of type 'never'", ['--no-replacement', 'Add the missing variant branch; no type or function replaces the unhandled branch.']],
+  ['SL-11 swapped order ID', 'src/order.ts', "shipment(parseOrderId('order-1'),", "shipment(parseCustomerId('customer-1'),", 'TS2345:', ['--replacement', 'OrderId']],
+  ['SL-11 swapped customer ID', 'src/order.ts', "parseCustomerId('customer-1'))", "parseOrderId('order-1'))", 'TS2345:', ['--replacement', 'CustomerId']],
+  ['SL-11 bare string', 'src/order.ts', "shipment(parseOrderId('order-1'),", "shipment('order-1',", 'TS2345:', ['--replacement', 'OrderId']],
+  ['SL-12 implicit any', 'src/order.ts', 'initial(name: string | null)', 'initial(name)', 'TS7006:', ['--no-replacement', 'Add the missing parameter annotation; no existing type or function is prescribed by this diagnostic.']],
+  ['SL-12 unchecked null', 'src/order.ts', "name === null ? '' : name.charAt(0)", 'name.charAt(0)', 'TS18047:', ['--no-replacement', 'Add the missing null handling; no type or function replaces the nullable value.']]
+] satisfies [string, string, string, string, string, string[]][]
+
+for (const [name, path, before, after, diagnostic, replacement] of typescriptTypeSeeds) {
+  test(`${name} accepts the clean control and rejects its seeded violation through the maintained command`, async t => {
+    const f = await scratch(t)
+    const valid = build(t, 'ts-types')
+    const violation = join(f.directory, 'violation')
+    await cp(valid, violation, { recursive: true, verbatimSymlinks: true })
+    const source = await readFile(join(violation, path), 'utf8')
+    await writeFile(join(violation, path), source.replace(before, after))
+    const checkPlan = join(f.directory, 'check-plan.json')
+    await writeFile(checkPlan, JSON.stringify({ schemaVersion: 1, changeKind: 'document-config', acceptanceSources: [{ id: 'design', path: 'tsconfig.json', contentHash: '0'.repeat(64) }],
+      acceptanceCases: [{ id: 'constraint', sourceId: 'design', pointer: 'compilerOptions.strict', outcome: name, userJourney: false }],
+      checks: [{ id: 'maintained', role: 'outcome', required: true, acceptanceCases: ['constraint'], inputScopes: ['**'],
+        command: { executable: 'npm', args: ['run', 'check'], cwd: '.', versionArgs: ['--version'] } }] }))
+    const proof = runVerification('rule-proof', valid, f.env, ['--check-plan', checkPlan, '--check-id', 'maintained', '--valid', valid, '--violation', violation, '--expect', diagnostic, ...replacement])
+    assert.equal(proof.exit, 0, `${name}: ${JSON.stringify(proof)}`)
+    assert.deepEqual(proof.data.cases.map((item: NonNullable<typeof proof.data.cases>[number]) => [item.kind, item.status, item.execution.exitCode === 0]), [['valid', 'passed', true], ['violation', 'passed', false]])
+    assert.match(proof.data.cases[1].execution.stdout, new RegExp(`${path}:\\d+: TS\\d+: `))
+  })
+}
