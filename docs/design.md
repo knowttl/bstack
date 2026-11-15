@@ -2235,7 +2235,7 @@ The agent must receive board verdicts and revise the draft before it reports tha
 The board generator must escape inserted text safely.
 Test it with quotes, backticks and HTML characters.
 
-New bstack runtime helper scripts use JavaScript on Node, following D3.
+New bstack runtime helper scripts are strict TypeScript in erasable syntax, run directly by Node 24 and compiled into each skill's JavaScript bundle, following D3 as superseded in the decision history.
 Repository tests and development tooling use strict TypeScript with native Node 24 execution.
 Target repos keep their own language and native check tools.
 The installer checks the supported Node version and tells users exactly which prerequisites are missing.
@@ -2566,7 +2566,7 @@ Historical entries keep their original decisions and name their current applicat
 |---|---|---|
 | D1 | Public personal GitHub repo named `bstack`, MIT licence | Applies to this release |
 | D2 | `/bstack` router | Superseded by R12, `repo-audit` uses native host invocation |
-| D3 | Preserve imported script languages; runtime helpers use JavaScript on Node, repository tests and development tooling use strict TypeScript | Runtime prerequisites stay unchanged; Node 24 executes repository TypeScript directly |
+| D3 | Preserve imported script languages; runtime helpers use JavaScript on Node, repository tests and development tooling use strict TypeScript | Superseded by the TypeScript conversion in #160 and #161: the shared runtime and its commands are strict TypeScript in erasable syntax, run directly by Node 24 from a checkout and compiled into each skill's JavaScript bundle; the installer and other untyped scripts stay JavaScript ES modules. Runtime prerequisites stay unchanged; Node 24 executes repository TypeScript directly |
 | D4 | Explicit invocation, staying on is opt-in | Explicit invocation applies, sticky workflow execution is excluded by R12 |
 | D5 and D6 | Include broader support skills, keep Anthropic's skill-creator unchanged | Outside the release scope in the summary; R29 commissions standalone verification separately and R31 commissions the split skills |
 | V1 | no-mistakes owns final review and delivery | Mandatory dependency superseded by R12, delivery is project-owned |
