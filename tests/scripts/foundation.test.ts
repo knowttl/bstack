@@ -4,7 +4,6 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 
-// Each skill is driven only through its installed entry point, as the user's agent would.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 
 function commands(skill: string) {

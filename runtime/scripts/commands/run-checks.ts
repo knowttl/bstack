@@ -144,7 +144,7 @@ export async function run(options: Options<'plan' | 'phase' | 'prior-run'>) {
   let prior = null
   if (phase === 'after' && ['bug-fix', 'refactor'].includes(plan.changeKind)) {
     if (options['prior-run']) {
-      try { prior = JSON.parse(await readFile(join(await scratchDirectory(target, options['prior-run']), 'checks.json'), 'utf8')) } catch { /* Missing or malformed capture cannot satisfy a prerequisite. */ }
+      try { prior = JSON.parse(await readFile(join(await scratchDirectory(target, options['prior-run']), 'checks.json'), 'utf8')) } catch {}
     }
     if (!prior || prior.schemaVersion !== 1 || prior.phase !== 'before' || prior.planDigest !== planDigest || prior.originalState?.state.root !== target.root || prior.status !== 'passed' || prior.finalState?.fingerprint !== prior.originalState?.fingerprint || !prior.completedAt || prior.completedAt > startedAt) {
       problem('missing-prior-evidence', 'The change needs a completed passing before capture for this target and exact plan.')

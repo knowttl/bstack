@@ -30,7 +30,6 @@ type BatchInputs = Pick<EvaluationRecord, 'scenario' | 'request' | 'adapter' | '
   fixture: Pick<EvaluationRecord['fixture'], 'revision'>
 }
 
-// Impact selection reads Git inputs without starting an evaluation host.
 const affectedHelp = 'eval affected --base <commit> [--json]\nLists changed paths, skill section keys and affected scenarios, including uncommitted changes. Unmapped keys select every scenario.\nExamples:\n  npm run eval -- affected --base HEAD\n  npm run eval -- affected --base main --json'
 
 async function affected(opts: EvalOptions) {
@@ -39,13 +38,9 @@ async function affected(opts: EvalOptions) {
   return affectedScenarios(root, opts.base!, definitions)
 }
 
-// Manual runs remain separate from task evidence and final selections.
 const defaultResults = join(root, 'tests', 'eval', 'results', 'runs')
-// Judge grading remains explicit so callers can audit answers before score publication.
 const judgeHelp = 'eval judge --run <id> [--judge <config.json>] [--transcript <manual-file>] [--results <directory>] [--json]\nDefault: Claude Sonnet 5.5 medium in the disposable container. Writes answers.json for eval score; real calibration must pass before release adoption.\nExamples:\n  npm run eval -- judge --run <id> --json\n  npm run eval -- judge --run <id> --judge judge.json --results <directory> --json'
-// Batch capture and grading are separate until the judge is available.
 const batchHelp = 'eval batch --tier smoke|full --mode without|with --adapter <file> [--repeat 5] [--concurrency 6] [--scenario <id,id>] [--stage <checkpoint>] [--results <directory>] [--json]\neval batch --batch <id> [--results <directory>] [--json]\nConcurrency: 1 to 6. Stage defaults to each scenario\'s last checkpoint. Captures all scripted replies and closes every host. Score pending runs with eval score, then finalize with --batch to append aggregate ledger lines.\nExamples:\n  npm run eval -- batch --tier smoke --mode without --adapter tests/eval/adapters/codex.json\n  npm run eval -- batch --tier full --scenario ambiguous-idea,clear-goals --stage baseline --mode without --adapter tests/eval/adapters/codex.json --repeat 3 --concurrency 2\n  npm run eval -- batch --batch <id>'
-// Adapter runs capture host turns, while unsupported hosts retain the manual interface.
 const help = 'eval --scenario <id> --mode without|with --stage <checkpoint> --adapter <file> [--repo <maintained-fixture>] [--results <directory>] [--json]\neval --manual --scenario <id> --mode without|with --stage <checkpoint> --agent <name> --model <name> [--invocation <explicit-command>] [--results <directory>] [--json]\neval turn --run <id> --answer <one-based-script-index> [--results <directory>] [--json]\neval close --run <id> [--results <directory>] [--json]\neval score --run <id> --answers <file> --transcript <file> [--results <directory>] [--json]\neval correct --run <id> --correction <file> [--results <directory>] [--json]\neval compare --without <id> --with <id> [--results <directory>] [--json]\n--repo reuses an explicit disposable maintained fixture for a final adapter follow-up; the caller owns its preservation and cleanup.'
 
 async function child(executable: string, args: readonly string[], targetRoot = root): Promise<Execution> {
@@ -94,7 +89,6 @@ async function start(opts: EvalOptions, results: string, frozen: FrozenRun | nul
   if (opts.mode === 'with' && definition.invocation === 'explicit' && !opts.invocation?.trim()) fail('An ordinary with-skill run requires --invocation for the current host.', 'usage-error')
   if (opts.invocation && (opts.mode === 'without' || definition.invocation === 'implicit')) fail('Baseline and implicit runs use the outcome request without --invocation.', 'usage-error')
   if (opts.repo && (!adapter || opts.stage !== 'final')) fail('--repo requires a final-stage adapter follow-up.', 'usage-error')
-  // A batch checks its resource budget once before creating any run resources.
   if (adapter && !frozen) await capacity()
   const git = await child('git', ['rev-parse', 'HEAD'])
   const revision = git.stdout.trim()
@@ -155,7 +149,6 @@ async function start(opts: EvalOptions, results: string, frozen: FrozenRun | nul
 }
 
 async function captureTurn(record: HostedRecord, message: string, directory: string) {
-  // Retain even failed host output as evidence rather than manufacturing a score.
   try {
     await hostTurn(record, message)
     record.reason = 'Host turn captured. Deliver the next scripted answer with eval turn, then score the transcript.'
@@ -224,7 +217,6 @@ async function batch(opts: EvalOptions, results: string) {
     const stage = opts.stage ?? definition.checkpoints.at(-1)!
     const fixtureRevision = await fixtureHash(definition.fixture)
     const mode = definition.mode ?? opts.mode!
-    // Each scenario is bound to the skills it stages, so the hash is per scenario.
     skillHashes[id] = mode === 'with' ? candidateSkillHash(candidate, await evaluatedSkills(definition, stage)) : null
     frozen[id] = { candidate, skillHash: skillHashes[id], definition, adapter, stage, fixtureRevision, mode }
   }
@@ -307,7 +299,6 @@ async function finishBatch(batch: BatchRecord, results: string) {
     return { status: 'blocked', batch: batch.id, ledger, runIds: batch.runIds, pending, errors, checks: entries,
       reason: 'Score every completed conversation with eval score, then finalize with eval batch --batch <id> using the same --results directory. Failed captures require a fresh batch.' }
   }
-  // Serialize ledger writers without making a second command wait or retry.
   const lock = `${ledger}.lock`
   let owned = false
   let interrupted = 0
@@ -349,7 +340,6 @@ async function load(results: string, id?: string) {
 
 async function saveRecord(record: EvaluationRecord, directory: string, flag?: string) {
   const content = JSON.stringify(record, null, 2) + '\n'
-  // Open run records are private operational state required for resume and isolation checks.
   const evidence = record.adapter && !record.isolation.cleanedAt && !record.transcript ? content : redactEvidence(content, record)
   await writeFile(join(directory, 'run.json'), evidence, { flag })
   return JSON.parse(evidence)
@@ -496,7 +486,6 @@ try {
     emitResult({ command: `eval ${command}`, status: data.status, data }, opts.json)
   }
 } catch (error) {
-  // Bad manual evidence must leave the saved run blocked rather than imply a result.
   emitResult({ command: 'eval', status: (error as { status?: string }).status === 'usage-error' ? 'usage-error' : 'blocked',
     problems: (error as { problems?: Problem[] }).problems ?? [{ code: 'evaluation-blocked', message: (error as Error).message, fix: 'Follow docs/evaluation.md and retry with complete evidence.' }] }, process.argv.includes('--json'))
 }

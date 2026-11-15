@@ -14,7 +14,6 @@ try {
   let data
   if (options.mode === 'run') {
     const readinessDirectory = input.cancelDirectory ?? input.timeoutDirectory
-    // Let the fixture become ready before triggering timeout or cancellation.
     if (readinessDirectory) mock.timers.enable({ apis: ['setTimeout'] })
     const controller = new AbortController()
     const watcher = readinessDirectory ? watch(readinessDirectory, { signal: controller.signal }) : null

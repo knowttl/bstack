@@ -3,7 +3,6 @@ import { dirname, join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { createHash } from 'node:crypto'
 
-// Copies and their manifest live beside this command, independent of the caller.
 const root = dirname(fileURLToPath(import.meta.url))
 
 type Source = { name: string; repoUrl: string; commit: string; files: string[]; sha256: Record<string, string> }
@@ -39,7 +38,6 @@ try {
       throw new Error(`${source.name}: require one SHA-256 hash for each listed file. Run node upstream/fetch.ts`)
     }
   }
-  // Fetch all inputs before writing, so a missing pinned file cannot leave a partial download.
   for (const copy of copies) {
     const { source, file, path } = copy
     const url = `https://raw.githubusercontent.com/${source.repoUrl.slice('https://github.com/'.length)}/${source.commit}/${file}`

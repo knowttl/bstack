@@ -6,7 +6,6 @@ import { evaluatedSkills, fail } from './evaluation.ts'
 import { commandModule, type SkillBundle } from './bundle.ts'
 import type { Scenario } from './evaluation-types.ts'
 
-// Skill-owned keys are qualified by the skill folder; shared runtime and installer keys are not.
 function skillHeadings(source: string, skill: string) {
   return [...source.matchAll(/^#{2,3} (.+)$/gm)].map(match => ({
     line: source.slice(0, match.index).split('\n').length,
@@ -18,22 +17,17 @@ function coversKey(covers: readonly string[], key: string) {
   return covers.some((cover) => cover === key || (cover.endsWith('/') && key.startsWith(cover)))
 }
 
-// The shared runtime mirrors each skill layout, so a changed source is covered by the key of the file it generates.
 const inPackage = (path: string) => !path.endsWith('.contract.md') && (path.startsWith('skills/') || path.startsWith('install/') || path.startsWith('runtime/') ||
   ['scripts/generate-skills.ts', 'scripts/lib/bundle.ts'].includes(path))
 
-// Each skill's bundle is declared once in runtime/skills.json.
 const bundleFiles = (bundle: SkillBundle) => [...bundle.schemas.map((name) => `schemas/${name}`), ...bundle.assets.map((name) => `assets/${name}`),
   ...(bundle.references ?? []).map((name) => `references/${name}`)]
 
-// Generated copies change only when their source does, and the source already carries the coverage key.
 function generatedFiles(skills: Record<string, SkillBundle>) {
   return new Set(Object.entries(skills).flatMap(([skill, bundle]) =>
     [`scripts/${skill}.mjs`, ...bundleFiles(bundle)].map(file => `skills/${skill}/${file}`)))
 }
 
-// The generator bundles a skill's command modules and everything they import, so those runtime files are its inputs.
-// Reading static import specifiers over-includes at worst, which only selects extra scenarios.
 async function bundledSources(repo: string, entries: readonly string[]) {
   const sources = new Set<string>()
   async function visit(file: string) {
@@ -46,8 +40,6 @@ async function bundledSources(repo: string, entries: readonly string[]) {
   return [...sources]
 }
 
-// A with-skill run depends on each staged skill's folder, the runtime sources bundled into it and the installer.
-// Runs without the skill stage nothing, so no skill input can change them.
 async function scenarioCovers(repo: string, definition: Scenario, skills: Record<string, SkillBundle>) {
   if (definition.mode === 'without') return []
   const { commands } = await import(pathToFileURL(join(repo, 'runtime/scripts/commands.ts')).href)
@@ -98,12 +90,10 @@ export async function affectedScenarios(repo: string, base: string, definitions:
           keys.push(...headings.filter(heading => heading.line > start && heading.line < start + count).map(heading => heading.key))
         }
       }
-      // Mode-only changes have no text hunk and still affect the package.
       if (!diff.includes('@@')) keys.push(`${skill}/SKILL.md`)
     }
   }
   const changedKeys = [...new Set(keys)].sort()
-  // Repository paths outside the package cannot alias skill-relative coverage keys.
   const unmapped = [...new Set([
     ...paths.filter(path => !inPackage(path)),
     ...changedKeys.filter(key => ![...covers.values()].some(items => coversKey(items, key)))

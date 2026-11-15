@@ -245,7 +245,6 @@ async function hostDirectory(directory, options) {
 }
 var hosts = {
   "claude-code": {
-    // Claude Code keeps one folder per launch directory under projects/, named by replacing every non-alphanumeric character with a hyphen.
     async files(root) {
       const projects = join3(process.env.CLAUDE_CONFIG_DIR ?? join3(homedir2(), ".claude"), "projects");
       const name = root.replaceAll(/[^a-zA-Z0-9]/g, "-");
@@ -259,7 +258,6 @@ var hosts = {
     turn: (record) => ["user", "assistant"].includes(record.type) && !record.isSidechain && !record.isMeta ? { role: record.type, text: textOf(record.message?.content) } : null
   },
   codex: {
-    // Codex keeps rollout files under sessions/YYYY/MM/DD/ and records the launch directory inside each.
     async files() {
       const sessions = join3(process.env.CODEX_HOME ?? join3(homedir2(), ".codex"), "sessions");
       const names = await hostDirectory(sessions, { recursive: true });

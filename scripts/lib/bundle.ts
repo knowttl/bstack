@@ -23,8 +23,6 @@ const minifiedYaml: Plugin = {
   }
 }
 
-// Every generated script runs on the same Node release the installer requires.
-// The browser build of yaml has no dependencies, so every bundle that parses frontmatter carries the same minified copy.
 export function bundle(root: string, input: BuildOptions) {
   return build({ absWorkingDir: root, ...input, alias: { yaml: join(root, 'node_modules/yaml/browser/index.js') }, plugins: [minifiedYaml, ...input.plugins ?? []],
     bundle: true, platform: 'node', target: 'node24', format: 'esm', write: false, metafile: true, legalComments: 'none' })

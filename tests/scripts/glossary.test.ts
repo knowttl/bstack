@@ -9,14 +9,12 @@ import { spawnSync } from 'node:child_process'
 import { maintenanceRepo } from './maintenance-fixture.ts'
 import { git } from './discovery-fixture.ts'
 
-// The skill is driven only through its installed entry point, as the user's agent would.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const entry = join(root, 'skills/glossary/scripts/glossary.mjs')
 function hash(value: string | Buffer): string
 function hash(value: null): null
 function hash(value: string | Buffer | null): string | null
 function hash(value: string | Buffer | null) { return value === null ? null : createHash('sha256').update(value).digest('hex') }
-// The documented digest algorithm is implemented here independently of production.
 function canonical(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`
   if (value !== null && typeof value === 'object') return `{${Object.keys(value).sort().map(key => `${JSON.stringify(key)}:${canonical((value as Record<string, unknown>)[key])}`).join(',')}}`
@@ -30,7 +28,6 @@ function glossary(directory: string, args: readonly string[]) {
   return { exit: result.status, ...JSON.parse(result.stdout) }
 }
 
-// Writes the findings and change set an agent records in scratch after the user approves the exact bytes.
 async function approvedPlan(directory: string, target: { mode: string; root: string; revision: null; }, edits: { path: string; original: null; proposed: string; }[] | ({ path: string; original: null; proposed: string; } | { path: string; original: string; proposed: string; })[] | { path: string; original: string; proposed: string; }[]) {
   const paths = edits.map((edit: NonNullable<typeof edits>[number]) => edit.path)
   const findings = JSON.parse(await readFile(join(root, 'tests/inputs/findings-audit.json'), 'utf8'))
@@ -120,7 +117,6 @@ test('an existing repo registers its new glossary, maintains it, and the check c
   const checked = glossary(f.directory, ['docs', 'check', '--repo', f.repo])
   assert.equal(checked.exit, 0, JSON.stringify(checked))
   assert.ok(checked.data.documents.some((document: NonNullable<typeof checked.data.documents>[number]) => document.path === 'GLOSSARY.md'))
-  // The format the guide teaches must be fully checkable, not skipped as a coverage limit.
   assert.deepEqual(checked.data.coverageLimits, [])
 
   const maintained = created + '\n**Customer**:\nA person or organisation that places orders.\nAvoid: Client\n'

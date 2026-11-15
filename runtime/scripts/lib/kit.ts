@@ -9,12 +9,9 @@ import { bullets, commandLines, link } from './render.ts'
 import type { CommandSpec } from './render.ts'
 import schema from '../../schemas/kit-plan.json' with { type: 'json' }
 
-// Every generated file other than helpers lives at one of these kit-relative paths.
 const gatePath = posix.join('scripts', 'map-coverage.mjs')
 const reservedPaths = ['SKILL.md', 'kit.json', 'features/README.md']
-// Launch waits at most this long for readiness unless the plan declares another limit.
 const defaultReadySeconds = 30
-// Generated text is the contract between the plan and the next agent, so its wording lives here once.
 const entryContract = [
   'Each feature file starts with an H1 title and one paragraph describing the user-visible behavior.',
   'A `Source paths:` line then lists the repo paths that implement the feature, as backticked paths or `**` globs; change-impact checks read it.',

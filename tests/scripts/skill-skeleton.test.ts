@@ -6,7 +6,6 @@ import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { parse } from 'yaml'
 
-// Read the installed-folder contract independently of the caller's directory.
 const skill = resolve(dirname(fileURLToPath(import.meta.url)), '../../skills/repo-audit')
 
 test('skill metadata declares its name and description', async () => {

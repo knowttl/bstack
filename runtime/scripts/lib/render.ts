@@ -1,4 +1,3 @@
-// Generated skills and kits share one way to show a command and link a file, so their documents read alike.
 export type CommandSpec = { command: string[]; cwd?: string; env?: Record<string, string> }
 
 export function link(text: string, destination: string) {

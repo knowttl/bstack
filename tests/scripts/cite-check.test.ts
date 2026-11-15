@@ -7,7 +7,6 @@ import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 
-// Commands run outside the checkout against disposable target files and reports.
 const entry = resolve(dirname(fileURLToPath(import.meta.url)), '../../skills/repo-audit/scripts/repo-audit.mjs')
 
 async function fixture(t: import('node:test').TestContext, content = 'Purpose\r\nHousehold scope\r\n') {

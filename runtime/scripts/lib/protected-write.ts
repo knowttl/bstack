@@ -183,7 +183,6 @@ export async function applyWrites(target: Target, plan: ReviewedPlan, staged: St
       for (const [index, edit] of staged.entries()) {
         if (edit.originalHash !== null) {
           const backup = join(directory, journal.edits[index].backup!)
-          // An interrupted preparation can leave backups without a journal.
           const existing = await fileBytes(backup)
           if (existing !== null && hashBytes(existing) !== edit.originalHash) throw new Error('Prepared backup differs from the reviewed original.')
           if (existing === null) await replaceFile(backup, edit.originalBytes!, undefined, limitations)

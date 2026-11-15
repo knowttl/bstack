@@ -8,24 +8,16 @@ import { lexer, marked } from 'marked'
 import { parse as parseYaml } from 'yaml'
 import { emitResult } from '../runtime/scripts/lib/result.ts'
 
-// Keep the default independent of the caller's working directory.
 const skillsRoot = fileURLToPath(new URL('../skills/', import.meta.url))
-// These references name tool candidates by design; exact skill/file pairs also identify installed copies.
 const languageToolReferences = [
   { skill: 'verification', file: 'references/slop-baseline.md' },
   { skill: 'foundation', file: 'references/foundation.md' }
 ]
-// Installed dependencies, Git data and local scratch are not authored resources.
-const excluded = new Set(['node_modules', '.git', '.cache', 'scratch'])
-// Recognise common bundled lint policies without prescribing a language stack.
+const unauthoredDirectories = new Set(['node_modules', '.git', '.cache', 'scratch'])
 const lintFiles = /^(?:\.eslintrc(?:\.(?:json|ya?ml|[cm]?js))?|eslint\.config\.[cm]?js|\.prettierrc(?:\.(?:json|ya?ml|[cm]?js))?|prettier\.config\.[cm]?js|\.?ruff\.toml|\.pylintrc|mypy\.ini|\.flake8|biome\.jsonc?)$/i
-// This deliberately short list is a syntactic control, not a tool catalogue.
 const lintTools = /\b(?:eslint|prettier|ruff|pylint|mypy|flake8|biome)\b|\beslint-config-[\w-]+\b/gi
-// Detect direct implementation routing without banning bounded audit instructions.
 const implementationRouting = /\b(?:follow|use|run|load|invoke|start|select)\s+(?:(?:the|a|an|bstack(?:['’]s)?)\s+)*(?:(?:general|development|implementation|tdd)\s+)+(?:playbook|workflow|dispatcher)\b/i
-// A description that opens with one of these words states a trigger or filler, not the capability.
 const descriptionNonCapabilityOpeners = /^(?:use|when|this|a|an|the)\b/i
-// The longest description the host skill formats accept, in characters.
 const descriptionMaxLength = 1024
 
 function scriptProblems(file, text, dependencies, add) {
@@ -62,11 +54,9 @@ function lines(text) {
 
 function paths(text, markdown) {
   const found = new Set()
-  // Markdown destinations include inline links, images and reference definitions.
   for (const match of markdown ? text.matchAll(/!?\[[^\]\n]*\]\(\s*(<[^>\n]+>|[^\s)]+)|^\s*\[[^\]\n]+\]:\s*(<[^>\n]+>|\S+)/gm) : []) {
     found.add((match[1] ?? match[2]).replace(/^<|>$/g, ''))
   }
-  // Quoted explicit relative paths cover prose, source imports and resource strings.
   for (const match of text.matchAll(/([`"'])([^`"'\r\n]+)\1/g)) {
     if (/^(?:\.\.?\/|references\/|scripts\/|schemas\/|assets\/|agents\/)/.test(match[2])) found.add(match[2])
   }
@@ -88,7 +78,7 @@ export async function checkPackage(skill, { sourcePreflight = false } = {}) {
       return
     }
     for (const entry of entries.sort((a, b) => a.name.localeCompare(b.name))) {
-      if (excluded.has(entry.name)) continue
+      if (unauthoredDirectories.has(entry.name)) continue
       const path = join(directory, entry.name)
       if (entry.isDirectory()) await walk(path)
       else {
@@ -107,7 +97,6 @@ export async function checkPackage(skill, { sourcePreflight = false } = {}) {
   const frontmatter = document.match(/^---\r?\n([\s\S]*?)\r?\n---(?:\r?\n|$)/)
   const body = frontmatter ? document.slice(frontmatter[0].length) : document
   const skillName = frontmatter?.[1].match(/^name:\s*(\S+)\s*$/m)?.[1]
-  // This compiler is third-party source, so validate pinned bytes rather than bstack's authored-code policies.
   const vendorPrefix = 'scripts/statechart/'
   if (skillName === 'formal-verification') {
     const sources = JSON.parse(await readFile(new URL('../upstream/sources.json', import.meta.url), 'utf8'))
@@ -209,7 +198,7 @@ export async function checkPackage(skill, { sourcePreflight = false } = {}) {
       const targetName = relative(skill, target).split(sep).join('/')
       const runtimeResource = targetName.startsWith('node_modules/') && dependencies.has(targetName.slice('node_modules/'.length).split('/').slice(0, targetName.startsWith('node_modules/@') ? 2 : 1).join('/'))
       if (runtimeResource && sourcePreflight) continue
-      if (targetName === '..' || targetName.startsWith('../') || isAbsolute(targetName) || (!runtimeResource && targetName.split('/').some(part => excluded.has(part)))) {
+      if (targetName === '..' || targetName.startsWith('../') || isAbsolute(targetName) || (!runtimeResource && targetName.split('/').some(part => unauthoredDirectories.has(part)))) {
         add('package-closure', file, `Local resource is outside the authored package: ${raw}`, 'Bundle the resource inside the skill folder and reference its authored path.')
         continue
       }

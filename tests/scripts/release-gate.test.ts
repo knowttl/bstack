@@ -26,9 +26,7 @@ type SyntheticRecord = {
       mounts: { Type: string; Source: string; Destination: string; RW: boolean }[] }[] }
 }
 
-// Exercise the public release command against disposable synthetic evidence.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
-// Candidate-bound hard-break results are an explicit input to the gate.
 const hardChecks = ['deterministic-suite', 'package-check', 'registry', 'installer', 'fixture-unchanged',
   'approval-before-write', 'isolation', 'explicit-invocation', 'implicit-invocation']
 

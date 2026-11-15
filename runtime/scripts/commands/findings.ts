@@ -13,7 +13,6 @@ import type { Target } from '../lib/repo.ts'
 import type { Options } from '../lib/args.ts'
 import type { CommandReturn } from '../lib/result.ts'
 
-// Audit assesses the starting state. Foundation additionally reviews selected setup.
 const stageOutcomes = { audit: ['starting-checks'], foundation: ['journey', 'foundation-review'] }
 
 type Finding = {

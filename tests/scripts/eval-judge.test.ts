@@ -8,7 +8,6 @@ import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { hashBytes, canonicalJSON } from '../../runtime/scripts/lib/fingerprint.ts'
 
-// Test the grading commands as child processes; no test starts a real provider.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 
 async function temporary(t: import('node:test').TestContext) {

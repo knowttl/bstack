@@ -8,10 +8,8 @@ import { createHash } from 'node:crypto'
 import { selectCommand } from '../../runtime/scripts/lib/run.ts'
 import { cloneRepository, cloneSeed } from './fixture-seed.ts'
 
-// Every installer invocation selects a disposable snapshot and isolated home.
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 
-// Resolve the platform npm adapter once per test process.
 const npmCommand = await selectCommand('npm', [])
 
 export function command(executable: string, args: readonly string[], cwd: string, env: NodeJS.ProcessEnv) {
@@ -79,9 +77,7 @@ async function prepareFixture(directory: string, failRuntime: boolean) {
   const packed = npm('pack', '--json', '--ignore-scripts')
   assert.equal(packed.status, 0, packed.stderr)
   const tarball = join(dependency, JSON.parse(packed.stdout)[0].filename)
-  // Lockfiles refer to this immutable seed tarball; upgrades pack into each clone's private dependency directory.
   const source = join(checkout, 'skills/repo-audit')
-  // The installer tests need one skill that pins a runtime, and the legacy installer looks for it under repo-audit, so the fixture gives its repo-audit copy the manifest the real vision skill carries.
   const manifest = JSON.parse(await readFile(join(root, 'skills/vision/package.json'), 'utf8'))
   await writeFile(join(source, 'package.json'), JSON.stringify(manifest, null, 2) + '\n')
   const lockResult = command('npm', ['install', '--package-lock-only', '--ignore-scripts', '--no-audit', '--no-fund', tarball], source, env)
@@ -137,7 +133,6 @@ export async function legacyInstallation(t: import('node:test').TestContext, hos
   f.git('update-index', '--assume-unchanged', 'install/install.mjs')
   const installer = command('git', ['show', '98b9ab1d8de5f9a238dde2383295c2c04450d852:install/install.mjs'], root, f.env)
   assert.equal(installer.status, 0, installer.stderr)
-  // The recorded installer predates the shared runtime folder, so point its libraries at the current source tree.
   await writeFile(join(f.checkout, 'install/install.mjs'), installer.stdout.replaceAll(/\.\.\/skills\/repo-audit\/scripts\/lib\/([a-z-]+)\.mjs/g, '../runtime/scripts/lib/$1.ts'))
   const args = ['--scope', 'project', '--project', f.project, '--host', host]
   assert.equal(f.run(...args).status, 0)

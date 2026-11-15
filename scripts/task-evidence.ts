@@ -3,7 +3,6 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { environment, git, hash, inputs, inputsCommitted, postCaptureDocumentation } from './lib/test-evidence.ts'
 
-// Task artifacts live in one portable directory, independent of the shell cwd.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
 
 try {

@@ -477,7 +477,6 @@ for (const mutation of ['missing assessment', 'stale document', 'incomplete asse
       const first = check(f)
       assert.equal(first.exit, 0, JSON.stringify(first))
       await writeFile(join(f.repo, 'leaf.mjs'), 'process.exit(1)\n')
-      // Bind a new committed source review; an earlier result cannot replace this run.
       commit(f.repo)
       const collected = run('evidence collect', f.repo, f.env, ['--base', f.base, '--portable', assessmentPath])
       assert.equal(collected.exit, 0, JSON.stringify(collected))

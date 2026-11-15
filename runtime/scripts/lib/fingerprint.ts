@@ -62,7 +62,6 @@ export async function fingerprint(target: Pick<Target, 'root'>, { baseCommit, pa
       files.push({ path, present: false, mode: null, linkTarget, contentHash: null })
     }
   }
-  // Only the explicitly named derived fields are omitted, never arbitrary nested data.
   const { fingerprint: derivedFingerprint, execution, ...substantive } = inputs
   if (portable && substantive.foundation) substantive.foundation = { ...substantive.foundation,
     record: { ...substantive.foundation.record, target: { ...substantive.foundation.record.target, root: '.' } } }

@@ -10,9 +10,7 @@ import { CommandError } from '../../runtime/scripts/lib/result.ts'
 import type { Status } from '../../runtime/scripts/lib/result.ts'
 import { canonicalJSON, hashBytes } from '../../runtime/scripts/lib/fingerprint.ts'
 
-// Repository-owned formats are resolved independently of the invoking directory.
 export const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
-// Nonempty strings are the shared primitive for joining IDs and evidence descriptions.
 export const text = { type: 'string', minLength: 1 }
 
 export function object(properties: Record<string, Schema>) {
@@ -93,16 +91,12 @@ export function options<Value extends string, Flag extends string = never>(args:
   return result as Partial<Record<Value, string> & Record<Flag | 'json', boolean>>
 }
 
-// Every skill folder has one runtime/skills.json entry, and the installer installs exactly these.
 export async function skillNames() { return Object.keys(await readJSON(join(root, 'runtime', 'skills.json'))) }
 
-// The final checkpoint installs the complete package; earlier ones stage only the skills the scenario names.
 export async function evaluatedSkills(definition: Scenario, stage: string) { return stage === 'final' ? await skillNames() : definition.skills }
 
-// The scenario's first skill is the one its opening request invokes.
 export const explicitInvocation = (adapter: Adapter, definition: Scenario) => adapter.invocation.explicit.replace('{skill}', definition.skills[0])
 
-// A case owned by no single skill (shared runtime, packaging, installer) is checked by tests, never by a scenario.
 const sharedOwner = 'shared'
 
 export async function scenario(id: string) {
@@ -121,7 +115,6 @@ export async function scenario(id: string) {
   for (const item of scenarios.scenarios) {
     validateIds(item.checks, '$/checks')
     if (!Object.hasOwn(fixtures, item.fixture) || !item.checks.length || !item.checkpoints.length || new Set(item.checkpoints).size !== item.checkpoints.length) fail(`Invalid scenario: ${item.id}`)
-    // The first skill is the one the opening request invokes, so a repeated or unknown name has no meaning.
     if (new Set(item.skills).size !== item.skills.length || item.skills.some((skill) => !names.includes(skill))) fail(`Invalid scenario skills: ${item.id}`)
     for (const check of item.checks) {
       const owner = registry.cases.find((entry: NonNullable<typeof registry.cases>[number]) => entry.id === check.caseId)

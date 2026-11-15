@@ -4,9 +4,7 @@ import child from 'node:child_process'
 import { join } from 'node:path'
 import { syncBuiltinESMExports } from 'node:module'
 
-// Fault injection stays at real filesystem and child-process boundaries.
 const fault = process.env.BSTACK_TEST_FAULT!
-// The selected destination is disposable and never the source checkout.
 const destination = process.env.BSTACK_TEST_DESTINATION!
 const nativeMkdir = fs.mkdir
 const nativeRename = fs.rename

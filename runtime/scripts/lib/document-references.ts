@@ -88,7 +88,6 @@ export async function checkLocalLink(root: string, source: string, href: string,
   try {
     const resolved = await resolvePath(root, local || '.')
     if (documents.has(resolved) && documents.get(resolved) === null) return problem('Missing destination in proposed documents')
-    // File systems differ in case sensitivity; references must preserve actual case.
     let parent = root
     for (const segment of local.split('/').filter(Boolean)) {
       if (!(await readdir(parent)).includes(segment)) {

@@ -8,9 +8,7 @@ import { createHash } from 'node:crypto'
 import { spawnSync } from 'node:child_process'
 import { runInNewContext } from 'node:vm'
 
-// Exercise the installed command from a different working directory.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
-// Include both context delimiters and template-like content in every user-controlled field.
 const text = '"quotes" \'apostrophe\' `backticks` ${globalThis.injected=true} <script>bad</script> & 日本語 {{PROJECT}} \u2028\u2029'
 
 async function setup(t: import('node:test').TestContext, draft: string | Buffer = '# Vision\n' + text + '\n') {

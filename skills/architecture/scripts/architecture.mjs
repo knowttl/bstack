@@ -3296,6 +3296,8 @@ function pathGlob(pattern) {
 function accepts(symbol, character) {
   return symbol === "any" || (symbol === "segment" ? character !== "/" : symbol === character);
 }
+var ordinaryCharacter = "a";
+var separator = "/";
 function sharedPath(left, right) {
   const queue = [{ a: 0, b: 0, segment: "", path: "" }];
   const visited = /* @__PURE__ */ new Set();
@@ -3309,7 +3311,7 @@ function sharedPath(left, right) {
     for (const edge of right.states[item.b]) if (edge.symbol === null) queue.push({ ...item, b: edge.to });
     for (const a of left.states[item.a].filter((edge) => edge.symbol !== null)) {
       for (const b of right.states[item.b].filter((edge) => edge.symbol !== null)) {
-        for (const character of new Set([a.symbol, b.symbol, "a", "/"].filter((value) => value !== "any" && value !== "segment"))) {
+        for (const character of new Set([a.symbol, b.symbol, ordinaryCharacter, separator].filter((value) => value !== "any" && value !== "segment"))) {
           if (!accepts(a.symbol, character) || !accepts(b.symbol, character)) continue;
           if (character === "/" && item.segment !== "valid") continue;
           const segment = character === "/" ? "" : item.segment === "" && character === "." ? "." : item.segment === "." && character === "." ? ".." : "valid";
@@ -3328,7 +3330,7 @@ function matchesPath(glob, path) {
 
 // runtime/scripts/commands/measure.ts
 var lockfiles = ["package-lock.json", "npm-shrinkwrap.json", "pnpm-lock.yaml", "yarn.lock", "bun.lock", "bun.lockb", "uv.lock", "poetry.lock", "Pipfile.lock", "Cargo.lock", "go.sum", "Gemfile.lock", "composer.lock"];
-var pairPathLimit = 100;
+var mechanicalCommitPathLimit = 100;
 function gitRecords(output) {
   const records = [];
   const tokens = output.split("\0");
@@ -3435,7 +3437,7 @@ async function run6(options) {
     }
     const paths = [...touched.keys()].sort();
     for (const path of paths) files.get(path).commits.push(record2.commit);
-    if (paths.length > pairPathLimit) pairSkips.push(`${record2.commit} (${paths.length} paths)`);
+    if (paths.length > mechanicalCommitPathLimit) pairSkips.push(`${record2.commit} (${paths.length} paths)`);
     else for (let a = 0; a < paths.length; a++) for (let b = a + 1; b < paths.length; b++) {
       const sources = touched.get(paths[b]);
       if (![...touched.get(paths[a])].some((source) => sources.size > 1 || !sources.has(source))) continue;
@@ -3471,7 +3473,7 @@ async function run6(options) {
       "History and co-change are advisory evidence, never violations, import analysis or observed merge conflicts. Formatting exclusions are explicitly declared, not inferred from commit messages.",
       "Merge signals use their first-parent diff; lineage follows every selected parent edge. Shared ancestry may support multiple surviving names, without inferring co-change from one historical path. Rename lineage is bounded by the selected range. Shallow history may omit ancestors.",
       "If a path is deleted on one line of history and reused by an unrelated file, then merged with a branch that edited the old file, old-lifetime commits, rename evidence and co-change pairs can be attributed to the new file. This limitation does not change what counts as a file change.",
-      ...pairSkips.length ? [`Co-change pairs skip ${pairSkips.length} commits that each changed more than ${pairPathLimit} measured paths, which still count toward each file's change frequency: ${pairSkips.join(", ")}. Declare a mechanical one in formattingCommits, or its generated paths in generatedPaths, to exclude it entirely.`] : []
+      ...pairSkips.length ? [`Co-change pairs skip ${pairSkips.length} commits that each changed more than ${mechanicalCommitPathLimit} measured paths, which still count toward each file's change frequency: ${pairSkips.join(", ")}. Declare a mechanical one in formattingCommits, or its generated paths in generatedPaths, to exclude it entirely.`] : []
     ]
   } };
 }

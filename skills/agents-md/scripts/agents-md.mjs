@@ -8600,6 +8600,8 @@ function pathGlob(pattern) {
 function accepts(symbol, character) {
   return symbol === "any" || (symbol === "segment" ? character !== "/" : symbol === character);
 }
+var ordinaryCharacter = "a";
+var separator = "/";
 function sharedPath(left, right) {
   const queue = [{ a: 0, b: 0, segment: "", path: "" }];
   const visited = /* @__PURE__ */ new Set();
@@ -8613,7 +8615,7 @@ function sharedPath(left, right) {
     for (const edge of right.states[item.b]) if (edge.symbol === null) queue.push({ ...item, b: edge.to });
     for (const a of left.states[item.a].filter((edge) => edge.symbol !== null)) {
       for (const b of right.states[item.b].filter((edge) => edge.symbol !== null)) {
-        for (const character of new Set([a.symbol, b.symbol, "a", "/"].filter((value) => value !== "any" && value !== "segment"))) {
+        for (const character of new Set([a.symbol, b.symbol, ordinaryCharacter, separator].filter((value) => value !== "any" && value !== "segment"))) {
           if (!accepts(a.symbol, character) || !accepts(b.symbol, character)) continue;
           if (character === "/" && item.segment !== "valid") continue;
           const segment = character === "/" ? "" : item.segment === "" && character === "." ? "." : item.segment === "." && character === "." ? ".." : "valid";

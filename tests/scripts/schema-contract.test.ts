@@ -6,11 +6,8 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 
-// Invoke the installed entry point from outside its own working directory.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
-// Test fixtures stay outside the installed skill package.
 const inputs = join(root, 'tests', 'inputs')
-// All assertions exercise dispatch and the result envelope.
 const entry = join(root, 'skills', 'repo-audit', 'scripts', 'repo-audit.mjs')
 
 function run(workspace: string, fixture: string, schema?: string) {

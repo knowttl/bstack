@@ -1,14 +1,11 @@
-// Machine-read directives that name a specific rule or code stay legal alongside the public-doc and link keep-list.
 const exemptions = {
   python: ['^#\\s*[a-z]+:\\s*ignore\\[\\s*([A-Za-z][A-Za-z0-9_-]*(?:\\s*,\\s*[A-Za-z][A-Za-z0-9_-]*)*)\\s*\\]\\s*$', '^#\\s*(?:[a-z]+:\\s*)?noqa:\\s*([A-Z]+[0-9]+(?:\\s*,\\s*[A-Z]+[0-9]+)*)\\s*$',
     '^#\\s*[a-z]+:\\s*(?:disable(?:-next)?|enable)\\s*=\\s*(?P<messages>[A-Za-z][A-Za-z0-9-]*(?:\\s*,\\s*[A-Za-z][A-Za-z0-9-]*)*)\\s*$'],
   go: ['^//go:[a-z]+', '^//nolint:([A-Za-z][A-Za-z0-9_-]*(?:,[A-Za-z][A-Za-z0-9_-]*)*)(?:\\s|$)', '^//lint:ignore ([A-Za-z0-9]+)(?:\\s|$)'],
   typescript: ['^//\\s*[a-z]+-disable-(?:next-)?line\\s+(@?[A-Za-z0-9_][\\w/-]*(?:\\s*,\\s*@?[A-Za-z0-9_][\\w/-]*)*)(?:\\s|$)', '^/\\*\\s*[a-z]+-(?:disable(?:-(?:next-)?line)?|enable)\\s+(@?[A-Za-z0-9_][\\w/-]*(?:\\s*,\\s*@?[A-Za-z0-9_][\\w/-]*)*)(?:\\s|\\*/|$)', '^///\\s*<reference\\s']
 }
-// A header comment group carrying one of these markers is a legally required license header.
 const licenseMarker = 'SPDX-License-Identifier|Copyright|Licensed under|All rights reserved'
 
-// Standard-library tokenizer: Python's own tokenize module reports every comment token.
 const python = `import argparse
 import hashlib
 import json
@@ -197,7 +194,6 @@ def main():
 sys.exit(main())
 `
 
-// Standard-library tokenizer: Go's scanner package reports every comment token.
 const go = `package main
 
 import (
@@ -516,7 +512,6 @@ func main() {
 }
 `
 
-// TypeScript's compiler scanner locates comments; projects using TypeScript 7 need the separate TypeScript 6 compiler API.
 const typescript = `import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { existsSync, readFileSync } from 'node:fs'
@@ -700,7 +695,6 @@ if (args.includes('--list')) {
 }
 `
 
-// Each generated checker is self-contained, comment-free and runs without bstack.
 export type CheckerLanguage = keyof typeof exemptions
 
 type Checker = { template: string; directory: string; file: string; run: string; format: (patterns: string[]) => string }

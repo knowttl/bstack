@@ -2,13 +2,9 @@ import fs from 'node:fs/promises'
 import { basename, dirname } from 'node:path'
 import { syncBuiltinESMExports } from 'node:module'
 
-// Faults replace only the filesystem boundary in a separate CLI process.
 const fault = process.env.BSTACK_TEST_FAULT!
-// Keep native operations for all paths outside the selected target boundary.
 const nativeRename = fs.rename
-// Deletion has its own replacement boundary.
 const nativeUnlink = fs.unlink
-// Directory flush support varies between real filesystems.
 const nativeOpen = fs.open
 const nativeMkdir = fs.mkdir
 let replaced = false

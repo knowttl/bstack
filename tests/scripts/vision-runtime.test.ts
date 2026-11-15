@@ -7,7 +7,6 @@ import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { parse } from 'yaml'
 
-// Install only the declared closure into a fresh checkout with an empty host home.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 
 test('gate prepare fails when an earlier skill runtime has no lockfile', async t => {

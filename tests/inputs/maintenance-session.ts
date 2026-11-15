@@ -3,7 +3,6 @@ import { cp, mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 import { execFileSync, spawnSync } from 'node:child_process'
 
-// This deterministic host fixture exercises real commands, not model judgement.
 export async function maintenanceSession() {
   const repo = process.cwd()
   const skill = join(process.env.HOME!, '.agents/skills/maintenance')
@@ -26,7 +25,6 @@ export async function maintenanceSession() {
   }
   const invoke = (name: string, args: readonly string[]) => JSON.parse(command(process.execPath, [helper, ...name.split(' '), '--repo', repo, ...args, '--json']))
   await readFile(join(skill, 'references/maintenance-contract.md'), 'utf8')
-  // Prepare an already selected narrow contract before starting routine maintenance.
   await mkdir(join(repo, '.bstack/bin'), { recursive: true })
   await cp(join(skill, 'scripts/bstack-check.mjs'), join(repo, '.bstack/bin/bstack-check.mjs'))
   const contract = { schemaVersion: 1,

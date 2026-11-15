@@ -8,7 +8,6 @@ import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { emptyRepo, git } from './discovery-fixture.ts'
 
-// Test the command in a disposable checkout, including paths with spaces and Unicode.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 
 async function sandbox(t: import('node:test').TestContext, files = ['nested/SKILL.md']) {
@@ -111,7 +110,6 @@ test('committed upstream copies exactly match the offline hash manifest', async 
 })
 
 function runOfflineInventory(repo: string) {
-  // A fresh test invocation must not inherit the parent runner's context.
   const { NODE_TEST_CONTEXT, ...env } = process.env
   return spawnSync(process.execPath, ['--test', '--test-name-pattern=committed upstream copies',
     join('tests', 'scripts', 'upstream.test.ts')], { cwd: repo, encoding: 'utf8', env })

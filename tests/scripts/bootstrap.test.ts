@@ -9,7 +9,6 @@ import { createServer } from 'node:http'
 import { once } from 'node:events'
 import { hash } from '../../scripts/lib/test-evidence.ts'
 
-// Resolve package inputs from the suite location, not the shell working directory.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 
 async function sandbox(t: import('node:test').TestContext) {
@@ -21,7 +20,6 @@ async function sandbox(t: import('node:test').TestContext) {
 }
 
 function run(directory: string, ...args: readonly string[]) {
-  // The child represents a fresh user invocation, outside the parent test runner.
   const { NODE_TEST_CONTEXT, ...env } = process.env
   return spawnSync(process.execPath, [join(directory, 'scripts', 'test.ts'), ...args], { encoding: 'utf8', env })
 }

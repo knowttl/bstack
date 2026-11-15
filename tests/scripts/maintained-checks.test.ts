@@ -44,7 +44,6 @@ async function apply(repo: string, contents: Record<string, string>, category = 
 
 test('ts-shop maintained command accepts documented debt and core imports but rejects new web debt in disposable copies', async t => {
   const repo = build(t, 'ts-shop')
-  // Keep the fixture's native TypeScript resolver and complete graph analysis.
   let checker = await readFile(join(repo, 'boundaries.ts'), 'utf8')
   const ending = "for (const violation of violations) console.log(`${violation.path}:${violation.line}: ${violation.rule}: ${violation.message}`)\nprocess.exitCode = violations.length ? 1 : 0\n"
   assert.ok(checker.endsWith(ending))
@@ -70,7 +69,6 @@ else {
   const entries = violations.map((violation: NonNullable<typeof violations>[number]) => ({ ...violation,
     reason: 'Existing audited fixture debt, selected for temporary retention.',
     removalCondition: 'Replace private imports with the public interface and remove the dependency cycle.' }))
-  // Initial debt is a complete, reviewed foundation edit, not a refresh of partial diagnostics.
   await apply(repo, { 'baseline.json': JSON.stringify({ schemaVersion: 1, entries }) }, 'debt',
     ['baseline.json', ...new Set<string>(violations.map((item: NonNullable<typeof violations>[number]) => item.path))])
   assert.equal(run('baseline check', repo, process.env, ['--baseline', 'baseline.json', '--violations', violationsFile]).exit, 0)
@@ -86,7 +84,6 @@ else {
   const planFile = join(repo, '.git', 'proof-plan.json')
   await writeFile(planFile, JSON.stringify(plan))
   const violation = build(t, 'ts-shop')
-  // Each source retains its own installed native dependencies and Git identity.
   await cp(repo, violation, { recursive: true, filter: source =>
     source !== join(repo, 'node_modules') && source !== join(repo, '.git') })
   await writeFile(join(violation, 'packages/web/new.ts'), "import { price } from '../core/internal/database.ts'; export const forbidden = price\n")

@@ -13,7 +13,6 @@ const entry = join(root, 'skills/formal-verification/scripts/formal-verification
 const fixtures = join(root, 'tests/fixtures')
 const sha256 = (bytes: Buffer) => createHash('sha256').update(bytes).digest('hex')
 const suite = '.agents/skills/formal-charge-once'
-// The pinned jar the fixtures document, so a different file can never stand in for the model checker.
 const pinnedJar = '15d103b7e5617780bcc904c0af12f1ad242e2b345c0301136c5be4588f17edac'
 const violation = 'Invariant NoDoubleCharge is violated'
 
@@ -33,7 +32,6 @@ type Fixture = {
   check: () => ReturnType<typeof runFormal>
 }
 
-// The real model checker is the project's own tool, so these tests use it only where the environment supplies the pinned file and Java.
 async function modelChecker() {
   const path = process.env.BSTACK_TLA2TOOLS_JAR
   if (!path) return { skip: 'Set BSTACK_TLA2TOOLS_JAR to the pinned tla2tools.jar to run the model checker.' }
@@ -44,13 +42,10 @@ async function modelChecker() {
   return { path }
 }
 
-// The violation fixture overlays only the model, so both models share the clean fixture's configuration.
 async function modelFiles(tla: string) {
   return Promise.all([['ChargeOnce.tla', tla], ['ChargeOnce.cfg', 'formal-charge-once/formal/ChargeOnce.cfg']].map(async ([name, path]) => ({ name, content: await readFile(join(fixtures, path), 'utf8') })))
 }
 
-// The plan is what a create run writes after interviewing the fixture repo, with the model the fixture documents.
-// A create run records the commit it proved the property against, so the plan carries HEAD unless a test sets another.
 async function plan(repo: string, { model, steps, tool, syncCommit = git(repo, 'rev-parse', 'HEAD') }: PlanOptions = {}) {
   return {
     schemaVersion: 1, target: 'charge-once', description: 'Prove that an order is charged at most once however two workers interleave.',
@@ -305,7 +300,6 @@ test('check blocks on a suite that was never applied', async t => {
   assert.equal(result.problems[0].code, 'suite-unavailable')
 })
 
-// The cited line keeps its number while its meaning changes, as after a direct push or a wrong No-proof-impact claim.
 async function splitClaimInPlace(f: Awaited<ReturnType<typeof setup>>) {
   const file = join(f.repo, 'src/charge.ts')
   await writeFile(file, (await readFile(file, 'utf8')).replace("!store.compareAndSet(orderId, 'pending', 'charging')", "!(store.get(orderId) === 'pending' && store.set(orderId, 'charging'))"))
@@ -331,7 +325,6 @@ test('check reports a change to a cited line that reached main, and moving the s
   const swept = runMaintenance('sweep', f.repo, f.env)
   assert.deepEqual(swept.problems.filter((problem: NonNullable<typeof swept.problems>[number]) => problem.fix === 'Run /formal-verification maintain.').map((problem: ReturnType<typeof JSON.parse>) => problem.code), ['source-changed-since-sync'])
 
-  // Maintain proves a commit passes before it records it, and a commit from before the change proves nothing.
   assert.equal(f.call('formal check', ['--suite', 'charge-once', '--sync-commit', synced]).exit, 1)
   assert.equal(f.call('formal check', ['--suite', 'charge-once', '--sync-commit', head]).exit, 0)
   await f.apply(await f.plan({ syncCommit: head }), ['--update'])
@@ -380,7 +373,6 @@ for (const [name, value] of [['a short hash', 'abc1234'], ['a hash the repo does
   })
 }
 
-// A gated branch holds the applied suite on main and one change to the declared source path on top.
 async function gatedBranch(t: import('node:test').TestContext, options?: { jar?: string }) {
   const f = await setup(t, options)
   await f.apply(await f.plan())
@@ -445,7 +437,6 @@ test('sweep routes a drifted formal suite to its maintain mode, reports a missin
   assert.deepEqual(formal(unproven), [])
   assert.deepEqual(unproven.data.coverageLimits.map((limit: NonNullable<typeof unproven.data.coverageLimits>[number]) => limit.path), ['tools/tla2tools.jar'])
   await writeFile(join(f.repo, 'tools/tla2tools.jar'), 'a different tool\n')
-  // A kit named like a suite is still a kit, found by the verify- prefix.
   await mkdir(join(f.repo, '.agents/skills/verify-formal-charge-once'), { recursive: true })
   await writeFile(join(f.repo, '.agents/skills/verify-formal-charge-once/kit.json'), '{}')
   const before = await snapshot(f.repo)
@@ -455,7 +446,6 @@ test('sweep routes a drifted formal suite to its maintain mode, reports a missin
   assert.ok(swept.problems.filter((problem: NonNullable<typeof swept.problems>[number]) => problem.fix === 'Run /verification maintain.').length > 0)
 })
 
-// The remaining tests run the pinned model checker, so a missing tool skips them rather than passing them.
 const checker = await modelChecker()
 
 test('formal chart refuses a wrong jar hash before running the compiler', checker, async t => {
@@ -512,7 +502,6 @@ test('rule-proof passes unchanged on the charge-once pair with the pinned tool',
   assert.match(result.data.cases[0].execution.stdout, /12 distinct states found/)
   assert.ok(result.data.cases[1].execution.stdout.includes(violation))
 
-  // A model that leaves charges unassigned in one branch is a modeling error and not a property violation.
   const flawed = build(t, 'formal-charge-once')
   await mkdir(join(flawed, 'tools'))
   await cp(checker.path!, join(flawed, 'tools/tla2tools.jar'))
@@ -535,13 +524,11 @@ test('the walkthrough on a scratch break in the real code is flagged, fails the 
   assert.equal(original.exit, 0, original.output)
   assert.equal(f.check().exit, 0)
 
-  // Break the real code: split the atomic claim into a read and a later write.
   await cp(join(fixtures, 'formal-charge-once-violation/overlay/src/charge.ts'), join(f.repo, 'src/charge.ts'))
   f.commit('Split the claim')
   const flagged = f.gate()
   assert.equal(flagged.status, 1, flagged.stdout)
   assert.match(flagged.stdout, /formal-proof-coverage: src\/charge\.ts changed without updating a model file/)
-  // The model checker alone cannot see the break: the unchanged model still passes on the broken code.
   assert.equal((await run()).exit, 0)
 
   await f.apply(await f.plan({ model: await modelFiles('formal-charge-once-violation/overlay/formal/ChargeOnce.tla'), steps: brokenSteps }), ['--update'])
@@ -552,7 +539,6 @@ test('the walkthrough on a scratch break in the real code is flagged, fails the 
   assert.equal(failed.exit, 12)
   assert.ok(failed.output.includes(violation), failed.output)
 
-  // Restore the code and the model, and the result is the original one.
   git(f.repo, 'checkout', '-q', 'main', '--', '.')
   git(f.repo, 'commit', '-q', '-m', 'Restore the code and the model')
   assert.equal(git(f.repo, 'diff', 'main', '--stat'), '')

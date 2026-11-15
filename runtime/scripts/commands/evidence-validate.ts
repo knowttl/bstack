@@ -22,7 +22,6 @@ import type { CheckPlan } from './run-checks.ts'
 import type { Options } from '../lib/args.ts'
 import type { CommandReturn, Problem } from '../lib/result.ts'
 
-// This conservative normalization rejects cosmetic proof, not semantic disagreement.
 function meaningful(text: string, excerpt?: string, path?: string) {
   const screened = text.split('')
   const literals = new Set()

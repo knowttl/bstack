@@ -31,7 +31,6 @@ function commit(repo: string) {
 
 async function fixture(t: import('node:test').TestContext, { initial = false, committedInitial = false, sampleContract = false, checker = false } = {}) {
   const f = await maintenanceRepo(t) as Fixture
-  // Use the internal-fix fixture's approved pricing contract and implementation.
   await writeFile(join(f.repo, 'README.md'), await readFile(new URL('../fixtures/maintenance/DESIGN.md', import.meta.url)))
   await writeFile(join(f.repo, 'src/change.mjs'), (await transform(await readFile(new URL('../fixtures/maintenance/price.ts', import.meta.url), 'utf8'), { loader: 'ts', format: 'esm', target: 'node24' })).code)
   await writeFile(join(f.repo, 'ACCEPTANCE.md'), 'A quote is quantity multiplied by 12.\n')
@@ -288,7 +287,6 @@ test('decision-needed stays blocked with all executable checks passing', async t
 for (const text of ['# Pricing contract\n\nA quote is quantity multiplied by 12.\n\nUpdated: 2026-10-08\n', '# Pricing contract\n\nA quote is quantity multiplied by 12.\n<!-- approved -->\n', '# Pricing contract\n\n  A quote is quantity multiplied by 12. \n', '# Pricing contract\n\nA quote is quantity multiplied by 12.\n// approved\n', '# Pricing contract\n\nA quote is quantity multiplied by 12.\n/* approved */\n']) {
   test(`cosmetic document edit cannot prove an updated rule: ${JSON.stringify(text)}`, async t => {
     const f = await fixture(t)
-    // Start with the same timestamp so a changed date is the only substantive-looking delta.
     await writeFile(join(f.repo, 'README.md'), '# Pricing contract\n\nA quote is quantity multiplied by 12.\n\nUpdated: 2026-10-07\n')
     f.base = commit(f.repo)
     await writeFile(join(f.repo, 'README.md'), text.includes('2026-10-08') ? text : text + '\nUpdated: 2026-10-07\n')

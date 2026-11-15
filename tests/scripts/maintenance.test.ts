@@ -8,7 +8,6 @@ import { spawnSync } from 'node:child_process'
 import { parse } from 'yaml'
 import { emptyRepo, git, snapshot } from './discovery-fixture.ts'
 
-// The skill is driven only through its installed entry point, as the user's agent would.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const entry = join(root, 'skills/maintenance/scripts/maintenance.mjs')
 const checker = join(root, 'skills/maintenance/scripts/bstack-check.mjs')
@@ -16,7 +15,6 @@ function hash(value: string | Buffer): string
 function hash(value: null): null
 function hash(value: string | Buffer | null): string | null
 function hash(value: string | Buffer | null) { return value === null ? null : createHash('sha256').update(value).digest('hex') }
-// The documented digest algorithm is implemented here independently of production.
 function canonical(value: unknown): string {
   if (Array.isArray(value)) return `[${value.map(canonical).join(',')}]`
   if (value !== null && typeof value === 'object') return `{${Object.keys(value).sort().map(key => `${JSON.stringify(key)}:${canonical((value as Record<string, unknown>)[key])}`).join(',')}}`
@@ -65,7 +63,6 @@ for (const context of [
   })
 }
 
-// Writes the findings and change set an agent records in scratch after the user approves the exact bytes.
 async function approvedPlan(directory: string, target: { mode: string; root: string; revision: null; }, edits: { path: string; original: null; proposed: string; }[]) {
   const paths = edits.map((edit) => edit.path)
   const findings = JSON.parse(await readFile(join(root, 'tests/inputs/findings-audit.json'), 'utf8'))
@@ -139,7 +136,6 @@ test('create installs a checker and a docs gate that pass on a true tree and sto
   f.commit('register the maintenance contract')
   git(f.repo, 'update-ref', 'refs/remotes/origin/main', 'HEAD')
 
-  // The gate runs the written command in the worktree through the shell, as no-mistakes does.
   const { command, after } = parse(await readFile(join(f.repo, '.no-mistakes.yaml'), 'utf8')).gates.find((entry: ReturnType<typeof JSON.parse>) => entry.name === 'docs')
   assert.equal(after, 'document')
   const runGate = () => spawnSync('sh', ['-c', command], { cwd: f.repo, encoding: 'utf8' })
@@ -300,7 +296,6 @@ test('sweep names the mode that fixes each seeded drift, and writes nothing', as
   await writeFile(join(f.repo, 'GLOSSARY.md'), '# Shop\n\n**Order**:\nA customer request for products, see [pricing](missing.md).\n')
   f.commit('refresh glossary')
   await writeFile(join(f.repo, 'AGENTS.md'), '# Agent instructions\n\nUse the terms in [GLOSSARY.md](GLOSSARY.md) and the rules in [RULES.md](RULES.md).\n')
-  // A kit whose plan cannot be read is drift the verification skill repairs.
   await mkdir(join(f.repo, '.agents/skills/verify-shop'), { recursive: true })
   await writeFile(join(f.repo, '.agents/skills/verify-shop/kit.json'), '{}')
 

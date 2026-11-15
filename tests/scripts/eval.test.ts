@@ -10,7 +10,6 @@ import { once } from 'node:events'
 import { createHash } from 'node:crypto'
 import { emptyRepo, git } from './discovery-fixture.ts'
 
-// Each test invokes the real command with disposable evaluation records.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 
 function run(directory: string, ...args: readonly string[]) {
@@ -423,7 +422,6 @@ test('batch delivers two scenarios three times, closes every container and appen
     assert.ok(record.execution.turns.every((turn: NonNullable<typeof record.execution.turns>[number]) => turn.verified && turn.removedAt))
   }
   assert.equal((await readdir(directory)).filter(name => name.endsWith('.docker.json')).length, 0)
-  // One of the three ambiguous runs fails its semantic check; every captured run counts.
   const failedId = records.find(record => record.scenario.id === 'ambiguous-idea').id
   for (const record of records) {
     const answers = join(directory, `${record.id}.answers.json`)
@@ -516,7 +514,6 @@ test('batch delivers two scenarios three times, closes every container and appen
     await cp(directory, join(results, 'runs'), { recursive: true })
     await rename(join(results, 'runs/ledger.jsonl'), join(results, 'ledger.jsonl'))
     await mkdir(join(results, 'release/runs'), { recursive: true })
-    // Gate contents are irrelevant to the storage policy; release-gate tests validate them.
     await writeFile(join(results, 'release/0.1.1.json'), JSON.stringify({ candidate: lines[0].candidate }))
     await writeFile(join(results, 'release/runs/new-raw-run.json'), '{}')
     await mkdir(join(repo, '.cache/eval-archives'), { recursive: true })
@@ -746,7 +743,6 @@ async function expectUncommittedCandidateBlocked(t: import('node:test').TestCont
     await cp(join(root, path), join(checkout, path), { recursive: true, filter: source => !source.split(/[\\/]/).includes('node_modules') || path.startsWith('node_modules/') })
   }
   execFileSync('git', ['init', '--initial-branch=main'], { cwd: checkout, stdio: 'ignore' })
-  // The scenario's machine checks run the committed assertions program.
   execFileSync('git', ['add', 'skills', 'tests/eval/container'], { cwd: checkout, stdio: 'ignore' })
   execFileSync('git', ['-c', 'user.name=Fixture Author', '-c', 'user.email=fixture@example.invalid',
     '-c', 'commit.gpgsign=false', 'commit', '-m', 'Committed candidate'], { cwd: checkout, stdio: 'ignore' })
@@ -776,7 +772,6 @@ async function expectUncommittedCandidateBlocked(t: import('node:test').TestCont
   await assert.rejects(readFile(join(directory, 'ledger.jsonl')), { code: 'ENOENT' })
 }
 
-// Every skill a scenario stages is bound to the committed candidate, not only its first.
 for (const [scenario, stage, changed] of [['clear-goals', 'baseline', 'repo-audit'], ['research-main-typescript', 'discovery', 'architecture']] satisfies [unknown, unknown, unknown][]) {
   test(`batch blocks uncommitted candidate bytes in ${changed} before opening a host`, t => expectUncommittedCandidateBlocked(t, scenario, stage, changed))
 }
@@ -820,7 +815,6 @@ for (const args of [
   test(`batch rejects invalid options before creating resources: ${args.join(' ')}`, async t => {
     const directory = await temporary(t)
     const { path } = await adapterFile(directory)
-    // Replace supplied defaults instead of exercising the duplicate-option parser.
     const defaults = ['--tier', 'smoke', '--mode', 'without', '--adapter', path]
     const base = defaults.filter((value, index) => !args.includes(index % 2 === 0 ? value : defaults[index - 1]))
     const result = run(directory, 'batch', ...base, ...args)
@@ -899,7 +893,6 @@ for (const [name, machine, expected, installer = { status: 'passed' }, skill = '
   ['unopened required path', { type: 'opened', patterns: ['**/references/vision.md'] }, false],
   ['failed file read', { type: 'opened', patterns: ['**/references/architecture.md'] }, false],
   ['nested shell forbidden read', { type: 'notOpened', patterns: ['**/references/intent-interview.md'] }, false],
-  // The check's own skill scopes its patterns and selects the cite-check it grades with.
   ['another skill entry point opened', { type: 'opened', patterns: ['**/vision/SKILL.md'] }, true, undefined, 'vision'],
   ['skill-scoped forbidden read', { type: 'notOpened', patterns: ['**/references/interview.md'] }, false, undefined, 'vision'],
   ['valid saved citations from another skill', { type: 'citeCheck', report: 'report.json' }, true, undefined, 'vision']
@@ -1076,7 +1069,6 @@ test('scenario fixture hashes bind selected source bytes and overlays without bi
   assert.notEqual(revision('ambiguous-idea'), idea)
 })
 
-// A scenario is staged, graded and impact-mapped by its skills, so names that do not line up are rejected before any run.
 for (const [name, mutate, message] of [
   ['a check testing a skill the scenario does not stage', (scenario: ReturnType<typeof JSON.parse>) => { scenario.checks[0].skill = 'glossary' }, /does not stage/],
   ['a check testing a skill other than its case owner', (scenario: ReturnType<typeof JSON.parse>) => { scenario.skills.push('glossary'); scenario.checks[0].skill = 'glossary' }, /AC-2 belongs to vision/],
@@ -1124,8 +1116,6 @@ for (const [scenario, mode] of [['research-main-typescript', 'require-no-subagen
     t.after(() => rm(record.fixture.path, { recursive: true, force: true }))
     t.after(() => rm(record.isolation.home, { recursive: true, force: true }))
     assert.equal(record.hostFailure, undefined, started.stdout)
-    // Empty-answer discovery scenarios cannot resume through the scripted CLI;
-    // exercise their effective resume template at the same host boundary.
     const { hostTurn, closeHost } = await import('../../scripts/lib/evaluation-host.ts')
     const previousPath = process.env.PATH
     process.env.PATH = testEnvironment(directory).PATH
@@ -1142,7 +1132,6 @@ for (const [scenario, mode] of [['research-main-typescript', 'require-no-subagen
 test('fake-only ts-shop maintenance in with mode validates review and fresh standalone checks without an interview or full audit', async t => {
   const directory = await temporary(t)
   const { path } = await adapterFile(directory, 'maintenance')
-  // The deterministic host retains the original failing-journey control, independent of the real scenario's maintained starting state.
   const fixture = JSON.parse(execFileSync(process.execPath, [join(root, 'tests/fixtures/build.ts'), 'ts-shop'], { encoding: 'utf8' }))
   t.after(() => rm(fixture.path, { recursive: true, force: true }))
   const result = run(directory, '--scenario', 'maintenance', '--mode', 'with', '--stage', 'final', '--adapter', path, '--repo', fixture.path)
@@ -1489,13 +1478,11 @@ test('final with-skill execution installs the complete package in the isolated h
   const installed = JSON.parse(record.installer.stdout)
   assert.equal(installed.status, 'passed')
   assert.equal(installed.data.mode, 'copy')
-  // The final checkpoint installs and discovers every skill, not only the scenario's own.
   const names = Object.keys(JSON.parse(await readFile(join(root, 'runtime/skills.json'), 'utf8')))
   const skillPath = (skill: string) => join(record.isolation.skillsPath, skill)
   assert.deepEqual(record.isolation.skills, names)
   assert.deepEqual(installed.data.installations.map((item: NonNullable<typeof installed.data.installations>[number]) => item.destination).sort(), names.map(skillPath).sort())
   assert.deepEqual(record.isolation.discovered, names.map(skill => join(skillPath(skill), 'SKILL.md')).sort())
-  // Installations list every skill in name order, so the evaluated skill is found by its folder rather than its position.
   const installation = installed.data.installations.find((item: NonNullable<typeof installed.data.installations>[number]) => item.destination.endsWith('/repo-audit'))
   assert.equal(installation.runtime, null)
   assert.ok(Object.keys(installation.files).includes('scripts/repo-audit.mjs'))

@@ -6,9 +6,7 @@ import { join } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 
-// Execute the public checker from any test working directory.
 const checker = fileURLToPath(new URL('../../scripts/check-package.mjs', import.meta.url))
-// Seed folders are data, never test-discovery roots.
 const fixtures = fileURLToPath(new URL('../package-check/', import.meta.url))
 
 function run(...args: readonly string[]) {

@@ -10,11 +10,8 @@ import { CommandError, emitResult } from '../runtime/scripts/lib/result.ts'
 import { installLinks } from './links.mjs'
 import { planLifecycle, applyLifecycle, finishLifecycle, verifyCleanup, resumeCopy, inspectInstallation, inspectCompletion, previewRecovery, verifyDestination, runtimeIdentity, ownsRuntime, legacyRuntimeDecision, matchesReplacement, matchesRuntimeAdoption, approveRecoveryReplacements } from './lifecycle.mjs'
 
-// Installation always selects complete skill folders beside this installer.
 const checkout = fileURLToPath(new URL('../', import.meta.url))
-// These directories contain runtime or scratch data rather than authored files.
-const excluded = new Set(['node_modules', '.git', '.cache', 'scratch'])
-// Both human and machine output describe the same supported slice.
+const unauthoredDirectories = new Set(['node_modules', '.git', '.cache', 'scratch'])
 const help = 'Usage: node install/install.mjs --scope user|project [--project <path>] --host claude|agents|all [--skill <name>]... [--link] [--dry-run] [--uninstall] [--replace <host>:<path>:<actual-hash|absent>] [--adopt-runtime <host>:<displayed-hash>] [--json]\nInstalls require Node 24+, Git, npm and root development dependencies (npm ci).\nEvery skill folder beside this installer installs on its own; repeat --skill to select some instead of all.\nUser scope uses the current home. Project scope requires an existing --project directory.\nRepeat --replace for specific conflicts after reviewing their diff. Use the displayed --adopt-runtime decision to confirm legacy runtime ownership. Interrupted runs resume automatically.\n--link prepares the pinned runtime in the source checkout before linking. Updates require --link; removal preserves the target.\nExamples:\n  node install/install.mjs --scope user --host agents --dry-run\n  node install/install.mjs --scope project --project ./example --host all --uninstall --json'
 
 function reject(status, code, message, fix) {
@@ -53,7 +50,7 @@ async function exists(path) {
 async function authored(directory, prefix = '') {
   const files = []
   for (const entry of (await readdir(directory, { withFileTypes: true })).sort((a, b) => a.name.localeCompare(b.name))) {
-    if (excluded.has(entry.name)) continue
+    if (unauthoredDirectories.has(entry.name)) continue
     const path = join(directory, entry.name)
     const name = prefix + entry.name
     if (entry.isDirectory()) files.push(...await authored(path, name + '/'))
@@ -72,7 +69,6 @@ async function child(root, executable, args, versionArgs = ['--version']) {
 }
 
 async function runtimeVersion(directory, expected) {
-  // A skill that pins no runtime has nothing to verify.
   if (expected === null) return true
   try {
     const manifest = JSON.parse(await readFile(join(directory, 'node_modules/lavish-axi/package.json'), 'utf8'))
@@ -82,7 +78,6 @@ async function runtimeVersion(directory, expected) {
   } catch { return false }
 }
 
-// A skill without a package manifest ships no runtime; one with a manifest pins exactly one version in its lockfile.
 async function pinnedRuntime(source) {
   if (!await exists(join(source, 'package.json'))) return null
   const manifest = JSON.parse(await readFile(join(source, 'package.json'), 'utf8'))
@@ -94,8 +89,6 @@ async function pinnedRuntime(source) {
   return runtime
 }
 
-// Skills share one parent folder, so each keeps its own ownership and journal records.
-// repo-audit predates multi-skill installs and keeps the original names so existing installations stay owned.
 function recordNames(skill) {
   const stem = skill === 'repo-audit' ? '.bstack-install' : `.bstack-install-${skill}`
   return { ownership: `${stem}.json`, journal: `${stem}-journal.json` }
@@ -244,7 +237,6 @@ async function installSkill(selected, skill, skills, decisions) {
       const saved = cleanup.entries.find(saved => saved.destination === destination)
       if (!saved) reject('blocked', 'journal-mismatch', 'Cleanup record does not match selected hosts.', help)
       entry.cleanup = saved
-      // Keep the frozen cleanup snapshot separate from pending explicit repairs.
       entry.recovery = await exists(journal) ? JSON.parse(await readFile(journal, 'utf8')) : structuredClone(saved.recovery)
       entry.previous = saved.previous
       entry.action = 'cleanup'
@@ -406,7 +398,6 @@ async function installSkill(selected, skill, skills, decisions) {
         if (record.runtime) record.runtime.identity = await runtimeIdentity(join(stage, 'node_modules'))
         await saveRecovery(entry.journal, journal)
         if (entry.action === 'update') {
-          // The validated stage becomes the recoverable per-file update plan.
           entry.recovery = null
           data.installations.push(await applyLifecycle(entry, entry.plan, stage, runtimeVersion, record.runtime && { ...record.runtime, path: join(stage, 'node_modules') }))
           continue
@@ -421,11 +412,9 @@ async function installSkill(selected, skill, skills, decisions) {
         await saveRecovery(entry.journal, journal)
         const installation = await inspectCompletion(entry, files, runtime, runtimeVersion)
         if (installation.conflicts.length) await saveRecovery(entry.ownership, { ...record, fileVersions: installation.fileVersions, sourceVersion: 'mixed' })
-        // A completed journal is no longer recovery state.
         entry.recovery = journal
         data.installations.push(installation)
       } catch (error) {
-        // Per-file application owns its journal once staging has finished.
         if (entry.action !== 'update' || journal.state !== 'prepared') {
           journal.error = error.message
           await saveRecovery(entry.journal, journal)
@@ -467,11 +456,9 @@ async function installSkill(selected, skill, skills, decisions) {
   return report()
 }
 
-// Each skill installs, updates and uninstalls independently, so one run is a sequence of single-skill runs.
 async function install(selected) {
   const skills = []
   for (const entry of await readdir(join(checkout, 'skills'), { withFileTypes: true })) {
-    // Hidden folders under skills/ are installer stages, which hold a copy of a skill's files.
     if (entry.isDirectory() && /^[a-z0-9][a-z0-9-]*$/.test(entry.name) && await exists(join(checkout, 'skills', entry.name, 'SKILL.md'))) skills.push(entry.name)
   }
   skills.sort()

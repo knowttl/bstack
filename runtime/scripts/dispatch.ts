@@ -5,9 +5,7 @@ import type { CommandReturn } from './lib/result.ts'
 
 type Command = { options: readonly string[]; help: string; run: (options: Options<any>, command: string) => Promise<CommandReturn> }
 
-// Each skill's generated entry file passes only the commands that skill ships.
 export async function dispatch(argv: string[], skill: string, commands: Record<string, Command>) {
-  // Multiword commands register their full public name.
   const command = Object.keys(commands).find(name => name.split(' ').every((word, index) => argv[index] === word))
   if (!argv.length || (argv.length === 1 && argv[0] === '--help')) {
     console.log(`Usage: node skills/${skill}/scripts/${skill}.mjs <command> [options]\n\nAvailable commands:\n${Object.keys(commands).map(name => `  ${name}`).join('\n')}\n\nUse --help to show this help (exit 0).\nMissing or unsupported arguments are a usage error (exit 3).`)

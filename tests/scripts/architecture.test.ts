@@ -7,7 +7,6 @@ import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 import { build, emptyRepo, git, runArchitecture } from './discovery-fixture.ts'
 
-// The skill is driven only through its installed entry point, as the user's agent would.
 const entry = join(resolve(dirname(fileURLToPath(import.meta.url)), '../..'), 'skills/architecture/scripts/architecture.mjs')
 
 function commit(repo: string, message: string) {
@@ -53,7 +52,6 @@ test('a maintain pass finds the module added since the design was reviewed, its 
   assert.equal(overlap.exit, 0, JSON.stringify(overlap))
   assert.deepEqual(overlap.data.sharedPaths.map((shared: NonNullable<typeof overlap.data.sharedPaths>[number]) => shared.examplePath), ['src/registry.mjs'])
 
-  // The new boundary is a rule only once a clean copy passes and a seeded private import fails it.
   const valid = join(directory, 'valid')
   const violation = join(directory, 'violation')
   for (const [root, source] of [[valid, 'import "./public.mjs"'], [violation, 'import "../core/private.mjs"']] satisfies [unknown, unknown][]) {
@@ -70,7 +68,6 @@ test('a maintain pass finds the module added since the design was reviewed, its 
   assert.equal(proof.exit, 0, JSON.stringify(proof))
   assert.deepEqual(proof.data.cases.map((item: NonNullable<typeof proof.data.cases>[number]) => item.execution.exitCode), [0, 1])
 
-  // Debt that predates the rule stays visible, and a new violation is rejected.
   const debt = { rule: 'private-import', path: 'src/billing/invoice.mjs', key: 'core/price', reason: 'Billing predates the public pricing interface.', removalCondition: 'Import the public pricing interface.' }
   await writeFile(join(repo, 'baseline.json'), JSON.stringify({ schemaVersion: 1, entries: [debt] }))
   const violations = join(directory, 'violations.json')

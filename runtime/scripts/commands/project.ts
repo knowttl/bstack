@@ -122,7 +122,6 @@ export async function run(options: Options<'plan' | 'dry-run'>) {
   const recovery = previous ?? { schemaVersion: 1, planDigest, destination, directories: ['', ...directories].sort((a, b) => a.split('/').length - b.split('/').length), gitStarted: false, gitComplete: false, commandsStarted: false, commands: [] }
   const save = () => saveRecovery(recoveryPath, recovery)
   try {
-    // Persist directory intentions before any destination mutation.
     await save()
     for (const path of recovery.directories) {
       const resolved = await resolvePath(destination, path || '.')
@@ -150,7 +149,6 @@ export async function run(options: Options<'plan' | 'dry-run'>) {
     await save()
     for (const command of [...plan.setupCommands, plan.journeyCommand]) {
       const recorded = recovery.commands.find((record: { id: string }) => record.id === command.id)
-      // Setup may have effects. Never duplicate an interrupted or failed command.
       if (recorded?.status === 'passed') continue
       if (recorded) break
       const record = { id: command.id, status: 'unverified', reason: 'Execution interrupted before a result was saved.' }

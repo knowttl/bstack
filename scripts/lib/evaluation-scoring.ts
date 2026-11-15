@@ -29,7 +29,6 @@ export function validateScore(record: EvaluationRecord, answers: Pick<Answers, '
         const item = event.item
         if (event.type !== 'item.completed' || item?.type !== 'command_execution') return false
         if (passing(item.command, item.aggregated_output ?? '', item.exit_code)) return true
-        // A resource wrapper can print its preflight before the helper result.
         const outputs = [item.aggregated_output, ...(item.aggregated_output ?? '').split(/\r?\n/)]
         return outputs.some(output => {
           let captured
@@ -38,8 +37,6 @@ export function validateScore(record: EvaluationRecord, answers: Pick<Answers, '
             const execution = check.execution
             if (passing([check.command.executable, ...check.command.args].join(' '),
               execution?.stdout ?? '', execution?.exitCode)) return true
-            // Maintained commands may wrap Node to enforce host prerequisites.
-            // Require successful, complete native execution and its Node version.
             return check.status === 'passed' && check.satisfied === true && execution?.status === 'passed' &&
               !execution.timedOut && !execution.cancelled && !execution.outputTruncated &&
               execution.toolVersion?.status === 'passed' && execution.toolVersion.stdout.trim() === record.tools.node &&

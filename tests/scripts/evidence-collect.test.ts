@@ -101,7 +101,6 @@ for (const source of ['staged', 'unstaged']) {
     const f = await maintenanceRepo(t)
     const base = commit(f.repo)
     if (source === 'unstaged') {
-      // An unstaged rename into another tracked path is detected by the worktree diff.
       await writeFile(join(f.repo, 'destination.mjs'), '')
       commit(f.repo)
     }

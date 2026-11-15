@@ -324,7 +324,6 @@ export async function inspectInstallation(entry, runtimeVersion, previousReport)
 async function state(destination, path) {
   const target = join(destination, path)
   try {
-    // A link is content to preserve, even when its target has the expected bytes.
     const stat = await lstat(target)
     if (!stat.isFile() || await resolvePath(destination, path) !== target) return { hash: 'non-file', bytes: null }
     const bytes = await readFile(target)
@@ -485,7 +484,6 @@ export async function applyLifecycle(entry, plan, stage, runtimeVersion, stagedR
         }
       }
     }
-    // A crash can follow a file rename and precede the journal update.
     if (actual.hash !== operation.proposedHash) {
       if (actual.hash !== operation.originalHash) {
         const bytes = operation.proposedHash === null ? Buffer.alloc(0) : await readFile(join(journal.stage, operation.path))
@@ -503,7 +501,6 @@ export async function applyLifecycle(entry, plan, stage, runtimeVersion, stagedR
         if (hashBytes(proposed) !== operation.proposedHash) blocked('staged-package-changed', 'Staged file differs from the recorded plan.')
         await mkdir(dirname(target), { recursive: true })
         const temporary = join(dirname(target), `.bstack-install-${index}.tmp`)
-        // Temporary files are recorded before creation and verified before reuse.
         if (!operation.temporary) {
           try { await lstat(temporary); blocked('temporary-collision', 'An unrelated installation temporary exists.') } catch (error) { if (error.code !== 'ENOENT') throw error }
           operation.temporary = temporary
@@ -540,7 +537,6 @@ export async function applyLifecycle(entry, plan, stage, runtimeVersion, stagedR
       if (!await runtimeVersion(journal.stage, journal.plan.runtime)) blocked('runtime-conflict', 'Staged pinned runtime changed before activation.')
       if (current && await exists(old)) blocked('runtime-conflict', 'An occupied runtime appeared after the old runtime was saved.')
       await mkdir(entry.destination, { recursive: true })
-      // Save the old directory before activating the staged runtime.
       await verifyDestination(entry)
       if (await exists(target) && !await ownsRuntime(target, runtime)) blocked('runtime-conflict', 'Runtime directory identity changed before replacement.')
       try { await lstat(target); await rename(target, old) } catch (error) { if (error.code !== 'ENOENT') throw error }

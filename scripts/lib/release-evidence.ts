@@ -20,14 +20,10 @@ type PreviousRelease = { schemaVersion: number; version: string; candidate: stri
 type HardBreakReport = { schemaVersion: number; candidate: string; model: string; checks: { id: string; passed: boolean }[];
   agentProcesses: { scenario: string; runs: number; failures: number; infrastructureFailures: number }[] }
 
-// These candidate-bound checks cover hard breaks not represented by scored ledger rows.
 const hardChecks = ['deterministic-suite', 'package-check', 'registry', 'installer', 'fixture-unchanged',
   'approval-before-write', 'isolation', 'explicit-invocation', 'implicit-invocation']
-// Commit and hash identities prevent accidental comparison across incompatible batches.
 const commit = { type: 'string', pattern: '^[0-9a-f]{40}$' }
-// Ledger identity hashes use the same SHA-256 format as batch finalization.
 const hash = { type: 'string', pattern: '^[0-9a-f]{64}$' }
-// Counts must be exact integers so threshold comparisons never accept partial runs.
 const count = { type: 'integer' }
 
 function key(row: Pick<LedgerRow, 'scenario' | 'check'>) { return `${row.scenario}/${row.check}` }
@@ -207,14 +203,12 @@ export async function releaseGate(opts: { release: string; candidate: string; ch
       if (hard && total.passes < total.runs) blocking.push({ ...total, class: 'hard-break' })
       if (first.passes < 3 && batches.length === 1) { confirmation.add(definition.id); continue }
       const threshold = total.passes * 5 >= total.runs * 3
-      // Integer cross multiplication preserves the exact two-of-five margin at both sample sizes.
       const margin = baseline.passes >= 3 || total.passes * 5 >= (baseline.passes + 2) * total.runs
       if (!threshold || !margin) {
         const issue = { ...total, reason: !threshold ? 'below k/N' : 'below per-check margin' }
         if (previous?.gatingSet.includes(key(first))) blocking.push({ ...issue, class: 'regression' })
         else knownIssues.push(issue)
       }
-      // Each smoke batch has five runs, so the last two batches give an exact ten-run history.
       const recent = history.filter(row => row.check === check.id && row.runs === 5 && identity(row) === identity(first))
         .map(row => ({ passes: row.passes, runIds: row.runIds }))
         .filter((row, index, all) => all.findIndex(other => canonicalJSON([...other.runIds].sort()) === canonicalJSON([...row.runIds].sort())) === index).slice(-2)

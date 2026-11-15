@@ -18,7 +18,6 @@ export async function scratchDirectory(target: Pick<Target, 'root'>, runId: stri
   if (isInside(target.root, base)) {
     throw new CommandError('blocked', [{ code: 'scratch-inside-target', message: 'Scratch would be written inside the target.', fix: 'Select an OS cache directory outside the target.', path: base }])
   }
-  // Real target identity survives aliases; the caller selects the run identity.
   const key = createHash('sha256').update(target.root).digest('hex')
   const directory = await resolveLinks(join(base, key, runId))
   if (isInside(target.root, directory)) {

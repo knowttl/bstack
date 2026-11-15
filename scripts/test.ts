@@ -6,9 +6,7 @@ import { createWriteStream, existsSync } from 'node:fs'
 import { finished } from 'node:stream/promises'
 import type { CaptureBinding } from './lib/test-evidence.ts'
 
-// Discovery is anchored to this checkout, independent of the caller's directory.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..')
-// These are the only suite roots, so fixture and evaluation sources stay excluded.
 const suiteRoots = ['scripts', 'package-check'].map(name => join(root, 'tests', name))
 
 async function discover(directory: string): Promise<string[]> {
@@ -34,7 +32,6 @@ try {
     arg === '--task' || arg === '--capture' && args.length === 2))) {
     throw new Error('Usage: npm test -- [--task <id> ... | --capture <run.json>]')
   }
-  // Ordinary gate runs retain evidence too; standalone discovery fixtures have no Git checkout.
   let capture = args[0] === '--capture' ? resolve(root, args[1]) :
     !args.length && existsSync(join(root, '.git')) ? join(root, '.cache', 'full-suite.json') : null
   if (capture) {

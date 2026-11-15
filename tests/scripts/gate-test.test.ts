@@ -16,7 +16,6 @@ async function put(repo: string, path: string, contents: string) {
   await writeFile(join(repo, path), contents)
 }
 
-// The npm process is the gate's external boundary; realRunner exercises the maintained runner as well.
 async function fixture(t: import('node:test').TestContext, { remote = true, realRunner = false } = {}) {
   const { repo } = await emptyRepo(t)
   for (const path of ['scripts/gate-test.ts', 'scripts/test.ts', 'tests/tasks.json', 'tests/affected.json', 'runtime']) {
@@ -82,7 +81,6 @@ for (const [path, reason] of [
   test(`${path} falls back to the full offline gate`, async t => {
     const repo = await fixture(t)
     const original = await readFile(join(repo, path), 'utf8').catch(() => '')
-    // Keep changed configuration valid so selection, rather than parse failure, exercises fallback.
     await put(repo, path, original + '\n')
     const result = gate(repo)
     assert.deepEqual(records(result), full)

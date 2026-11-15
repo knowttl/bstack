@@ -8,14 +8,11 @@ import { spawnSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
 import { snapshot } from './discovery-fixture.ts'
 
-// Commands exercise the installed entry point with only disposable targets.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
-// Independent canonical encoding verifies the published digest contract.
 type Command = { id: string; executable: string; args: string[]; versionArgs: string[]; cwd: string; timeoutMs: number }
 
 const canonical = (value: unknown): string => Array.isArray(value) ? `[${value.map(canonical).join(',')}]`
   : value && typeof value === 'object' ? `{${Object.keys(value).sort().map(key => `${JSON.stringify(key)}:${canonical((value as Record<string, unknown>)[key])}`).join(',')}}` : JSON.stringify(value)!
-// Exact byte hashes bind the payload reviewed through the command.
 const hash = (value: string | Buffer) => createHash('sha256').update(value).digest('hex')
 
 async function save(context: Awaited<ReturnType<typeof setup>>) {
@@ -44,7 +41,6 @@ async function setup(t: import('node:test').TestContext) {
     'docs/design.md': '# Foundation\nThe list owns marks. The CLI prints the list.\n',
     'journey.mjs': "import assert from 'node:assert/strict'\nconst needed = new Set()\nneeded.add('Rice')\nassert.deepEqual([...needed], ['Rice'])\nconsole.log('shopping list: Rice')\n",
     'README.md': '# Pantry\n\nRun `node journey.mjs` to print the shopping list.\n',
-    // The foundation skill's own pointer line, created with the scaffold because a new project has no instruction file.
     'AGENTS.md': '# Agent instructions\n\nRun the setup and check commands in [README.md](README.md) before reporting a change complete.\n'
   }
   const findings = JSON.parse(await readFile(join(root, 'tests/inputs/findings-foundation.json'), 'utf8'))

@@ -5,7 +5,6 @@ import { dirname, join, resolve } from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { spawnSync } from 'node:child_process'
 
-// Skills are read and driven only through their installed folders, as the user's agent would.
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '../..')
 const research = ['how', 'why', 'teach']
 

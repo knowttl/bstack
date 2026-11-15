@@ -6,11 +6,8 @@ import { createHash } from 'node:crypto'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
-// Seeds live only in this worker and are never handed to a test for mutation.
 const seeds = new Map<string, Promise<string>>()
-// Authored inputs are immutable for a worker; only disposable clones may be edited.
 const inputHashes = new Map<string, Promise<string>>()
-// Register at module scope so cleanup follows the whole file, not the first test using a seed.
 const seedDirectories: string[] = []
 after(() => Promise.all(seedDirectories.map(directory => rm(directory, { recursive: true, force: true }))))
 
