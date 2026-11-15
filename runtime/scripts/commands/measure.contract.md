@@ -5,7 +5,7 @@ node skills/architecture/scripts/architecture.mjs measure --repo <path> --range 
 node skills/architecture/scripts/architecture.mjs overlap --repo <path> --plans <file> <file> --json
 ```
 
-Both commands ship in the [architecture skill](../skills/architecture/SKILL.md), which also runs `rule-proof`, `baseline check`, `findings validate`, `apply`, `state show` and `cite-check` from the shared runtime with those same contracts.
+Both commands ship in the [architecture skill](../../../skills/architecture/SKILL.md), which also runs `rule-proof`, `baseline check`, `findings validate`, `apply`, `state show` and `cite-check` from the shared runtime with those same contracts.
 `measure`, `overlap`, `rule-proof` and `baseline check` accept only `--repo`; `--workspace` is a usage error for them.
 Both commands require a Git repo, accept optional `--json`, and make no writes or scratch files.
 Input JSON filenames resolve from the caller's working directory.
@@ -48,7 +48,7 @@ Counts describe same-commit changes, rather than observed merge conflicts.
 Default exclusions cover lock basenames at every depth: package-lock.json, npm-shrinkwrap.json, pnpm-lock.yaml, yarn.lock, bun.lock, bun.lockb, uv.lock, poetry.lock, Pipfile.lock, Cargo.lock, go.sum, Gemfile.lock and composer.lock.
 Generated directory conventions are .git, node_modules, .venv, venv, __pycache__, dist, build and .cache at every depth.
 These patterns derive from the shared discovery policy in `lib/discovery.ts`.
-Declare other generated files and broad formatting commits with the [exclusions schema](../skills/architecture/schemas/measure-exclusions.json):
+Declare other generated files and broad formatting commits with the [exclusions schema](../../../skills/architecture/schemas/measure-exclusions.json):
 
 ```json
 {

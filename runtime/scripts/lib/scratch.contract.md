@@ -11,7 +11,7 @@ Drafts, board verdicts and resume state stay outside the selected target.
 
 The cache directory must be absolute.
 A target subfolder uses SHA-256 of the absolute real target root, and `createScratch` assigns a UUID to each new draft run.
-Apply uses the [digest-bound run identity](#apply-dry-run) instead.
+Apply uses the [digest-bound run identity](../commands/apply.contract.md#apply-dry-run) instead.
 Existing cache and run-parent links are resolved before creating directories.
 A resolved scratch location inside the target is blocked before any write.
 Draft review commands use explicit returned scratch paths rather than guessing the newest run.

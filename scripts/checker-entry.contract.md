@@ -15,7 +15,7 @@ Each distinct required leaf command runs once across the comparison and current 
 Identical commands share that execution while retaining each previous/proposed declaration's coverage obligation.
 Result validation uses only these current executions, never saved `execution` references in the assessment.
 Final validation rechecks committed assessment bytes, document references and generated facts under both policies against the target tree, including ignored link destinations and generator inputs, outputs and command sources.
-Results retain the [document reference coverage limits](#document-references) observed under either policy, including comparison and final validation results.
+Results retain the [document reference coverage limits](../runtime/scripts/commands/docs-check.contract.md#document-references) observed under either policy, including comparison and final validation results.
 Changed review inputs block final validation, and failed or incomplete required executions cannot pass.
 The leaf phase writes a fresh scratch `checker-result.json` containing source and base objects, their computed merge base, timestamps and captured command results, including failures.
 Execution and final-validation exceptions retain results from already completed leaves.
@@ -71,7 +71,7 @@ After rebasing or changing the agreed base, recollect, review, bind and commit t
 node .bstack/bin/bstack-check.mjs --repo <path> --docs-only [--contract <repo-relative-file>] [--json]
 ```
 
-`--docs-only` runs `docs check`, the `docs generate --check` comparison, the instruction growth check and the [constraint ledger validation](#constraint-ledger-and-lock-down-scorecard) on the current tree and nothing else, so it takes no base or assessment and starts no leaf command.
+`--docs-only` runs `docs check`, the `docs generate --check` comparison, the instruction growth check and the [constraint ledger validation](../runtime/scripts/commands/scorecard.contract.md#constraint-ledger-and-lock-down-scorecard) on the current tree and nothing else, so it takes no base or assessment and starts no leaf command.
 Supplying `--base`, `--assessment` or `--workspace` with it is a usage error (exit 3, problem code `docs-only-input`).
 When the contract records `instructions.baseline`, the check measures the loaded instructions as `instructions measure` does, applying `instructions.exclude`, and fails with `instructions-grew` when the total bytes exceed `baseline.bytes`.
 A change that needs more instructions raises `baseline.bytes` and replaces `baseline.reason` in the same change, and a baseline without a nonblank reason is a schema violation.

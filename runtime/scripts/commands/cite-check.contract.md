@@ -3,9 +3,9 @@
 `node skills/repo-audit/scripts/repo-audit.mjs cite-check --repo <path>|--workspace <path> --report <file> [--json]` checks a scratch research report without target writes.
 The report follows `skills/repo-audit/schemas/research-report.json`, version 1.
 It requires the actual mode, host, observed subagent and web capabilities and one or more uniquely identified briefs.
-The [shared report schema](../runtime/schemas/research-report.json) defines the allowed brief IDs.
+The [shared report schema](../../schemas/research-report.json) defines the allowed brief IDs.
 Each brief records its actual scope, concise findings, limitations, file citations and web citations.
-The [research briefs reference](../skills/repo-audit/references/research-briefs.md#execution-and-report-contract) owns the documents and history briefs that repo-audit runs and their execution guidance; the schema keeps the other brief IDs for the skills that research them.
+The [research briefs reference](../../../skills/repo-audit/references/research-briefs.md#execution-and-report-contract) owns the documents and history briefs that repo-audit runs and their execution guidance; the schema keeps the other brief IDs for the skills that research them.
 
 Each file citation has a repo-relative `location` in `path:line` form and a `state` with kind sha256 or revision and its lowercase hex value.
 Use forward slashes for portable repo-relative paths.

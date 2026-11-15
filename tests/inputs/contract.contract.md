@@ -5,4 +5,4 @@
 Its input is `{ "schemaVersion": 1, "paths": [<relative path>], "scratch": <boolean> }` with no additional fields.
 It validates all paths before optionally writing `draft.txt` in a new scratch run.
 Valid and invalid fixtures in `tests/inputs/` cover refusal with no partial writes.
-See [development](development.md#validate) for suite selection and the [implementation plan](implementation-plan.md#progress) for slice progress.
+See [development](../../docs/development.md#validate) for suite selection and the [implementation plan](../../docs/implementation-plan.md#progress) for slice progress.

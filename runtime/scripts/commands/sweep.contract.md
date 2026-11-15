@@ -18,7 +18,7 @@ The document registered with the ID `plan` is read as a plan: `plan-finished` is
 `plan-orphaned` is reported when a `path:line` citation in backticks on a `Design:` line names a missing or unresolvable path, or when "How to read this" has no readable removal condition or its condition path cannot be resolved.
 Sweep fixes neither: the user approves deleting the plan together with its `AGENTS.md` pointer line, or restoring an orphaned plan's dependencies.
 For registered documents, code changes or document age alone never produce a repair item or fail the command.
-Formal suites follow the [formal check contract](#formal-verification-skill-commands), including source drift since a property's sync commit.
+Formal suites follow the [formal check contract](formal-scaffold.contract.md#formal-verification-skill-commands), including source drift since a property's sync commit.
 Each applied verification kit under `.agents/skills/verify-*/` is checked with the `kit check` rules and fixed by `/verification maintain`, each applied formal verification suite under `.agents/skills/formal-*/` is checked with the `formal check` rules and fixed by `/formal-verification maintain`, and a link in the root `AGENTS.md` that does not resolve is fixed by `/agents-md`.
 A suite whose pinned tool file is missing is unproven and not drifted, so it appears in `data.coverageLimits` with the tool's path and never fails sweep by itself.
 The two prefixes are distinct, so a `verify-` kit is never read as a suite.

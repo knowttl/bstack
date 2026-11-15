@@ -1,6 +1,6 @@
 ## Constraint ledger and lock-down scorecard
 
-A repo's constraint ledger is the data file `.bstack/constraints.json`, following the [constraint ledger schema](../runtime/schemas/constraints.schema.json).
+A repo's constraint ledger is the data file `.bstack/constraints.json`, following the [constraint ledger schema](../../schemas/constraints.schema.json).
 It is the memory of the learning loop: one entry per mistake class, so a class seen once is counted the next time it occurs and each adopted constraint keeps its rung, check and proof.
 It is data, not an instruction file: no host loads it into an agent's context, no skill reads it whole, and commands report only what they derive from it.
 
@@ -33,7 +33,7 @@ It is data, not an instruction file: no host loads it into an agent's context, n
 | `constraint.check.id` | The ID of the check in the project contract's `checks` that enforces the constraint |
 | `constraint.check.ruleId` | The stable `rule-id:` prefix of the check's diagnostic |
 | `constraint.check.proofDate` | The date, as `YYYY-MM-DD`, of the passing `rule-proof` |
-| `constraint.check.baseline` | Optional repo-relative path of the constraint's debt baseline, following the [baseline schema](../runtime/schemas/baseline.schema.json) |
+| `constraint.check.baseline` | Optional repo-relative path of the constraint's debt baseline, following the [baseline schema](../../schemas/baseline.schema.json) |
 
 An entry without `constraint` is a class below the two-occurrence threshold, kept with its single occurrence.
 A constraint that comes from an approved requirement or the slop baseline may record no occurrences.

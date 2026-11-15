@@ -1,6 +1,6 @@
 ### Declared overlap plans and glob semantics
 
-Each file follows the [overlap plan schema](../skills/architecture/schemas/overlap-plan.json):
+Each file follows the [overlap plan schema](../../../skills/architecture/schemas/overlap-plan.json):
 
 ```json
 {

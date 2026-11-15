@@ -1,6 +1,6 @@
 Verdicts takes the complete-round Context data JSON embedded in the terminal's vision-verdict prompt.
 Copy that JSON unchanged to a scratch file, retaining the captured terminal response as provenance.
-The [vision-verdicts schema source](../runtime/schemas/vision-verdicts.json) defines the input fields and accepted verdict labels:
+The [vision-verdicts schema source](../../schemas/vision-verdicts.json) defines the input fields and accepted verdict labels:
 
 ```json
 {

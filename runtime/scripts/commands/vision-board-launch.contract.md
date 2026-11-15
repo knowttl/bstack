@@ -21,4 +21,4 @@ Follow the runtime's ended-session and browser-disconnection instructions.
 With no reachable browser, preserve scratch and report interaction blocked.
 Runtime launch failures return blocked exit 2 with the nested install and server-access fix, leaving draft.md unchanged.
 The runtime inherits the host's server and state configuration.
-See the [manual procedure](../tests/eval/results/tasks/C10b.manual-board.md) for the observed server setup and interaction limits.
+See the [manual procedure](../../../tests/eval/results/tasks/C10b.manual-board.md) for the observed server setup and interaction limits.

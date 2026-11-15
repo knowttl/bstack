@@ -26,7 +26,7 @@ Proposals conform to `skills/vision/schemas/vision-proposals.json`:
 ```
 
 This shape illustrates fields.
-The [executable draft](../tests/inputs/vision-draft.md) and [matching proposals](../tests/inputs/vision-proposals.json) provide a complete valid pair.
+The [executable draft](../../../tests/inputs/vision-draft.md) and [matching proposals](../../../tests/inputs/vision-proposals.json) provide a complete valid pair.
 Supply at least one card when a real unresolved trade-off warrants a board.
 All fields are required, all card strings and the project name must be nonempty, and unknown fields are rejected.
 IDs must be nonblank and unique by exact string value.

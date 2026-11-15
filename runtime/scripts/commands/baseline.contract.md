@@ -1,7 +1,7 @@
 `baseline check --repo <target> --baseline <repo-relative-file> --violations <file> [--json]` compares complete current normalized native diagnostics with `schemas/baseline.schema.json`.
 Native adapters must preserve stable rule/path/key identities, and must not present setup failure or unavailable analysis as an empty violation list.
 This command compares supplied data; it does not execute the native analysis.
-The [baseline schema source](../runtime/schemas/baseline.schema.json) owns the fields; each entry records a narrow reason and removal condition.
+The [baseline schema source](../../schemas/baseline.schema.json) owns the fields; each entry records a narrow reason and removal condition.
 The baseline file must already exist; start with `{"schemaVersion":1,"entries":[]}` when no debt has been accepted.
 
 The violation file is an array such as `[{"rule":"private-import","path":"src/app.py","key":"ledger._internal"}]`.
