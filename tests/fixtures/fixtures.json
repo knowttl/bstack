@@ -598,5 +598,10 @@
     "kind": "repo",
     "files": [".gitignore", "lint.json", "package.json", "package-lock.json", "src"],
     "history": [{ "paths": ["."], "message": "feat: establish fixture", "date": "2026-01-09T12:00:00Z" }]
+  },
+  "ts-types": {
+    "kind": "repo",
+    "files": [".gitignore", "package.json", "package-lock.json", "tsconfig.json", "check.ts", "src"],
+    "history": [{ "paths": ["."], "message": "feat: establish fixture", "date": "2026-01-09T12:00:00Z" }]
   }
 }

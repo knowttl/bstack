@@ -31,7 +31,7 @@ Default on, adopted with each rule proven by `rule-proof` and existing violation
 | SL-11 | Identifiers that share a primitive have distinct types, so one cannot be passed where another is expected |
 | SL-12 | The compiler's or type checker's strict mode is enabled and runs inside the maintained command |
 
-SL-9 to SL-12 are unproven: each ships as a default candidate that stays off until a project proves it with `rule-proof`.
+SL-9 is unproven in every language, and SL-10 to SL-12 are unproven outside the TypeScript proofs recorded below: each ships as a default candidate that stays off until a project proves it with `rule-proof`.
 SL-10 to SL-12 are the top-rung type candidates: each makes a mistake unrepresentable, so its proof seeds the mistake, such as an unhandled variant or a swapped identifier, and expects the type check to fail inside the maintained command.
 Treat a reasoned skip as one whose reason is recorded where the checker can read it, such as the skip call's reason argument.
 
@@ -70,8 +70,12 @@ Dropped: `require-safety-comment-for-type-assertion`, which conflicts with the c
 - SL-9 has no proof in any language: every mapping in its row is a candidate by name only, and polling loops and skips need custom checks in each mapping.
 The named timer checks do not cover every sleep-based wait, including bare `setTimeout`, `asyncio.sleep` and `time.After`; those paths remain unproven in TypeScript, Python and Go respectively.
 Prove coverage of sleep-based waits, polling loops and unreasoned skips before treating SL-9 as proven.
-- SL-10, SL-11 and SL-12 have no proof in any language: every mapping in their rows is a candidate by name only.
-- No Go slop rule, and no TypeScript slop rule outside SL-1, SL-2 and SL-3, was proven by this skill's tests. The comment-ban checkers were tested for Python, Go and TypeScript.
+- TypeScript SL-10, SL-11 and SL-12 were proven in part on a disposable fixture with `tsc` 7.0.2 and `strict` enabled in `tsconfig.json`, through one maintained command (`npm run check`) that rejected each seeded mistake. In the bstack source checkout, the configuration lives in `tests/fixtures/ts-types`. `tsc` names no replacement, so the fixture's `check.ts` rewrites each diagnostic to `path:line: TSnnnn: what is wrong.`, appending `Use OrderId.` or `Use CustomerId.` for the identifier mistakes; the SL-10 and SL-12 proofs use `--no-replacement`, since the fix adds a branch, annotation or null check rather than naming something to use. Prove it again on every project.
+  - SL-10: adding a variant to a union whose `switch` ends in a call that takes a `never` parameter fails with `not assignable to parameter of type 'never'`. Only a `switch` written that way is covered: a `switch` with no `never` branch is flagged only when its return type forces a value (`TS2366`), so one in a function returning nothing is not seen. The typescript-eslint rule `switch-exhaustiveness-check` was not run and stays unproven.
+  - SL-11: passing a `CustomerId` for an `OrderId`, the reverse, or a bare string to a parameter typed with the brand fails with `not assignable to parameter of type`. Unproven: the custom check for identifier parameters typed as a bare `string`. `tsc` accepts two such parameters in either order, so a mistake the types never encode stays invisible. The brands are made by a cast in their parse functions, which SL-1 allows only at the parse boundary.
+  - SL-12: an implicit `any` (`TS7006`) and an unchecked `null` (`TS18047`), both errors only under `strict`, fail inside the command. Unproven: that turning `strict` off is detected. With `"strict": false` the command passes the same code, so a check on `tsconfig.json` itself would need a custom check.
+- Python and Go SL-10, SL-11 and SL-12, and every other TypeScript mapping in their rows, have no proof: those mappings are candidates by name only.
+- No Go slop rule, and no TypeScript slop rule outside SL-1, SL-2, SL-3 and the parts of SL-10, SL-11 and SL-12 above, was proven by this skill's tests. The comment-ban checkers were tested for Python, Go and TypeScript.
 
 ## The comment ban
 
