@@ -57,7 +57,8 @@ Also retain the brief's cited statement that the suite or the gate is slow, if t
 
 For a Git repo, also run `node scripts/repo-audit.mjs history --repo <target> --export-findings --json` and keep the output in scratch; its `findingsExport.path` names a scratch file holding each finding's run, step, round, current file and text.
 Run the one history brief from the research briefs reference on that output, reading the run history only as the [history reference](references/no-mistakes-history.md) allows, and add its entry to the same report.
-The brief reports the runs read versus the total, or that the repo has no linked history, and names only mistake classes with two cited occurrences.
+When the output shows no linked `no-mistakes` history, the history brief samples recent Git reverts, `fix` commits and available pull request review threads read-only so recurring mistake classes still surface.
+The brief reports the runs read versus the total (or the Git/PR history sampled when no `no-mistakes` history exists) and names only mistake classes with two cited occurrences.
 
 For a Git repo, also run `node scripts/repo-audit.mjs scorecard --repo <target> --json` and keep the output in scratch.
 It summarises the repo's constraint ledger; take the scorecard only from this output and never open the ledger file.
@@ -69,7 +70,7 @@ Done when: The report passes `cite-check` against the current bytes, or the miss
 Print the checklist for the chosen path, one line per skill in the order shown, each with one reason in the form `path:line` or an inventory kind reported absent, taken from the checked report and the inventory output.
 Mark a line `looks done` when its output already exists and the cited source shows it, otherwise `to do`; this is a pointer for the user and not a verdict on quality.
 A reason that cites nothing is not a reason: drop the claim or mark the line `no evidence` and say what could not be read.
-On the existing-repo path, a reason may instead cite the history output by run ID and finding ID or by its late-round share with the runs read versus the total, as the history brief routes it.
+On the existing-repo path, a reason may instead cite the history output by run ID and finding ID, by its late-round share with the runs read versus the total, or by cited Git commits and PR review threads when no `no-mistakes` history exists, as the history brief routes it.
 Do not start any listed skill during the audit, and do not write the checklist into the target.
 On the existing-repo path, print the lock-down scorecard above the checklist: one line per principle from the `scorecard` output, in its order, with the principle's title and its rung followed by `proven` or `not proven`, or `none` when the rung is null, then each limitation the output reports.
 
@@ -92,7 +93,7 @@ Existing repo:
 - [ ] `/glossary` (only if terms are unclear) - the cited terms that are missing or compete
 - [ ] `/architecture` - the cited boundary, decision or design gap, or the design document found absent
 - [ ] `/verification create` - the cited test and check state from the manifests and standards, including the test-quality policy signal and one cited instance with its rule if encountered; when a cited statement says the suite or the gate is slow, name `/verification maintain` for a repo that has a kit and `/verification create` for one that has none, as the skill that audits and speeds up the suite
-- [ ] `/verification correct` (only with history evidence) - a mistake class the history brief cites at least twice, with its run and finding IDs
+- [ ] `/verification correct` (only with history evidence) - a mistake class the history brief cites at least twice, with its run and finding IDs or its cited Git commits and PR review threads
 - [ ] `/formal-verification create` (only with cited risk evidence) - the cited spot where a mistake costs money or data and depends on timing or a rare input
 - [ ] `/no-mistakes-tuning` (only with history evidence) - the late-round share of findings with the runs read versus the total, or the gate config found absent
 - [ ] `/maintenance` - the cited documents that no registered contract covers
@@ -101,6 +102,7 @@ Existing repo:
 - [ ] `/plan` - the cited approved design that has no implementation plan yet, or the design document found absent, last
 
 `/foundation` is for new projects only and never appears on the existing-repo checklist, because it refuses a non-empty directory.
+When the user asks for a visual review of a large scorecard and checklist, you may also write a local HTML summary in scratch outside the target alongside the terminal checklist.
 State the limitations and the decisions the audit could not make, then proceed to the closing Next step.
 
 Done when: The checklist for the chosen path is printed with every line citing a reason, the existing-repo path shows the scorecard's five principle lines, nothing has been written to the target, and no other skill has been started during the audit.
