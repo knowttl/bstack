@@ -16,6 +16,7 @@ import sys
 import tokenize
 
 RULE = "no-prose-comments"
+ALLOW_DOCS = __ALLOW_DOCS__
 EXEMPT = [
     re.compile(pattern)
     for pattern in [
@@ -86,7 +87,7 @@ def violations(path):
             (line == 1 and text.startswith("#!"))
             or line in licensed
             or is_exempt(text)
-            or (not SUPPRESSION.search(text) and re.search(r"https?://[^\\s<>]+", text))
+            or (ALLOW_DOCS and not SUPPRESSION.search(text) and re.search(r"https?://[^\\s<>]+", text))
         ):
             continue
         digest = hashlib.sha256(text.strip().encode()).hexdigest()[:12]
@@ -215,6 +216,7 @@ import (
 )
 
 const rule = "no-prose-comments"
+const allowDocs = __ALLOW_DOCS__
 
 var exempt = []*regexp.Regexp{__EXEMPT__}
 var license = regexp.MustCompile(__LICENSE__)
@@ -364,7 +366,7 @@ func scan(path string) ([]comment, error) {
 	seen := map[string]int{}
 	var kept []comment
 	for index, item := range found {
-		skip := licensed[index] || (!suppression.MatchString(item.text) && (item.documented || link.MatchString(item.text)))
+		skip := licensed[index] || (allowDocs && !suppression.MatchString(item.text) && (item.documented || link.MatchString(item.text)))
 		for _, pattern := range exempt {
 			match := pattern.FindStringSubmatch(item.text)
 			if match == nil {
@@ -521,6 +523,7 @@ const major = Number(metadata.version.split('.')[0])
 const { default: ts } = await import(major >= 7 ? '@typescript/typescript6' : 'typescript')
 
 const rule = 'no-prose-comments'
+const allowDocs = __ALLOW_DOCS__
 const exempt = __EXEMPT__.map(pattern => new RegExp(pattern))
 const license = new RegExp(__LICENSE__)
 const suppression = new RegExp('^(/[/]\\\\s*|/[*]+\\\\s*)([a-z]+-(disable|enable)|@ts-(ignore|expect-error|nocheck))')
@@ -640,7 +643,7 @@ function violations(path) {
       const match = pattern.exec(item.text)
       return match && (!match[1] || match[1].split(',').every(selector => selector.trim().toLowerCase() !== 'all'))
     })
-    const documentation = !suppression.test(item.text) && (item.documented || new RegExp('https?://[^\\\\s<>]+').test(item.text))
+    const documentation = allowDocs && !suppression.test(item.text) && (item.documented || new RegExp('https?://[^\\\\s<>]+').test(item.text))
     if (licensed.has(index) || documentation || (item.line === 1 && item.text.startsWith('#!')) || directive) continue
     const digest = createHash('sha256').update(item.text.trim()).digest('hex').slice(0, 12)
     seen.set(digest, (seen.get(digest) ?? 0) + 1)
@@ -705,9 +708,13 @@ export const checkers: Record<CheckerLanguage, Checker> = {
   typescript: { template: typescript, directory: 'scripts', file: 'check-comments.mjs', run: 'node', format: patterns => `[${patterns.map(pattern => JSON.stringify(pattern)).join(', ')}]` }
 }
 
-export function generateChecker(language: CheckerLanguage) {
+export function generateChecker(language: CheckerLanguage, { strict = false }: { strict?: boolean } = {}) {
   const checker = checkers[language]
   const suggestedPath = `${checker.directory}/${checker.file}`
+  const allowDocs = language === 'python' ? (strict ? 'False' : 'True') : (strict ? 'false' : 'true')
   return { suggestedPath, run: language === 'go' ? `${checker.run} ./${checker.directory}` : `${checker.run} ${suggestedPath}`,
-    content: checker.template.replace('__EXEMPT__', () => checker.format(exemptions[language])).replace('__LICENSE__', () => JSON.stringify(licenseMarker)) }
+    content: checker.template
+      .replace('__ALLOW_DOCS__', () => allowDocs)
+      .replace('__EXEMPT__', () => checker.format(exemptions[language]))
+      .replace('__LICENSE__', () => JSON.stringify(licenseMarker)) }
 }

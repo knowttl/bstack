@@ -3,7 +3,7 @@ import assert from 'node:assert/strict'
 import { spawnSync } from 'node:child_process'
 import { appendFile, cp, mkdir, mkdtemp, readFile, rename, rm, symlink, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
-import { join, resolve } from 'node:path'
+import { dirname, join, resolve } from 'node:path'
 import { build, git, runVerification } from './discovery-fixture.ts'
 
 async function scratch(t: import('node:test').TestContext) {
@@ -663,3 +663,30 @@ for (const [name, path, before, after, diagnostic, replacement] of typescriptTyp
     assert.match(proof.data.cases[1].execution.stdout, new RegExp(`${path}:\\d+: TS\\d+: `))
   })
 }
+
+test('comment-check generate --strict rejects public API doc comments and linked comments while keeping directives and licenses', async t => {
+  const f = await scratch(t)
+  const repo = await repository(t, {
+    'app.py': '#!/usr/bin/env python3\n# SPDX-License-Identifier: MIT\n\n# https://example.com/spec\nx = 1  # noqa: E501\n',
+    'doc.ts': '// SPDX-License-Identifier: MIT\n\nexport const base = 0\n/** Public API doc. */\nexport const value = 1\n// https://example.com/spec\n// eslint-disable-next-line no-var\nexport const next = 2\n'
+  })
+  const pyStrict = runVerification('comment-check generate', repo, f.env, ['--language', 'python', '--strict'])
+  assert.equal(pyStrict.exit, 0, JSON.stringify(pyStrict))
+  assert.equal(pyStrict.data.strict, true)
+  const pyRun = execute(repo, process.platform === 'win32' ? 'python' : 'python3', [pyStrict.data.path, 'app.py'])
+  assert.equal(pyRun.exit, 1, pyRun.output)
+  assert.match(pyRun.output, /app\.py:4: no-prose-comments: prose comment: # https:\/\/example\.com\/spec/)
+  assert.doesNotMatch(pyRun.output, /SPDX-License-Identifier|noqa: E501|env python3/)
+  const tsStrict = runVerification('comment-check generate', repo, f.env, ['--language', 'typescript', '--strict'])
+  assert.equal(tsStrict.exit, 0, JSON.stringify(tsStrict))
+  assert.equal(tsStrict.data.strict, true)
+  const tsChecker = join(repo, tsStrict.data.suggestedPath)
+  await mkdir(dirname(tsChecker), { recursive: true })
+  await cp(tsStrict.data.path, tsChecker)
+  await symlink(resolve(import.meta.dirname, '../../node_modules'), join(repo, 'node_modules'), 'junction')
+  const tsRun = execute(repo, process.execPath, [tsChecker, 'doc.ts'])
+  assert.equal(tsRun.exit, 1, tsRun.output)
+  assert.match(tsRun.output, /doc\.ts:4: no-prose-comments: prose comment: \/\*\* Public API doc\. \*\//)
+  assert.match(tsRun.output, /doc\.ts:6: no-prose-comments: prose comment: \/\/ https:\/\/example\.com\/spec/)
+  assert.doesNotMatch(tsRun.output, /SPDX-License-Identifier|eslint-disable-next-line/)
+})

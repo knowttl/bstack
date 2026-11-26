@@ -65,7 +65,7 @@ function parseArgs(argv, valueOptions = []) {
     if (Object.hasOwn(options, name)) {
       problems.push({ code: "duplicate-option", message: `Repeated option: ${token}`, fix: "Supply each option once." });
     }
-    if (name === "json" || name === "dry-run" || name === "approved-by-user" || name === "refresh" || name === "check" || name === "update" || name === "docs-only" || name === "export-findings") options[name] = true;
+    if (name === "json" || name === "dry-run" || name === "approved-by-user" || name === "refresh" || name === "check" || name === "update" || name === "docs-only" || name === "export-findings" || name === "strict") options[name] = true;
     else if (!argv[index + 1] || argv[index + 1].startsWith("--")) {
       problems.push({ code: "missing-value", message: `Missing value for ${token}`, fix: "Supply a nonempty value after the option." });
     } else if (name === "plans") {
@@ -4703,6 +4703,7 @@ import sys
 import tokenize
 
 RULE = "no-prose-comments"
+ALLOW_DOCS = __ALLOW_DOCS__
 EXEMPT = [
     re.compile(pattern)
     for pattern in [
@@ -4773,7 +4774,7 @@ def violations(path):
             (line == 1 and text.startswith("#!"))
             or line in licensed
             or is_exempt(text)
-            or (not SUPPRESSION.search(text) and re.search(r"https?://[^\\s<>]+", text))
+            or (ALLOW_DOCS and not SUPPRESSION.search(text) and re.search(r"https?://[^\\s<>]+", text))
         ):
             continue
         digest = hashlib.sha256(text.strip().encode()).hexdigest()[:12]
@@ -4901,6 +4902,7 @@ import (
 )
 
 const rule = "no-prose-comments"
+const allowDocs = __ALLOW_DOCS__
 
 var exempt = []*regexp.Regexp{__EXEMPT__}
 var license = regexp.MustCompile(__LICENSE__)
@@ -5050,7 +5052,7 @@ func scan(path string) ([]comment, error) {
 	seen := map[string]int{}
 	var kept []comment
 	for index, item := range found {
-		skip := licensed[index] || (!suppression.MatchString(item.text) && (item.documented || link.MatchString(item.text)))
+		skip := licensed[index] || (allowDocs && !suppression.MatchString(item.text) && (item.documented || link.MatchString(item.text)))
 		for _, pattern := range exempt {
 			match := pattern.FindStringSubmatch(item.text)
 			if match == nil {
@@ -5206,6 +5208,7 @@ const major = Number(metadata.version.split('.')[0])
 const { default: ts } = await import(major >= 7 ? '@typescript/typescript6' : 'typescript')
 
 const rule = 'no-prose-comments'
+const allowDocs = __ALLOW_DOCS__
 const exempt = __EXEMPT__.map(pattern => new RegExp(pattern))
 const license = new RegExp(__LICENSE__)
 const suppression = new RegExp('^(/[/]\\\\s*|/[*]+\\\\s*)([a-z]+-(disable|enable)|@ts-(ignore|expect-error|nocheck))')
@@ -5325,7 +5328,7 @@ function violations(path) {
       const match = pattern.exec(item.text)
       return match && (!match[1] || match[1].split(',').every(selector => selector.trim().toLowerCase() !== 'all'))
     })
-    const documentation = !suppression.test(item.text) && (item.documented || new RegExp('https?://[^\\\\s<>]+').test(item.text))
+    const documentation = allowDocs && !suppression.test(item.text) && (item.documented || new RegExp('https?://[^\\\\s<>]+').test(item.text))
     if (licensed.has(index) || documentation || (item.line === 1 && item.text.startsWith('#!')) || directive) continue
     const digest = createHash('sha256').update(item.text.trim()).digest('hex').slice(0, 12)
     seen.set(digest, (seen.get(digest) ?? 0) + 1)
@@ -5384,13 +5387,14 @@ var checkers = {
   go: { template: go, directory: "tools/check-comments", file: "main.go", run: "go run", format: (patterns) => patterns.map((pattern) => `regexp.MustCompile(${JSON.stringify(pattern)})`).join(", ") },
   typescript: { template: typescript, directory: "scripts", file: "check-comments.mjs", run: "node", format: (patterns) => `[${patterns.map((pattern) => JSON.stringify(pattern)).join(", ")}]` }
 };
-function generateChecker(language) {
+function generateChecker(language, { strict = false } = {}) {
   const checker = checkers[language];
   const suggestedPath = `${checker.directory}/${checker.file}`;
+  const allowDocs = language === "python" ? strict ? "False" : "True" : strict ? "false" : "true";
   return {
     suggestedPath,
     run: language === "go" ? `${checker.run} ./${checker.directory}` : `${checker.run} ${suggestedPath}`,
-    content: checker.template.replace("__EXEMPT__", () => checker.format(exemptions[language])).replace("__LICENSE__", () => JSON.stringify(licenseMarker))
+    content: checker.template.replace("__ALLOW_DOCS__", () => allowDocs).replace("__EXEMPT__", () => checker.format(exemptions[language])).replace("__LICENSE__", () => JSON.stringify(licenseMarker))
   };
 }
 
@@ -5404,10 +5408,11 @@ async function run11(options) {
     }]);
   }
   const target = await resolveTarget(options);
-  const checker = generateChecker(options.language);
+  const strict = Boolean(options.strict);
+  const checker = generateChecker(options.language, { strict });
   const path = join15(await createScratch(target), checkers[options.language].file);
   await writeFile7(path, checker.content);
-  return { inputs: { target, language: options.language }, data: { path, suggestedPath: checker.suggestedPath, run: checker.run } };
+  return { inputs: { target, language: options.language, strict }, data: { path, suggestedPath: checker.suggestedPath, run: checker.run, strict } };
 }
 
 // runtime/scripts/runtime/scripts/verification.mjs
@@ -5423,5 +5428,5 @@ await dispatch(process.argv.slice(2), "verification", {
   "kit scaffold": { options: ["plan", "update"], help: "Render the selected verification kit as a reviewable change set in scratch.\nUsage: verification.mjs kit scaffold --repo <path> --plan <file> [--update] [--json]\nPlan follows schemas/kit-plan.json. Returns the change set path, its planDigest and the exact diff. Without --update, existing kit files are never overwritten. With --update, the change set also replaces kit files that differ from the plan, creates missing ones and deletes feature files the plan no longer lists; when nothing differs it returns no change set. Review with apply --dry-run, then apply the unchanged change set.", run: run8 },
   "kit check": { options: ["app"], help: "Check an applied verification kit for drift without running the product or writing.\nUsage: verification.mjs kit check --repo <path> --app <name> [--json]\nFails with one problem per drifted file, missing file, orphan feature file, missing AGENTS.md pointer or feature source path that matches no file: file-drift, file-missing, orphan-feature-file, pointer-missing, source-path-missing. It compares the kit with what kit.json renders and with the repo, and does not judge whether the feature files are true; drive them with kit prove.", run: run9 },
   "kit prove": { options: ["app", "feature"], help: "Run the applied kit end to end once: launch, doctor, drive one feature, capture evidence, clean up and confirm the evidence survived.\nUsage: verification.mjs kit prove --repo <path> --app <name> --feature <id> [--json]\nReads .agents/skills/verify-<name>/kit.json. Cleanup stops only the process the proof started. A failed proof still cleans up and keeps its evidence.", run: run10 },
-  "comment-check generate": { options: ["language"], help: "Generate a comment-ban checker that uses the target language's own tokenizer, in scratch.\nUsage: verification.mjs comment-check generate --repo <path> --language python|go|typescript [--json]\nThe checker is self-contained, runs without bstack and fails on every prose comment. Rule-specific machine directives and license headers are exempt. --baseline <file> accepts temporary debt entries and --list prints the current violations as rule/path/key objects. Propose it as a selected create edit and wire it into the maintained check command.", run: run11 }
+  "comment-check generate": { options: ["language", "strict"], help: "Generate a comment-ban checker that uses the target language's own tokenizer, in scratch.\nUsage: verification.mjs comment-check generate --repo <path> --language python|go|typescript [--strict] [--json]\nThe checker is self-contained, runs without bstack and fails on every prose comment. Rule-specific machine directives and license headers are exempt; pass --strict to also reject public API doc comments and linked external constraints (the no-comments policy). --baseline <file> accepts temporary debt entries and --list prints the current violations as rule/path/key objects. Propose it as a selected create edit and wire it into the maintained check command.", run: run11 }
 });

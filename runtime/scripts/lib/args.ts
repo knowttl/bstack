@@ -1,7 +1,7 @@
 import { CommandError } from './result.ts'
 import type { Problem } from './result.ts'
 
-type Flag = 'json' | 'dry-run' | 'approved-by-user' | 'refresh' | 'check' | 'update' | 'docs-only' | 'export-findings'
+type Flag = 'json' | 'dry-run' | 'approved-by-user' | 'refresh' | 'check' | 'update' | 'docs-only' | 'export-findings' | 'strict'
 
 export type TargetOptions = { repo: string; workspace?: undefined } | { repo?: undefined; workspace: string }
 
@@ -26,7 +26,7 @@ export function parseArgs(argv: string[], valueOptions: readonly string[] = []):
     if (Object.hasOwn(options, name)) {
       problems.push({ code: 'duplicate-option', message: `Repeated option: ${token}`, fix: 'Supply each option once.' })
     }
-    if (name === 'json' || name === 'dry-run' || name === 'approved-by-user' || name === 'refresh' || name === 'check' || name === 'update' || name === 'docs-only' || name === 'export-findings') options[name] = true
+    if (name === 'json' || name === 'dry-run' || name === 'approved-by-user' || name === 'refresh' || name === 'check' || name === 'update' || name === 'docs-only' || name === 'export-findings' || name === 'strict') options[name] = true
     else if (!argv[index + 1] || argv[index + 1].startsWith('--')) {
       problems.push({ code: 'missing-value', message: `Missing value for ${token}`, fix: 'Supply a nonempty value after the option.' })
     } else if (name === 'plans') {
