@@ -173,6 +173,15 @@ export async function checkPackage(skill, { sourcePreflight = false } = {}) {
     if (!bstackSkills.has(name)) add('next-step', 'SKILL.md', `Next step names /${name}, which is not a bstack skill.`, 'Suggest a skill registered in runtime/skills.json.')
   }
   if (lines(body) > 500) add('skill-too-long', 'SKILL.md', 'SKILL.md body exceeds 500 lines.', 'Keep the body at most 500 lines.')
+  if (skillName === 'bstack-mode') {
+    const routed = new Set([...body.matchAll(/`\/([a-z][a-z0-9-]*)(?:\s+[^`]+)?`/g)].map(match => match[1]))
+    for (const name of [...routed].sort()) {
+      if (!bstackSkills.has(name)) add('bstack-mode-unknown-skill', 'SKILL.md', `Routing table names /${name}, which is not in runtime/skills.json.`, 'Remove the unknown skill or register it in runtime/skills.json.')
+    }
+    for (const name of [...bstackSkills].sort()) {
+      if (name !== 'bstack-mode' && !routed.has(name)) add('bstack-mode-missing-skill', 'SKILL.md', `Routing table is missing registered skill /${name}.`, 'Add a routing row for this skill in skills/bstack-mode/SKILL.md.')
+    }
+  }
   const loadSection = body.match(/^#{1,6} Load when\s*\r?\n([\s\S]*?)(?=^#{1,6} |$(?![\s\S]))/m)?.[1] ?? ''
   const listed = new Set(paths(loadSection.split('\n').filter(line => /^\s*\|.*\|\s*$/.test(line)).join('\n'), true))
   for (const [file, text] of files) {

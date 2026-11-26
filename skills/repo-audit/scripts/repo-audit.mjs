@@ -2274,6 +2274,7 @@ async function run3(options) {
     const totalMs = Object.values(stepMs).reduce((sum, ms) => sum + ms, 0);
     const byStatus = {};
     for (const entry of readRuns) count(byStatus, entry.status);
+    const multiRoundRuns = readRuns.filter((entry) => (reviewRounds.get(entry.id) ?? 0) >= 2).length;
     return {
       data: {
         root: target.root,
@@ -2283,6 +2284,8 @@ async function run3(options) {
           total: runs.length,
           read: readRuns.length,
           byStatus,
+          multiRoundRuns,
+          reworkRate: share(multiRoundRuns, readRuns.length),
           firstAt: new Date(runs[0].created_at * 1e3).toISOString(),
           lastAt: new Date(runs.at(-1).created_at * 1e3).toISOString(),
           perRun: readRuns.map((entry) => ({ id: entry.id, status: entry.status, branch: entry.branch, reviewRounds: reviewRounds.get(entry.id) ?? 0, findings: byRun[entry.id] ?? 0 }))

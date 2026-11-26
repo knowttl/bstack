@@ -147,6 +147,7 @@ export async function run(options: Options<'export-findings'>) {
     const totalMs = Object.values(stepMs).reduce((sum, ms) => sum + ms, 0)
     const byStatus: Record<string, number> = {}
     for (const entry of readRuns) count(byStatus, entry.status)
+    const multiRoundRuns = readRuns.filter(entry => (reviewRounds.get(entry.id) ?? 0) >= 2).length
 
     return {
       data: {
@@ -157,6 +158,8 @@ export async function run(options: Options<'export-findings'>) {
           total: runs.length,
           read: readRuns.length,
           byStatus,
+          multiRoundRuns,
+          reworkRate: share(multiRoundRuns, readRuns.length),
           firstAt: new Date(runs[0].created_at * 1000).toISOString(),
           lastAt: new Date(runs.at(-1)!.created_at * 1000).toISOString(),
           perRun: readRuns.map(entry => ({ id: entry.id, status: entry.status, branch: entry.branch, reviewRounds: reviewRounds.get(entry.id) ?? 0, findings: byRun[entry.id] ?? 0 }))
