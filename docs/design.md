@@ -70,7 +70,7 @@ The new-project path can implement the approved foundation, but it does not buil
 | Foundation goal | Design project-specific guidelines and protections that agents can extend, without prescribing implementation steps |
 | Research | Send read-heavy research to subagents where the host has them, otherwise run it in the main thread |
 | Context use | Install every bundled file, but read each one only when the current step needs it |
-| Invocation | Shipped skills, including the research, recall and prototyping skills, start when the user names them or when the agent matches a plain request to their trigger-index descriptions. A skill's procedure starts only itself, and each ends with a next step that names a real bstack skill for the agent to run or to ask the user about. A multi-model design arena and an auto-routing mode skill are not adopted (R17, R31, R41, R44, R47) |
+| Invocation | Shipped skills, including the research, recall and prototyping skills, start when the user names them or when the agent matches a plain request to their trigger-index descriptions. A thin, stateless `bstack-mode` router maps plain requests to the right bstack skill without adding general implementation playbooks or auto-executing multi-step workflows. Each skill's procedure starts only itself, and each ends with a next step that names a real bstack skill for the agent to run or to ask the user about. A multi-model design arena is not adopted (R17, R31, R41, R44, R47) |
 | Skill authoring | Write repo-audit for the same process on every run, with checkable step criteria and tests with and without the skill |
 | Languages | General design principles in the skill, with language practice researched for each project at audit time |
 | Models and hosts | Works with any capable model and any host that supports skills. Basic tests run in whatever agent runs them, with no host or model matrix |
@@ -1058,7 +1058,7 @@ The public API documentation-comment and linked-constraint comment exemptions ap
 For projects that adopt that rule, use its policy and proof requirements instead.
 Examples of exempt directives include build/generate directives, shebangs, named-rule lint suppressions and coded type ignores.
 Generate a language-tokenizer-based check for comment tokens, using syntax-position detection for exported/public doc comments; partial native comment rules do not establish the complete ban.
-The existing verification comment-check generator retains the broader exemptions and does not establish enforcement of the no-comments rule.
+The existing verification comment-check generator retains the broader exemptions by default and enforces the strict no-comments rule when invoked with `--strict`.
 The keep-list must be checker-verifiable; review still judges whether a linked source explains an external constraint.
 Before removing a warning such as a do-not-remove comment, encode its protected requirement as a type, test or lint constraint.
 Before baselining existing comments, triage each listed comment into delete, reshape, encode or keep-exempt under inverted-pyramid P1.
@@ -1181,9 +1181,8 @@ Neither project requires an installation of the other.
 | Work execution | Provide explicitly invoked foundation, research and prototyping skills and bounded check tools | Route tasks, order steps, coordinate agents, recover runs and deliver changes |
 
 The linked [poteto-mode guide](https://github.com/backnotprop/pstack/blob/124f622bcaeac490e7e9dac6af83f3ef9611d554/docs/guide/02-poteto-mode.md) describes automatic playbook selection and sequencing.
-bstack does not adopt that responsibility.
-It contains no task router, sticky execution mode, general implementation playbooks or autonomous restart service.
-Those capabilities belong to akashic when wanted, rather than a later bstack release.
+bstack does not adopt general implementation playbooks, sticky execution loops or autonomous restart services; those capabilities belong to akashic when wanted.
+`bstack-mode` is strictly a thin, stateless router over bstack's own skills and shared principles.
 
 Writing a plan document is not one of those capabilities.
 `/plan` records what each unit depends on and what proves it done, and it prescribes no development method, tool or agent.

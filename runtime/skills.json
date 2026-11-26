@@ -134,5 +134,11 @@
     "schemas": ["research-report.json"],
     "assets": [],
     "references": ["mechanics.md", "why-evidence.md", "writing.md"]
+  },
+  "bstack-mode": {
+    "commands": [],
+    "schemas": [],
+    "assets": [],
+    "references": []
   }
 }
