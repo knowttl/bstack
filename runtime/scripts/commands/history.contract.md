@@ -4,7 +4,7 @@
 It identifies the repo from the basename of its `no-mistakes` Git remote URL, removing a `.git` suffix, and opens `state.sqlite` under `NM_HOME` (default `~/.no-mistakes`) read-only.
 Repo, run, round and step records are read within one SQLite transaction.
 
-`data.runs` reports total and readable run counts, readable counts by status, the first and last recorded run dates, and each readable run's ID, status, branch, highest review round and finding count.
+`data.runs` reports total and readable run counts, readable counts by status, `multiRoundRuns` (readable runs reaching round 2 or later in any step) and `reworkRate` (`multiRoundRuns / read`), the first and last recorded run dates, and each readable run's ID, status, branch, highest review round and finding count.
 Findings are counted once per run, step and finding ID, using their first recorded round, severity, action and file.
 `data.findings` reports the total, counts by severity, action (including `ask-user`) and step, skipped count, and counts and shares first raised in round 2 or later and in round 3 or later.
 A skipped finding was declined by the user and never selected for a fix in any recorded round.
@@ -19,7 +19,7 @@ Without the option the command writes nothing.
 `data.stepTime` reports recorded milliseconds per step and each step's share of the sum of recorded step durations, rather than elapsed wall-clock time.
 Shares are fractions rounded to three decimal places, or zero when the denominator is zero.
 
-`data.git` counts commits reachable from the current HEAD, fixes whose subjects start with a Conventional Commit `fix:` prefix (including a scope or breaking-change marker), and reverts whose subjects start with the word `revert`, case-insensitively.
+`data.git` counts commits reachable from the current HEAD, fixes whose subjects start with a Conventional Commit `fix:` prefix (including a scope or breaking-change marker), and reverts whose subjects start with the word `revert`, case-insensitively, plus `recentFixes` (up to 20 most recent matching commits with `sha`, `subject` and `files`).
 These are subject-based counts of locally available Git history, independent of the linked run records; missing ancestors are never fetched.
 Unreadable Git history returns `git: null` and a limitation.
 

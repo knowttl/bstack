@@ -8,12 +8,14 @@
 
 ```text
 $ npx skills add knowttl/bstack --agent claude-code --yes
-◇  Installed 17 skills ──────────────────────╮
+◇  Installed 18 skills ──────────────────────╮
 │                                            │
 │  ✓ agents-md (copied)                      │
 │    → ./.claude/skills/agents-md            │
 │  ✓ architecture (copied)                   │
 │    → ./.claude/skills/architecture         │
+│  ✓ bstack-mode (copied)                    │
+│    → ./.claude/skills/bstack-mode          │
 │  ✓ formal-verification (copied)            │
 │    → ./.claude/skills/formal-verification  │
 │  ✓ foundation (copied)                     │
@@ -84,6 +86,12 @@ Prerequisites: Node 24 or later, Git and jq (for the inventory example).
 
    ```sh
    npx skills add knowttl/bstack --agent claude-code --yes
+   ```
+
+   For a lean install with fewer always-loaded skill descriptions, install only the router and core skills:
+
+   ```sh
+   npx skills add knowttl/bstack --agent claude-code --skill bstack-mode --skill repo-audit --skill verification --yes
    ```
 
    Set the skills directory for the commands below in the same shell:
@@ -191,7 +199,7 @@ Claude Code reads skills from `.claude/skills` and Codex from `.agents/skills`.
 | [`why`](skills/why/SKILL.md) | Explain why code, a rule or a decision exists from git history, pull request review threads and any ticket, document or chat connector the host exposes, with every claim cited to its source. Use when the user says "why does this code exist", "why was this rule added", "why is it written this way" or "what is the history behind this decision". |
 <!-- skills-table:end -->
 
-- `repo-audit` is the entry point: for a new idea or an existing repo it lists which of the other skills to run next, and `/plan` always comes last.
+- `bstack-mode` is the thin, stateless router that maps plain requests to the right bstack skill; `repo-audit` is the overview audit entry point that prints an ordered checklist of skills to run next, with `/plan` always last.
 - `/verification` runs in `create`, `maintain` or `correct` mode, `/glossary`, `/architecture` and `/formal-verification` in `create` or `maintain`, and `/maintenance` in `create` or `sweep`.
 - `/formal-verification` proves one stated property of a high-stakes spot with a model checker such as TLA+ with TLC, and it is listed only where the repo shows cited risk evidence; the project pins the tool file and its sha256, bstack installs nothing, and a missing tool means unproven, never a pass.
   Its optional [chart step](skills/formal-verification/references/chart.md) reads a TLC result as local Mermaid text and a bug-path report.

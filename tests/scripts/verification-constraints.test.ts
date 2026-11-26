@@ -668,7 +668,7 @@ test('comment-check generate --strict rejects public API doc comments and linked
   const f = await scratch(t)
   const repo = await repository(t, {
     'app.py': '#!/usr/bin/env python3\n# SPDX-License-Identifier: MIT\n\n# https://example.com/spec\nx = 1  # noqa: E501\n',
-    'doc.ts': '// SPDX-License-Identifier: MIT\n\nexport const base = 0\n/** Public API doc. */\nexport const value = 1\n// https://example.com/spec\n// eslint-disable-next-line no-var\nexport const next = 2\n'
+    'doc.ts': '// SPDX-License-Identifier: MIT\n\n/** Public API doc. */\nexport const value = 1\n// https://example.com/spec\n// eslint-disable-next-line no-var\nexport const next = 2\n'
   })
   const pyStrict = runVerification('comment-check generate', repo, f.env, ['--language', 'python', '--strict'])
   assert.equal(pyStrict.exit, 0, JSON.stringify(pyStrict))
@@ -686,7 +686,7 @@ test('comment-check generate --strict rejects public API doc comments and linked
   await symlink(resolve(import.meta.dirname, '../../node_modules'), join(repo, 'node_modules'), 'junction')
   const tsRun = execute(repo, process.execPath, [tsChecker, 'doc.ts'])
   assert.equal(tsRun.exit, 1, tsRun.output)
-  assert.match(tsRun.output, /doc\.ts:4: no-prose-comments: prose comment: \/\*\* Public API doc\. \*\//)
-  assert.match(tsRun.output, /doc\.ts:6: no-prose-comments: prose comment: \/\/ https:\/\/example\.com\/spec/)
+  assert.match(tsRun.output, /doc\.ts:3: no-prose-comments: prose comment: \/\*\* Public API doc\. \*\//)
+  assert.match(tsRun.output, /doc\.ts:5: no-prose-comments: prose comment: \/\/ https:\/\/example\.com\/spec/)
   assert.doesNotMatch(tsRun.output, /SPDX-License-Identifier|eslint-disable-next-line/)
 })

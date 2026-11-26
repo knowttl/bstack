@@ -1,12 +1,13 @@
 import { execFileSync } from 'node:child_process'
 import { createHash } from 'node:crypto'
-import { existsSync, readFileSync } from 'node:fs'
+import { existsSync, globSync, readFileSync } from 'node:fs'
 
 const { default: metadata } = await import('typescript/package.json', { with: { type: 'json' } })
 const major = Number(metadata.version.split('.')[0])
 const { default: ts } = await import(major >= 7 ? '@typescript/typescript6' : 'typescript')
 
 const rule = 'no-prose-comments'
+const allowDocs = true
 const exempt = ["^//\\s*[a-z]+-disable-(?:next-)?line\\s+(@?[A-Za-z0-9_][\\w/-]*(?:\\s*,\\s*@?[A-Za-z0-9_][\\w/-]*)*)(?:\\s|$)", "^/\\*\\s*[a-z]+-(?:disable(?:-(?:next-)?line)?|enable)\\s+(@?[A-Za-z0-9_][\\w/-]*(?:\\s*,\\s*@?[A-Za-z0-9_][\\w/-]*)*)(?:\\s|\\*/|$)", "^///\\s*<reference\\s"].map(pattern => new RegExp(pattern))
 const license = new RegExp("SPDX-License-Identifier|Copyright|Licensed under|All rights reserved")
 const suppression = new RegExp('^(/[/]\\s*|/[*]+\\s*)([a-z]+-(disable|enable)|@ts-(ignore|expect-error|nocheck))')
@@ -96,7 +97,7 @@ function violations(path) {
   const ranges = new Map()
   let first = true
   const visit = node => {
-    if (node.kind === ts.SyntaxKind.JsxText) return
+    if (node.kind === ts.SyntaxKind.JsxText || ts.isJSDoc(node)) return
     const children = node.getChildren(source)
     if (children.length) return children.forEach(visit)
     for (const [list, leading] of [[ts.getLeadingCommentRanges(text, node.getFullStart()), first], [ts.getTrailingCommentRanges(text, node.getEnd()), false]]) {
@@ -126,7 +127,7 @@ function violations(path) {
       const match = pattern.exec(item.text)
       return match && (!match[1] || match[1].split(',').every(selector => selector.trim().toLowerCase() !== 'all'))
     })
-    const documentation = !suppression.test(item.text) && (item.documented || new RegExp('https?://[^\\s<>]+').test(item.text))
+    const documentation = allowDocs && !suppression.test(item.text) && (item.documented || new RegExp('https?://[^\\s<>]+').test(item.text))
     if (licensed.has(index) || documentation || (item.line === 1 && item.text.startsWith('#!')) || directive) continue
     const digest = createHash('sha256').update(item.text.trim()).digest('hex').slice(0, 12)
     seen.set(digest, (seen.get(digest) ?? 0) + 1)
@@ -158,7 +159,7 @@ try {
   console.error('invalid-baseline: ' + error.message)
   process.exit(2)
 }
-const files = args.filter((arg, index) => !arg.startsWith('--') && args[index - 1] !== '--baseline')
+const files = args.filter((arg, index) => !arg.startsWith('--') && args[index - 1] !== '--baseline').flatMap(arg => /[*?[]/.test(arg) ? globSync(arg).map(item => item.replaceAll('\\', '/')).sort() : [arg])
 const listed = files.length ? files : execFileSync('git', ['ls-files', '--cached', '--others', '--exclude-standard', '--deduplicate', '-z', '--', '*.ts', '*.tsx', '*.mts', '*.cts', '*.js', '*.jsx', '*.mjs', '*.cjs'], { encoding: 'utf8' }).split('\0').filter(Boolean)
 const found = [...new Set(listed)].filter(path => files.length || existsSync(path)).flatMap(violations)
 if (args.includes('--list')) {

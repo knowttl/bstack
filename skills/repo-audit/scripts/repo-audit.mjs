@@ -2173,13 +2173,22 @@ async function run3(options) {
   const target = await resolveTarget(options);
   const inputs = { repo: target.root };
   const limitations = [];
-  const log = readGit(target.root, ["log", "--format=%s"]);
-  const subjects = log.status === 0 ? log.stdout.split("\n").filter(Boolean) : null;
-  if (!subjects) limitations.push("Git history is unreadable, so fix and revert counts are unavailable.");
-  const git = subjects && {
-    commits: subjects.length,
-    fixes: subjects.filter((subject) => /^fix(\([^)]*\))?!?:/i.test(subject)).length,
-    reverts: subjects.filter((subject) => /^revert\b/i.test(subject)).length
+  const log = readGit(target.root, ["log", "--format=%H%x1f%s"]);
+  const entries = log.status === 0 ? log.stdout.split("\n").filter(Boolean).map((line) => {
+    const [sha, ...rest] = line.split("");
+    return { sha, subject: rest.join("") };
+  }) : null;
+  if (!entries) limitations.push("Git history is unreadable, so fix and revert counts are unavailable.");
+  const isFixOrRevert = (subject) => /^fix(\([^)]*\))?!?:/i.test(subject) || /^revert\b/i.test(subject);
+  const recentFixes = entries ? entries.filter((item) => isFixOrRevert(item.subject)).slice(0, 20).map((item) => {
+    const diff = readGit(target.root, ["diff-tree", "--no-commit-id", "--name-only", "-r", item.sha]);
+    return { sha: item.sha, subject: item.subject, files: diff.status === 0 ? diff.stdout.split("\n").filter(Boolean) : [] };
+  }) : [];
+  const git = entries && {
+    commits: entries.length,
+    fixes: entries.filter((item) => /^fix(\([^)]*\))?!?:/i.test(item.subject)).length,
+    reverts: entries.filter((item) => /^revert\b/i.test(item.subject)).length,
+    recentFixes
   };
   const store = join7(process.env.NM_HOME ?? join7(homedir2(), ".no-mistakes"), "state.sqlite");
   const noHistory = (reason) => ({ data: { root: target.root, store, runs: { total: 0, read: 0 }, git, limitations: [...limitations, reason] }, inputs });
@@ -2203,6 +2212,7 @@ async function run3(options) {
     database.exec("COMMIT");
     const unreadable = /* @__PURE__ */ new Set();
     const reviewRounds = /* @__PURE__ */ new Map();
+    const maxRounds = /* @__PURE__ */ new Map();
     const found = /* @__PURE__ */ new Map();
     for (const row of rounds) {
       let listed;
@@ -2214,6 +2224,7 @@ async function run3(options) {
         unreadable.add(row.run_id);
         continue;
       }
+      maxRounds.set(row.run_id, Math.max(maxRounds.get(row.run_id) ?? 0, row.round));
       if (row.step_name === "review") reviewRounds.set(row.run_id, Math.max(reviewRounds.get(row.run_id) ?? 0, row.round));
       const userDecided = row.selection_source === "user" || row.selection_source === "user_declined";
       for (const finding of listed) {
@@ -2274,6 +2285,7 @@ async function run3(options) {
     const totalMs = Object.values(stepMs).reduce((sum, ms) => sum + ms, 0);
     const byStatus = {};
     for (const entry of readRuns) count(byStatus, entry.status);
+    const multiRoundRuns = readRuns.filter((entry) => (maxRounds.get(entry.id) ?? 0) >= 2).length;
     return {
       data: {
         root: target.root,
@@ -2283,6 +2295,8 @@ async function run3(options) {
           total: runs.length,
           read: readRuns.length,
           byStatus,
+          multiRoundRuns,
+          reworkRate: share(multiRoundRuns, readRuns.length),
           firstAt: new Date(runs[0].created_at * 1e3).toISOString(),
           lastAt: new Date(runs.at(-1).created_at * 1e3).toISOString(),
           perRun: readRuns.map((entry) => ({ id: entry.id, status: entry.status, branch: entry.branch, reviewRounds: reviewRounds.get(entry.id) ?? 0, findings: byRun[entry.id] ?? 0 }))
