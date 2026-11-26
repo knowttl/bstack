@@ -15,12 +15,12 @@ Checks catch defined mistakes, not every unsound future design decision.
 
 ## The ladder
 
-1. **Eliminate**: make the mistake unrepresentable through types, schemas or architecture.
-2. **Detect**: fail the maintained command through lint, type or dependency-graph checks.
-3. **Encode**: state it in agent instructions or skills.
-4. **Review**: leave it to human or reviewer judgement.
+1. **Eliminate**: make the mistake unrepresentable. Try **Architecture** first (reshape the module boundary or call path so the invalid state cannot exist), then **Types** (encode the invariant in the type system or schema so invalid usage fails at check time).
+2. **Detect**: fail the maintained command automatically. Try **Lint, static, dependency-graph or formal checks** first (with a diagnostic that names the replacement), then **Automated tests** when static checks cannot express the constraint.
+3. **Encode**: state it in agent instructions or skills (last resort for enforceable rules).
+4. **Review**: leave it to human or reviewer judgement (only for judgement calls no check can express).
 
-Start at the top rung and move down only when the rung above cannot express the constraint.
+Start at the top rung and move down only when every higher level cannot express the constraint. Never let an enforceable constraint drop past Automated tests into prose (`Encode`).
 
 ## Principles L1-L8
 

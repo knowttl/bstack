@@ -55,16 +55,15 @@ A contract without `instructions.baseline` is accepted only when the readable pr
 
 ## Offer the no-comments rule
 
-Offer an owner-selected rule that rejects every comment in project-authored code, including tests, test fixtures and snapshots that are code, except tool directives, license or SPDX headers, and a shebang on the first line.
-Directives include `# type: ignore`, `//go:build` and `# noqa`; rationale, warnings, documentation comments and linked explanations are violations.
+Offer an owner-selected rule that enforces the strict comment ban (`--strict` mode in `/verification`'s `comment-check generate`): reject every comment in project-authored code, including tests, test fixtures and snapshots that are code, except rule-specific tool directives, license or SPDX headers, and a shebang on the first line.
+Directives include `# type: ignore[code]`, `//go:build` and `# noqa: CODE`; rationale, warnings, documentation comments and linked explanations are violations.
 Exclude only vendored third-party code, tool-generated output marked as generated, and non-code files such as lockfiles from this rule.
 Existing contributor guidance that permits other comments needs reconciliation before adoption.
 
-Use a maintained native linter rule only when it enforces the whole policy; warning-comment rules alone are insufficient.
-Otherwise propose a small project-owned check using the language's tokenizer or parser, recognising actual directives and headers rather than arbitrary comments containing their words.
+For Python, Go and TypeScript, generate the deterministic checker with `comment-check generate --repo <target> --language <python|go|typescript> --strict --json` (owned by `/verification`) instead of maintaining a separate policy; for another language, use a maintained native linter rule only when it enforces the whole policy, or propose a small project-owned tokenizer check.
 Wire the selected check into the project's one maintained check command, and include all proposed files, dependencies, configuration and handling of existing violations in the review.
 Do not alter existing comments or enforcement without the owner's approval of the exact changes.
-Before adoption, prove the selected rule and the integrated command in disposable fixtures: clean code and files with directives, license or SPDX headers and a shebang pass, while a plain comment fails with the expected diagnostic.
+Before adoption, prove the selected rule and the integrated command in disposable fixtures: clean code and files with directives, license or SPDX headers and a shebang pass, while a plain comment, a doc comment and a linked explanation each fail with the expected diagnostic.
 Repeat the proof with a plain comment as the sole violation in a project-authored code fixture, such as `tests/fixtures/example.py` in a Python project, and in a snapshot that is code when the project has one; each must fail with the rule's diagnostic.
 Record unsupported syntax and languages as coverage limits.
 

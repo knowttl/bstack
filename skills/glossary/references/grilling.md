@@ -1,6 +1,7 @@
 # Grilling
 
 Resolve only decisions that would change the requested recommendation.
+Skip formal grilling rounds when the change is small, reversible and unambiguous from the repo and request: state the assumptions in two lines and proceed.
 Use the user's explanation and, for an existing project, the initial audit as the starting point.
 Retain settled decisions and distinguish documented goals, observed behaviour and inferred intent.
 

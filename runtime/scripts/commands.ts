@@ -178,7 +178,7 @@ export const commands: Record<string, { module: string; options: string[]; help:
   },
   'comment-check generate': {
     module: './commands/comment-check.ts',
-    options: ['language'],
-    help: 'Generate a comment-ban checker that uses the target language\'s own tokenizer, in scratch.\nUsage: {entry} comment-check generate --repo <path> --language python|go|typescript [--json]\nThe checker is self-contained, runs without bstack and fails on every prose comment. Rule-specific machine directives and license headers are exempt. --baseline <file> accepts temporary debt entries and --list prints the current violations as rule/path/key objects. Propose it as a selected create edit and wire it into the maintained check command.'
+    options: ['language', 'strict'],
+    help: 'Generate a comment-ban checker that uses the target language\'s own tokenizer, in scratch.\nUsage: {entry} comment-check generate --repo <path> --language python|go|typescript [--strict] [--json]\nThe checker is self-contained, runs without bstack and fails on every prose comment. Rule-specific machine directives and license headers are exempt; pass --strict to also reject public API doc comments and linked external constraints (the no-comments policy). --baseline <file> accepts temporary debt entries and --list prints the current violations as rule/path/key objects. Propose it as a selected create edit and wire it into the maintained check command.'
   }
 }

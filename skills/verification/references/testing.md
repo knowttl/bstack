@@ -82,7 +82,7 @@ Similar inputs alone do not establish duplicate coverage: different boundaries m
 |---|---|
 | Duplicate coverage of the same scenario at unit and end-to-end levels or in sibling tests | Keep the fewest tests that protect distinct observable failures; consolidate redundant cases while retaining critical journey coverage. |
 | Tests of guards or paths with no production caller | Test supported production behaviour; do not add tests solely to preserve unused code paths. |
-| Oversized tables of combinations | Choose representative boundary and failure cases; add combinations only when they protect a distinct requirement or plausible failure. |
+| Oversized tables of combinations | Choose representative boundary and failure cases; add combinations only when they protect a distinct requirement or plausible failure. Keep exhaustive permission-matrix tables for security, authorization and compliance rules. |
 | Tests that re-run tests already in the suite, such as a nested `go test` | Let the suite run each test once; invoke a test runner inside a test only when that runner's behaviour is the contract under test. |
 | Expensive setup repeated for every table case | Share expensive setup when cases can remain isolated and deterministic; retain per-case setup where isolation requires it. |
 | Expensive setup repeated per file when cleanup is proven | Share the setup per worker once the tests demonstrably clean up after themselves, following the reusing-setup section of the fast-feedback reference; keep per-file setup where cleanup is unproven. |
@@ -90,7 +90,7 @@ Similar inputs alone do not establish duplicate coverage: different boundaries m
 | Cold rebuilds that build a binary per test | Reuse a binary built for the current source inputs across tests; rebuild only when a case changes build inputs or tests the build itself. |
 | Tautological tests that assert their own setup, cannot fail, or copy the expected value from the current output (bug-locking) | Assert production outcomes against independent expectations; do not add assertions that only confirm test setup or cannot fail when production behaviour breaks. |
 | Tests of impossible scenarios no production path can reach, including states that types, schemas or database constraints already rule out | Use inputs and states reachable through supported production paths, including invalid external input at real boundaries; do not fabricate states that production cannot create. |
-| Mocking fiction: mock payloads no real dependency can return, mocks of in-process code, or tests that only assert how a mock was configured or called | Mock only true external boundaries with schema-valid or recorded payloads; test the product's handling of the response; delete mock-configuration checks unless that interaction is the requirement. |
+| Mocking fiction: mock payloads no real dependency can return, mocks of in-process code or the application's own database, or tests that only assert how a mock was configured or called | Mock only true external boundaries (third-party services outside this repo's control) with schema-valid or recorded payloads; test the application's own database against a real local or ephemeral instance; test the product's handling of the response; delete mock-configuration checks unless that interaction is the requirement. |
 | Private implementation spying: tests that reach private helpers, internal state or internal call counts | Test through the public interface at the lowest level that still sees the behaviour (P4). |
 | Trivial assertions: assertions that only check existence, type, a constant or "does not throw", or tests whose only failure mode is a compile or import error | Assert the exact result the caller sees (P5), or delete the test. |
 
@@ -110,13 +110,13 @@ Tests are never required first; a change is verified end to end against the beha
 1. Trust upstream invariants: do not test states that types, schemas or database constraints already rule out.
    Test invalid input only at the boundary that validates it.
 2. Assert outcomes from an agreed source (spec, domain rule, ground-truth fixture), never values copied from what the code returns today.
-3. Mock only true external boundaries, with schema-valid or recorded payloads.
-   Never mock in-process code.
+3. Mock only true external boundaries (third-party services outside this repo's control), with schema-valid or recorded payloads.
+   Never mock in-process code or the application's own database; use a real local or ephemeral database for persistence tests.
    Delete tests that only check how a mock was set up or called, unless that call is the requirement.
 4. Test through the public interface: no private helpers, internal state or internal call counts.
 5. Every assertion must be able to fail when the behaviour breaks: no existence-, type- or constant-only assertions.
 
-Exempt: validation-boundary tests, contract tests against an agreed schema or recording, and regression tests that cite the bug they reproduce.
+Exempt: validation-boundary tests, contract tests against an agreed schema or recording, security, authorization and legal/compliance tests, and regression tests that cite the bug they reproduce.
 <!-- END canonical test-quality rules -->
 
 Apply the following remedies only after checking the exemptions against evidence.
@@ -142,6 +142,7 @@ Check these false-positive guards before flagging a test:
 - **Lowest level that sees it (TQ4):** Directly testing an exported function is valid when it is the caller's public interface and the cheapest level that observes the behaviour (P4).
 - **Startup smoke (TQ5):** Starting a process and observing its health-check response is a journey assertion.
   Merely importing code or checking that a value exists does not establish that journey.
+- **Security, authorization and compliance (TQ1, TQ4, wasteful-test pruning):** Never recommend deleting or weakening tests that guard authentication, authorization, tenant isolation, security boundaries or legal/compliance requirements, including exhaustive permission-matrix tables.
 
 Exemptions apply to the evidenced behaviour, not to every assertion in a test labelled contract or regression.
 Keep deletion and rewriting owner-selected under P10.

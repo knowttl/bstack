@@ -13,12 +13,9 @@ Use `create` when the repo has no kit and `maintain` when it has one; if the use
 Use `correct` when the user keeps correcting agents for the same mistake; it needs no kit and works with or without one.
 
 Create builds a kit in the target repo that tells an agent how to start and drive the product, plus a feature map of how a user reaches each feature.
-Maintain keeps an applied kit true: it checks the kit for drift, drives every feature, triages what disagrees and proposes reviewed corrections.
-Correct turns a repeated mistake into the highest-rung check that makes it impossible, proves the check on a real past occurrence and proposes it for review, without driving the product.
-No mode edits product code, implements features, fixes product bugs or opens pull requests; when startup needs a product fix, report the blocker, and report a product bug instead of weakening the map.
-It never adds hosted CI unless the user selects it.
-Checks it proposes must run without bstack installed.
-Scripts collect facts and render reviewable change sets; this workflow writes target changes through `apply`, after the user approves the exact diff.
+Maintain checks an applied kit for drift, drives every feature, triages disagreements and proposes reviewed corrections.
+Correct turns a repeated mistake into the highest-rung check that prevents it, proves the check on a real past occurrence and proposes it for review.
+Keep product code edits, bug fixes, hosted CI setup and pull requests outside this skill: report blockers and product bugs directly, keep proposed checks runnable without bstack installed, and write approved target changes only through `apply`.
 
 ## Create checklist
 
@@ -94,7 +91,7 @@ The safety section and its pointer are selected edits with their destination or 
 Propose the default slop baseline and the prose-comment ban as selected changes, each implemented with the project's native tools first.
 Research the project's language and tools; a rule name alone never proves equivalent enforcement.
 Check the project's adopted comment policy against the [slop baseline's exemptions and generator limits](references/slop-baseline.md#the-comment-ban).
-Where those exemptions apply, generate the comment-ban checker with `node scripts/verification.mjs comment-check generate --repo <target> --language <python|go|typescript> --json`, and propose it as a selected `create` edit wired into the project's one maintained check command.
+Where those exemptions apply (or with `--strict` for the no-comments policy), generate the comment-ban checker with `node scripts/verification.mjs comment-check generate --repo <target> --language <python|go|typescript> [--strict] --json`, and propose it as a selected `create` edit wired into the project's one maintained check command.
 Triage existing comments into delete, reshape, encode or keep-exempt before baselining unresolved violations, following the slop baseline reference.
 Report product reshaping rather than performing it; removal and encoding stay selected findings requiring approval.
 Prove every enabled rule with `rule-proof` and put unresolved violations into a shrinking baseline with `baseline check`.
@@ -189,7 +186,8 @@ Run Steps C1 and C2 of the [Correct checklist](#correct-checklist) over the find
 Then list the project's adopted constraint rules from its maintained check configuration and baseline, and obtain and search the maintained check's output alongside the same findings in those runs for each rule's diagnostic.
 Report a rule as fired if its diagnostic appeared in any available evidence.
 For a rule with no observed diagnostic, report it as a pruning candidate only when at least one run exists, all runs are read and their relevant findings and check output are available; otherwise report its firing history as unknown and identify the unavailable evidence.
-Include the runs read versus the total; a rule that never fired may be preventing the mistake, so remove nothing without the user's selection and propose it through the reviewed boundary.
+Include the runs read versus the total; a rule that never fired may be preventing the mistake, so propose pruning candidates through the reviewed boundary.
+When run history or session transcripts record rework rounds or per-task token/cost trends, include that observed trend as an outcome health signal; mark it unavailable when absent without inventing numbers.
 Report an unproven rule as such rather than as a candidate, and record the absence of history as a limitation.
 
 Done when: Each repeated mistake has a proposed rung and evidence, or the evidence read contains no repeated mistake and its limits are stated, including the runs read versus the total; and each adopted rule is reported as fired, never fired, unknown or unproven, with missing evidence named.
@@ -285,18 +283,13 @@ Done when: The report separates applied changes, proof evidence, reported produc
 
 ## Review before apply
 
-Keep plans, change sets, generated checkers and transcripts in scratch outside the target until the user selects changes.
-Present each proposed change's problem, consequence, fix, scope and verification, then the exact diff.
-A scope change needs a decision, not a silent widening.
-Machine configuration changes need approval for each change.
+Keep plans, change sets, generated checkers and transcripts in scratch until the user approves them.
+Present each change's problem, consequence, fix, scope and verification alongside the exact diff; confirm scope widenings and machine-configuration edits explicitly.
 
 ## Write rules
 
-Use the `scripts/verification.mjs` entry point, run documented commands and read their output rather than script source.
-Resolve resources relative to the installed skill and pass the target explicitly.
-Use `--help` for any command's syntax and never guess arguments.
-Only `apply` makes project edits, including `AGENTS.md`; it validates reviewed scope, hashes and the plan digest before writing and refuses anything changed since review.
-User changes block remaining writes, and a repeated unchanged plan resumes.
+Run documented commands via `scripts/verification.mjs` (check `--help` for syntax, pass `--repo` explicitly, and read command output rather than script source).
+Write target edits only through `apply`, which validates reviewed scope, hashes and plan digests; resume interrupted runs by repeating the unchanged plan after checking `state show`.
 
 ## Load when
 

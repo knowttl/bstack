@@ -79,7 +79,8 @@ Question: Which classes of mistake recur in this repo's no-mistakes runs, and wh
 Run it only for a Git repo, on the `history` command's output kept in scratch.
 Read finding text for a class from the findings file the output names, or as the history reference named in `SKILL.md` allows, and read nothing else about the runs.
 Each finding's `file` is the current path of the file it was raised against, so open that path; a finding with `atHead` false names a file that no longer exists.
-Report the runs read versus the total and every limitation the output names; when the output shows no linked history, report that and no classes.
+Report the runs read versus the total and every limitation the output names.
+When the output shows no linked `no-mistakes` history, state that and sample recent Git reverts, `fix` commits and available pull request review threads read-only to group recurring mistake classes with at least two cited occurrences (by commit SHA or thread URL and current `path:line`).
 
 Group the findings of the runs read into classes by what went wrong, then place each class under one practice:
 
@@ -104,7 +105,8 @@ Also report, each with the runs read versus the total:
 - The share of findings first raised in round 2 or later and in round 3 or later, for `/no-mistakes-tuning`.
 - The files flagged in two or more runs, as the places where a class shows.
 - Each step's share of run time, so that a gate dominated by test or lint time is routed to `/verification` and not to `/no-mistakes-tuning`.
-- The fix and revert commit counts from Git history, as a cross-check on the classes and never as a class by themselves.
+- The fix and revert commit counts from Git history, as a cross-check on `no-mistakes` classes when runs exist, or as the primary source of recurring mistake classes (>=2 cited occurrences) when no linked `no-mistakes` history exists.
+- The rework rate (multi-round runs or repeated fixes) and per-task token/cost trend when the run history records them, reported as unavailable when absent.
 
 Do not propose rules, configuration values or edits: that is the work of the skills the checklist names.
 Paths in scope: The `history` output, the finding text the history reference allows for the classes and the current files the findings name.
