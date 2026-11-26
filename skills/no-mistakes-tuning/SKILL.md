@@ -66,6 +66,7 @@ When an existing instruction asks the reviewer to widen scope, such as one that 
 When an existing instruction already says what the focus instruction says, propose no duplicate.
 Edit within an existing entry by deleting the phrases in place, keeping its YAML scalar style, and write new entries in the style the file already uses.
 For each proposed value, including values that already match the profile and stay unchanged, write one line with the setting, the current effective value, the proposed value, the reason, and the class of defect it trades away, if any.
+Match review rigor to stakes: keep strict review on high-stakes or irreversible paths (such as auth, payments, schema contracts, formal properties and machine config), and use `ignore_patterns` or lighter review on low-harm, easily reversible files where checks catch regressions.
 When a value trades away detection of a class of defect, such as skipping review for a path that can carry behaviour, present it as a decision with its options instead of choosing silently.
 Keep the review instructions short and in plain words; they share the review prompt's size budget.
 

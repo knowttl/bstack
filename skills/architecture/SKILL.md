@@ -74,6 +74,7 @@ Name each module's responsibility, owned knowledge, public contract and private 
 Declare source paths, protocol modules and reverse dependents with links to module build, lint and test commands as the architecture reference describes, so `/verification` can select affected validation.
 Write two or three caller call sites before each proposed public contract, taken from existing callers or the stated next changes, and derive the contract from them.
 Offer at least two structurally distinct boundary candidates, meaning different whole module shapes rather than point fixes inside one shape, and recommend the one that hides more complexity behind a smaller public contract.
+When the user asks for a visual comparison of complex boundary trade-offs, you may also write a local HTML review summary in scratch outside the target alongside the terminal proposal.
 Record each boundary's project-specific reason, source, scope, enforcement and exception policy, and reuse existing decisions and standards instead of duplicating their rules.
 Draft the design sections in the project's existing design document, or `DESIGN.md` when it has none, and keep the design to structure and links to the enforcing checks.
 Offer a decision record only for a choice that is hard to reverse, surprising without context and the result of a real trade-off, following the decisions guide, and never one per setup choice.

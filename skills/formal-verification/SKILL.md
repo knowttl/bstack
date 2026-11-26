@@ -104,7 +104,8 @@ Done when: `formal check` passed, and the property check either passed within it
 ### Step 6: Prove it can fail
 
 Prove the check can fail in two ways, and restore everything afterwards.
-First, run `rule-proof` on the property check with a clean copy and a broken copy of the code and model, expecting the property's violation diagnostic, following the [create guide](references/create.md) for the check plan and the fixtures.
+First, when Git history or issues record a real past bug in the target spot, seed the broken copy from that real bug (showing the model fails pre-fix and passes post-fix, with the commit cited); otherwise seed a faithful synthetic break and record that no past bug existed in history.
+Run `rule-proof` on the property check with a clean copy and that broken copy of the code and model, expecting the property's violation diagnostic, following the [create guide](references/create.md) for the check plan and the fixtures.
 Then do the walkthrough on a disposable copy of the repo, never the user's working tree: follow the generated suite, break the real code at a declared source path, confirm the coverage gate flags the change, update the model to match the break, confirm the check now fails with the violation diagnostic, then restore the code and the model and confirm the result is back where it started.
 Say plainly that the model checker alone cannot see a code change; what the walkthrough proves is that the gate flags it, the agent updates the model and the check then fails.
 A Kani check runs on the code, so a break in the code is caught directly.
