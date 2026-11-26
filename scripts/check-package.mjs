@@ -174,7 +174,9 @@ export async function checkPackage(skill, { sourcePreflight = false } = {}) {
   }
   if (lines(body) > 500) add('skill-too-long', 'SKILL.md', 'SKILL.md body exceeds 500 lines.', 'Keep the body at most 500 lines.')
   if (skillName === 'bstack-mode') {
-    const routed = new Set([...body.matchAll(/`\/([a-z][a-z0-9-]*)(?:\s+[^`]+)?`/g)].map(match => match[1]))
+    const routingSection = body.match(/^## Route to the right skill\s*\r?\n([\s\S]*?)(?=^## |$(?![\s\S]))/m)?.[1] ?? ''
+    const tableLines = routingSection.split('\n').filter(line => /^\s*\|.*\|\s*$/.test(line)).join('\n')
+    const routed = new Set([...tableLines.matchAll(/`\/([a-z][a-z0-9-]*)(?:\s+[^`]+)?`/g)].map(match => match[1]))
     for (const name of [...routed].sort()) {
       if (!bstackSkills.has(name)) add('bstack-mode-unknown-skill', 'SKILL.md', `Routing table names /${name}, which is not in runtime/skills.json.`, 'Remove the unknown skill or register it in runtime/skills.json.')
     }

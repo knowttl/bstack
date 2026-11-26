@@ -4694,6 +4694,7 @@ var exemptions = {
 };
 var licenseMarker = "SPDX-License-Identifier|Copyright|Licensed under|All rights reserved";
 var python = `import argparse
+import glob
 import hashlib
 import json
 import os
@@ -4832,23 +4833,31 @@ def main():
     except (OSError, ValueError) as error:
         print("invalid-baseline: " + str(error), file=sys.stderr)
         return 2
-    files = options.files or subprocess.run(
-        [
-            "git",
-            "ls-files",
-            "--cached",
-            "--others",
-            "--exclude-standard",
-            "--deduplicate",
-            "-z",
-            "--",
-            "*.py",
-        ],
-        capture_output=True,
-        text=True,
-        check=True,
-    ).stdout.split("\\0")
-    if not options.files:
+    if options.files:
+        expanded = []
+        for pattern in options.files:
+            if any(char in pattern for char in "*?["):
+                expanded.extend(sorted(path.replace("\\\\", "/") for path in glob.glob(pattern, recursive=True)))
+            else:
+                expanded.append(pattern)
+        files = expanded
+    else:
+        files = subprocess.run(
+            [
+                "git",
+                "ls-files",
+                "--cached",
+                "--others",
+                "--exclude-standard",
+                "--deduplicate",
+                "-z",
+                "--",
+                "*.py",
+            ],
+            capture_output=True,
+            text=True,
+            check=True,
+        ).stdout.split("\\0")
         files = [path for path in files if os.path.exists(path)]
     found = [item for path in dict.fromkeys(files) if path for item in violations(path)]
     if options.list:
@@ -4895,6 +4904,7 @@ import (
 	"go/token"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"regexp"
 	"sort"
 	"strconv"
@@ -5136,7 +5146,20 @@ func main() {
 			os.Exit(2)
 		}
 	}
-	files := flag.Args()
+	var files []string
+	for _, arg := range flag.Args() {
+		if strings.ContainsAny(arg, "*?[") {
+			matches, err := filepath.Glob(arg)
+			if err == nil && len(matches) > 0 {
+				sort.Strings(matches)
+				for _, match := range matches {
+					files = append(files, filepath.ToSlash(match))
+				}
+				continue
+			}
+		}
+		files = append(files, arg)
+	}
 	if len(files) == 0 {
 		output, err := exec.Command("git", "ls-files", "--cached", "--others", "--exclude-standard", "--deduplicate", "-z", "--", "*.go").Output()
 		if err != nil {

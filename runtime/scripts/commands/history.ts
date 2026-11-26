@@ -51,13 +51,22 @@ export async function run(options: Options<'export-findings'>) {
   const target = await resolveTarget(options)
   const inputs = { repo: target.root }
   const limitations: string[] = []
-  const log = readGit(target.root, ['log', '--format=%s'])
-  const subjects = log.status === 0 ? log.stdout.split('\n').filter(Boolean) : null
-  if (!subjects) limitations.push('Git history is unreadable, so fix and revert counts are unavailable.')
-  const git = subjects && {
-    commits: subjects.length,
-    fixes: subjects.filter(subject => /^fix(\([^)]*\))?!?:/i.test(subject)).length,
-    reverts: subjects.filter(subject => /^revert\b/i.test(subject)).length
+  const log = readGit(target.root, ['log', '--format=%H%x1f%s'])
+  const entries = log.status === 0 ? log.stdout.split('\n').filter(Boolean).map(line => {
+    const [sha, ...rest] = line.split('\x1f')
+    return { sha, subject: rest.join('\x1f') }
+  }) : null
+  if (!entries) limitations.push('Git history is unreadable, so fix and revert counts are unavailable.')
+  const isFixOrRevert = (subject: string) => /^fix(\([^)]*\))?!?:/i.test(subject) || /^revert\b/i.test(subject)
+  const recentFixes = entries ? entries.filter(item => isFixOrRevert(item.subject)).slice(0, 20).map(item => {
+    const diff = readGit(target.root, ['diff-tree', '--no-commit-id', '--name-only', '-r', item.sha])
+    return { sha: item.sha, subject: item.subject, files: diff.status === 0 ? diff.stdout.split('\n').filter(Boolean) : [] }
+  }) : []
+  const git = entries && {
+    commits: entries.length,
+    fixes: entries.filter(item => /^fix(\([^)]*\))?!?:/i.test(item.subject)).length,
+    reverts: entries.filter(item => /^revert\b/i.test(item.subject)).length,
+    recentFixes
   }
   const store = join(process.env.NM_HOME ?? join(homedir(), '.no-mistakes'), 'state.sqlite')
   const noHistory = (reason: string) => ({ data: { root: target.root, store, runs: { total: 0, read: 0 }, git, limitations: [...limitations, reason] }, inputs } satisfies CommandReturn)
@@ -83,6 +92,7 @@ export async function run(options: Options<'export-findings'>) {
 
     const unreadable = new Set()
     const reviewRounds = new Map()
+    const maxRounds = new Map()
     const found = new Map()
     for (const row of rounds) {
       let listed
@@ -94,6 +104,7 @@ export async function run(options: Options<'export-findings'>) {
         unreadable.add(row.run_id)
         continue
       }
+      maxRounds.set(row.run_id, Math.max(maxRounds.get(row.run_id) ?? 0, row.round))
       if (row.step_name === 'review') reviewRounds.set(row.run_id, Math.max(reviewRounds.get(row.run_id) ?? 0, row.round))
       const userDecided = row.selection_source === 'user' || row.selection_source === 'user_declined'
       for (const finding of listed) {
@@ -147,7 +158,7 @@ export async function run(options: Options<'export-findings'>) {
     const totalMs = Object.values(stepMs).reduce((sum, ms) => sum + ms, 0)
     const byStatus: Record<string, number> = {}
     for (const entry of readRuns) count(byStatus, entry.status)
-    const multiRoundRuns = readRuns.filter(entry => (reviewRounds.get(entry.id) ?? 0) >= 2).length
+    const multiRoundRuns = readRuns.filter(entry => (maxRounds.get(entry.id) ?? 0) >= 2).length
 
     return {
       data: {

@@ -68,7 +68,7 @@ test('history aggregates rounds, findings, hotspots, step time and Git counts fo
   assert.equal(result.exit, 0)
   assert.deepEqual(result.problems, [])
   assert.deepEqual(result.data.repo, { id: 'abc123', workingPath: '/work/demo', upstreamUrl: 'https://example.invalid/demo.git' })
-  assert.deepEqual({ total: result.data.runs.total, read: result.data.runs.read, byStatus: result.data.runs.byStatus }, { total: 2, read: 2, byStatus: { completed: 1, failed: 1 } })
+  assert.deepEqual({ total: result.data.runs.total, read: result.data.runs.read, byStatus: result.data.runs.byStatus, multiRoundRuns: result.data.runs.multiRoundRuns, reworkRate: result.data.runs.reworkRate }, { total: 2, read: 2, byStatus: { completed: 1, failed: 1 }, multiRoundRuns: 1, reworkRate: 0.5 })
   assert.deepEqual(result.data.runs.perRun, [
     { id: 'run-a', status: 'completed', branch: 'feat/a', reviewRounds: 3, findings: 4 },
     { id: 'run-b', status: 'failed', branch: 'feat/b', reviewRounds: 1, findings: 1 }
@@ -79,7 +79,8 @@ test('history aggregates rounds, findings, hotspots, step time and Git counts fo
   })
   assert.deepEqual(result.data.hotspots, [{ file: 'a.mjs', recordedPaths: ['a.mjs'], atHead: false, runs: 2, findings: 3 }])
   assert.deepEqual(result.data.stepTime, [{ step: 'review', ms: 4500, share: 0.9 }, { step: 'test', ms: 500, share: 0.1 }])
-  assert.deepEqual(result.data.git, { commits: 3, fixes: 1, reverts: 1 })
+  assert.deepEqual({ commits: result.data.git.commits, fixes: result.data.git.fixes, reverts: result.data.git.reverts }, { commits: 3, fixes: 1, reverts: 1 })
+  assert.deepEqual(result.data.git.recentFixes.map((item: { subject: string }) => item.subject), ['Revert "feat: add"', 'fix(core): repair'])
   assert.equal(result.data.limitations.length, 1)
   assert.match(result.data.limitations[0], /^3 finding paths are not files at HEAD.*: a\.mjs, b\.mjs, c\.mjs\./)
   assert.equal(result.data.findingsExport, undefined)

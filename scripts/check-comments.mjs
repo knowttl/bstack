@@ -7,6 +7,7 @@ const major = Number(metadata.version.split('.')[0])
 const { default: ts } = await import(major >= 7 ? '@typescript/typescript6' : 'typescript')
 
 const rule = 'no-prose-comments'
+const allowDocs = true
 const exempt = ["^//\\s*[a-z]+-disable-(?:next-)?line\\s+(@?[A-Za-z0-9_][\\w/-]*(?:\\s*,\\s*@?[A-Za-z0-9_][\\w/-]*)*)(?:\\s|$)", "^/\\*\\s*[a-z]+-(?:disable(?:-(?:next-)?line)?|enable)\\s+(@?[A-Za-z0-9_][\\w/-]*(?:\\s*,\\s*@?[A-Za-z0-9_][\\w/-]*)*)(?:\\s|\\*/|$)", "^///\\s*<reference\\s"].map(pattern => new RegExp(pattern))
 const license = new RegExp("SPDX-License-Identifier|Copyright|Licensed under|All rights reserved")
 const suppression = new RegExp('^(/[/]\\s*|/[*]+\\s*)([a-z]+-(disable|enable)|@ts-(ignore|expect-error|nocheck))')
@@ -126,7 +127,7 @@ function violations(path) {
       const match = pattern.exec(item.text)
       return match && (!match[1] || match[1].split(',').every(selector => selector.trim().toLowerCase() !== 'all'))
     })
-    const documentation = !suppression.test(item.text) && (item.documented || new RegExp('https?://[^\\s<>]+').test(item.text))
+    const documentation = allowDocs && !suppression.test(item.text) && (item.documented || new RegExp('https?://[^\\s<>]+').test(item.text))
     if (licensed.has(index) || documentation || (item.line === 1 && item.text.startsWith('#!')) || directive) continue
     const digest = createHash('sha256').update(item.text.trim()).digest('hex').slice(0, 12)
     seen.set(digest, (seen.get(digest) ?? 0) + 1)
